@@ -22,7 +22,7 @@ Asterisk is an open-source telephone solution that runs over the Internet instea
 
 For this guide we will install Asterisk from source rather than from Ubuntu's repositories. The newer version offers several additional features, including the ability to integrate a Google Voice account as a trunk. We will use FreePBX as a web interface for our Asterisk configuration.
 
-**Please note:** Because of the special configuration options required for this setup, you should not run other services on the Linode you intend to use Asterisk on. It is also worth noting that this guide will walk you through using PV-GRUB. Any alterations to the steps in this guide will fall outside the scope of support.
+**Please note:** Because of the special configuration options required for this setup, you should not run other services on the Linode you intend to use Asterisk on. It is also worth noting that this guide will walk you through using GRUB Legacy. Any alterations to the steps in this guide will fall outside the scope of support.
 
  {: .note }
 >
@@ -70,7 +70,7 @@ You will be prompted for a password and some details for the user such as name a
 
 ## Install the Kernel
 
-You will need to use the PV-GRUB kernel provided by Linode. This method works, but any kernel problems that arise from editing the kernel beyond the steps outlined in this document will not be supported by Linode. You'll need to prepare your Linode before updating your configuration profile by following the commands in the next section.
+You will need to use the GRUB Legacy kernel provided by Linode. This method works, but any kernel problems that arise from editing the kernel beyond the steps outlined in this document will not be supported by Linode. You'll need to prepare your Linode before updating your configuration profile by following the commands in the next section.
 
 Asterisk uses the dahdi\_dummy kernel module, which requires you to edit a few things in the kernel as well as your Linode's configuration profile. This is a straightforward process; issue the following command:
 
@@ -117,7 +117,7 @@ You will be presented with a menu like the one below asking you to choose a disk
 You will now need to log in to the Linode Manager in order to change your Linode's configuration profile.
 
 1.  Navigate to the **Dashboard** page of the Linode you are going to use for Asterisk.
-2.  Click the profile you are currently using and select **pv-grub-x86\_64** (or **pv-grub-x86\_32** if you are using a 32 bit system) from the kernel drop down.
+2.  Click the profile you are currently using and select **GRUB (Legacy) (Deprecated)** from the kernel drop down.
 3.  Save this configuration profile. You may wish to change its name to indicate that this is no longer a default profile.
 4.  Reboot your system to make sure that these changes are applied. You will need to do this before you can proceed. It is a good idea to watch the shutdown and reboot phases via [LISH](/docs/using-lish-the-linode-shell) to see if there are any errors.
 
