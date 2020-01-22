@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Deploy WireGuard with One-Click Apps</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Deploy a WireGuard Server on Linode with One-Click Apps.">
+        <meta name="keywords" content="vpn, wireguard, tunnel">
+        
+        <meta property="og:title" content="Deploy WireGuard with One-Click Apps">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/platform/one-click/deploy-wireguard-with-one-click-apps/">
+        <meta property="og:description" content="Deploy a WireGuard Server on Linode with One-Click Apps.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/platform/one-click/deploy-wireguard-with-one-click-apps/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/">Linode Platform</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/one-click/">One-Click Apps</a>
+  
+</li>
+
+
+<li>
+  
+  Deploy WireGuard with One-Click Apps
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Deploy WireGuard with One-Click Apps</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-04-08T15:21:01-04:00">Monday, April 8, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fone-click%2fdeploy-wireguard-with-one-click-apps%2f&via=linode&text=Deploy%20WireGuard%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fone-click%2fdeploy-wireguard-with-one-click-apps%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fone-click%2fdeploy-wireguard-with-one-click-apps%2f&t=Deploy%20WireGuard%20with%20One-Click%20Apps" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Deploy%20WireGuard%20with%20One-Click%20Apps%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fplatform%2fone-click%2fdeploy-wireguard-with-one-click-apps%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/platform%5cone-click%5cdeploy-wireguard-with-one-click-apps%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/platform%5cone-click%5cdeploy-wireguard-with-one-click-apps%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="wireguard-one-click-app">WireGuard One-Click App</h2>
+
+<p>WireGuard is a simple, fast, and modern virtual private network (VPN) which utilizes state-of-the-art cryptography. It aims to be faster and leaner than other VPN protocols such as OpenVPN and IPSec, and it has a much smaller source code footprint.</p>
+
+<p>Configuring WireGuard is as simple as configuring SSH. A connection is established by an exchange of public keys between server and client, and only a client whose public key is present in the server&rsquo;s configuration file is considered authorized. WireGuard sets up standard network interfaces which behave similarly to other common network interfaces, like <code>eth0</code>. This makes it possible to configure and manage WireGuard interfaces using standard networking tools such as ifconfig and ip.</p>
+
+<p>The WireGuard One-Click App will create a Linode instance and set up a WireGuard network device named <code>wg0</code> on it. This device will have a simple configuration which can send and receive traffic to/from a single WireGuard peer (which will also be referred to as your WireGuard <em>client</em>).</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>The peer configurations provided by the One-Click App and this guide will allow you to directly connect your WireGuard server and client. This configuration will <em>not</em> enable forwarding of all of your client&rsquo;s traffic through the WireGuard server to the public Internet (though that arrangement is possible with WireGuard).</p>
+
+<p>Your WireGuard configuration can be adjusted after you first set up your One-Click App; review the <a href="https://manpages.debian.org/unstable/wireguard-tools/wg.8.en.html">WireGuard man page</a> for more information about the options that are available.</p>
+</div>
+</blockquote>
+
+
+<h2 id="deploy-wireguard-with-one-click-apps">Deploy WireGuard with One-Click Apps</h2>
+
+
+
+
+
+<!-- Use title convention: Deploy a X One-Click App. -->
+
+<p>One-Click Apps allow you to easily deploy software on a Linode using the Linode Cloud Manager. To access Linode&rsquo;s One-Click Apps:</p>
+
+<ol>
+<li><p>Log in to your <a href="https://cloud.linode.com">Linode Cloud Manager</a> account.</p></li>
+
+<li><p>From the Linode dashboard, click on the <strong>Create</strong> button in the top left-hand side of the screen and select <strong>Linode</strong> from the dropdown menu.</p></li>
+
+<li><p>The Linode creation page will appear. Select the <strong>One-Click</strong> tab.</p></li>
+
+<li><p>Under the <strong>Select App</strong> section, select the app you would like to deploy:</p>
+
+
+
+
+
+    <img src="/docs/platform/one-click/deploy-one-click-apps/one-click-apps-create.png" 
+        alt="Select a One-Click App to deploy"
+        title="Select a One-Click App to deploy"
+    />
+
+</li>
+
+<li><p>Once you have selected the app, proceed to the app&rsquo;s <strong>Options</strong> section and provide values for the required fields.</p></li>
+</ol>
+
+
+
+
+
+<h3 id="wireguard-options">WireGuard Options</h3>
+
+<p>The WireGuard One-Click form includes fields for your WireGuard client&rsquo;s <a href="https://www.wireguard.com/quickstart/#key-generation"><em>public key</em></a>, and for your client&rsquo;s <em>endpoint IP</em> (which is your client&rsquo;s public IP address). If you have already set up your client and installed the WireGuard software on it prior to setting up your WireGuard One-Click App, then you may already have this information. If you do have the key and the endpoint IP for the client, you can enter them into the app&rsquo;s creation form, and your server&rsquo;s configuration will be pre-populated with those values.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Please note that a public key generated by WireGuard will not resemble <a href="/docs/security/authentication/use-public-key-authentication-with-ssh/">a public key that you might use for SSH connections</a>; when in doubt, leave the form&rsquo;s <strong>Public Key (Client)</strong> field blank.</div>
+</blockquote>
+
+
+<p>If you do not have the values for these fields, you can leave them empty. After the app is deployed, visit the <a href="#configure-and-connect-your-wireguard-client-and-server">Configure and Connect your WireGuard Client and Server</a> section to set up your client and generate a key. The instructions in that section will also show you how to insert the key and the endpoint IP for your client into your server&rsquo;s configuration.</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>Field</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>SSH Key</strong></td>
+<td>Your SSH <a href="/docs/security/authentication/use-public-key-authentication-with-ssh/">public key</a>. The public key will be stored in the <code>/root/.ssh/authorized_keys</code> file on your Linode, and you will be able to use it to login as root over SSH. <em>Advanced Configuration</em>.</td>
+</tr>
+
+<tr>
+<td><strong>Port</strong></td>
+<td>Set your WireGuard server&rsquo;s listening port number. The default is: <code>51820</code>. <em>Advanced Configuration</em>.</td>
+</tr>
+
+<tr>
+<td><strong>Tunnel IP</strong></td>
+<td>Your WireGuard server&rsquo;s tunnel IP address and subnet in CIDR notation. The default is: <code>10.0.1.1/24</code>. This is not the same as a private IP address that Linode can assign to your Linode instance; instead, this address is managed by the network that WireGuard creates. <em>Advanced Configuration</em>.</td>
+</tr>
+
+<tr>
+<td><strong>WireGuard Public Key (Client)</strong></td>
+<td>Your WireGuard client&rsquo;s public key. <em>Advanced Configuration</em>.</td>
+</tr>
+
+<tr>
+<td><strong>Tunnel IP (Client)</strong></td>
+<td>Your WireGuard client&rsquo;s tunnel IP address and subnet in CIDR notation. The default is: <code>10.0.1.2/24</code>. This is not the same as a private IP address that Linode can assign to your Linode instance; instead, this address is managed by the network that WireGuard creates. <em>Advanced Configuration</em>.</td>
+</tr>
+
+<tr>
+<td><strong>Endpoint IP (Client)</strong></td>
+<td>The Internet address of your WireGuard client. If your WireGuard client is another Linode, then the Endpoint IP is the public IP of that Linode, which is visible in the Linode&rsquo;s dashboard in the Linode Cloud Manager. <em>Advanced Configuration</em>.</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="linode-options">Linode Options</h3>
+
+<p>After providing the app-specific options, provide configurations for your Linode server:</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>Configuration</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>Select an Image</strong></td>
+<td>Debian 9 is currently the only image supported by the WireGuard One-Click App, and it is pre-selected on the Linode creation page. <em>Required</em></td>
+</tr>
+
+<tr>
+<td><strong>Region</strong></td>
+<td>The region where you would like your Linode to reside. In general, it&rsquo;s best to choose a location that&rsquo;s closest to you. For more information on choosing a DC, review the <a href="/docs/platform/how-to-choose-a-data-center">How to Choose a Data Center</a> guide. You can also generate <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/">MTR reports</a> for a deeper look at the network routes between you and each of our data centers. <em>Required</em>.</td>
+</tr>
+
+<tr>
+<td><strong>Linode Plan</strong></td>
+<td>Your Linode&rsquo;s <a href="/docs/platform/how-to-choose-a-linode-plan/#hardware-resource-definitions">hardware resources</a>. You can use any size Linode for your WireGuard App. The Linode plan that you select should be appropriate for the amount of data transfer, users, and other stress that may affect the performance of your VPN. You can create your VPN on a Nanode 1GB or a Linode 2GB with low risk for performance hits, unless you expect intensive data transfer to happen on your VPN. <em>Required</em></td>
+</tr>
+
+<tr>
+<td><strong>Linode Label</strong></td>
+<td>The name for your Linode, which must be unique between all of the Linodes on your account. This name will be how you identify your server in the Cloud Manager’s Dashboard. <em>Required</em>.</td>
+</tr>
+
+<tr>
+<td><strong>Root Password</strong></td>
+<td>The primary administrative password for your Linode instance. This password must be provided when you log in to your Linode via SSH. It must be at least 6 characters long and contain characters from two of the following categories: lowercase and uppercase case letters, numbers, and punctuation characters. Your root password can be used to perform any action on your server, so make it long, complex, and unique. <em>Required</em></td>
+</tr>
+</tbody>
+</table>
+
+<p>When you&rsquo;ve provided all required Linode Options, click on the <strong>Create</strong> button. <strong>Your WireGuard app will complete installation anywhere between 2-5 minutes after your Linode has finished provisioning</strong>.</p>
+
+<h2 id="getting-started-after-deployment">Getting Started after Deployment</h2>
+
+<h3 id="configure-and-connect-your-wireguard-client-and-server">Configure and Connect your WireGuard Client and Server</h3>
+
+<p>After your One-Click App has provisioned your WireGuard server, you can proceed with setting up your WireGuard client and establishing a connection to the server.</p>
+
+<p>If you did not provide a public key for WireGuard when you first set up your One-Click App, you will need to follow the next set of steps. These instructions will set up your client and inform your server of your client&rsquo;s public key. If you did provide a public key when deploying the One-Click App and have set up your client, skip to the second collection of steps in this section.</p>
+
+<ol>
+<li><p>Follow the <a href="/docs/networking/vpn/set-up-wireguard-vpn-on-ubuntu/#wireguard-client">WireGuard Client</a> section of our WireGuard guide to generate a public/private keypair for your client, and to set up the WireGuard network interface configuration on your client.</p></li>
+
+<li><p><a href="/docs/getting-started/#connect-to-your-linode-via-ssh">Connect to your One-Click App&rsquo;s Linode via SSH</a>.</p></li>
+
+<li><p>Bring down the <code>wg0</code> interface on the server:</p>
+
+<pre><code>wg-quick down wg0
+</code></pre></li>
+
+<li><p>Open the <code>/etc/wireguard/wg0.conf</code> file in a text editor (<a href="/docs/quick-answers/linux/use-nano-to-edit-files-in-linux/">nano</a>, for example).</p></li>
+
+<li><p>You will see a line that reads <code>PublicKey =</code> under the <code>[Peer]</code> section. Append your client&rsquo;s public key to this line.</p></li>
+
+<li><p>You will also see a line that reads <code>Endpoint =</code>. Append your client&rsquo;s Internet address to this line and then save the file. If your WireGuard client is also a Linode, user your Linode&rsquo;s public IP. If your client is on your home computer, visit a site like <a href="https://www.whatismyip.com">whatismyip.com</a> to get your address.</p></li>
+
+<li><p>Bring the <code>wg0</code> interface back up on the server:</p>
+
+<pre><code>wg-quick up wg0
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><code>wg-quick</code> is a convenient wrapper for many of the common functions in <code>wg</code>. To learn more about all the available commands for each utility, issue the <code>wg --help</code> and <code>wg-quick --help</code> commands from your Linode&rsquo;s command line.</div>
+</blockquote>
+</li>
+</ol>
+
+<p>You should now have your server configuration completed. At this point, you still need to complete your client&rsquo;s configuration; specifically, you need to add your server as a peer to the client:</p>
+
+<ol>
+<li><p><a href="/docs/getting-started/#connect-to-your-linode-via-ssh">Connect to your One-Click App&rsquo;s Linode via SSH</a>.</p></li>
+
+<li><p>Just like your client, your server also has a public/private keypair of its own. The One-Click App script leaves a copy of these keys in the root user&rsquo;s home folder:</p>
+
+<pre><code>ls /root
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+wg-private.key	wg-public.key
+</code>
+</pre>
+</li>
+
+<li><p>Use the <code>cat</code> command to get the value of the server&rsquo;s WireGuard public key:</p>
+
+<pre><code>cat /root/wg-public.key
+</code></pre></li>
+
+<li><p>You should see a random string similar to:</p>
+
+<pre class="file terminal">
+  <code>
+FngGVypEJ13KU8+OeBGG1sOd2i+aazsj7qPL3ZxacG8=
+</code>
+</pre>
+</li>
+
+<li><p>Copy the output of your server&rsquo;s public key, then use it to complete <strong>steps 1 and 2</strong> of the <a href="/docs/networking/vpn/set-up-wireguard-vpn-on-ubuntu/#connect-the-client-and-server">Connect the Client and Server</a> section of our WireGuard guide. These steps will tell you to append <code>[Peer]</code> section to your client&rsquo;s existing WireGuard configuration and then how to enable the service on your client.</p>
+
+<p>Enter your server&rsquo;s WireGuard tunnel IP (using the <code>/24</code> CIDR notation) as the value for the <code>AllowedIPs</code> setting, and set the server&rsquo;s public IP address and WireGuard port to be the Endpoint. Here&rsquo;s an example template for a completed client configuration:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>Interface<span class="o">]</span>
+<span class="nv">PrivateKey</span> <span class="o">=</span> &lt;Your client WireGuard private key&gt;
+<span class="nv">Address</span> <span class="o">=</span> <span class="m">10</span>.0.1.2
+
+<span class="o">[</span>Peer<span class="o">]</span>
+<span class="nv">PublicKey</span> <span class="o">=</span> &lt;Your server WireGuard public key&gt;
+<span class="nv">AllowedIPs</span> <span class="o">=</span> <span class="m">10</span>.0.1.1
+<span class="nv">Endpoint</span> <span class="o">=</span> &lt;Your WireGuard server public IP&gt;:51820</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>After you complete steps 1 and 2 from that section, you will have established the server as the client&rsquo;s peer.</p></li>
+</ol>
+
+<h3 id="test-your-wireguard-client-s-connection">Test your WireGuard Client&rsquo;s Connection</h3>
+
+<p>This test should be performed once you have configured a WireGuard client and updated your WireGuard server to include the client&rsquo;s peer information:</p>
+
+<ol>
+<li><p>Access your WireGuard client and ping the WireGuard server. Replace <code>10.0.1.1</code> with the tunnel IP address you assigned to the WireGuard server in the One-Click App creation form:</p>
+
+<pre><code>ping 10.0.1.1
+</code></pre></li>
+
+<li><p>Use the WireGuard utility to verify your client&rsquo;s latest handshake:</p>
+
+<pre><code>wg show
+</code></pre>
+
+<p>The last two lines of the output from running the wg command should be similar to:</p>
+
+<pre class="file terminal">
+  <code>
+latest handshake: 1 minute, 17 seconds ago
+transfer: 98.86 KiB received, 43.08 KiB sent
+</code>
+</pre>
+</li>
+</ol>
+
+<h3 id="software-included">Software Included</h3>
+
+<table>
+<thead>
+<tr>
+<th><strong>Software</strong></th>
+<th><strong>Description</strong></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><a href="https://www.wireguard.com"><strong>WireGuard</strong></a></td>
+<td>VPN software.</td>
+</tr>
+
+<tr>
+<td><a href="https://wiki.ubuntu.com/UncomplicatedFirewall"><strong>UFW (UncomplicatedFireWall)</strong></a></td>
+<td>Firewall utility. The Port assigned during the <a href="#wireguard-options">WireGuard Options</a> step of the deployment will allow outgoing and incoming traffic.</td>
+</tr>
+</tbody>
+</table>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.wireguard.com/quickstart/">WireGuard Quick Start</a></li>
+
+<li><a href="https://www.wireguard.com/#conceptual-overview">WireGuard Conceptual Overview</a></li>
+
+<li><a href="https://manpages.debian.org/unstable/wireguard-tools/wg.8.en.html">WireGuard man page</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#wireguard-one-click-app">WireGuard One-Click App</a></li>
+<li><a href="#deploy-wireguard-with-one-click-apps">Deploy WireGuard with One-Click Apps</a>
+<ul>
+<li><a href="#wireguard-options">WireGuard Options</a></li>
+<li><a href="#linode-options">Linode Options</a></li>
+</ul></li>
+<li><a href="#getting-started-after-deployment">Getting Started after Deployment</a>
+<ul>
+<li><a href="#configure-and-connect-your-wireguard-client-and-server">Configure and Connect your WireGuard Client and Server</a></li>
+<li><a href="#test-your-wireguard-client-s-connection">Test your WireGuard Client&rsquo;s Connection</a></li>
+<li><a href="#software-included">Software Included</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

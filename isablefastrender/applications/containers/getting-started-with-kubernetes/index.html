@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Getting Started with Kubernetes: Use kubeadm to Deploy a Cluster on Linode</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Use kubeadm to deploy a cluster on Linode and get started with Kubernetes.">
+        <meta name="keywords" content="kubernetes, orchestration, docker, container">
+        
+        <meta property="og:title" content="Getting Started with Kubernetes: Use kubeadm to Deploy a Cluster on Linode">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/getting-started-with-kubernetes/">
+        <meta property="og:description" content="Use kubeadm to deploy a cluster on Linode and get started with Kubernetes.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/getting-started-with-kubernetes/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  Getting Started with Kubernetes: Use kubeadm to Deploy a Cluster on Linode
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Getting Started with Kubernetes: Use kubeadm to Deploy a Cluster on Linode</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-05-16T16:08:27-04:00">Thursday, May 16, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fgetting-started-with-kubernetes%2f&via=linode&text=Getting%20Started%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fgetting-started-with-kubernetes%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fgetting-started-with-kubernetes%2f&t=Getting%20Started%20with%20Kubernetes%3a%20Use%20kubeadm%20to%20Deploy%20a%20Cluster%20on%20Linode" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Getting%20Started%20with%20Kubernetes%3a%20Use%20kubeadm%20to%20Deploy%20a%20Cluster%20on%20Linode%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fgetting-started-with-kubernetes%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cgetting-started-with-kubernetes%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cgetting-started-with-kubernetes%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Linode offers several pathways for users to easily deploy a Kubernetes cluster. If you prefer the command line, you can create a Kubernetes cluster with one command using the <a href="https://developers.linode.com/kubernetes/">Linode CLI&rsquo;s k8s-alpha plugin</a>, and <a href="https://www.linode.com/docs/applications/configuration-management/beginners-guide-to-terraform/">Terraform</a>. Or, if you prefer a full featured GUI, <a href="/docs/applications/containers/how-to-deploy-kubernetes-on-linode-with-rancher-2-2/">Linode&rsquo;s Rancher integration</a> enables you to deploy and manage Kubernetes clusters with a simple web interface. The Linode Kubernetes Engine, currently under development with an early access beta version on its way this summer, allows you to spin up a Kubernetes cluster with Linode handling the management and maintenance of your control plane. These are all great options for production ready deployments.</p>
+
+<p><a href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/">Kubeadm</a> is a cloud provider agnostic tool that automates many of the tasks required to get a cluster up and running. Users of kubeadm can run a few simple commands on individual servers to turn them into a Kubernetes cluster consisting of a master node and worker nodes. This guide will walk you through installing kubeadm and using it to deploy a Kubernetes cluster on Linode. While the kubeadm approach requires more manual steps than other Kubernetes cluster creation pathways offered by Linode, this solution will be covered as way to dive deeper into the various components that make up a Kubernetes cluster and the ways in which they interact with each other to provide a scalable and reliable container orchestration mechanism.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This guide&rsquo;s example instructions will result in the creation of three billable Linodes. Information on how to tear down the Linodes are provided at the end of the guide. Interacting with the Linodes via the command line will provide the most opportunity for learning, however, this guide is written so that users can also benefit by reading along.</div>
+</blockquote>
+
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Deploy three Linodes running Ubuntu 18.04 with the following system requirements:</p>
+
+<ul>
+<li>One Linode to use as the master Node with 4GB RAM and 2 CPU cores.</li>
+<li>Two Linodes to use as the Worker Nodes each with 1GB RAM and 1 CPU core.</li>
+</ul></li>
+
+<li><p>Follow the <a href="/docs/getting-started">Getting Started</a> and the <a href="/docs/security/securing-your-server/">Securing Your Server</a> guides for instructions on setting up your Linodes. The steps in this guide assume the use of a limited user account with sudo privileges.</p></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>When following the <a href="/docs/getting-started">Getting Started</a> guide, make sure that each Linode is using a different hostname. Not following this guideline will leave you unable to join some or all nodes to the cluster in a later step.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Disable swap memory on your Linodes. Kubernetes requires that you disable swap memory on any cluster nodes to prevent the Kubernetes scheduler (kube-scheduler) from ever sending a pod to a node that has run out of CPU/memory or reached its designated CPU/memory limit.</p>
+
+<pre><code>sudo swapoff -a
+</code></pre>
+
+<p>Verify that your swap has been disabled. You should expect to see a value of <code>0</code> returned.</p>
+
+<pre><code>cat /proc/meminfo | grep 'SwapTotal'
+</code></pre>
+
+<p>To learn more about managing compute resources for containers, see the official <a href="https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/">Kubernetes documentation</a>.</p></li>
+
+<li><p>Read the <a href="/docs/applications/containers/beginners-guide-to-kubernetes/">Beginners Guide to Kubernetes</a> to familiarize yourself with the major components and concepts of Kubernetes. The current guide assumes a working knowledge of common Kubernetes concepts and terminology.</p></li>
+</ol>
+
+<h2 id="build-a-kubernetes-cluster">Build a Kubernetes Cluster</h2>
+
+<h3 id="kubernetes-cluster-architecture">Kubernetes Cluster Architecture</h3>
+
+<p>A Kubernetes cluster consists of a master node and worker nodes. The master node hosts the <em>control plane</em>, which is the combination of all the components that provide it the ability to maintain the desired cluster state. This cluster state is defined by manifest files and the kubectl tool. While the control plane components can be run on any cluster node, it is a best practice to isolate the control plane on its own node and to run any application containers on a separate worker node. A cluster can have a single worker node or up to 5000. Each worker node must be able to maintain running containers in a pod and be able to communicate with the master node&rsquo;s control plane.</p>
+
+<p>The table below provides a list of the Kubernetes tooling you will need to install on your master and worker nodes in order to meet the minimum requirements for a functioning Kubernetes cluster as described above.</p>
+
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Description</th>
+<th align="center">Master Node</th>
+<th align="center">Worker Nodes</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><strong>kubeadm</strong></td>
+<td>This tool provides a simple way to create a Kubernetes cluster by automating the tasks required to get a cluster up and running. New Kubernetes users with access to a cloud hosting provider, like Linode, can use kubeadm to build out a playground cluster. kubeadm is also used as a foundation to create more mature Kubernetes deployment tooling.</td>
+<td align="center">x</td>
+<td align="center">x</td>
+</tr>
+
+<tr>
+<td><strong>Container Runtime</strong></td>
+<td>A container runtime is responsible for running the containers that make up a cluster&rsquo;s pods. This guide will use Docker as the container runtime.</td>
+<td align="center">x</td>
+<td align="center">x</td>
+</tr>
+
+<tr>
+<td><strong>kubelet</strong></td>
+<td>kubelet ensures that all pod containers running on a node are healthy and meet the specifications for a pod&rsquo;s desired behavior.</td>
+<td align="center">x</td>
+<td align="center">x</td>
+</tr>
+
+<tr>
+<td><strong>kubectl</strong></td>
+<td>A command line tool used to manage a Kubernetes cluster.</td>
+<td align="center">x</td>
+<td align="center">x</td>
+</tr>
+
+<tr>
+<td><strong>Control Plane</strong></td>
+<td>Series of services that form Kubernetes master structure that allow it to control the cluster. Kubeadm allows the control plane services to run as containers on the master node. The control plane will be created when you initialize kubeadm later in this guide.</td>
+<td align="center">x</td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="install-the-container-runtime-docker">Install the Container Runtime: Docker</h3>
+
+<p>Docker is the software responsible for running the pod containers on each node. You can use other container runtime software with Kubernetes, such as <a href="https://containerd.io/">Containerd</a> and <a href="https://cri-o.io/">CRI-O</a>. You will need to install Docker on all three Linodes.</p>
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group. Replace <code>$USER</code> with your username:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>sudo docker run hello-world
+</code></pre></li>
+
+<li><p>Setup the Docker daemon to use <a href="/docs/quick-answers/linux-essentials/what-is-systemd/">systemd</a> as the cgroup driver, instead of the default cgroupfs. This is a recommended step so that Kubelet and Docker are both using the same cgroup manager. This will make it easier for Kubernetes to know which resources are available on your cluster&rsquo;s nodes.</p>
+
+<pre><code>sudo bash -c 'cat &gt; /etc/docker/daemon.json &lt;&lt;EOF
+{
+  &quot;exec-opts&quot;: [&quot;native.cgroupdriver=systemd&quot;],
+  &quot;log-driver&quot;: &quot;json-file&quot;,
+  &quot;log-opts&quot;: {
+    &quot;max-size&quot;: &quot;100m&quot;
+  },
+  &quot;storage-driver&quot;: &quot;overlay2&quot;
+}
+EOF'
+</code></pre></li>
+
+<li><p>Create a systemd directory for Docker:</p>
+
+<pre><code>sudo mkdir -p /etc/systemd/system/docker.service.d
+</code></pre></li>
+
+<li><p>Restart Docker:</p>
+
+<pre><code>sudo systemctl daemon-reload
+sudo systemctl restart docker
+</code></pre></li>
+</ol>
+
+<h3 id="install-kubeadm-kubelet-and-kubectl">Install kubeadm, kubelet, and kubectl</h3>
+
+<p>Complete the steps outlined in this section on all three Linodes.</p>
+
+<ol>
+<li><p>Update the system and install the required dependencies for installation:</p>
+
+<pre><code>sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https curl
+</code></pre></li>
+
+<li><p>Add the required GPG key to your apt-sources keyring to authenticate the Kubernetes related packages you will install:</p>
+
+<pre><code>curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Add Kubernetes to the package manager&rsquo;s list of sources:</p>
+
+<pre><code>sudo bash -c &quot;cat &lt;&lt;EOF &gt;/etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF&quot;
+</code></pre></li>
+
+<li><p>Update apt, install Kubeadm, Kubelet, and Kubectl, and hold the installed packages at their installed versions:</p>
+
+<pre><code>sudo apt-get update
+sudo apt-get install -y kubelet kubeadm kubectl
+sudo apt-mark hold kubelet kubeadm kubectl
+</code></pre></li>
+
+<li><p>Verify that kubeadm, kubelet, and kubectl have installed by retrieving their version information. Each command should return version information about each package.</p>
+
+<pre><code>kubeadm version
+kubelet --version
+kubectl version
+</code></pre></li>
+</ol>
+
+<h3 id="set-up-the-kubernetes-control-plane">Set up the Kubernetes Control Plane</h3>
+
+<p>After installing the Kubernetes related tooling on all your Linodes, you are ready to set up the Kubernetes control plane on the master node. The control plane is responsible for allocating resources to your cluster, maintaining the health of your cluster, and ensuring that it meets the minimum requirements you designate for the cluster.</p>
+
+<p>The primary components of the control plane are the kube-apiserver, kube-controller-manager, kube-scheduler, and etcd. kubeadm provides a way to easily initialize the Kubernetes master node with all the necessary control plane components. For more information on each of control plane component see the <a href="/docs/applications/containers/beginners-guide-to-kubernetes/">Beginner&rsquo;s Guide to Kubernetes</a>.</p>
+
+<p>In addition to the baseline control plane components, there are several <em>addons</em>, that can be installed on the master node to access additional cluster features. You will need to install a networking and network policy provider add on that will implement <a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">Kubernetes&rsquo; network model</a> on the cluster&rsquo;s pod network.</p>
+
+<p>This guide will use <em>Calico</em> as the pod network add on. Calico is a secure and open source L3 networking and network policy provider for containers. There are several other network and network policy providers to choose from. To view a full list of providers, refer to the official <a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/#networking-and-network-policy">Kubernetes documentation</a>.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>kubeadm only supports Container Network Interface (CNI) based networks. CNI consists of a specification and libraries for writing plugins to configure network interfaces in Linux containers</div>
+</blockquote>
+
+
+<ol>
+<li><p>Initialize kubeadm on the master node. This command will run checks against the node to ensure it contains all required Kubernetes dependencies, if the checks pass, it will then install the control plane components.</p>
+
+<p>When issuing this command, it is necessary to set the pod network range that Calico will use to allow your pods to communicate with each other. It is recommended to use the private IP address space, <code>10.2.0.0/16</code>.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>The pod network IP range should not overlap with the service IP network range. The default service IP address range is <code>10.96.0.0/12</code>. You can provide an alternative service ip address range using the <code>--service-cidr=10.97.0.0/12</code> option when initializing kubeadm. Replace <code>10.97.0.0/12</code> with the desired service IP range.</p>
+
+<p>For a full list of available kubeadm initialization options, see the official <a href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm-init/">Kubernetes documentation</a>.</p>
+</div>
+</blockquote>
+
+
+<pre><code>sudo kubeadm init --pod-network-cidr=10.2.0.0/16
+</code></pre>
+
+<p>You should see a similar output:</p>
+
+<pre class="file terminal">
+  <code>
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 192.0.2.0:6443 --token udb8fn.nih6n1f1aijmbnx5 \
+    --discovery-token-ca-cert-hash sha256:b7c01e83d63808a4a14d2813d28c127d3a1c4e1b6fc6ba605fe4d2789d654f26
+      </code>
+</pre>
+
+
+<p>The <code>kubeadm join</code> command will be used in the <a href="/docs/applications/containers/getting-started-with-kubernetes/#join-a-worker-node-to-the-cluster">Join a Worker Node to the Cluster</a> section of this guide to bootstrap the worker nodes to the Kubernetes cluster. This command should be kept handy for later use. Below is a description of the required options you will need to pass in with the <code>kubeadm join</code> command:</p>
+
+<ul>
+<li>The master node&rsquo;s IP address and the Kubernetes API server&rsquo;s port number. In the example output, this is <code>192.0.2.0:6443</code>. The Kubernetes API server&rsquo;s port number is <code>6443</code> by default on all Kubernetes installations.</li>
+<li>A bootstrap token. The bootstrap token has a 24-hour TTL (time to live). A new bootstrap token can be generated if your current token expires.</li>
+<li>A CA key hash. This is used to verify the authenticity of the data retrieved from the Kubernetes API server during the bootstrap process.</li>
+</ul></li>
+
+<li><p>Copy the <code>admin.conf</code> configuration file to your limited user account. This file allows you to communicate with your cluster via kubectl and provides superuser privileges over the cluster. It contains a description of the cluster, users, and contexts. Copying the <code>admin.conf</code> to your limited user account will provide you with administrative privileges over your cluster.</p>
+
+<pre><code>mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre></li>
+
+<li><p>Install the necessary Calico manifests to your master node and apply them using kubectl. The first file, <code>rbac-kdd.yaml</code>, works with Kubernetes&rsquo; role-based access control (RBAC) to provide Calico components access to necessary parts of the Kubernetes API. The second file, <code>calico.yaml</code>, configures a self-hosted Calico installation that uses the Kubernetes API directly as the datastore (instead of etcd).</p>
+
+<pre><code>kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+kubectl apply -f https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+</code></pre></li>
+</ol>
+
+<h3 id="inspect-the-master-node-with-kubectl">Inspect the Master Node with Kubectl</h3>
+
+<p>After completing the previous section, your Kubernetes master node is ready with all the necessary components to manage a cluster. To gain a better understanding of all the parts that make up the master&rsquo;s control plane, this section will walk you through inspecting your master node. If you have not yet reviewed the <a href="/docs/applications/containers/beginners-guide-to-kubernetes/">Beginner&rsquo;s Guide to Kubernetes</a>, it will be helpful to do so prior to continuing with this section as it relies on the understanding of basic Kubernetes concepts.</p>
+
+<ol>
+<li><p>View the current state of all nodes in your cluster. At this stage, the only node you should expect to see is the master node, since worker nodes have yet to be bootstrapped. A <code>STATUS</code> of <code>Ready</code> indicates that the master node contains all necessary components, including the pod network add-on, to start managing clusters.</p>
+
+<pre><code>kubectl get nodes
+</code></pre>
+
+<p>Your output should resemble the following:</p>
+
+<pre class="file terminal">
+  <code>
+NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;STATUS&nbsp;&nbsp;&nbsp;  ROLES&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AGE&nbsp;&nbsp;&nbsp;VERSION
+kube-master   Ready&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;master&nbsp;&nbsp;&nbsp;   1h&nbsp;&nbsp;&nbsp;&nbsp;v1.14.1
+    </code>
+</pre>
+</li>
+
+<li><p>Inspect the available <a href="https://deploy-preview-2397--nostalgic-ptolemy-b01ab8.netlify.com/applications/containers/beginners-guide-to-kubernetes/#namespaces">namespaces</a> in your cluster.</p>
+
+<pre><code>kubectl get namespaces
+</code></pre>
+
+<p>Your output should resemble the following:</p>
+
+<pre class="file terminal">
+  <code>
+NAME              STATUS   AGE
+default           Active   23h
+kube-node-lease   Active   23h
+kube-public       Active   23h
+kube-system       Active   23h
+    </code>
+</pre>
+
+
+<p>Below is an overview of each namespace installed by default on the master node by kubeadm:</p>
+
+<ul>
+<li><code>default</code>: The default namespace contains objects with no other assigned namespace. By default, a Kubernetes cluster will instantiate a default namespace when provisioning the cluster to hold the default set of Pods, Services, and Deployments used by the cluster.</li>
+<li><code>kube-system</code>: The namespace for objects created by the Kubernetes system. This includes all resources used by the master node.</li>
+<li><code>kube-public</code>: This namespace is created automatically and is readable by all users. It contains information, like certificate authority data (CA), that helps kubeadm join and authenticate worker nodes.</li>
+<li><code>kube-node-lease</code>: The <code>kube-node-lease</code> namespace contains lease objects that are used by kubelet to determine node health. kubelet creates and periodically renews a Lease on a node. The node lifecycle controller treats this lease as a health signal. kube-node-lease was released to beta in Kubernetes 1.14.</li>
+</ul></li>
+
+<li><p>View all resources available in the <code>kube-system</code> namespace. The <code>kube-system</code> namespace contains the widest range of resources, since it houses all control plane resources. Replace <code>kube-system</code> with another namespace  to view its corresponding resources.</p>
+
+<pre><code>kubectl get all -n kube-system
+</code></pre></li>
+</ol>
+
+<h3 id="join-a-worker-node-to-the-cluster">Join a Worker Node to the Cluster</h3>
+
+<p>Now that your Kubernetes master node is set up, you can join worker nodes to your cluster. In order for a worker node to join a cluster, it must <em>trust</em> the cluster&rsquo;s control plane, and the control plane must trust the worker node. This trust is managed via a shared bootstrap token and a certificate authority (CA) key hash. kubeadm handles the exchange between the control plane and the worker node. At a high-level the worker node bootstrap process is the following:</p>
+
+<ol>
+<li><p>kubeadm retrieves information about the cluster from the Kubernetes API server. The bootstrap token and CA key hash are used to ensure the information originates from a trusted source.</p></li>
+
+<li><p>kubelet can take over and begin the bootstrap process, since it has the necessary cluster information retrieved in the previous step. The bootstrap token is used to gain access to the Kubernetes API server and submit a certificate signing request (CSR), which is then signed by the control plane.</p></li>
+
+<li><p>The worker node&rsquo;s kubelet is now able to connect to the Kubernetes API server using the node&rsquo;s established identity.</p></li>
+</ol>
+
+<p>Before continuing, you will need to make sure that you know your Kubernetes API server&rsquo;s IP address, that you have a bootstrap token, and a CA key hash. This information was provided when kubeadm was initialized on the master node in the <a href="/docs/applications/containers/getting-started-with-kubernetes/#set-up-the-kubernetes-control-plane">Set up the Kubernetes Control Plane</a> section of this guide. If you no longer have this information, you can regenerate the necessary information from the master node.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Regenerate a Bootstrap Token
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>These commands should be issued from your master node.</p>
+
+<ol>
+<li><p>Generate a new bootstrap token and display the <code>kubeadm join</code> command with the necessary options to join a worker node to the master node&rsquo;s control plane:</p>
+
+<pre><code>kubeadm token create --print-join-command
+</code></pre></li>
+</ol>
+</div></div>
+</blockquote>
+
+<p>Follow the steps below on each node you would like to bootstrap to the cluster as a worker node.</p>
+
+<ol>
+<li><p>SSH into the Linode that will be used as a worker node in the Kubernetes cluster.</p>
+
+<pre><code>ssh username@192.0.2.1
+</code></pre></li>
+
+<li><p>Join the node to your cluster using kubeadm. Ensure you replace <code>192.0.2.0:6443</code> with the IP address for your master node along with its Kubernetes API server&rsquo;s port number, <code>udb8fn.nih6n1f1aijmbnx5</code> with your bootstrap token, and <code>sha256:b7c01e83d63808a4a14d2813d28c127d3a1c4e1b6fc6ba605fe4d2789d654f26</code> with your CA key hash. The bootstrap process will take a few moments.</p>
+
+<pre><code>sudo kubeadm join 192.0.2.0:6443 --token udb8fn.nih6n1f1aijmbnx5 \
+--discovery-token-ca-cert-hash sha256:b7c01e83d63808a4a14d2813d28c127d3a1c4e1b6fc6ba605fe4d2789d654f26
+</code></pre>
+
+<p>When the bootstrap process has completed, you should see a similar output:</p>
+
+<pre class="file terminal">
+  <code>
+  This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+      </code>
+</pre>
+</li>
+
+<li><p>Repeat the steps outlined above on the second worker node to bootstrap it to the cluster.</p></li>
+
+<li><p>SSH into the master node and verify the worker nodes have joined the cluster:</p>
+
+<pre><code> kubectl get nodes
+</code></pre>
+
+<p>You should see a similar output.</p>
+
+<pre class="file terminal">
+  <code>
+NAME          STATUS   ROLES    AGE     VERSION
+kube-master   Ready    master   1d22h   v1.14.1
+kube-node-1   Ready    <none>   1d22h   v1.14.1
+kube-node-2   Ready    <none>   1d22h   v1.14.1
+      </code>
+</pre>
+</li>
+</ol>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Now that you have a Kubernetes cluster up and running, you can begin experimenting with the various ways to configure pods, group resources, and deploy services that are exposed to the public internet. To help you get started with this, move on to follow along with the <a href="/docs/applications/containers/deploy-container-image-to-kubernetes/">Deploy a Static Site on Linode using Kubernetes</a> guide.</p>
+
+<h2 id="tear-down-your-cluster">Tear Down Your Cluster</h2>
+
+<p>If you are done experimenting with your Kubernetes Cluster, be sure to remove the Linodes you have running in order to avoid being further billed for them. See the <a href="/docs/platform/billing-and-support/billing-and-payments/#removing-services">Removing Services</a> section of the <a href="/docs/platform/billing-and-support/billing-and-payments/">Billing and Payments</a> guide.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://kubernetes.io/docs/concepts/configuration/overview/">Kubernetes: Configuration Best Practices</a></li>
+
+<li><a href="https://kubernetes.io/docs/concepts/cluster-administration/cluster-administration-overview/">Kubernetes: Cluster Administration Overview</a></li>
+
+<li><a href="https://kubernetes.io/docs/tasks/administer-cluster/securing-a-cluster/">Kubernetes: Securing a Cluster</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#build-a-kubernetes-cluster">Build a Kubernetes Cluster</a>
+<ul>
+<li><a href="#kubernetes-cluster-architecture">Kubernetes Cluster Architecture</a></li>
+<li><a href="#install-the-container-runtime-docker">Install the Container Runtime: Docker</a></li>
+<li><a href="#install-kubeadm-kubelet-and-kubectl">Install kubeadm, kubelet, and kubectl</a></li>
+<li><a href="#set-up-the-kubernetes-control-plane">Set up the Kubernetes Control Plane</a></li>
+<li><a href="#inspect-the-master-node-with-kubectl">Inspect the Master Node with Kubectl</a></li>
+<li><a href="#join-a-worker-node-to-the-cluster">Join a Worker Node to the Cluster</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+<li><a href="#tear-down-your-cluster">Tear Down Your Cluster</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Manage a Docker Cluster with Kubernetes</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Kubernetes makes it easy to manage containers across multiple servers. This guide shows how to manage Dockerized applications using Kubernetes.">
+        <meta name="keywords" content="Kubernetes, cluster, docker">
+        
+        <meta property="og:title" content="Manage a Docker Cluster with Kubernetes">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/manage-a-docker-cluster-with-kubernetes/">
+        <meta property="og:description" content="Kubernetes makes it easy to manage containers across multiple servers. This guide shows how to manage Dockerized applications using Kubernetes.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/manage-a-docker-cluster-with-kubernetes/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  Manage a Docker Cluster with Kubernetes
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Manage a Docker Cluster with Kubernetes</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-23T15:04:27-05:00">Wednesday, January 23, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    <a href="https://twitter.com/damasosanoja">Damaso Sanoja
+      
+      <i class="fa fa-twitter"></i>
+      
+    </a>
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fmanage-a-docker-cluster-with-kubernetes%2f&via=linode&text=Manage%20a%20Docker%20Cluster%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fmanage-a-docker-cluster-with-kubernetes%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fmanage-a-docker-cluster-with-kubernetes%2f&t=Manage%20a%20Docker%20Cluster%20with%20Kubernetes" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Manage%20a%20Docker%20Cluster%20with%20Kubernetes%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fmanage-a-docker-cluster-with-kubernetes%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cmanage-a-docker-cluster-with-kubernetes%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cmanage-a-docker-cluster-with-kubernetes%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="docker-cluster-kubernetes.jpg" alt="Manage a Docker Cluster with Kubernetes" /></p>
+
+<h2 id="what-is-a-kubernetes-cluster">What is a Kubernetes Cluster?</h2>
+
+<p><a href="https://kubernetes.io/">Kubernetes</a> is an open source platform for managing containerized applications. If you use Docker for an application deployed on multiple Linodes, a Kubernetes cluster can manage your servers and deployments, including tasks such as scaling, deployment, and rolling upgrades.</p>
+
+<p>A Kubernetes cluster consists of at least one master node and several worker nodes. The master node runs the API server, the scheduler and the controller manager, and the actual application is deployed dynamically across the cluster.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You can now create a Kubernetes cluster with one command using the Linode CLI. To provision Kubernetes on Linodes, this tool uses the <a href="https://github.com/linode/terraform-linode-k8s">Linode Kubernetes Terraform module</a>, the <a href="https://github.com/linode/linode-cloud-controller-manager">Linode Cloud Controller Manager (CCM)</a>, and the <a href="https://github.com/linode/linode-blockstorage-csi-driver">Container Storage Interface (CSI) Driver</a> for Linode Block Storage.  See the <a href="https://developers.linode.com/kubernetes/">Kubernetes Tools</a> page for installation steps. For an in-depth dive into the the Linode Kubernetes Terraform module, see its related <a href="https://www.linode.com/community/questions/17611/the-linode-kubernetes-module-for-terraform">Community Site post</a>.</div>
+</blockquote>
+
+
+<h2 id="system-requirements">System Requirements</h2>
+
+<p>To complete this guide you will need three Linodes running Ubuntu 16.04 LTS, each with at least 4GB of RAM. Before beginning this guide, you should also use the Linode Manager to generate a <a href="https://linode.com/docs/networking/remote-access#adding-private-ip-addresses">private IP address</a> for each Linode.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>This article requires that you first complete our <a href="https://linode.com/docs/applications/containers/how-to-deploy-nginx-on-a-kubernetes-cluster/">How to Install, Configure, and Deploy NGINX on a Kubernetes Cluster</a> guide and follow the procedures described there to configure one master node and two worker nodes.</p>
+
+<p>Set the hostnames of the three Linodes as follows:</p>
+
+<ul>
+<li>Master node: <code>kube-master</code></li>
+<li>First worker node: <code>kube-worker-1</code></li>
+<li>Second worker node: <code>kube-worker-2</code></li>
+</ul>
+
+<p>Unless otherwise stated, all commands will be executed from the <code>kube-master</code>.</p>
+
+<h2 id="kubernetes-pods">Kubernetes Pods</h2>
+
+<p>A <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">Pod</a> is a group of one or more tightly coupled containers that share resources such as storage and network. Containers inside a pod are started, stopped, and replicated as a group.</p>
+
+<p><img src="kubernetes-cluster.png" alt="Kubernetes Cluster" /></p>
+
+<h3 id="create-a-deployment">Create a Deployment</h3>
+
+<p><a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployments</a> are high-level objects that can manage pod creation and allow the use of features such as declarative scaling and rolling-upgrade.</p>
+
+<ol>
+<li><p>In a text editor, create <code>nginx.yaml</code> and add the following content:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/nginx.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>apps/v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Deployment<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>nginx-server<span class="w">
+</span><span class="w">  </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>replicas<span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">  </span>selector<span class="p">:</span><span class="w">
+</span><span class="w">    </span>matchLabels<span class="p">:</span><span class="w">
+</span><span class="w">      </span>app<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">  </span>template<span class="p">:</span><span class="w">
+</span><span class="w">    </span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">      </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">        </span>app<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">    </span>spec<span class="p">:</span><span class="w">
+</span><span class="w">      </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">        </span>image<span class="p">:</span><span class="w"> </span>nginx<span class="p">:</span><span class="m">1.13</span>-alpine<span class="w">
+</span><span class="w">        </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>containerPort<span class="p">:</span><span class="w"> </span><span class="m">80</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The file contains all the necessary information to specify a deployment, including the Docker image to use, number of replicas, and the container port. For more information about deployment configuration, see the <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/#creating-a-deployment">documentation.</a></p></li>
+
+<li><p>Create your first deployment:</p>
+
+<pre><code>kubectl create -f nginx.yaml --record
+</code></pre></li>
+
+<li><p>List your deployments:</p>
+
+<pre><code>kubectl get deployments
+</code></pre>
+
+<pre><code>NAME           DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+nginx-server   1         1         1            1           13s
+</code></pre></li>
+
+<li><p>Check that your pod is present:</p>
+
+<pre><code>kubectl get pods
+</code></pre>
+
+<pre><code>NAME                           READY     STATUS    RESTARTS   AGE
+nginx-server-b9bc6c6b5-d2gqv   1/1       Running   0          58s
+</code></pre></li>
+
+<li><p>To see which node the deployment was created on, add the <code>-o wide</code> flag:</p>
+
+<pre><code>kubectl get pods -o wide
+</code></pre>
+
+<pre><code>NAME                           READY     STATUS    RESTARTS   AGE       IP                NODE
+nginx-server-b9bc6c6b5-d2gqv   1/1       Running   0          1m        192.168.255.197   kube-worker-02
+</code></pre></li>
+</ol>
+
+<h3 id="scale-deployments">Scale Deployments</h3>
+
+<p>Kubernetes makes it easy to scale deployments to add or remove replicas.</p>
+
+<ol>
+<li><p>Increase the number of replicas to 8:</p>
+
+<pre><code>kubectl scale deployment nginx-server --replicas=8
+</code></pre></li>
+
+<li><p>Check the availability of your new replicas:</p>
+
+<pre><code>kubectl get pods -o wide
+</code></pre>
+
+<pre><code>NAME                           READY     STATUS    RESTARTS   AGE       IP               NODE
+nginx-server-b9bc6c6b5-4mdf6   1/1       Running   0          41s       192.168.180.10   kube-worker-1
+nginx-server-b9bc6c6b5-8mvrd   1/1       Running   0          3m        192.168.180.9    kube-worker-1
+nginx-server-b9bc6c6b5-b99pt   1/1       Running   0          40s       192.168.180.12   kube-worker-1
+nginx-server-b9bc6c6b5-fjg2c   1/1       Running   0          40s       192.168.127.12   kube-worker-2
+nginx-server-b9bc6c6b5-kgdq5   1/1       Running   0          41s       192.168.127.11   kube-worker-2
+nginx-server-b9bc6c6b5-mhb7s   1/1       Running   0          40s       192.168.180.11   kube-worker-1
+nginx-server-b9bc6c6b5-rlf9w   1/1       Running   0          41s       192.168.127.10   kube-worker-2
+nginx-server-b9bc6c6b5-scwgj   1/1       Running   0          40s       192.168.127.13   kube-worker-2
+</code></pre></li>
+
+<li><p>The same command can be used to decrease the number of replicas:</p>
+
+<pre><code>kubectl scale deployment nginx-server --replicas=3
+</code></pre></li>
+</ol>
+
+<h3 id="rolling-upgrades">Rolling Upgrades</h3>
+
+<p>Managing pods with a Deployment allows you to make use of <strong>rolling upgrades</strong>. A rolling upgrade is a mechanism that allows you to update your application version without any downtime. Kubernetes ensures that at least 25% of your Pods are available at all times and creates new pods before deleting the old ones.</p>
+
+<ol>
+<li><p>Upgrade your containers&rsquo; NGINX version from 1.13 to 1.13.8:</p>
+
+<pre><code>kubectl set image deployment/nginx-server nginx=nginx:1.13.8-alpine
+</code></pre>
+
+<p>Similar to the scaling process, the <code>set</code> command uses declarative approach: you specify the desired state and the controller manages all necessary tasks to accomplish that goal.</p></li>
+
+<li><p>Check the update status:</p>
+
+<pre><code>kubectl rollout status deployment/nginx-server
+</code></pre>
+
+<pre><code>Waiting for rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for rollout to finish: 1 out of 3 new replicas have been updated...
+Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for rollout to finish: 2 out of 3 new replicas have been updated...
+Waiting for rollout to finish: 1 old replicas are pending termination...
+Waiting for rollout to finish: 1 old replicas are pending termination...
+deployment &quot;nginx-server&quot; successfully rolled out
+</code></pre></li>
+
+<li><p>You can manually check the application version with the <code>describe</code> command:</p>
+
+<pre><code>kubectl describe pod &lt;pod-name&gt;
+</code></pre></li>
+
+<li><p>In the event of an error, the rollout will hang and you will be forced to cancel by pressing <strong>CTRL+C</strong>. Test this by setting an invalid NGINX version:</p>
+
+<pre><code>kubectl set image deployment/nginx-server nginx=nginx:1.18.
+</code></pre></li>
+
+<li><p>Check your current pods:</p>
+
+<pre><code>kubectl get pods -o wide
+</code></pre>
+
+<pre><code>NAME                            READY     STATUS             RESTARTS   AGE       IP               NODE
+nginx-server-76976d4555-7nv6z   1/1       Running            0          3m        192.168.127.15   kube-worker-2
+nginx-server-76976d4555-wg785   1/1       Running            0          3m        192.168.180.13   kube-worker-1
+nginx-server-76976d4555-ws4vf   1/1       Running            0          3m        192.168.127.14   kube-worker-2
+nginx-server-7ddd985dd6-mpn9h   0/1       ImagePullBackOff   0          2m        192.168.180.16   kube-worker-1
+</code></pre>
+
+<p>The pod <code>nginx-server-7ddd985dd6-mpn9h</code> is trying to upgrade to an nonexistent version of NGINX.</p></li>
+
+<li><p>Get more details about the error by inspecting this pod:</p>
+
+<pre><code>kubectl describe pod nginx-server-7ddd985dd6-mpn9h
+</code></pre></li>
+
+<li><p>Since you used the <code>--record</code> flag when creating the deployment, you can retrieve the complete revision history:</p>
+
+<pre><code>kubectl rollout history deployment/nginx-server
+</code></pre>
+
+<pre><code>REVISION  CHANGE-CAUSE
+1         kubectl scale deployment nginx-server --replicas=3
+2         kubectl set image deployment/nginx-server nginx=nginx:1.13.8-alpine
+3         kubectl set image deployment/nginx-server nginx=nginx:1.18
+</code></pre></li>
+
+<li><p>You can then roll back to an earlier, working revision. To revert to the previous revision, use the <code>undo</code> command:</p>
+
+<pre><code>kubectl rollout undo deployment/nginx-server
+</code></pre></li>
+
+<li><p>To roll back to a specific revision, specify the target revision with the <code>--to-revision</code> option:</p>
+
+<pre><code>kubectl rollout undo deployment/nginx-server --to-revision=1
+</code></pre></li>
+</ol>
+
+<h2 id="kubernetes-services">Kubernetes Services</h2>
+
+<p>You now have a deployment running three pods of an NGINX application. In order to expose the pods to the internet, you need to create a <strong>service</strong>. In Kubernetes a service is an abstraction that allows pods to be accessible at all times. Services automatically handle IP changes, updates, and scaling, so once the service is enabled your application will be available as long as a running pod remains active.</p>
+
+<ol>
+<li><p>Configure a test service:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/nginx-service.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    run: nginx
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: nginx</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the service:</p>
+
+<pre><code>kubectl create -f nginx-service.yaml
+</code></pre></li>
+
+<li><p>Check the status of the new service:</p>
+
+<pre><code>kubectl get services
+</code></pre>
+
+<pre><code>NAME            TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+kubernetes      ClusterIP   10.96.0.1     &lt;none&gt;        443/TCP        2d
+nginx-service   NodePort    10.97.41.31   &lt;none&gt;        80:31738/TCP   38m
+</code></pre>
+
+<p>The service is running and accepting connections on port 31738.</p></li>
+
+<li><p>Test the service:</p>
+
+<pre><code>curl &lt;MASTER_LINODE_PUBLIC_IP_ADDRESS&gt;:&lt;PORT(S)&gt;
+</code></pre></li>
+
+<li><p>View additional information about this service with the <code>describe</code> command:</p>
+
+<pre><code>kubectl describe service nginx-service
+</code></pre>
+
+<pre><code>Name:                     nginx-service
+Namespace:                default
+Labels:                   run=nginx
+Annotations:              &lt;none&gt;
+Selector:                 app=nginx
+Type:                     NodePort
+IP:                       10.97.41.31
+Port:                     http  80/TCP
+TargetPort:               80/TCP
+NodePort:                 http  31738/TCP
+Endpoints:                192.168.127.14:80,192.168.127.15:80,192.168.180.13:80
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   &lt;none&gt;
+</code></pre></li>
+</ol>
+
+<h2 id="kubernetes-namespaces">Kubernetes Namespaces</h2>
+
+<p>Namespaces are logical environments that offer the flexibility to divide Cluster resources between multiple teams or users.</p>
+
+<ol>
+<li><p>List the available namespaces:</p>
+
+<pre><code>kubectl get namespaces
+</code></pre>
+
+<pre><code>default       Active        7h
+kube-public   Active        7h
+kube-system   Active        7h
+</code></pre>
+
+<p>As the name implies, the <code>default</code> namespace is where your deployments will be placed if no other namespace is specified. <code>kube-system</code> is reserved for objects created by Kubernetes and <code>kube-public</code> is available for all users. Namespaces can be created from a <code>.json</code> file or directly from the command line.</p></li>
+
+<li><p>Create a new file named <code>dev-namespace.json</code> for the <strong>Development</strong> environment:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/home/dev-namespace.json 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">{
+  &#34;kind&#34;: &#34;Namespace&#34;,
+  &#34;apiVersion&#34;: &#34;v1&#34;,
+  &#34;metadata&#34;: {
+    &#34;name&#34;: &#34;development&#34;,
+    &#34;labels&#34;: {
+      &#34;name&#34;: &#34;development&#34;
+    }
+  }
+}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the namespace in your cluster:</p>
+
+<pre><code>kubectl create -f dev-namespace.json
+</code></pre></li>
+
+<li><p>List the namespaces again:</p>
+
+<pre><code>kubectl get namespaces
+</code></pre></li>
+</ol>
+
+<h3 id="contexts">Contexts</h3>
+
+<p>In order to use your namespaces you need to define the <strong>context</strong> where you want to employ them. Kubernetes contexts are saved in the <code>kubectl</code> configuration.</p>
+
+<ol>
+<li><p>View your current configuration:</p>
+
+<pre><code>kubectl config view
+</code></pre></li>
+
+<li><p>Check in what context you are working on:</p>
+
+<pre><code>kubectl config current-context
+</code></pre></li>
+
+<li><p>Add the <code>dev</code> context using the command:</p>
+
+<pre><code>kubectl config set-context dev --namespace=development \
+--cluster=kubernetes \
+--user=kubernetes-admin
+</code></pre></li>
+
+<li><p>Switch to the <code>dev</code> context/namespace:</p>
+
+<pre><code>kubectl config use-context dev
+</code></pre></li>
+
+<li><p>Verify the change:</p>
+
+<pre><code>kubectl config current-context
+</code></pre></li>
+
+<li><p>Review your new configuration:</p>
+
+<pre><code>kubectl config view
+</code></pre></li>
+
+<li><p>Pods within a namespace are not visible to other namespaces. Check this by listing your pods:</p>
+
+<pre><code>kubectl get pods
+</code></pre>
+
+<p>The message &ldquo;No resources found&rdquo; appears because you have no pods or deployments created in this namespace. You still can view these objects with the <code>--all-namespaces</code> flag:</p>
+
+<pre><code>kubectl get services --all-namespaces
+</code></pre></li>
+</ol>
+
+<h3 id="labels">Labels</h3>
+
+<p>Any object in Kubernetes can have a label attached to it. Labels are key value pairs that make it easier to organize, filter, and select objects based on common characteristics.</p>
+
+<ol>
+<li><p>Create a test deployment for this namespace. This deployment will include the <code>nginx</code> label:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/my-app.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>apps/v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Deployment<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>my-app<span class="w">
+</span><span class="w">  </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>my-app<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>replicas<span class="p">:</span><span class="w"> </span><span class="m">4</span><span class="w">
+</span><span class="w">  </span>selector<span class="p">:</span><span class="w">
+</span><span class="w">    </span>matchLabels<span class="p">:</span><span class="w">
+</span><span class="w">      </span>app<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">  </span>template<span class="p">:</span><span class="w">
+</span><span class="w">    </span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">      </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">        </span>app<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">    </span>spec<span class="p">:</span><span class="w">
+</span><span class="w">      </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">        </span>image<span class="p">:</span><span class="w"> </span>nginx<span class="p">:</span><span class="m">1.12</span>-alpine<span class="w">
+</span><span class="w">        </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>containerPort<span class="p">:</span><span class="w"> </span><span class="m">80</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the deployment:</p>
+
+<pre><code>kubectl create -f my-app.yaml --record
+</code></pre></li>
+
+<li><p>If you need to find a particular pod within your cluster, rather than listing all of the pods it is usually more efficient to search by label with the <code>-l</code> option:</p>
+
+<pre><code>kubectl get pods --all-namespaces -l app=nginx
+</code></pre>
+
+<p>Only the pods in the <code>default</code> and <code>development</code> namespace are listed because they have the label <code>nginx</code> included in their definition.</p></li>
+</ol>
+
+<h2 id="kubernetes-nodes">Kubernetes Nodes</h2>
+
+<p>A node may be a physical machine or a virtual machine. In this guide each Linode is a node. Think of nodes as the uppermost level in the Kubernetes abstraction model.</p>
+
+<ol>
+<li><p>List your current nodes:</p>
+
+<pre><code>kubectl get nodes
+</code></pre>
+
+<pre><code>NAME             STATUS    ROLES     AGE       VERSION
+kube-master      Ready     master    21h       v1.9.2
+kube-worker-1    Ready     &lt;none&gt;    19h       v1.9.2
+kube-worker-2    Ready     &lt;none&gt;    17h       v1.9.2
+</code></pre></li>
+
+<li><p>For more detail, add the <code>-o</code> flag:</p>
+
+<pre><code>kubectl get nodes -o wide
+</code></pre></li>
+
+<li><p>The information displayed is mostly self-explanatory and useful for checking that all nodes are ready. You can also use the <code>describe</code> command for more detailed information about a specific node:</p>
+
+<pre><code>kubectl describe node kube-worker-1
+</code></pre></li>
+</ol>
+
+<h3 id="node-maintenance">Node Maintenance</h3>
+
+<p>Kubernetes offers a very straightforward solution for taking nodes offline safely.</p>
+
+<ol>
+<li><p>Return to the default namespace where you have a running service for NGINX:</p>
+
+<pre><code>kubectl config use-context kubernetes-admin@kubernetes
+</code></pre></li>
+
+<li><p>Check your pods:</p>
+
+<pre><code>kubectl get pods -o wide
+</code></pre></li>
+
+<li><p>Prevent new pods creation on the node <code>kube-worker-2</code>:</p>
+
+<pre><code>kubectl cordon kube-worker-2
+</code></pre></li>
+
+<li><p>Check the status of your nodes:</p>
+
+<pre><code>kubectl get nodes
+</code></pre>
+
+<pre><code>NAME             STATUS                     ROLES     AGE       VERSION
+kube-master      Ready                      master    4h        v1.9.2
+kube-worker-1    Ready                      &lt;none&gt;    4h        v1.9.2
+kube-worker-2    Ready,SchedulingDisabled   &lt;none&gt;    4h        v1.9.2
+</code></pre></li>
+
+<li><p>To test the Kubernetes controller and scheduler, scale up your deployment:</p>
+
+<pre><code>kubectl scale deployment nginx-server --replicas=10
+</code></pre></li>
+
+<li><p>List your pods again:</p>
+
+<pre><code>kubectl get pods -o wide
+</code></pre>
+
+<pre><code>NAME                           READY     STATUS    RESTARTS   AGE       IP                NODE
+nginx-server-b9bc6c6b5-2pnbk   1/1       Running   0          11s       192.168.188.146   kube-worker-1
+nginx-server-b9bc6c6b5-4cls5   1/1       Running   0          11s       192.168.188.148   kube-worker-1
+nginx-server-b9bc6c6b5-7nw5m   1/1       Running   0          3d        192.168.255.220   kube-worker-2
+nginx-server-b9bc6c6b5-7s7w5   1/1       Running   0          44s       192.168.188.143   kube-worker-1
+nginx-server-b9bc6c6b5-88dvp   1/1       Running   0          11s       192.168.188.145   kube-worker-1
+nginx-server-b9bc6c6b5-95jgr   1/1       Running   0          3d        192.168.255.221   kube-worker-2
+nginx-server-b9bc6c6b5-md4qd   1/1       Running   0          3d        192.168.188.139   kube-worker-1
+nginx-server-b9bc6c6b5-r5krq   1/1       Running   0          11s       192.168.188.144   kube-worker-1
+nginx-server-b9bc6c6b5-r5nd6   1/1       Running   0          44s       192.168.188.142   kube-worker-1
+nginx-server-b9bc6c6b5-ztgmr   1/1       Running   0          11s       192.168.188.147   kube-worker-1
+</code></pre>
+
+<p>There are ten pods in total but new pods were created only in the first node.</p></li>
+
+<li><p>Tell <code>kube-worker-2</code> to drain its running pods:</p>
+
+<pre><code>kubectl drain kube-worker-2 --ignore-daemonsets
+</code></pre>
+
+<pre><code>node &quot;kube-worker-2&quot; already cordoned
+WARNING: Ignoring DaemonSet-managed pods: calico-node-9mgc6, kube-proxy-2v8rw
+pod &quot;my-app-68845b9f68-wcqsb&quot; evicted
+pod &quot;nginx-server-b9bc6c6b5-7nw5m&quot; evicted
+pod &quot;nginx-server-b9bc6c6b5-95jgr&quot; evicted
+pod &quot;my-app-68845b9f68-n5kpt&quot; evicted
+node &quot;kube-worker-2&quot; drained
+</code></pre></li>
+
+<li><p>Check the effect of this command on your pods:</p>
+
+<pre><code>kubectl get pods -o wide
+</code></pre>
+
+<pre><code>NAME                           READY     STATUS    RESTARTS   AGE       IP                NODE
+nginx-server-b9bc6c6b5-2pnbk   1/1       Running   0          9m        192.168.188.146   kube-worker-1
+nginx-server-b9bc6c6b5-4cls5   1/1       Running   0          9m        192.168.188.148   kube-worker-1
+nginx-server-b9bc6c6b5-6zbv6   1/1       Running   0          3m        192.168.188.152   kube-worker-1
+nginx-server-b9bc6c6b5-7s7w5   1/1       Running   0          9m        192.168.188.143   kube-worker-1
+nginx-server-b9bc6c6b5-88dvp   1/1       Running   0          9m        192.168.188.145   kube-worker-1
+nginx-server-b9bc6c6b5-c2c5c   1/1       Running   0          3m        192.168.188.150   kube-worker-1
+nginx-server-b9bc6c6b5-md4qd   1/1       Running   0          3d        192.168.188.139   kube-worker-1
+nginx-server-b9bc6c6b5-r5krq   1/1       Running   0          9m        192.168.188.144   kube-worker-1
+nginx-server-b9bc6c6b5-r5nd6   1/1       Running   0          9m        192.168.188.142   kube-worker-1
+nginx-server-b9bc6c6b5-ztgmr   1/1       Running   0          9m        192.168.188.147   kube-worker-1
+</code></pre></li>
+
+<li><p>You are ready now to safely shut down your Linode without interrupting service.</p></li>
+
+<li><p>Once you finish your maintenance, tell the controller that this node is available for scheduling again:</p>
+
+<pre><code>kubectl uncordon kube-worker-2
+</code></pre></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://kubernetes.io/docs/home">Kubernetes Documentation</a></li>
+
+<li><a href="https://docs.projectcalico.org/v2.0/getting-started/kubernetes/">Calico Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-a-kubernetes-cluster">What is a Kubernetes Cluster?</a></li>
+<li><a href="#system-requirements">System Requirements</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#kubernetes-pods">Kubernetes Pods</a>
+<ul>
+<li><a href="#create-a-deployment">Create a Deployment</a></li>
+<li><a href="#scale-deployments">Scale Deployments</a></li>
+<li><a href="#rolling-upgrades">Rolling Upgrades</a></li>
+</ul></li>
+<li><a href="#kubernetes-services">Kubernetes Services</a></li>
+<li><a href="#kubernetes-namespaces">Kubernetes Namespaces</a>
+<ul>
+<li><a href="#contexts">Contexts</a></li>
+<li><a href="#labels">Labels</a></li>
+</ul></li>
+<li><a href="#kubernetes-nodes">Kubernetes Nodes</a>
+<ul>
+<li><a href="#node-maintenance">Node Maintenance</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

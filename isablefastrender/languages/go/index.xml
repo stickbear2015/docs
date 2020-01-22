@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/languages/go/</link>
+    <description>Recent content in Go on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/languages/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Getting Started with Go Packages</title>
+      <link>http://localhost:1313/docs/development/go/getting-started-with-go-packages/</link>
+      <pubDate>Wed, 06 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/go/getting-started-with-go-packages/</guid>
+      <description>What is Go? Go is a compiled, statically typed programming language developed by Google. Many modern applications, including Docker, Kubernetes, and Caddy, are written in Go.
+Go packages allow developers to organize and reuse Go code in a simple and maintainable manner. Using and declaring Go packages are essential tasks that are performed when writing Go applications. This guide will demonstrate and help you to understand how to create and use Go packages.</description>
+    </item>
+    
+    <item>
+      <title>How to Install Go on Ubuntu</title>
+      <link>http://localhost:1313/docs/development/go/install-go-on-ubuntu/</link>
+      <pubDate>Mon, 29 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/go/install-go-on-ubuntu/</guid>
+      <description>What is Go? Go is a compiled, statically typed programming language developed by Google. Many modern applications, including Docker, Kubernetes, and Caddy, are written in Go.
+Install Go  Use curl or wget to download the current binary for Go from the official download page. As of this writing, the current version is 1.9.3. Check the download page for updates, and replace 1.9.3 with the most recent stable version if necessary.</description>
+    </item>
+    
+  </channel>
+</rss>

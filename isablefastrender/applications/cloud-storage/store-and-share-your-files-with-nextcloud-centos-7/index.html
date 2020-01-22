@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Store and Share your Files with Nextcloud on Centos 7</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Nextcloud is an open source solution to hosting your own content online. In addition to the total control users gain over their own files, Nextcloud offers customizable security features that allow the user to take control of sharing and access privileges, among other features.">
+        <meta name="keywords" content="nextcloud, cloud, open source hosting">
+        
+        <meta property="og:title" content="Store and Share your Files with Nextcloud on Centos 7">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/cloud-storage/store-and-share-your-files-with-nextcloud-centos-7/">
+        <meta property="og:description" content="Nextcloud is an open source solution to hosting your own content online. In addition to the total control users gain over their own files, Nextcloud offers customizable security features that allow the user to take control of sharing and access privileges, among other features.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/cloud-storage/store-and-share-your-files-with-nextcloud-centos-7/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/cloud-storage/">Cloud Storage</a>
+  
+</li>
+
+
+<li>
+  
+  Store and Share your Files with Nextcloud on Centos 7
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Store and Share your Files with Nextcloud on Centos 7</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-18T20:15:58Z">Tuesday, December 18, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    <a href="https://www.linkedin.com/in/andrew-lescher-87027940/">Andrew Lescher
+      
+      <i class="fa fa-linkedin"></i>
+      
+    </a>
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcloud-storage%2fstore-and-share-your-files-with-nextcloud-centos-7%2f&via=linode&text=Store%20and%20Share%20your%20Files%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcloud-storage%2fstore-and-share-your-files-with-nextcloud-centos-7%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcloud-storage%2fstore-and-share-your-files-with-nextcloud-centos-7%2f&t=Store%20and%20Share%20your%20Files%20with%20Nextcloud%20on%20Centos%207" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Store%20and%20Share%20your%20Files%20with%20Nextcloud%20on%20Centos%207%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcloud-storage%2fstore-and-share-your-files-with-nextcloud-centos-7%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccloud-storage%5cstore-and-share-your-files-with-nextcloud-centos-7%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccloud-storage%5cstore-and-share-your-files-with-nextcloud-centos-7%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="Store_and_Share_your_Files_with_Nextcloud_on_Centos_smg.png" alt="Store and Share your Files with Nextcloud on CentOS" title="Store and Share your Files with Nextcloud on CentOS" /></p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Familiarize yourself with our <a href="/docs/getting-started/">Getting Started</a> guide and complete the steps for setting your Linode&rsquo;s hostname and timezone.</p></li>
+
+<li><p>The steps in this guide require root privileges. Be sure to run the steps below as <code>root</code> or with the <code>sudo</code> prefix. Complete the sections of our <a href="/docs/security/securing-your-server/">Securing Your Server</a> to create a standard user account, harden SSH access and remove unnecessary network services. For more information on privileges, see our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</p></li>
+
+<li><p>Update your system:</p>
+
+<pre><code>yum update -y
+</code></pre></li>
+
+<li><p>Install the <em>EPEL</em> repository:</p>
+
+<pre><code>yum install epel-release -y
+</code></pre></li>
+</ol>
+
+<h2 id="install-mariadb-database-server">Install MariaDB Database Server</h2>
+
+<ol>
+<li><p>Add the MariaDB 10.2 repository to force yum to install the latest version:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/yum.repos.d/MariaDB.repo 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-repo" data-lang="repo"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-repo" data-lang="repo">[mariadb]
+name = MariaDB-10.2.3
+baseurl = http://yum.mariadb.org/10.2.3/centos7-amd64
+gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
+gpgcheck=1</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Install MariaDB and enable the service on system startup:</p>
+
+<pre><code>yum install mariadb mariadb-server -y
+systemctl start mariadb
+systemctl enable mariadb
+</code></pre></li>
+
+<li><p>Set up the MariaDB server with the <code>mysql_secure_installation</code> script. Respond to the prompts with the replies shown below:</p>
+
+<pre><code>mysql_secure_installation
+
+Enter current password for root (enter for none): ENTER
+Set root password? [Y/n] Y
+Remove anonymous users? [Y/n] Y
+Disallow root login remotely? [Y/n] Y
+Remove test database and access to it? [Y/n] Y
+Reload privilege tables now? [Y/n] Y
+</code></pre></li>
+
+<li><p>Create a database and user for Nextcloud in MariaDB. Login as <code>root</code> and enter the password set earlier. Be sure to create a strong password to replace the <code>CREATE-PASSWORD-HERE</code> text:</p>
+
+<pre><code>mysql -u root -p
+
+MariaDB [(none)]&gt; CREATE DATABASE nextcloud;
+MariaDB [(none)]&gt; GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextclouduser'@'localhost' IDENTIFIED BY 'CREATE-PASSWORD-HERE' WITH GRANT OPTION;
+MariaDB [(none)]&gt; FLUSH PRIVILEGES;
+MariaDB [(none)]&gt; quit
+</code></pre></li>
+</ol>
+
+<h2 id="install-apache-web-server">Install Apache Web Server</h2>
+
+<ol>
+<li><p>Install Apache and enable the service on system startup:</p>
+
+<pre><code>yum install httpd -y
+systemctl start httpd
+systemctl enable httpd
+</code></pre></li>
+
+<li><p>Disable Apache&rsquo;s WebDAV modules to prevent conflict with Nextcloud&rsquo;s WebDAV modules:</p>
+
+<pre><code>sudo sed -i 's/^/#&amp;/g' /etc/httpd/conf.modules.d/00-dav.conf
+</code></pre></li>
+
+<li><p>Restart Apache to reflect changes:</p>
+
+<pre><code>systemctl restart httpd
+</code></pre></li>
+</ol>
+
+<h2 id="install-php-7-1-and-required-modules">Install PHP 7.1 and Required Modules</h2>
+
+<ol>
+<li><p>Add the Remi repository:</p>
+
+<pre><code>rpm -Uvh http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+</code></pre></li>
+
+<li><p>Install the <em>yum-utils</em> package:</p>
+
+<pre><code>yum install yum-utils -y
+</code></pre></li>
+
+<li><p>Update the system to populate the Remi repository:</p>
+
+<pre><code>yum update -y
+</code></pre></li>
+
+<li><p>Direct the system to use PHP 7.1 and issue installation command:</p>
+
+<pre><code>yum-config-manager --enable remi-php71
+yum install php71-php php-mbstring php-zip php71-php-opcache php71-php-mysql php71-php-pecl-imagick php71-php-intl php71-php-mcrypt php71-php-pdo php-ZendFramework-Db-Adapter-Pdo-Mysql php71-php-pecl-zip php71-php-mbstring php71-php-gd php71-php-xml -y
+</code></pre></li>
+
+<li><p>The default file upload size PHP will allow is 2MB. Increase (or decrease) the allowed file size to your preferred value. The example below will set a 512MB file upload size and no limit for the post size:</p>
+
+<pre><code>sudo cp /etc/php.ini /etc/php.ini.bak
+sudo sed -i &quot;s/post_max_size = 8M/post_max_size = 0/&quot; /etc/php.ini
+sudo sed -i &quot;s/upload_max_filesize = 2M/upload_max_filesize = 512M/&quot; /etc/php.ini
+</code></pre></li>
+
+<li><p>Restart Apache:</p>
+
+<pre><code>systemctl restart httpd
+</code></pre></li>
+</ol>
+
+<h2 id="install-nextcloud-12">Install Nextcloud 12</h2>
+
+<ol>
+<li><p>Check the <a href="https://nextcloud.com/install/#instructions-server">Nextcloud download page</a> for the latest version and replace <code>12.0.4</code> in the command below with the appropriate version number:</p>
+
+<pre><code>cd /opt
+sudo yum install wget
+wget https://download.nextcloud.com/server/releases/nextcloud-12.0.4.zip
+</code></pre></li>
+
+<li><p>Unzip the package:</p>
+
+<pre><code>sudo yum install unzip
+unzip nextcloud-x.y.z.zip
+</code></pre></li>
+
+<li><p>Move the entire unzipped Nextcloud folder to the root web directory and grant permissions to the <code>apache</code> user for all contents:</p>
+
+<pre><code>cp -r nextcloud /var/www/html
+</code></pre></li>
+
+<li><p>Grant permissions to the Nextcloud folder and all its contents to the Apache user. Determine which user Apache is running with the first command below. Replace <code>apache:apache</code> in the second command with the output if it differs:</p>
+
+<pre><code>ps -ef | egrep '(httpd|apache2|apache)' | grep -v `whoami` | grep -v root | head -n1 | groups $(awk '{print $1}')
+chown apache:apache -R /var/www/html/nextcloud
+</code></pre></li>
+
+<li><p>Navigate to the <code>nextcloud</code> root web directory, and complete the Nextcloud installation:</p>
+
+<pre><code>cd /var/www/html/nextcloud
+sudo -u apache php occ maintenance:install --database &quot;mysql&quot; --database-name &quot;nextcloud&quot;  --database-user &quot;nextclouduser&quot; --database-pass &quot;yourpassword&quot; --admin-user &quot;admin&quot; --admin-pass &quot;adminpassword&quot;
+</code></pre></li>
+
+<li><p>If the installation is successful, you will receive the following message:</p>
+
+<pre><code>Nextcloud was successfully installed
+</code></pre></li>
+
+<li><p>Since these files are now internet-facing, set stronger permissions to improve security:</p>
+
+<pre><code>find /var/www/html -type f -print0 | sudo xargs -0 chmod 0640
+find /var/www/html -type d -print0 | sudo xargs -0 chmod 0750
+</code></pre></li>
+
+<li><p>Update the URL in the <code>config.php</code> file to accommodate the <code>nextcloud</code> subfolder added within the document root. Match the <code>overwrite.cli.url</code> and <code>htaccess.RewriteBase</code> lines:</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/www/html/nextcloud/config/config.php 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-php" data-lang="php">. . .
+
+),
+  &#39;datadirectory&#39; =&gt; &#39;/var/www/html/nextcloud/data&#39;,
+  &#39;overwrite.cli.url&#39; =&gt; &#39;http://localhost/nextcloud&#39;,
+  &#39;htaccess.RewriteBase&#39; =&gt; &#39;/nextcloud&#39;,
+  &#39;dbtype&#39; =&gt; &#39;mysql&#39;,
+  &#39;version&#39; =&gt; &#39;12.0.3.3&#39;,
+  &#39;dbname&#39; =&gt; &#39;nextcloud&#39;,
+
+. . .</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Update the <code>.htaccess</code> file with the URL changes:</p>
+
+<pre><code>sudo -u apache php /var/www/nextcloud/occ maintenance:update:htaccess
+</code></pre></li>
+
+<li><p>Navigate to <code>your-Linode-IP-address/nextcloud</code> (replace <code>your-Linode-IP-address</code>) and the Nextcloud page should load with a login page for the admin user you created earlier.</p>
+
+<p>To check the status of your Nextcloud environment, use the following <code>occ</code> command:</p>
+
+<pre><code>sudo -u apache /var/www/html/nextcloud/ php occ status
+</code></pre></li>
+</ol>
+
+<h2 id="where-to-go-from-here">Where to Go from Here</h2>
+
+<p>Once you have successfully installed you Nextcloud environment, you may want to further integrate it into an owned domain name or make adjustments to your web server to serve SSL encrypted pages. See Nextcloud&rsquo;s <a href="https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#enabling-ssl">Enabling SSL</a> guide to enable SSL.</p>
+
+<p>Although Apache was used as the web server in this guide, installing Nextcloud with nginx is possible as well. Navigate to the <a href="https://docs.nextcloud.com/server/12/admin_manual/installation/nginx.html">Nextcloud NGINX Configuration</a> documentation to setup Nextcloud with NGINX.</p>
+
+<p><a href="https://nextcloud.com/talk/">Nextcloud Talk</a>, is an addon to Nextcloud that allows for secure text and video conferencing through Nextcloud&rsquo;s platform. Check out our guide on how to <a href="/docs/applications/cloud-storage/install-nextcloud-talk/">Install Nextcloud Talk</a>.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.nextcloud.com/server/12/admin_manual/configuration_server/occ_command.html#http-user-label">Using the occ command</a></li>
+
+<li><a href="https://docs.nextcloud.com/server/12/admin_manual/installation/nginx.html">nginx Configuration</a></li>
+
+<li><a href="https://docs.nextcloud.com/server/12/admin_manual/installation/source_installation.html#enabling-ssl">Enabling SSL</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#install-mariadb-database-server">Install MariaDB Database Server</a></li>
+<li><a href="#install-apache-web-server">Install Apache Web Server</a></li>
+<li><a href="#install-php-7-1-and-required-modules">Install PHP 7.1 and Required Modules</a></li>
+<li><a href="#install-nextcloud-12">Install Nextcloud 12</a></li>
+<li><a href="#where-to-go-from-here">Where to Go from Here</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

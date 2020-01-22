@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Rescue and Rebuild</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Our guide to rescuing and rebuilding your Linode.">
+        <meta name="keywords" content="rescue, rebuild">
+        
+        <meta property="og:title" content="Rescue and Rebuild">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/troubleshooting/rescue-and-rebuild/">
+        <meta property="og:description" content="Our guide to rescuing and rebuilding your Linode.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/troubleshooting/rescue-and-rebuild/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/troubleshooting/">Troubleshooting</a>
+  
+</li>
+
+
+<li>
+  
+  Rescue and Rebuild
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Rescue and Rebuild</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-03-18T16:20:46-04:00">Monday, March 18, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2frescue-and-rebuild%2f&via=linode&text=Rescue%20and%20Rebuild" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2frescue-and-rebuild%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2frescue-and-rebuild%2f&t=Rescue%20and%20Rebuild" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Rescue%20and%20Rebuild%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2ftroubleshooting%2frescue-and-rebuild%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/troubleshooting%5crescue-and-rebuild%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/troubleshooting%5crescue-and-rebuild%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="rescue-rebuild.jpg" alt="Rescue and Rebuild" /></p>
+
+<p>Even the best system administrators may need to deal with unplanned events in the operation of their services. The Linode Cloud Manager provides recovery tools that you can leverage if you are having trouble connecting to one of your Linodes, and this guide describes those tools:</p>
+
+<ul>
+<li><p>You can boot your Linode into <a href="#rescuing"><em>Rescue Mode</em></a> to perform system recovery tasks and transfer data off your disks, if necessary.</p></li>
+
+<li><p>If you are unable to resolve your system&rsquo;s issues, you can <a href="#rebuilding"><em>rebuild</em></a> your Linode from a backup or start over with a fresh Linux distribution.</p></li>
+</ul>
+
+<h2 id="troubleshooting-resources">Troubleshooting Resources</h2>
+
+<p>While this guide outlines the recovery tools that Linode makes available to you, it does not provide a specific troubleshooting strategy. Our other guides offer a logical progression of steps you can follow when troubleshooting different symptoms:</p>
+
+<ul>
+<li><p>If you are not able to establish basic network connections with your Linode, we recommend that you review the <a href="/docs/troubleshooting/troubleshooting-basic-connection-issues/">Troubleshooting Basic Connection Issues</a> guide.</p></li>
+
+<li><p>If you can ping your Linode but can&rsquo;t access SSH, follow the <a href="/docs/troubleshooting/troubleshooting-ssh/">Troubleshooting SSH</a> guide.</p></li>
+
+<li><p>If you can access SSH but are experiencing an outage with a web server or other service, review <a href="/docs/troubleshooting/troubleshooting-web-servers-databases-other-services/">Troubleshooting Web Servers, Databases, and Other Services</a>.</p></li>
+
+<li><p>For an overview of all these issues and answers to other questions, check out the <a href="/docs/troubleshooting/troubleshooting/">Troubleshooting Overview</a> guide.</p></li>
+</ul>
+
+<h2 id="rescuing">Rescuing</h2>
+
+<p><em>Rescue Mode</em> is a safe environment for performing many system recovery and disk management tasks. Rescue Mode is based on the <a href="http://www.finnix.org/">Finnix recovery distribution</a>, a self-contained and bootable Linux distribution that you can mount your Linode&rsquo;s disks from. You can also use Rescue Mode for tasks other than disaster recovery, such as:</p>
+
+<ul>
+<li><p>Formatting disks to use different filesystems</p></li>
+
+<li><p>Copying data between disks</p></li>
+
+<li><p>Downloading files from a disk via SSH and SFTP</p></li>
+</ul>
+
+<h3 id="rescue-mode-overview">Rescue Mode Overview</h3>
+
+<p>To access Rescue Mode, you will need to <a href="#booting-into-rescue-mode">reboot your Linode</a> from the Linode Cloud Manager and then connect via <a href="#connecting-to-a-linode-running-in-rescue-mode">Lish</a> or <a href="#starting-ssh">SSH</a>. After you connect, you can <a href="#performing-a-file-system-check">perform a check on your filesystem</a> if you suspect that it is corrupted. If you need access to a certain software package to troubleshoot your system, you can <a href="#installing-packages">install it</a>.</p>
+
+<p>Your disks will not be mounted by default, so <a href="#mounting-disks">mount</a> them in order to access your files. Once you mount your primary filesystem, you can <a href="#change-root"><em>change root</em></a> to have Rescue Mode emulate your normal Linux distribution.</p>
+
+<h3 id="booting-into-rescue-mode">Booting into Rescue Mode</h3>
+
+<p>To boot your Linode into Rescue Mode:</p>
+
+<ol>
+<li><p>Log in to the <a href="https://cloud.linode.com">Linode Cloud Manager</a>.</p></li>
+
+<li><p>Click on the <strong>Linodes</strong> link in the sidebar:</p>
+
+<p><a href="cloud-manager-dashboard.png"><img src="cloud-manager-dashboard.png" alt="Linode Cloud Manager dashboard - Linodes sidebar link highlighted" title="Linode Cloud Manager Dashboard with the Linodes link the sidebar highlighted" /></a></p></li>
+
+<li><p>Select a Linode:</p>
+
+<p><a href="cloud-manager-linodes-page.png"><img src="cloud-manager-linodes-page.png" alt="Linode Cloud Manager Linodes page" title="Linode Cloud Manager Linodes page with one Linode highlighted" /></a></p></li>
+
+<li><p>The Linode&rsquo;s detail page will appear. Click on the <strong>Rescue</strong> tab:</p>
+
+<p><a href="cloud-manager-linode-detail-page-rescue-tab-highlighted.png"><img src="cloud-manager-linode-detail-page-rescue-tab-highlighted.png" alt="Linode Cloud Manager Linode detail page - Rescue tab highlighted" title="Linode Cloud Manager Linode detail page with Rescue tab highlighted" /></a></p></li>
+
+<li><p>In the <strong>Rescue</strong> form, select the disks you want to be mounted:</p>
+
+<p><a href="cloud-manager-rescue-form-dev-sda-highlighted.png"><img src="cloud-manager-rescue-form-dev-sda-highlighted.png" alt="Linode Cloud Manager Rescue form - /dev/sda highlighted" title="Linode Cloud Manager Rescue form with /dev/sda highlighted" /></a></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Make a note of which devices your disks are assigned to (e.g. <code>/dev/sda</code>, <code>/dev/sdb</code>, etc). For example, in the screenshot shown above, the Ubuntu disk corresponds to <code>/dev/sda</code>. These assignments will be where you can mount your disks from inside Rescue Mode.</div>
+</blockquote>
+</li>
+
+<li><p>If you need to assign more than two disks to be accessible inside Rescue Mode, click the <strong>Add Disk</strong> option:</p>
+
+<p><a href="cloud-manager-rescue-form-add-disk-highlighted.png"><img src="cloud-manager-rescue-form-add-disk-highlighted.png" alt="Linode Cloud Manager Rescue form - Add Disk highlighted" title="Linode Cloud Manager Rescue form with the Add Disk option highlighted" /></a></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You can assign up to 7 disks in Rescue Mode. <code>/dev/sdh</code> is always assigned to the Finnix recovery distribution.</div>
+</blockquote>
+</li>
+
+<li><p>Click the <strong>Submit</strong> button. The Linode will reboot into Rescue Mode, and a progress bar will appear. When this progress bar completes, proceed to <a href="#connecting-to-a-linode-running-in-rescue-mode">Connecting to a Linode Running in Rescue Mode</a>.</p>
+
+<p><a href="cloud-manager-rescue-form-reboot-progress-bar-highlighted.png"><img src="cloud-manager-rescue-form-reboot-progress-bar-highlighted.png" alt="Linode Cloud Manager Rescue form - reboot progress bar highlighted" title="Linode Cloud Manager Rescue form with the reboot progress bar highlighted" /></a></p></li>
+</ol>
+
+<h3 id="connecting-to-a-linode-running-in-rescue-mode">Connecting to a Linode Running in Rescue Mode</h3>
+
+<p>By default, Rescue Mode&rsquo;s Finnix environment does not accept SSH connections. To access your Linode when it&rsquo;s running in Rescue Mode, connect to it via the <em>Lish</em> console.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>It is possible to enable SSH for Rescue Mode by manually starting the SSH daemon. Using SSH can provide a nicer experience and will allow you to copy files off of your server. Review the <a href="#starting-ssh">Starting SSH</a> section for instructions. You will need to use Lish at least once in order to start SSH.</div>
+</blockquote>
+
+
+<p>To connect with Lish:</p>
+
+<ol>
+<li><p>From the Linode&rsquo;s detail page, click the <strong>Launch Console</strong> button:</p>
+
+<p><a href="cloud-manager-rescue-tab-launch-console-highlighted.png"><img src="cloud-manager-rescue-tab-launch-console-highlighted.png" alt="Linode Cloud Manager Linode detail page - Launch Console button highlighted" title="Linode Cloud Manager Linode detail page with the Launch Console button highlighted" /></a></p></li>
+
+<li><p>A new window will appear which displays your Lish console, a <code>Welcome to Finnix!</code> message, and a root prompt:</p>
+
+<p><a href="cloud-manager-new-lish-window.png"><img src="cloud-manager-new-lish-window.png" alt="Linode Cloud Manager Lish console" title="Linode Cloud Manager Lish console" /></a></p></li>
+</ol>
+
+<p>Review the <a href="/docs/platform/manager/using-the-linode-shell-lish/">Using the Linode Shell (Lish)</a> guide for further explanation of the Lish console and alternative methods for accessing it, including <a href="/docs/platform/manager/using-the-linode-shell-lish/#use-a-terminal-application">from your computer&rsquo;s terminal application</a>.</p>
+
+<h3 id="starting-ssh">Starting SSH</h3>
+
+<p>The Finnix recovery distribution does not automatically start an SSH server, but you can enable one manually. This is useful if your Linode won&rsquo;t boot and you need to copy files off of the disks. You can also copy entire disks over SSH. To start SSH:</p>
+
+<ol>
+<li><p>Open the <a href="#connecting-to-a-linode-running-in-rescue-mode">Lish console</a> for your Linode.</p></li>
+
+<li><p>Set the <code>root</code> password for the Finnix rescue environment by entering the following command:</p>
+
+<pre><code>passwd
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This root password is separate from the root password of the disk that you normally boot from. Setting the root password for Finnix will not affect the root account of your distribution.</div>
+</blockquote>
+</li>
+
+<li><p>Enter the new password for the <code>root</code> user.</p></li>
+
+<li><p>Start the SSH server:</p>
+
+<pre><code>service ssh start
+</code></pre></li>
+</ol>
+
+<p>You can now connect to the server as root with the SSH client on your computer. You can also access mounted disks with an SFTP client:</p>
+
+<ul>
+<li><p>For instructions on connecting with an SFTP client, see the <a href="/docs/tools-reference/file-transfer/">File Transfer reference manuals</a>.</p></li>
+
+<li><p>For instructions on copying an entire disk over SSH, see <a href="/docs/platform/disk-images/copying-a-disk-image-over-ssh/">Copy a Disk Over SSH</a>.</p></li>
+</ul>
+
+<h3 id="performing-a-file-system-check">Performing a File System Check</h3>
+
+<p>You can use the <code>fsck</code> system utility (short for &ldquo;file system check&rdquo;) to check the consistency of filesystems and repair any damage detected. If you suspect that your Linode&rsquo;s filesystem is corrupted, you should run <code>fsck</code> to check for and repair any damage:</p>
+
+<ol>
+<li><p>Enter the <code>df -h</code> command to verify that your primary disks are not currently mounted:</p>
+
+<pre><code>root@ttyS0:~# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs           739M 1016K  738M   1% /media/ramdisk
+/dev/sdh        160M  160M     0 100% /media/sdh
+/dev/loop0      146M  146M     0 100% /media/compressed_root
+unionfs         739M 1016K  738M   1% /
+devtmpfs         10M     0   10M   0% /dev
+</code></pre>
+
+<p>Your primary disks should not appear in the list. In the <a href="cloud-manager-rescue-form-dev-sda-highlighted.png">example screenshot</a> from the <a href="#booting-into-rescue-mode">Booting into Rescue Mode</a> section, we assigned the Ubuntu 18.04 disk to <code>/dev/sda</code>. Because this device does not appear in the example output from <code>df -h</code>, we can run a filesystem check on it.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>Never run <code>fsck</code> on a mounted disk. Do not continue unless you&rsquo;re sure that the target disk is unmounted.</div>
+</blockquote>
+</li>
+
+<li><p>Run <code>fsck</code> by entering the following command, replacing <code>/dev/sda</code> with the location of the disk you want to check and repair:</p>
+
+<pre><code>e2fsck -f /dev/sda
+</code></pre></li>
+
+<li><p>If no problems are detected, <code>fsck</code> will display the tests it performed:</p>
+
+<pre><code>e2fsck -f /dev/sda
+e2fsck 1.42.13 (17-May-2015)
+Pass 1: Checking inodes, blocks, and sizes
+Pass 2: Checking directory structure
+Pass 3: Checking directory connectivity
+Pass 4: Checking reference counts
+Pass 5: Checking group summary information
+/dev/sda: 109771/1568000 files (0.5% non-contiguous), 675014/6422528 blocks
+</code></pre></li>
+
+<li><p>If <code>fsck</code> determines that there is a problem with your filesystem, it will prompt you to fix problems as they are found during each test:</p>
+
+<pre><code>root@ttyS0:~# e2fsck -f /dev/sda
+e2fsck 1.42.13 (17-May-2015)
+ext2fs_check_desc: Corrupt group descriptor: bad block for block bitmap
+e2fsck: Group descriptors look bad... trying backup blocks...
+e2fsck: Bad magic number in super-block while using the backup blockse2fsck: gok
+Superblock has an invalid journal (inode 8).
+Clear&lt;y&gt;?
+</code></pre>
+
+<p>Press <strong>enter</strong> to automatically attempt to fix the problems.</p>
+
+<p>Once the filesystem check completes, any problems detected should be fixed. Try rebooting the Linode from the Cloud Manager. If <code>fsck</code> fixed the issues, the Linode should boot normally.</p></li>
+</ol>
+
+<h3 id="installing-packages">Installing Packages</h3>
+
+<p>The Finnix recovery distribution is based on Debian, so you can use the <a href="/docs/tools-reference/linux-package-management/#debian-and-ubuntu-package-management"><code>apt</code> package management system</a> to install additional software packages in the temporary rescue environment. For example, you could install and run the <code>htop</code> utility by issuing the following commands:</p>
+
+<pre><code>apt update
+apt install htop
+htop
+</code></pre>
+
+<p>The software packages you install will be available as long as your Linode is running in Rescue Mode.</p>
+
+<h3 id="mounting-disks">Mounting Disks</h3>
+
+<p>By default, your disks are not mounted when your Linode boots into Rescue Mode. However, you can manually mount a disk under Rescue Mode to perform system recovery and maintenance tasks. Run the <code>mount</code> command, replacing <code>/dev/sda</code> with the location of the disk you want to mount:</p>
+
+<pre><code>mount -o barrier=0 /dev/sda
+</code></pre>
+
+<p>Disks that contain a single filesystem will have mount points under <code>/media</code> in the rescue environment&rsquo;s <code>/etc/fstab</code> file. To view the directories on the disk, enter the following command:</p>
+
+<pre><code>ls /media/sda
+</code></pre>
+
+<p>Now you can read and write to files on the mounted disk.</p>
+
+<h3 id="change-root">Change Root</h3>
+
+<p><em>Changing root</em> is the process of changing your working root directory. When you change root (abbreviated as <em>chroot</em>) to your Linode root disk, you will be able to run commands as though you are logged into that system.</p>
+
+<p>Chroot will allow you to change user passwords, remove/install packages, and do other system maintenance and recovery tasks in your Linode&rsquo;s normal Linux environment.</p>
+
+<ol>
+<li><p>Before you can use chroot, you need to mount your root disk with execute permissions:</p>
+
+<pre><code>mount -o exec,barrier=0 /dev/sda
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>If you mounted your disk prior to reviewing this section, unmount the disk:</p>
+
+<pre><code>umount /dev/sda
+</code></pre>
+
+<p>Then, remount it with the <code>exec</code> option.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>Then to create the chroot, you need to mount the temporary filesystems:</p>
+
+<pre><code>cd /media/sda
+mount -t proc proc proc/
+mount -t sysfs sys sys/
+mount -o bind /dev dev/
+mount -t devpts pts dev/pts/
+</code></pre></li>
+
+<li><p>Chroot to your disk:</p>
+
+<pre><code>chroot /media/sda /bin/bash
+</code></pre></li>
+
+<li><p>To exit the chroot and get back to Finnix type &ldquo;exit&rdquo; :</p>
+
+<pre><code>exit
+</code></pre></li>
+</ol>
+
+<h2 id="rebuilding">Rebuilding</h2>
+
+<p>If you can&rsquo;t rescue and resolve issues on an existing disk, you will likely need to rebuild your Linode. Rebuilding your Linode is the process of starting over with a set of known-good disks that you can boot from. There are a few different ways you can do this:</p>
+
+<ul>
+<li><p>If you are subscribed to the <a href="https://www.linode.com/backups">Linode Backup Service</a>, you can <a href="#restoring-from-a-linode-backup">restore from an existing backup</a> and return your Linode to a previous state.</p></li>
+
+<li><p>If you aren&rsquo;t subscribed to the Linode Backup Service, you can copy files off an existing disk and then <a href="#use-the-rebuild-feature">use the Rebuild feature</a> of the Cloud Manager to erase everything and start over again from scratch.</p></li>
+
+<li><p>If you have a backup system other than the Linode Backup Service in place, you can <a href="#use-the-rebuild-feature">rebuild your Linode</a> and then restore your data from that backup service. The methods for restoring your data will vary by the kind of backup system that you use.</p></li>
+</ul>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div><p>Did an unauthorized intruder gain access to your Linode? Since it is virtually impossible to determine the full scope of an attacker&rsquo;s reach into a compromised system, you should never continue using a compromised Linode.</p>
+
+<p>We recommend that you follow the instructions in <a href="/docs/security/recovering-from-a-system-compromise/">Recovering from a System Compromise</a>. You&rsquo;ll need to create a new Linode, copy your existing data from the old Linode to the new one, and then swap IP addresses.</p>
+</div>
+</blockquote>
+
+
+<h3 id="restoring-from-a-linode-backup">Restoring from a Linode Backup</h3>
+
+<p>If you previously enabled the <a href="https://www.linode.com/backups">Linode Backup Service</a>, you may be able to restore one of the backups to your Linode. Review the <a href="/docs/platform/disk-images/linode-backup-service/#restore-from-a-backup">Restoring from a Backup</a> section (specifically, the <a href="/docs/platform/disk-images/linode-backup-service/#restore-to-an-existing-linode">Restore to an Existing Linode</a> section) of the <a href="/docs/platform/disk-images/linode-backup-service/">The Linode Backup Service</a> guide for instructions.</p>
+
+<p>If you created backups with an application other than the Linode Backup Service, review the application&rsquo;s instructions to restore a backup to your Linode.</p>
+
+<h3 id="use-the-rebuild-feature">Use the Rebuild Feature</h3>
+
+<p>The Linode Cloud Manager provides a <em>Rebuild</em> feature which will perform the following two actions:</p>
+
+<ol>
+<li><p>Your current disks are removed.</p></li>
+
+<li><p>A new set of disks is provisioned from one of the Cloud Manager&rsquo;s built-in Linux images, or from one of your <a href="/docs/platform/disk-images/linode-images/">saved images</a>.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div><p>If you use the Rebuild feature, the data from the disks that are deleted will not be retrievable.</p>
+
+<p>If you&rsquo;d like to deploy a new Linux distribution without erasing your existing disks, follow the instructions in the <a href="/docs/platform/disk-images/disk-images-and-configuration-profiles/#creating-a-disk-with-a-linux-distribution-installed">Creating a Disk with a Linux Distribution Installed</a> section of the <a href="/docs/platform/disk-images/disk-images-and-configuration-profiles/">Disks and Configuration Profiles</a> guide. This is a better option for those who need to create a new distribution, but also need to save their existing data.</p>
+
+<p>Your Linode will need to have some amount of unallocated disk space in order to provision a new distribution. If your Linode does not have enough unallocated space, you can <a href="/docs/platform/disk-images/disk-images-and-configuration-profiles/#resizing-a-disk">shrink your existing disks</a> to free up space or <a href="/docs/platform/disk-images/resizing-a-linode/">resize your Linode</a> to a higher resource tier.</p>
+</div>
+</blockquote>
+
+
+<p>If you need to copy files from your existing disk to another location before rebuilding, you can <a href="#starting-ssh">start SSH</a> under Rescue Mode and then use an SFTP client to copy files to your computer.</p></li>
+</ol>
+
+<p>To use the Rebuild feature:</p>
+
+<ol>
+<li><p>If you need to copy files from your existing disk to another location before rebuilding, you can <a href="#starting-ssh">start SSH</a> under Rescue Mode and then use an <a href="/docs/tools-reference/file-transfer/">SFTP client</a> to copy files to your computer, another server, or somewhere else.</p></li>
+
+<li><p>Log in to the <a href="https://cloud.linode.com">Linode Cloud Manager</a>.</p></li>
+
+<li><p>Click on the <strong>Linodes</strong> link in the sidebar:</p>
+
+<p><a href="cloud-manager-dashboard.png"><img src="cloud-manager-dashboard.png" alt="Linode Cloud Manager dashboard - Linodes sidebar link highlighted" title="Linode Cloud Manager Dashboard with the Linodes link the sidebar highlighted" /></a></p></li>
+
+<li><p>Select a Linode:</p>
+
+<p><a href="cloud-manager-linodes-page.png"><img src="cloud-manager-linodes-page.png" alt="Linode Cloud Manager Linodes page" title="Linode Cloud Manager Linodes page with one Linode highlighted" /></a></p></li>
+
+<li><p>The Linode&rsquo;s detail page will appear. Click on the <strong>Rebuild</strong> tab:</p>
+
+<p><a href="cloud-manager-linode-detail-page-rebuild-tab-highlighted.png"><img src="cloud-manager-linode-detail-page-rebuild-tab-highlighted.png" alt="Linode Cloud Manager Linode detail page - Rebuild tab highlighted" title="Linode Cloud Manager Linode detail page with Rebuild tab highlighted" /></a></p></li>
+
+<li><p>Complete the Rebuild form. Select an image to deploy and enter a root password. Optionally, select one or more SSH keys (if you have not added any SSH Keys via the Cloud Manager, this option will not be available).</p></li>
+
+<li><p>Click on the <strong>Rebuild</strong> button after completing the form:</p>
+
+<p><a href="cloud-manager-rebuild-form-rebuild-button-highlighted.png"><img src="cloud-manager-rebuild-form-rebuild-button-highlighted.png" alt="Linode Cloud Manager Rebuild form - Rebuild button highlighted" title="Linode Cloud Manager Rebuild form with Rebuild button highlighted" /></a></p></li>
+
+<li><p>A confirmation dialog will appear. Click the <strong>Rebuild</strong> button in the dialog to start the rebuild process:</p>
+
+<p><a href="cloud-manager-rebuild-form-confirmation-dialog.png"><img src="cloud-manager-rebuild-form-confirmation-dialog.png" alt="Linode Cloud Manager Rebuild form confirmation dialog" title="Linode Cloud Manager Rebuild form confirmation dialog" /></a></p></li>
+
+<li><p>You will be returned to the <strong>Summary</strong> tab for the Linode and a <strong>Rebuilding</strong> progress bar will appear. When the operation completes, your Linode will be booted under the new Linux image:</p>
+
+<p><a href="cloud-manager-linode-detail-page-rebuild-progress-bar-highlighted.png"><img src="cloud-manager-linode-detail-page-rebuild-progress-bar-highlighted.png" alt="Linode Cloud Manager Linode detail page - Rebuild progress bar highlighted" title="Linode Cloud Manager Linode detail page with the Rebuild progress bar highlighted" /></a></p></li>
+</ol>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+<blockquote class="classic_manager_link">
+  <strong class="callout-title">The <a href="https://manager.linode.com">Linode Classic Manager</a></strong>
+  <div>If you're using the Linode Classic Manager instead of the new <a href="https://cloud.linode.com">Cloud Manager</a>, you can still view the Classic Manager version of this <a href=http://localhost:1313/docs/troubleshooting/rescue-and-rebuild-classic-manager/>Rescue and Rebuild</a> guide.</div>
+</blockquote>
+
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#troubleshooting-resources">Troubleshooting Resources</a></li>
+<li><a href="#rescuing">Rescuing</a>
+<ul>
+<li><a href="#rescue-mode-overview">Rescue Mode Overview</a></li>
+<li><a href="#booting-into-rescue-mode">Booting into Rescue Mode</a></li>
+<li><a href="#connecting-to-a-linode-running-in-rescue-mode">Connecting to a Linode Running in Rescue Mode</a></li>
+<li><a href="#starting-ssh">Starting SSH</a></li>
+<li><a href="#performing-a-file-system-check">Performing a File System Check</a></li>
+<li><a href="#installing-packages">Installing Packages</a></li>
+<li><a href="#mounting-disks">Mounting Disks</a></li>
+<li><a href="#change-root">Change Root</a></li>
+</ul></li>
+<li><a href="#rebuilding">Rebuilding</a>
+<ul>
+<li><a href="#restoring-from-a-linode-backup">Restoring from a Linode Backup</a></li>
+<li><a href="#use-the-rebuild-feature">Use the Rebuild Feature</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

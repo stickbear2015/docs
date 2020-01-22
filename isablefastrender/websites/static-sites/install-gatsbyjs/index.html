@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Create a CI/CD Pipeline with Gatsby.js, Netlify and Travis CI</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Create a CI/CD Pipeline with Gatsby.js, Netlify and Travis CI">
+        <meta name="keywords" content="gatsbyjs, gatsby, ssg, static site generator, travis, netlify">
+        
+        <meta property="og:title" content="Create a CI/CD Pipeline with Gatsby.js, Netlify and Travis CI">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/websites/static-sites/install-gatsbyjs/">
+        <meta property="og:description" content="Create a CI/CD Pipeline with Gatsby.js, Netlify and Travis CI">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/websites/static-sites/install-gatsbyjs/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/">Website Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/static-sites/">Static Site Generators</a>
+  
+</li>
+
+
+<li>
+  
+  Create a CI/CD Pipeline with Gatsby.js, Netlify and Travis CI
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Create a CI/CD Pipeline with Gatsby.js, Netlify and Travis CI</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-09-04T10:32:20-04:00">Tuesday, September 4, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fstatic-sites%2finstall-gatsbyjs%2f&via=linode&text=Create%20a%20CI%2fCD%20Pipeline%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fstatic-sites%2finstall-gatsbyjs%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fstatic-sites%2finstall-gatsbyjs%2f&t=Create%20a%20CI%2fCD%20Pipeline%20with%20Gatsby.js%2c%20Netlify%20and%20Travis%20CI" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Create%20a%20CI%2fCD%20Pipeline%20with%20Gatsby.js%2c%20Netlify%20and%20Travis%20CI%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fwebsites%2fstatic-sites%2finstall-gatsbyjs%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/websites%5cstatic-sites%5cinstall-gatsbyjs%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/websites%5cstatic-sites%5cinstall-gatsbyjs%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="what-is-gatsby">What is Gatsby?</h2>
+
+<p>Gatsby is a <a href="/docs/websites/static-sites/how-to-choose-static-site-generator/#what-is-a-static-site">Static Site Generator</a> for React built on Node.js. Gatsby uses a modern web technology stack based on client-side Javascript, reusable APIs, and prebuilt Markdown, otherwise known as the <a href="https://jamstack.org/"><em>JAMstack</em></a>. This method of building a site is fast, secure, and scalable. All production site pages are prebuilt and static, so Gatsby does not have to build HTML for each page request.</p>
+
+<h2 id="what-is-the-ci-cd-pipeline">What is the CI/CD Pipeline?</h2>
+
+<p>The CI/CD (continuous integration/continuous delivery) pipeline created in this guide is an automated sequence of events that is initiated after you update the code for your website on your local computer. These events take care of the work that you would otherwise need to perform manually: previewing your in-development site, testing your new code, and deploying it to your production server. These actions are powered by GitHub, Netlify, and Travis CI.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This guide uses GitHub as your central Git repository, but you can use any service that is compatible with Netlify and Travis.</div>
+</blockquote>
+
+
+<h3 id="netlify">Netlify</h3>
+
+<p><a href="https://www.netlify.com/">Netlify</a> is a PaaS (Platform as a Service) provider that allows you to quickly deploy static sites on the Netlify platform. In this guide Netlify will be used to provide a preview of your Gatsby site while it is in development. This preview can be shared with different stakeholders for site change approvals, or with anyone that is interested in your project. The production version of your website will ultimately be deployed to a Linode, so Netlify will only be used to preview development of the site.</p>
+
+<h3 id="travis-ci">Travis CI</h3>
+
+<p><a href="https://travis-ci.com/">Travis CI</a> is a continuous integration tool that tests and deploys the code you upload to your GitHub repository. Travis will be used in this guide to deploy your Gatsby site to a Linode running Ubuntu 18.04. Testing your website code will not be explored in depth, but the method for integrating unit tests will be introduced.</p>
+
+<h3 id="the-ci-cd-pipeline-sequence">The CI/CD Pipeline Sequence</h3>
+
+<p>This guide sets up the following flow of events:</p>
+
+<ol>
+<li><p>You create a new branch in your local Git repository and make code changes to your Gatsby project.</p></li>
+
+<li><p>You push your branch to your GitHub repository and create a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a>.</p></li>
+
+<li><p>Netlify automatically creates a preview of the site with a unique URL that can be shared.</p></li>
+
+<li><p>Travis CI automatically builds the site in an isolated container and runs any declared tests.</p></li>
+
+<li><p>When all tests pass, you merge the PR into the repository&rsquo;s <em>master</em> branch, which automatically triggers a deployment to your production Linode.</p></li>
+</ol>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Follow the <a href="/docs/getting-started/">Getting Started</a> guide and deploy a Linode running Ubuntu 18.04.</p></li>
+
+<li><p>Complete the <a href="/docs/security/securing-your-server/">Securing Your Server</a> guide to create a limited Linux user account with <code>sudo</code> privileges, harden SSH access, and remove unnecessary network services.</p>
+
+
+
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>This guide is written for a non-root user. Commands that require elevated privileges are prefixed with <code>sudo</code>. If you&rsquo;re not familiar with the <code>sudo</code> command, visit our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</p>
+
+<p>All configuration files should be edited with elevated privileges. Remember to include <code>sudo</code> before running your text editor.</p>
+</div>
+</blockquote>
+
+
+
+
+</li>
+
+<li><p>Configure DNS for your site by adding a <a href="/docs/platform/manager/dns-manager/#add-a-domain-zone">domain zone</a> and setting up <a href="/docs/networking/dns/configure-your-linode-for-reverse-dns/">reverse DNS</a> on your Linode&rsquo;s IP.</p></li>
+
+<li><p>Create a <a href="https://github.com/">GitHub</a> account if you don&rsquo;t already have one. GitHub is free for open source projects.</p></li>
+
+<li><p><a href="/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/">Install Git</a> on your local computer. Later in this guide, <a href="/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/#install-git-via-homebrew">Homebrew</a> will be used to install Gatsby on a Mac, so it&rsquo;s recommended that you also use Homebrew to install Git if you&rsquo;re using a Mac.</p></li>
+</ol>
+
+<h2 id="prepare-your-production-linode">Prepare Your Production Linode</h2>
+
+<h3 id="install-nginx">Install NGINX</h3>
+
+<ol>
+<li><p>Install NGINX from Ubuntu&rsquo;s repository <strong>on your Linode:</strong></p>
+
+<pre><code>sudo apt install nginx
+</code></pre></li>
+</ol>
+
+<h3 id="configure-nginx">Configure NGINX</h3>
+
+<ol>
+<li><p>Delete the default welcome page:</p>
+
+<pre><code>sudo rm /etc/nginx/sites-enabled/default
+</code></pre></li>
+
+<li><p>Create a site configuration file for Gatsby. Replace <code>example.com</code> in the file name and in the file&rsquo;s contents with your domain name:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>       <span class="mi">80</span><span class="p">;</span>
+    <span class="kn">server_name</span>  <span class="s">example.com</span><span class="p">;</span>
+    <span class="c1">#charset koi8-r;
+</span><span class="c1"></span>    <span class="c1">#access_log  /var/log/nginx/host.access.log  main;
+</span><span class="c1"></span>
+    <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+        <span class="kn">root</span>   <span class="s">/usr/share/nginx/html/example.com/public</span><span class="p">;</span>
+        <span class="kn">index</span>  <span class="s">index.html</span> <span class="s">index.htm</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Replace all future instances of <code>example.com</code> in this guide with your domain name.</div>
+</blockquote>
+</li>
+
+<li><p>The <code>root</code> directive in your NGINX configuration points to a directory named <code>public</code> within <code>/usr/share/nginx/html/example.com/</code>. Later in this guide, Gatsby will be responsible for creating the <code>public</code> directory and building its static content within it (specifically, via the <code>gatsby build</code> command).</p>
+
+<p>The <code>/usr/share/nginx/html/example.com/</code> directory does not exist on your server yet, so create it:</p>
+
+<pre><code>sudo mkdir -p /usr/share/nginx/html/example.com/
+</code></pre></li>
+
+<li><p>The Gatsby deployment script that will be introduced later in this guide will run under your limited Linux user. Set your limited user to be the owner of the new document root directory. This ensures the deployment script will be able write your site&rsquo;s files to it:</p>
+
+<pre><code>sudo chown $(whoami):$(id -gn) -R /usr/share/nginx/html/example.com/
+</code></pre></li>
+
+<li><p>Test your NGINX configuration for errors:</p>
+
+<pre><code>sudo nginx -t
+</code></pre></li>
+
+<li><p>Reload the configuration:</p>
+
+<pre><code>sudo nginx -s reload
+</code></pre></li>
+
+<li><p>Navigate to your Linode’s domain or IP address in a browser. Your Gatsby site files aren&rsquo;t deployed yet, so you should only see a <em>404 Not Found</em> error. Still, this error indicates that your NGINX process is running as expected.</p></li>
+</ol>
+
+<h2 id="develop-with-gatsby-on-your-local-computer">Develop with Gatsby on Your Local Computer</h2>
+
+<p>You will develop with Gatsby on your local computer. This guide walks through creating a simple sample Gatsby website, but more extensive website development is not explored, so review Gatsby&rsquo;s <a href="https://www.gatsbyjs.org/docs/">official documentation</a> afterwards for more information on the subject.</p>
+
+<h3 id="install-gatsby">Install Gatsby</h3>
+
+<p>This section provides instructions for installing Gatsby via Node.js and the Node Package Manager (npm) on Mac and Linux computers. If you are using a Windows PC, read Gatsby&rsquo;s <a href="https://www.gatsbyjs.org/docs/gatsby-on-windows/">official documentation</a> for installation instructions.</p>
+
+<ol>
+<li><p>Install npm <strong>on your local computer.</strong> If you are running Ubuntu or Debian on your computer, use <code>apt</code>:</p>
+
+<pre><code>sudo apt install nodejs npm
+</code></pre>
+
+<p>If you have a Mac, use Homebrew:</p>
+
+<pre><code>brew install nodejs npm
+</code></pre></li>
+
+<li><p>Ensure Node.js was installed by checking its version:</p>
+
+<pre><code>node --version
+</code></pre></li>
+
+<li><p>Install the Gatsby command line:</p>
+
+<pre><code>sudo npm install --global gatsby-cli
+</code></pre></li>
+</ol>
+
+<h3 id="create-a-gatsby-site">Create a Gatsby Site</h3>
+
+<ol>
+<li><p>Gatsby uses <a href="https://www.gatsbyjs.org/docs/gatsby-starters/#gatsby-starters"><em>starters</em></a> to provide a pre-configured base Gatsby site that you can customize and build on top of. This guide uses the <em>Hello World</em> starter. On your local computer, install the Hello World starter in your home directory (using the name <code>example-site</code> for your new project) and navigate into it:</p>
+
+<pre><code>gatsby new example-site https://github.com/gatsbyjs/gatsby-starter-hello-world
+cd ~/example-site
+</code></pre></li>
+
+<li><p>Inspect the contents of the directory:</p>
+
+<pre><code>ls
+</code></pre>
+
+<p>You should see output similar to:</p>
+
+<pre class="file terminal">
+  <code>
+LICENSE  node_modules  package.json  package-lock.json  README.md  src
+</code>
+</pre>
+
+
+<p>The <code>src</code> directory contains your project&rsquo;s source files. This starter will include the <a href="https://reactjs.org/">React</a> Javascript component file <code>src/pages/index.js</code>, which will be mapped to our example site&rsquo;s homepage.</p>
+
+<p>Gatsby uses <em>React components</em> to build your site&rsquo;s static pages. Components are small and isolated pieces of code, and Gatsby stores them in the <code>src/pages</code> directory. When your Gatsby site is built, these will automatically become your site&rsquo;s pages, with paths based on each file&rsquo;s name.</p></li>
+
+<li><p>Gatsby offers a built-in development server which builds and serves your Gatsby site. This server will also monitor any changes made to your <code>src</code> directory&rsquo;s React components and will rebuild Gatsby after every change, which helps you see your local changes as you make them.</p>
+
+<p>Open a new shell session (in addition the one you already have open) and run the Gatsby development server:</p>
+
+<pre><code>cd ~/example-site
+gatsby develop
+</code></pre></li>
+
+<li><p>The <code>gatsby develop</code> command will display messages from the build process, including a section similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+You can now view gatsby-starter-hello-world in the browser.
+
+    http://localhost:8000/
+</code>
+</pre>
+
+
+<p>Copy and paste the <code>http://localhost:8000/</code> URL (or the specific string displayed in your terminal) into your web browser to view your Gatsby site. You should see a page that displays &ldquo;Hello World&rdquo;.</p></li>
+
+<li><p>In your original shell session, view the contents of your <code>example-site</code> directory again:</p>
+
+<pre><code>ls
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+    LICENSE  node_modules  package.json  package-lock.json  README.md  src  public
+    </code>
+</pre>
+
+
+<p>You should now see a <code>public</code> directory which was not present before. This directory holds the static files built by Gatsby. Your NGINX server will serve the static files located in the <code>public</code> directory.</p></li>
+
+<li><p>Open the <code>src/pages/index.js</code> file in your text editor, add new text between the <code>&lt;div&gt;</code> tags, and save your change:</p>
+
+<dl class="file">
+
+
+<dt>
+		src/pages/index.js 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s2">&#34;react&#34;</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="nx">Hello</span> <span class="nx">world</span> <span class="nx">and</span> <span class="nx">universe</span><span class="o">!&lt;</span><span class="err">/div&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Navigate back to your browser window, where the updated text should automatically appear on the page.</p></li>
+</ol>
+
+<h3 id="version-control-your-gatsby-project">Version Control Your Gatsby Project</h3>
+
+<p>In the workflow explored by this guide, Git and GitHub are used to:</p>
+
+<ul>
+<li>Track changes you make during your site&rsquo;s development.</li>
+<li>Trigger the preview, test, and deployment functions offered by Netlify and Travis.</li>
+</ul>
+
+<p>The following steps present how to initialize a new local Git repository for your Gatsby project, and how to connect it to a central GitHub repository.</p>
+
+<ol>
+<li><p>Open a shell session on your local computer and navigate to the <code>example-site</code> directory. Initialize a Git repository to begin tracking your project files:</p>
+
+<pre><code>git init
+</code></pre>
+
+<p>Stage all the files you&rsquo;ve created so far for your first commit:</p>
+
+<pre><code>git add -A
+</code></pre>
+
+<p>The Hello World starter includes a <a href="https://git-scm.com/docs/gitignore"><code>.gitignore</code> file</a>. Your <code>.gitignore</code> designates which files and directories to ignore in your Git commits. By default, it is set to ignore any files in the <code>public</code> directory. The <code>public</code> directory&rsquo;s files will not be tracked in this repository, as they can be quickly rebuilt by anyone who clones your repository.</p></li>
+
+<li><p>Commit all the Hello World starter files:</p>
+
+<pre><code>git commit -m &quot;Initial commit&quot;
+</code></pre></li>
+
+<li><p>Navigate to your GitHub account and create a new repository named <code>example-site</code>. After the repository is created, copy its URL, which will have the form <code>https://github.com/your-github-username/example-site.git</code>.</p></li>
+
+<li><p>In your local computer&rsquo;s shell session, <a href="https://help.github.com/articles/about-remote-repositories/">add the GitHub repository</a> as your local repository&rsquo;s <code>origin</code>:</p>
+
+<pre><code>git remote add origin https://github.com/your-github-username/example-site.git
+</code></pre></li>
+
+<li><p>Verify the <code>origin</code> remote&rsquo;s location:</p>
+
+<pre><code>git remote -v
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+origin	https://github.com/your-github-username/example-site.git (fetch)
+origin	https://github.com/your-github-username/example-site.git (push)
+</code>
+</pre>
+</li>
+
+<li><p>Push the <em>master</em> branch of your local repository to the origin repository:</p>
+
+<pre><code>git push origin master
+</code></pre></li>
+
+<li><p>View your GitHub account in your browser, navigate to the <code>example-site</code> repository, and verify that all the files have been pushed to it successfully:</p>
+
+<p><img src="github-initial-commit.png" alt="GitHub Initial Commit" title="GitHub repository for example-site after initial commit" /></p></li>
+</ol>
+
+<h2 id="preview-your-site-with-netlify">Preview Your Site with Netlify</h2>
+
+<p>In the course of developing a website (or any other software project), a common practice when you&rsquo;ve finished a new feature and would like to share it with your collaborators is to create a <a href="https://help.github.com/articles/about-pull-requests/">pull request</a> (also referred to as a <em>PR</em>). A pull request is an intermediate step between uploading your work to GitHub (by pushing the changes to a new branch) and later merging it into the <em>master</em> branch (or another release or development branch, according to your specific Git workflow).</p>
+
+<p>Once connected to your GitHub account, the Netlify service can build a site preview from your PR&rsquo;s code every time you create a PR. Netlify will also regenerate your site preview if you commit and push new updates to your PR&rsquo;s branch while the PR is still open. A random, unique URL is assigned to every preview, and you can share these URLs with your collaborators.</p>
+
+<h3 id="connect-your-github-repository-to-netlify">Connect Your GitHub Repository to Netlify</h3>
+
+<ol>
+<li><p>Navigate to the <a href="https://www.netlify.com/">Netlify</a> site and click on the <strong>Sign Up</strong> link:</p>
+
+<p><img src="sign-up.png" alt="Netlify Home Page" title="Netlify Home Page" /></p></li>
+
+<li><p>Click on the <strong>GitHub</strong> button to connect your GitHub account with Netlify. If you used a different version control service, select that option instead:</p>
+
+<p><img src="github-connect.png" alt="GitHub and Netlify connection page" title="GitHub and Netlify connection page" /></p></li>
+
+<li><p>You will be taken to the GitHub site and asked to authorize Netlify to access your account. Click on the <strong>Authorize Netlify</strong> button:</p>
+
+<p><img src="authorize.png" alt="GitHub Netlify Authorization" title="GitHub Netlify Authorization" /></p></li>
+
+<li><p>Add your new site to Netlify and continue along with the prompts to finish connecting your repository to Netlify. Be sure to select the GitHub repository created in the previous steps:</p>
+
+<p><img src="add-site.png" alt="Add site to Netlify" title="Add site to Netlify" /></p></li>
+
+<li><p>Provide the desired deploy settings for your repository. Unless you are sure you need to change these settings, keep the Netlify defaults:</p>
+
+<p><img src="deploy-settings.png" alt="Netlify repository settings" title="Netlify repository settings" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You can add a <code>netlify.toml</code> <a href="https://www.netlify.com/docs/netlify-toml-reference/">configuration file</a> to your Git repository to define more deployment settings.</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="create-a-pull-request">Create a Pull Request</h3>
+
+<ol>
+<li><p>In your local Git repository, create a new branch to test Netlify:</p>
+
+<pre><code>git checkout -b test-netlify
+</code></pre></li>
+
+<li><p>On your computer, edit your <code>src/pages/index.js</code> and update the message displayed:</p>
+
+<dl class="file">
+
+
+<dt>
+		src/pages/index.js 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-javascript" data-lang="javascript"><span class="k">import</span> <span class="nx">React</span> <span class="nx">from</span> <span class="s2">&#34;react&#34;</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span><span class="nx">Hello</span> <span class="nx">world</span><span class="p">,</span> <span class="nx">universe</span><span class="p">,</span> <span class="nx">and</span> <span class="nx">multiverse</span><span class="o">!&lt;</span><span class="err">/div&gt;</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Commit those changes:</p>
+
+<pre><code>git add .
+git commit -m &quot;Testing Netlify&quot;
+</code></pre></li>
+
+<li><p>Push the new branch to the origin repository:</p>
+
+<pre><code>git push origin test-netlify
+</code></pre></li>
+
+<li><p>Navigate to the <code>example-site</code> repository in your GitHub account and create a <a href="https://help.github.com/articles/creating-a-pull-request/">pull request</a> with the <code>test-netlify</code> branch:</p>
+
+<p><img src="github-compare-and-pull-request-banner.png" alt="GitHub Compare and Pull Request Banner" title="GitHub Compare and Pull Request Banner" /></p></li>
+
+<li><p>After you create the pull request, you will see a <strong>deploy/netlify</strong> row with a <strong>Details</strong> link. The accent color for this row will initially be yellow while the Netlify preview is being built. When the preview&rsquo;s build process is finished, this row will turn green. At that point, you can click on the <strong>Details</strong> link to view your Gatsby site&rsquo;s preview.</p>
+
+<p><img src="netlify-preview.png" alt="Netlify GitHub Preview" title="Netlify GitHub Preview" /></p>
+
+<p>Every time you push changes to your branch, Netlify will provide a new preview link.</p></li>
+</ol>
+
+<h2 id="test-and-deploy-your-site-with-travis-ci">Test and Deploy Your Site with Travis CI</h2>
+
+<p>Travis CI manages testing your Gatsby site and deploying it to the Linode production server. Travis does this by monitoring updates to your GitHub repository:</p>
+
+<ul>
+<li><p>Travis&rsquo;s tests will run when a pull request is created, whenever new commits are pushed to that pull request&rsquo;s branch, and whenever a branch is updated on your GitHub repository in general (including outside the context of a pull request).</p></li>
+
+<li><p>Travis&rsquo;s deployment function will trigger whenever a pull request has been merged into the <em>master</em> branch (and optionally when merging into other branches, depending on your configuration).</p></li>
+</ul>
+
+<h3 id="connect-your-github-repository-to-travis-ci">Connect Your GitHub Repository to Travis CI</h3>
+
+<ol>
+<li><p>Navigate to the <a href="https://travis-ci.com/">Travis CI</a> site and click on the <em>Sign up with GitHub</em> button.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Be sure to visit <a href="https://travis-ci.com/">travis-ci.com</a>, not <a href="https://travis-ci.org/">travis-ci.org</a>. Travis originally operated travis-ci.com for paid/private repositories, and travis-ci.org was run separately for free/open source projects. <a href="https://blog.travis-ci.com/2018-05-02-open-source-projects-on-travis-ci-com-with-github-apps">As of May 2018</a>, travis-ci.com supports open source projects and should be used for all new projects. Projects on travis-ci.org will eventually be migrated to travis-ci.com.</div>
+</blockquote>
+</li>
+
+<li><p>You will be redirected to your GitHub account. Authorize Travis CI to access your GitHub account:</p>
+
+<p><img src="git-auth-travis.png" alt="Authorize Travis CI" title="Authorize Travis CI" /></p></li>
+
+<li><p>You will be redirected to your Travis CI account&rsquo;s page where you will be able to see a listing of all your public repositories. Click on the toggle button next to your Gatsby repository to activate Travis CI for it.</p></li>
+</ol>
+
+<h3 id="configure-travis-ci-to-run-tests">Configure Travis CI to Run Tests</h3>
+
+<p>Travis&rsquo;s functions are all configured by adding and editing a <a href="https://docs.travis-ci.com/user/customizing-the-build/"><code>.travis.yml</code> file</a> in the root of your project. When <code>.travis.yml</code> is present in your project and you push a commit to your central GitHub respository, Travis performs one or more <em>builds</em>.</p>
+
+<p>Travis builds are run in new virtualized environments created for each build. The build lifecycle is primarily composed of an <code>install</code> step and a <code>script</code> step. <a href="https://docs.travis-ci.com/user/customizing-the-build/#customizing-the-installation-step">The <code>install</code> step</a> is responsible for installing your project&rsquo;s dependencies in the new virtual environment. <a href="https://docs.travis-ci.com/user/customizing-the-build/#customizing-the-build-step">The <code>script</code> step</a> invokes one or more bash scripts that you specify, usually test scripts of some kind.</p>
+
+<ol>
+<li><p>Navigate to your local Gatsby project and create a new Git branch to keep track of your Travis configurations:</p>
+
+<pre><code>git checkout -b travis-configs
+</code></pre></li>
+
+<li><p>Create your <code>.travis.yml</code> file at the root of the project:</p>
+
+<pre><code>touch .travis.yml
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Make sure you commit changes at logical intervals as you modify the files in your Git repository.</div>
+</blockquote>
+</li>
+
+<li><p>Open your <code>.travis.yml</code> file in a text editor and add the following lines:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/example-site/.travis.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml">language<span class="p">:</span><span class="w"> </span>node_js<span class="w">
+</span><span class="w"></span>node_js<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span><span class="s1">&#39;10.0&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>dist<span class="p">:</span><span class="w"> </span>trusty<span class="w">
+</span><span class="w"></span>sudo<span class="p">:</span><span class="w"> </span><span class="kc">false</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This configuration specifies that the build&rsquo;s virtual environment should be Ubuntu 14.04 (<a href="https://wiki.ubuntu.com/Releases">also known as <em>trusty</em></a>). <code>sudo: false</code> indicates that the virtual environment should be a container, and not a full virtual machine. <a href="https://docs.travis-ci.com/user/reference/overview/">Other environments</a> are available.</p>
+
+<p>Gatsby is built with Node.js, so the Travis configuration is set to use <code>node_js</code> as the build language, and to use the latest version of Node (<code>10.0</code> at the time of this guide&rsquo;s publication). When Node is specified as the build language, Travis automatically sets default values for the <code>install</code> and <code>script</code> steps: <code>install</code> will run <code>npm install</code>, and <code>script</code> will run <code>npm test</code>. <a href="https://docs.travis-ci.com/user/languages/">Other languages</a>, like Python, are also available.</p></li>
+
+<li><p>The Gatsby Hello World starter provides a <a href="https://docs.npmjs.com/files/package.json"><code>package.json</code> file</a>, which is a collection of metadata that describes your project. It is used by npm to install, run, and test your project. In particular, it includes a <code>dependencies</code> section used by <code>npm install</code>, and a <code>scripts</code> section where you can declare the tests run by <code>npm test</code>.</p>
+
+<p>No tests are listed by default in your starter&rsquo;s <code>package.json</code>, so open the file with your editor and add a <code>test</code> line to the <code>scripts</code> section:</p>
+
+<dl class="file">
+
+
+<dt>
+		package.json 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;gatsby-starter-hello-world&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;description&#34;</span><span class="p">:</span> <span class="s2">&#34;Gatsby hello world starter&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;license&#34;</span><span class="p">:</span> <span class="s2">&#34;MIT&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;scripts&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;develop&#34;</span><span class="p">:</span> <span class="s2">&#34;gatsby develop&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;build&#34;</span><span class="p">:</span> <span class="s2">&#34;gatsby build&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;serve&#34;</span><span class="p">:</span> <span class="s2">&#34;gatsby serve&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;test&#34;</span><span class="p">:</span> <span class="s2">&#34;echo &#39;Run your tests here&#39;&#34;</span>
+  <span class="p">},</span>
+  <span class="nt">&#34;dependencies&#34;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nt">&#34;gatsby&#34;</span><span class="p">:</span> <span class="s2">&#34;^1.9.277&#34;</span><span class="p">,</span>
+    <span class="nt">&#34;gatsby-link&#34;</span><span class="p">:</span> <span class="s2">&#34;^1.6.46&#34;</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This entry is just a stub to illustrate where tests are declared. For more information on how to test your Gatsby project, review the <a href="https://gatsbyjs.org/docs/unit-testing/">unit testing documentation</a> on Gatsby&rsquo;s website. <a href="https://jestjs.io">Jest</a> is the testing framework recommended by Gatsby.</p></li>
+</ol>
+
+<h3 id="view-output-from-your-travis-build">View Output from Your Travis Build</h3>
+
+<ol>
+<li><p>Commit the changes you&rsquo;ve made and push your <code>travis-configs</code> branch to your origin repository:</p>
+
+<pre><code>git add .
+git commit -m &quot;Travis testing configuration&quot;
+git push origin travis-configs
+</code></pre></li>
+
+<li><p>View your GitHub repository in your browser and create a pull request for the <code>travis-configs</code> branch.</p></li>
+
+<li><p>Several rows that link to your Travis builds will appear in your new pull request. When a build finishes running without error, the build&rsquo;s accent color will turn green:</p>
+
+<p><img src="github-travis-builds.png" alt="GitHub Travis Builds" title="GitHub Travis Builds" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>Four rows for your Travis builds will appear, which is more than you may expect. This is because Travis runs your builds whenever your branch is updated, and whenever your pull request is updated, and <a href="https://docs.travis-ci.com/user/pull-requests/#double-builds-on-pull-requests">Travis considers these to be separate events</a>.</p>
+
+<p>In addition, the rows prefixed by <code>Travis CI -</code> are links to GitHub&rsquo;s preview of those builds, while rows prefixed with <code>continuous-integration/travis-ci/</code> are direct links to the builds on <a href="https://travis-ci.com/">travis-ci.com</a>.</p>
+
+<p>For now, these builds will produce identical output. After the deployment functions of Travis have been configured, the pull request builds will <a href="https://docs.travis-ci.com/user/deployment#pull-requests">skip the deployment step</a>, while the branch builds will implement your deployment configuration.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>Click the <strong>Details</strong> link in the <code>continuous-integration/travis-ci/push</code> row to visit the logs for that build. A page with similar output will appear:</p>
+
+<p><img src="travis-test-log.png" alt="Travis Build Logs - First Test" title="Travis logs from first test build" /></p>
+
+<p>Towards the end of your output, you should see the &ldquo;Run your tests here&rdquo; message from the test stub that you entered in your <code>package.json</code>. If you implement testing of your code with Jest or another library, the output from those tests will appear at this location in your build logs.</p>
+
+<p>If any of the commands that Travis CI runs in the <code>script</code> step (or in any preceding steps, like <code>install</code>) returns with a <a href="https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html">non-zero exit code</a>, then <a href="https://docs.travis-ci.com/user/customizing-the-build/#breaking-the-build">the build will fail</a>, and you will not be able to merge your pull request on GitHub.</p></li>
+
+<li><p>For now, do not merge your pull request, even if the builds were successful.</p></li>
+</ol>
+
+<h3 id="give-travis-permission-to-deploy-to-your-linode">Give Travis Permission to Deploy to Your Linode</h3>
+
+<p>In order to let Travis push your code to your production Linode, you first need to give the Travis build environment access to the Linode. This will be accomplished by generating a <a href="/docs/security/authentication/use-public-key-authentication-with-ssh/">public-private key pair</a> for your build environment and then uploading the public key to your Linode. Your code will be deployed over SSH, and the SSH agent in the build environment will be configured to use your new private key.</p>
+
+<p>The private key will also need to be encrypted, as the key file will live in your Gatsby project&rsquo;s Git repository, and you should <strong>never</strong> check a plain-text version of it into version control.</p>
+
+<ol>
+<li><p>Install the Travis CLI, which you will need to generate an encrypted version of your private key. The Travis CLI is distributed as a <a href="https://rubygems.org/gems/travis">Ruby gem</a>:</p>
+
+<p><strong>On Linux:</strong></p>
+
+<pre><code>sudo apt install ruby ruby-dev
+sudo gem install travis
+</code></pre>
+
+<p><strong>On macOS:</strong></p>
+
+<pre><code>sudo gem install travis
+</code></pre>
+
+<p><strong>On Windows:</strong> Use <a href="https://rubyinstaller.org">RubyInstaller</a> to install Ruby and the Travis CLI gem.</p></li>
+
+<li><p><a href="https://github.com/travis-ci/travis.rb#login">Log in to Travis CI</a> with the CLI:</p>
+
+<pre><code>travis login --com
+</code></pre>
+
+<p>Follow the prompts to provide your GitHub login credentials. These credentials are passed directly to GitHub and are not recorded by Travis. In exchange, GitHub returns a GitHub access token to Travis, after which Travis will provide your CLI with a Travis access token.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><a href="https://github.com/travis-ci/travis.rb#general-api-commands">The <code>--com</code> argument</a> tells your CLI to log in to <a href="https://travis-ci.com/">travis-ci.com</a> (instead of <a href="https://travis-ci.org/">travis-ci.org</a>).</div>
+</blockquote>
+</li>
+
+<li><p>Inside the root of your local <code>example-site</code> Git repository, create a <code>scripts</code> directory. This will hold files related to deploying your Gatsby site:</p>
+
+<pre><code>mkdir scripts
+</code></pre></li>
+
+<li><p>Generate a pair of SSH keys inside the <code>scripts</code> directory. The key pair will be named <em>gatsby-deploy</em> so that you don&rsquo;t accidentally overwrite any preexisting key pairs. Replace <code>your_email@example.com</code> with your email address. When prompted for the key pair&rsquo;s passphrase, enter no passphrase/leave the field empty:</p>
+
+<pre><code>ssh-keygen -t rsa -b 4096 -C &quot;your_email@example.com&quot; -f scripts/gatsby-deploy
+</code></pre>
+
+<p>Two files will be created: <code>gatsby-deploy</code> (your private key) and <code>gatsby-deploy.pub</code> (your public key).</p></li>
+
+<li><p>Add the location of the <code>gatsby-deploy</code> file to your project&rsquo;s <code>.gitignore</code> file. <strong>This will ensure that you do not accidentally commit the secret key to your central repository:</strong></p>
+
+<dl class="file">
+
+
+<dt>
+		.gitignore 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-git" data-lang="git"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-git" data-lang="git"># Other .gitignore instructions
+# [...]
+scripts/gatsby-deploy</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Encrypt your private key using the Travis CLI:</p>
+
+<pre><code>cd scripts &amp;&amp; travis encrypt-file gatsby-deploy --add --com
+</code></pre></li>
+
+<li><p>You should now see a <code>gatsby-deploy.enc</code> file in your scripts directory:</p>
+
+<pre><code>ls
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+    gatsby-deploy		gatsby-deploy.enc	gatsby-deploy.pub
+</code>
+</pre>
+</li>
+
+<li><p>The <code>--add</code> flag from the previous command also told the Travis CLI to add a few new lines to your <code>.travis.yml</code> file. These lines decrypt your private key and should look similar to the following snippet:</p>
+
+<dl class="file">
+
+
+<dt>
+		.travis.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml">before_install<span class="p">:</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>openssl<span class="w"> </span>aes-<span class="m">256</span>-cbc<span class="w"> </span>-K<span class="w"> </span>$encrypted_9e3557de08a3_key<span class="w"> </span>-iv<span class="w"> </span>$encrypted_9e3557de08a3_iv<span class="w">
+</span><span class="w">  </span>-in<span class="w"> </span>gatsby-deploy.enc<span class="w"> </span>-out<span class="w"> </span>gatsby-deploy<span class="w"> </span>-d</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            About the openssl command and Travis build variables
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>The second line (starting with <code>-in gatsby-deploy.enc</code>) is a continuation of the first line, and <code>-in</code> is an option passed to the <code>openssl</code> command. This line is not its own item in the <code>before_install</code> list.</p>
+
+<p>The <code>openssl</code> command accepts the encrypted <code>gatsby-deploy.enc</code> file and uses two environment variables to decrypt it, resulting in your original <code>gatsby-deploy</code> private key. These two variables are stored in the Settings page for your repository on travis-ci.com. <a href="https://docs.travis-ci.com/user/environment-variables/#defining-variables-in-repository-settings">Any variables stored there</a> will be accessible to your build environment:</p>
+
+<p><img src="travis-environment-variables.png" alt="Travis Environment Variables" title="Travis settings page - viewing environment variables" /></p>
+</div></div>
+</blockquote></li>
+
+<li><p>Edit the lines previously added by the <code>travis encrypt-file</code> command so that <code>gatsby-deploy.enc</code> and <code>gatsby-deploy</code> are prefixed with your <code>scripts/</code> directory:</p>
+
+<dl class="file">
+
+
+<dt>
+		.travis.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml">before_install<span class="p">:</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>openssl<span class="w"> </span>aes-<span class="m">256</span>-cbc<span class="w"> </span>-K<span class="w"> </span>$encrypted_9e3557de08a3_key<span class="w"> </span>-iv<span class="w"> </span>$encrypted_9e3557de08a3_iv<span class="w">
+</span><span class="w">  </span>-in<span class="w"> </span>scripts/gatsby-deploy.enc<span class="w"> </span>-out<span class="w"> </span>scripts/gatsby-deploy<span class="w"> </span>-d</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Continue preparing the SSH agent in your build environment by adding the following lines to the <code>before_install</code> step, after the <code>openssl</code> command. Be sure to replace <code>192.0.2.2</code> with your Linode&rsquo;s IP address:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/example-site/.travis.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml">before_install<span class="p">:</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>openssl<span class="w"> </span>aes-<span class="m">256</span>-cbc<span class="w"> </span>-K<span class="w"> </span>$encrypted_9e3557de08a3_key<span class="w"> </span>-iv<span class="w"> </span>$encrypted_9e3557de08a3_iv<span class="w">
+</span><span class="w">  </span>-in<span class="w"> </span>scripts/gatsby-deploy.enc<span class="w"> </span>-out<span class="w"> </span>scripts/gatsby-deploy<span class="w"> </span>-d<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>eval<span class="w"> </span><span class="s2">&#34;$(ssh-agent -s)&#34;</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>cp<span class="w"> </span>scripts/gatsby-deploy<span class="w"> </span>~/.ssh/gatsby-deploy<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.ssh/gatsby-deploy<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>ssh-add<span class="w"> </span>~/.ssh/gatsby-deploy<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>echo<span class="w"> </span>-e<span class="w"> </span><span class="s2">&#34;Host 192.0.2.2\n\tStrictHostKeyChecking no\n&#34;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.ssh/config</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Travis CI can add entries to the build environment&rsquo;s <code>~/.ssh/known_hosts</code> prior to deploying your site. Insert the following <code>addons</code> step prior to the <code>before_install</code> step in your <code>.travis.yml</code>. Replace <code>192.0.2.2</code> with your Linode&rsquo;s IP address:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/example-site/.travis.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="c"># [...]</span><span class="w">
+</span><span class="w"></span>dist<span class="p">:</span><span class="w"> </span>trusty<span class="w">
+</span><span class="w"></span>sudo<span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>addons<span class="p">:</span><span class="w">
+</span><span class="w">  </span>ssh_known_hosts<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span><span class="m">192.0</span>.<span class="m">2.2</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>before_install<span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="c"># [...]</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>From your local computer, upload your Travis environment&rsquo;s public key to the home directory of your limited Linux user on your Linode. Replace <code>example_user</code> with your Linode&rsquo;s user and <code>192.0.2.2</code> with your Linode&rsquo;s IP address:</p>
+
+<pre><code>scp ~/example-site/scripts/gatsby-deploy.pub example_user@192.0.2.2:~/gatsby-deploy.pub
+</code></pre></li>
+
+<li><p>Log in to your Linode (using the same user that the key was uploaded to) and copy the key into your <code>authorized_keys</code> file:</p>
+
+<pre><code>mkdir -p .ssh
+cat gatsby-deploy.pub | tee -a .ssh/authorized_keys
+</code></pre></li>
+</ol>
+
+<h3 id="create-a-deployment-script">Create a Deployment Script</h3>
+
+<ol>
+<li><p>Update your <code>.travis.yml</code> to include a <code>deploy</code> step. This section will be executed when a pull request is merged into the <em>master</em> branch. Add the following lines below the <code>before_install</code> step, at the end of the file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/example-site/.travis.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml">deploy<span class="p">:</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>provider<span class="p">:</span><span class="w"> </span>script<span class="w">
+</span><span class="w">  </span>skip_cleanup<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">  </span>script<span class="p">:</span><span class="w"> </span>bash<span class="w"> </span>scripts/deploy.sh<span class="w">
+</span><span class="w">  </span>on<span class="p">:</span><span class="w">
+</span><span class="w">    </span>branch<span class="p">:</span><span class="w"> </span>master</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The instructions for pushing your site to your Linode will be defined in a <code>deploy.sh</code> script that you will create.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Full contents of your Travis configuration
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>The complete and final version of your <code>.travis.yml</code> file should resemble the following:</p>
+
+<dl class="file">
+
+
+<dt>
+        ~/example-site/.travis.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yml" data-lang="yml">language<span class="p">:</span><span class="w"> </span>node_js<span class="w">
+</span><span class="w"></span>node_js<span class="p">:</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span><span class="s2">&#34;10.0&#34;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>dist<span class="p">:</span><span class="w"> </span>trusty<span class="w">
+</span><span class="w"></span>sudo<span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>addons<span class="p">:</span><span class="w">
+</span><span class="w">  </span>ssh_known_hosts<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span><span class="m">192.0</span>.<span class="m">2.2</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>before_install<span class="p">:</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>openssl<span class="w"> </span>aes-<span class="m">256</span>-cbc<span class="w"> </span>-K<span class="w"> </span>$encrypted_07d52615a665_key<span class="w"> </span>-iv<span class="w"> </span>$encrypted_07d52615a665_iv<span class="w">
+</span><span class="w">  </span>-in<span class="w"> </span>scripts/gatsby-deploy.enc<span class="w"> </span>-out<span class="w"> </span>scripts/gatsby-deploy<span class="w"> </span>-d<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>eval<span class="w"> </span><span class="s2">&#34;$(ssh-agent -s)&#34;</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>cp<span class="w"> </span>scripts/gatsby-deploy<span class="w"> </span>~/.ssh/gatsby-deploy<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>chmod<span class="w"> </span><span class="m">600</span><span class="w"> </span>~/.ssh/gatsby-deploy<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>ssh-add<span class="w"> </span>~/.ssh/gatsby-deploy<span class="w">
+</span><span class="w"></span>-<span class="w"> </span>echo<span class="w"> </span>-e<span class="w"> </span><span class="s2">&#34;Host 192.0.2.2\n\tStrictHostKeyChecking no\n&#34;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.ssh/config<span class="w">
+</span><span class="w">
+</span><span class="w"></span>deploy<span class="p">:</span><span class="w">
+</span><span class="w"></span>-<span class="w"> </span>provider<span class="p">:</span><span class="w"> </span>script<span class="w">
+</span><span class="w">  </span>skip_cleanup<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">  </span>script<span class="p">:</span><span class="w"> </span>bash<span class="w"> </span>scripts/deploy.sh<span class="w">
+</span><span class="w">  </span>on<span class="p">:</span><span class="w">
+</span><span class="w">    </span>branch<span class="p">:</span><span class="w"> </span>master</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</div></div>
+</blockquote></li>
+
+<li><p>From your local <code>example-site</code> Git repository, create a <code>deploy.sh</code> file in the <code>scripts</code> directory and make it executable:</p>
+
+<pre><code>touch scripts/deploy.sh
+chmod +x scripts/deploy.sh
+</code></pre></li>
+
+<li><p>Open your <code>deploy.sh</code> file in your text editor and add the following lines. Replace all instances of <code>example_user</code> with your Linode&rsquo;s user, and replace <code>192.0.2.2</code> with your Linode&rsquo;s IP:</p>
+
+<dl class="file">
+
+
+<dt>
+		scripts/deploy.sh 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/bash
+</span><span class="cp"></span><span class="nb">set</span> -x
+
+gatsby build
+
+<span class="c1"># Configure Git to only push the current branch</span>
+git config --global push.default simple
+
+<span class="c1"># Remove .gitignore and replace with the production version</span>
+rm -f .gitignore
+cp scripts/prodignore .gitignore
+cat .gitignore
+
+<span class="c1"># Add the Linode production server as a remote repository</span>
+git remote add production ssh://example_user@192.0.2.2:/home/example_user/gatsbybare.git
+
+<span class="c1"># Add and commit all the static files generated by the Gatsby build</span>
+git add . <span class="o">&amp;&amp;</span> git commit -m <span class="s2">&#34;Gatsby build&#34;</span>
+
+<span class="c1"># Push all changes to the Linode production server</span>
+git push -f production HEAD:refs/heads/master</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The deploy script builds the Gatsby static files (which are placed inside the <code>public</code> directory inside your repository) and pushes them to your Linode. Specifically, this script:</p>
+
+<ul>
+<li>Commits the newly-built <code>public</code> directory to the Travis build environment&rsquo;s copy of your Git repository.</li>
+<li>Pushes that commit (over the SSH protocol) to a remote repository on your Linode, which you will create in the next section of this guide.</li>
+</ul>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Remember that because these instructions are executed in an isolated virtual environment, the <code>git commit</code> that is run here does not affect the repository on your local computer or on GitHub.</div>
+</blockquote>
+</li>
+
+<li><p>You may recall that you previously updated your <code>.gitignore</code> file to exclude the <code>public</code> directory. To allow this directory to be committed in your build environment&rsquo;s repository (and therefore pushed to your Linode), you will need to override that rule at deploy time.</p>
+
+<p>From the root of your local Gatsby project, copy your <code>.gitignore</code> to a new <code>scripts/prodignore</code> file:</p>
+
+<pre><code>cp .gitignore scripts/prodignore
+</code></pre>
+
+<p>Open your new <code>prodignore</code> file, remove the <code>public</code> line, and save the change:</p>
+
+<dl class="file">
+
+
+<dt>
+		scripts/prodignore 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-git" data-lang="git"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-git" data-lang="git">.cache/
+public # Remove this line
+yarn-error.log</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>deploy.sh</code> script you created includes a line that will copy this <code>scripts/prodignore</code> file into your repository&rsquo;s root <code>.gitgnore</code>, which will then allow the script to commit the <code>public</code> directory.</p></li>
+</ol>
+
+<h3 id="prepare-the-remote-git-repository-on-your-linode">Prepare the Remote Git Repository on Your Linode</h3>
+
+<p>In the previous section you completed the configuration for the Travis deployment step. In this section, you will prepare the Linode to receive Git pushes from your deployment script. The pushed website files will then be served by your NGINX web server.</p>
+
+<ol>
+<li><p>SSH into your Linode (under the same the user that holds your Travis build environment&rsquo;s public key). Create a new directory inside your home folder named <code>gatsbybare.git</code>:</p>
+
+<pre><code>mkdir ~/gatsbybare.git
+</code></pre></li>
+
+<li><p>Navigate to the new directory and initialize it as a <em>bare</em> Git repository:</p>
+
+<pre><code>cd ~/gatsbybare.git
+git init --bare
+</code></pre>
+
+<p><a href="https://git-scm.com/book/en/v2/Git-on-the-Server-Getting-Git-on-a-Server">A bare Git repository</a> stores Git objects and does not maintain working copies (i.e. file changes that haven&rsquo;t been committed) in the directory. Bare repositories provide a centralized place where users can push their changes. GitHub is an example of a bare Git repository. The common practice for naming a bare Git repository is to end the name with the <code>.git</code> extension.</p></li>
+
+<li><p>Configure the Git directory to allow linking two repositories together:</p>
+
+<pre><code>git config receive.denyCurrentBranch updateInstead
+</code></pre></li>
+
+<li><p>Your Travis build environment will now be able to push files into your Linode&rsquo;s Git repository, but the files will not be located in your NGINX document root. To fix this, you will use the <a href="https://git-scm.com/book/en/v2/Customizing-Git-Git-Hooks"><em>hooks</em> feature</a> of Git to copy your website files to the document root folder. Specifically, you can implement a <code>post-receive</code> hook that will run after every push to your Linode&rsquo;s repository.</p>
+
+<p>In your Linode&rsquo;s Git repository, create the <code>post-receive</code> file and make it executable:</p>
+
+<pre><code>touch hooks/post-receive
+chmod +x hooks/post-receive
+</code></pre></li>
+
+<li><p>Add the following lines to the <code>post-receive</code> file. Replace <code>example.com</code> with your domain name, and replace <code>example_user</code> with your Linode&rsquo;s user:</p>
+
+<dl class="file">
+
+
+<dt>
+		hooks/post-receive 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
+</span><span class="cp"></span>git --work-tree<span class="o">=</span>/usr/share/nginx/html/example.com --git-dir<span class="o">=</span>/home/example_user/gatsbybare.git checkout -f</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This script will check out the files from your Linode repository&rsquo;s <em>master</em> branch into your document root folder.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>While a bare Git repository does not keep working copies of files within the repository&rsquo;s directory, you can still use the <code>--work-tree</code> option to check out files into another directory.</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="deploy-with-travis-ci">Deploy with Travis CI</h3>
+
+<p>All of the test and deployment configuration work has been completed and can now be executed:</p>
+
+<ol>
+<li><p>Commit all remaining changes to your <code>travis-configs</code> branch and push them up to your central GitHub repository:</p>
+
+<pre><code>git add .
+git commit -m &quot;Travis deployment configuration&quot;
+git push origin travis-configs
+</code></pre></li>
+
+<li><p>Visit the pull request you previously created on GitHub for your <code>travis-configs</code> branch. If you visit this page shortly after the <code>git push</code> command is issued, the new Travis builds may still be in progress.</p></li>
+
+<li><p>After the linked <code>continuous-integration/travis-ci/pr</code> pull request Travis build completes, click on the corresponding <strong>Details</strong> link. If the build was successful, you should see the following message:</p>
+
+<pre class="file terminal">
+  <code>
+Skipping a deployment with the script provider because the current build is a pull request.
+</code>
+</pre>
+
+
+<p>This message appears because pull request builds <a href="https://docs.travis-ci.com/user/deployment#pull-requests">skip the deployment step</a>.</p></li>
+
+<li><p>Back on the GitHub pull request page, after the linked <code>continuous-integration/travis-ci/push</code> branch build completes, click on the corresponding <strong>Details</strong> link. If the build was successful, you should see the following message:</p>
+
+<pre class="file terminal">
+  <code>
+Skipping a deployment with the script provider because this branch is not permitted: travis-configs
+</code>
+</pre>
+
+
+<p>This message appears because your <code>.travis.yml</code> restricts the deployment script to updates on the <em>master</em> branch.</p></li>
+
+<li><p>If your Travis builds failed, review the build logs for the reason for the failure.</p></li>
+
+<li><p>If the builds succeeded, <a href="https://help.github.com/articles/merging-a-pull-request/">merge your pull request</a>.</p></li>
+
+<li><p>After merging the pull request, visit <a href="https://travis-ci.com/">travis-ci.com</a> directly and view the <code>example-site</code> repository. A new Travis build corresponding to your <code>Merge pull request</code> commit will be in progress. When this build completes, a <code>Deploying application</code> message will appear at the end of the build logs. This message can be expanded to view the complete logs for the <code>deploy</code> step.</p></li>
+
+<li><p>If your <code>deploy</code> step succeeded, you can now visit your domain name in your browser. You should see the message from your Gatsby project&rsquo;s <code>index.js</code>.</p></li>
+</ol>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>If your Travis builds are failing, here are some places to look when troubleshooting:</p>
+
+<ul>
+<li>View the build logs for the failed Travis build.</li>
+<li>Ensure all your <code>.sh</code> scripts are executable, including the Git hook on the Linode.</li>
+<li>Test the Git hook on your Linode by running <code>bash ~/gatsbybare.git/hooks/post-receive</code>.</li>
+<li>If you encounter permissions issues, make sure your Linode user can write files to your document root directory.</li>
+<li>To view the contents of the bare Git repository, run <code>git ls-tree --full-tree -r HEAD</code>.</li>
+</ul>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Read the <a href="https://www.gatsbyjs.org/tutorial/">Gatsby.js Tutorial</a> to learn how to build a website with Gatsby.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library toc-long nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-gatsby">What is Gatsby?</a></li>
+<li><a href="#what-is-the-ci-cd-pipeline">What is the CI/CD Pipeline?</a>
+<ul>
+<li><a href="#netlify">Netlify</a></li>
+<li><a href="#travis-ci">Travis CI</a></li>
+<li><a href="#the-ci-cd-pipeline-sequence">The CI/CD Pipeline Sequence</a></li>
+</ul></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#prepare-your-production-linode">Prepare Your Production Linode</a>
+<ul>
+<li><a href="#install-nginx">Install NGINX</a></li>
+<li><a href="#configure-nginx">Configure NGINX</a></li>
+</ul></li>
+<li><a href="#develop-with-gatsby-on-your-local-computer">Develop with Gatsby on Your Local Computer</a>
+<ul>
+<li><a href="#install-gatsby">Install Gatsby</a></li>
+<li><a href="#create-a-gatsby-site">Create a Gatsby Site</a></li>
+<li><a href="#version-control-your-gatsby-project">Version Control Your Gatsby Project</a></li>
+</ul></li>
+<li><a href="#preview-your-site-with-netlify">Preview Your Site with Netlify</a>
+<ul>
+<li><a href="#connect-your-github-repository-to-netlify">Connect Your GitHub Repository to Netlify</a></li>
+<li><a href="#create-a-pull-request">Create a Pull Request</a></li>
+</ul></li>
+<li><a href="#test-and-deploy-your-site-with-travis-ci">Test and Deploy Your Site with Travis CI</a>
+<ul>
+<li><a href="#connect-your-github-repository-to-travis-ci">Connect Your GitHub Repository to Travis CI</a></li>
+<li><a href="#configure-travis-ci-to-run-tests">Configure Travis CI to Run Tests</a></li>
+<li><a href="#view-output-from-your-travis-build">View Output from Your Travis Build</a></li>
+<li><a href="#give-travis-permission-to-deploy-to-your-linode">Give Travis Permission to Deploy to Your Linode</a></li>
+<li><a href="#create-a-deployment-script">Create a Deployment Script</a></li>
+<li><a href="#prepare-the-remote-git-repository-on-your-linode">Prepare the Remote Git Repository on Your Linode</a></li>
+<li><a href="#deploy-with-travis-ci">Deploy with Travis CI</a></li>
+</ul></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

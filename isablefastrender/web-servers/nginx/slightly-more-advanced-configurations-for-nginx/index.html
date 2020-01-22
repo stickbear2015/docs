@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Getting Started with NGINX - Part 2: (Slightly More) Advanced Configurations</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Configure and optimize NGINX to best suit your web server needs. Host multiple sites, configure caching, disable content sniffing, and more.">
+        <meta name="keywords" content="nginx, web server, nginx configuration, multiple sites, configure caching">
+        
+        <meta property="og:title" content="Getting Started with NGINX - Part 2: (Slightly More) Advanced Configurations">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/web-servers/nginx/slightly-more-advanced-configurations-for-nginx/">
+        <meta property="og:description" content="Configure and optimize NGINX to best suit your web server needs. Host multiple sites, configure caching, disable content sniffing, and more.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/web-servers/nginx/slightly-more-advanced-configurations-for-nginx/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/">Web Server Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/nginx/">NGINX</a>
+  
+</li>
+
+
+<li>
+  
+  Getting Started with NGINX - Part 2: (Slightly More) Advanced Configurations
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Getting Started with NGINX - Part 2: (Slightly More) Advanced Configurations</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-09-25T12:30:03-04:00">Tuesday, September 25, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fslightly-more-advanced-configurations-for-nginx%2f&via=linode&text=Getting%20Started%20with%20NGINX%20-%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fslightly-more-advanced-configurations-for-nginx%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fslightly-more-advanced-configurations-for-nginx%2f&t=Getting%20Started%20with%20NGINX%20-%20Part%202%3a%20%28Slightly%20More%29%20Advanced%20Configurations" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Getting%20Started%20with%20NGINX%20-%20Part%202%3a%20%28Slightly%20More%29%20Advanced%20Configurations%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fweb-servers%2fnginx%2fslightly-more-advanced-configurations-for-nginx%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/web-servers%5cnginx%5cslightly-more-advanced-configurations-for-nginx%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/web-servers%5cnginx%5cslightly-more-advanced-configurations-for-nginx%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="Getting-Started-with-NGINX-Part-2-smg.jpg" alt="Getting Started with NGINX - Part 2" /></p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ul>
+<li><p>This guide is Part 2 of our <em>Getting Started with NGINX</em> series, and you will need a working NGINX setup with a website accessible via HTTP. If you do not already have that, complete <a href="/docs/web-servers/nginx/nginx-installation-and-basic-setup/">Part 1: Basic Installation and Setup</a>.</p></li>
+
+<li><p>You will need root access to the system, or a user account with <code>sudo</code> privilege.</p></li>
+
+<li><p>You may want to make another backup of your <code>nginx.conf</code> so you have a snapshot of the work you&rsquo;ve done up to this point:</p>
+
+<pre><code>cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.backup-pt2
+</code></pre></li>
+</ul>
+
+<h2 id="configuration-notes">Configuration Notes</h2>
+
+<p>The internet has no shortage of sites, posts, and other places listing &ldquo;tuning&rdquo;, &ldquo;tweaking&rdquo;, or &ldquo;optimizing&rdquo; procedures for NGINX.</p>
+
+<p>However, rarely are these configurations tested to deduce if there is in fact a performance increase. Of those that are, the author&rsquo;s use case may be completely different than yours, so there&rsquo;s no guarantee you&rsquo;ll experience the same benefit using their configuration.</p>
+
+<p>Favor simplicity and your own results; do not blindly follow tuning guides you find on the internet which haphazardly present their configuration as one-size-fits-all advice. There are some config options which are virtually universal, and we use many of them in this series. Beyond that, you could actually be decreasing your server&rsquo;s performance and/or security.</p>
+
+<p>Truly advanced system tuning for web services, such as adjusting Linux kernel parameters and TCP stack functionality, is out of the scope of this series. If you would like to explore the topic further, a good place to start is <a href="https://www.nginx.com/blog/tuning-nginx/">this NGINX blog post</a>.</p>
+
+<h2 id="host-multiple-websites">Host Multiple Websites</h2>
+
+<p>In NGINX speak, a <em>Server Block</em> basically equates to a website (same as <em>Virtual Host</em> in Apache terminology). NGINX can host multiple websites, and <strong>each site&rsquo;s configuration should be in its own file</strong>, with the name formatted as <code>example.com.conf</code>. That file should be located at <code>/etc/nginx/conf.d/</code>.</p>
+
+<p>If you then want to disable the site <em>example.com</em>, then rename <code>example.com.conf</code> to <code>example.com.conf.disabled</code>. When hosting multiple sites, be sure to separate their access and error logs with specific directives inside each site&rsquo;s server block. See <a href="https://www.nginx.com/resources/wiki/start/topics/examples/server_blocks/"><em>Server Block Examples</em></a> in the NGINX docs for more information.</p>
+
+<ol>
+<li><p>Provided that you already have one site configuration running on NGINX, all the second site&rsquo;s configuration file needs is a server block inside:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example2.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>       <span class="mi">80</span><span class="p">;</span>
+    <span class="kn">listen</span>       <span class="s">[::]:80</span><span class="p">;</span>
+    <span class="kn">server_name</span>  <span class="s">example2.org</span> <span class="s">www.example2.org</span><span class="p">;</span>
+    <span class="kn">access_log</span>   <span class="s">logs/example</span><span class="mi">2</span><span class="s">.access.log</span> <span class="s">main</span><span class="p">;</span>
+    <span class="kn">error_log</span>    <span class="s">logs/example</span><span class="mi">2</span><span class="s">.error</span> <span class="s">error</span><span class="p">;</span>
+
+    <span class="kn">root</span>         <span class="s">/var/www/example2.com/</span><span class="p">;</span>
+
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Reload NGINX:</p>
+
+<pre><code>nginx -s reload
+</code></pre>
+
+<p>Your second website should be visible at its domain and/or IP address.</p></li>
+</ol>
+
+<h2 id="basic-nginx-caching">Basic NGINX Caching</h2>
+
+<p>NGINX can cache files served by web applications and frameworks such as WordPress, Drupal and Ruby on Rails. Though covering caching at this point steps out of the basic workflow so far (we haven&rsquo;t set up any application with data to cache yet), it&rsquo;s worth mentioning here briefly.</p>
+
+<p>For more information, see the <a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html">NGINX docs</a>, <a href="https://www.nginx.com/resources/admin-guide/content-caching/">NGINX admin guide</a>, and the <a href="https://www.nginx.com/blog/nginx-caching-guide/">NGINX blog</a>.</p>
+
+<ol>
+<li><p>Create a folder to store cached content:</p>
+
+<pre><code>mkdir /var/www/example.com/cache/
+</code></pre></li>
+
+<li><p>Add the <code>proxy_cache_path</code> directive to NGINX&rsquo;s <code>http</code> block. Make sure the file path references the folder you just created in Step 1.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/nginx.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">proxy_cache_path</span> <span class="s">/var/www/example.com/cache/</span> <span class="s">keys_zone=one:10m</span> <span class="s">max_size=500m</span> <span class="s">inactive=24h</span> <span class="s">use_temp_path=off</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<ul>
+<li><p><code>keys_zone=one:10m</code> sets a 10 megabyte shared storage zone (simply called <code>one</code>, but you can change this for your needs) for cache keys and metadata.</p></li>
+
+<li><p><code>max_size=500m</code> sets the actual cache size at 500 MB.</p></li>
+
+<li><p><code>inactive=24h</code> removes anything from the cache which has not been accessed in the last 24 hours.</p></li>
+
+<li><p><code>use_temp_path=off</code> writes cached files directly to the cache path. This setting is <a href="https://www.nginx.com/blog/nginx-caching-guide/">recommended by NGNIX</a>.</p></li>
+</ul></li>
+
+<li><p>Add the following to your site configuration&rsquo;s <code>server</code> block. If you changed the name of the storage zone in the previous step, change the directive below from <code>one</code> to the zone name you chose.</p>
+
+<p>Replace <em>ip-address</em> and <em>port</em> with the URL and port of the upstream service whose files you wish to cache. For example, you would fill in <code>127.0.0.1:9000</code> if using <a href="https://www.nginx.com/resources/wiki/start/topics/recipes/wordpress/">WordPress</a> or <code>127.0.0.1:2638</code> with <a href="https://docs.ghost.org/v1/docs/config#section-server">Ghost</a>.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">proxy_cache</span> <span class="no">on</span><span class="s">e</span><span class="p">;</span>
+    <span class="k">location</span> <span class="s">/</span> <span class="p">{</span>
+    <span class="kn">proxy_pass</span> <span class="s">http://ip-address:port</span><span class="p">;</span>
+    <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>If you need to clear the cache, <a href="http://nginx.2469901.n2.nabble.com/best-way-to-empty-nginx-cache-td3017271.html#a3017429">the easiest way</a> is with the command:</p>
+
+<pre><code>find /var/www/example.com/cache/ -type f -delete
+</code></pre>
+
+<p>If you want more than just a basic cache clear, you can use the <a href="https://www.nginx.com/products/nginx/caching/#purging">proxy_cache_purge</a> directive.</p></li>
+</ol>
+
+<h2 id="http-response-header-fields">HTTP Response Header Fields</h2>
+
+<p>Use <a href="https://nginx.org/en/docs/http/ngx_http_headers_module.html"><em>add_header</em></a> directives in your configuration carefully. Unlike other directives, an <code>add_header</code> directive is not inherited from parent configuration blocks. If you have the directive in both, an <code>add_header</code> directive in a <code>server</code> block will override any in your <code>http</code> area.</p>
+
+<p>For this reason, you should include them in one of two different ways:</p>
+
+<ul>
+<li><p>Put all <code>add_header</code> directives in the <code>http</code> block. This isn&rsquo;t practical unless you want every header directive to apply to every site in your configuration.</p></li>
+
+<li><p>Add the desired <code>add_header</code> directives only to the <code>server</code> block (or an <a href="https://nginx.org/en/docs/ngx_core_module.html#include">include file</a>) of the site you want those directives applied to. This is the best scenario if you have multiple websites and want some header directives applied to some sites, but not all sites you&rsquo;re hosting.</p></li>
+</ul>
+
+<p>Below are some of the more universally-applicable header modifications. There are many more available, and you should read through the <a href="https://www.owasp.org/index.php/OWASP_Secure_Headers_Project">OWASP Secure Headers Project</a> for more information.</p>
+
+<h3 id="disable-content-sniffing">Disable Content Sniffing</h3>
+
+<p>Content sniffing allows browsers to inspect a byte stream in order to determine the file format of its contents. It is generally used to help sites that do not correctly identify the MIME type of their content, but it also presents a vector for cross-site scripting and other attacks. To disable content sniffing, add the following line to your configuration&rsquo;s <code>http</code> block:</p>
+
+<pre><code>add_header X-Content-Type-Options nosniff;
+</code></pre>
+
+<h3 id="limit-or-disable-content-embedding">Limit or Disable Content Embedding</h3>
+
+<p>Content embedding is when a website renders a 3rd party element (div, img, etc.), or even an entire page from a completely different website, in a  <code>&lt;frame&gt;</code>, <code>&lt;iframe&gt;</code>, or <code>&lt;object&gt;</code> HTML block on its own site.</p>
+
+<p>The <code>X-Frame-Options</code> HTTP header stops content embedding so your site can&rsquo;t be presented from an embedded frame hosted on someone else&rsquo;s website, one undesirable outcome being a clickjacking attack. See <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Frame-Options"><em>X-Frame-Options, Mozilla Developer Network</em></a> for more information.</p>
+
+<p>To disallow the embedding of your content from any domain other than your own, add the following line to your configuration:</p>
+
+<pre><code>add_header X-Frame-Options SAMEORIGIN;
+</code></pre>
+
+<p>To disallow embedding entirely, even from within your own site&rsquo;s domain:</p>
+
+<pre><code>add_header X-Frame-Options DENY;
+</code></pre>
+
+<h3 id="cross-site-scripting-xss-filter">Cross-Site Scripting (XSS) Filter</h3>
+
+<p>This header signals to a connecting browser to enable its cross-site scripting filter for the request responses. XSS filtering is usually enabled by default in modern browsers, but there are occasions where it&rsquo;s disabled by the user. Forcing XSS filtering for your website is a security precaution, especially when your site offers dynamic content like login sessions:</p>
+
+<pre><code>add_header X-XSS-Protection &quot;1; mode=block&quot;;
+</code></pre>
+
+<h2 id="configuration-recap">Configuration Recap</h2>
+
+<p>To summarize where we are so far:</p>
+
+<ul>
+<li><p>We&rsquo;re continuing with the configuration from <a href="/docs/web-servers/nginx/nginx-installation-and-basic-setup/#configuration-recap">Part 1</a>, so we have a single site being served over HTTP.</p></li>
+
+<li><p>We&rsquo;ve added the caching and HTTP header changes mentioned above.</p></li>
+
+<li><p>The site&rsquo;s configuration file looks like this:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>         <span class="mi">80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">listen</span>         <span class="s">[::]:80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">server_name</span>    <span class="s">example.com</span> <span class="s">www.example.com</span><span class="p">;</span>
+    <span class="kn">root</span>           <span class="s">/var/www/example.com</span><span class="p">;</span>
+    <span class="kn">index</span>          <span class="s">index.html</span><span class="p">;</span>
+
+    <span class="kn">proxy_cache</span> <span class="no">on</span><span class="s">e</span><span class="p">;</span>
+        <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+            <span class="kn">proxy_pass</span> <span class="s">http://localhost:8000</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    <span class="kn">gzip</span>             <span class="no">on</span><span class="p">;</span>
+    <span class="kn">gzip_comp_level</span>  <span class="mi">3</span><span class="p">;</span>
+    <span class="kn">gzip_types</span>       <span class="s">text/html</span> <span class="s">text/plain</span> <span class="s">text/css</span> <span class="s">image/*</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Here is the server&rsquo;s <code>nginx.conf</code> file. Again, our additions are at the bottom of the block so we know what we added:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/nginx.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">user</span>  <span class="s">nginx</span><span class="p">;</span>
+<span class="k">worker_processes</span>  <span class="s">auto</span><span class="p">;</span>
+
+<span class="k">error_log</span>  <span class="s">/var/log/nginx/error.log</span> <span class="s">warn</span><span class="p">;</span>
+<span class="k">pid</span>        <span class="s">/var/run/nginx.pid</span><span class="p">;</span>
+
+<span class="k">events</span> <span class="p">{</span>
+    <span class="kn">worker_connections</span>  <span class="mi">1024</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="k">http</span> <span class="p">{</span>
+    <span class="kn">include</span>       <span class="s">/etc/nginx/mime.types</span><span class="p">;</span>
+    <span class="kn">default_type</span>  <span class="s">application/octet-stream</span><span class="p">;</span>
+
+    <span class="kn">log_format</span>  <span class="s">main</span>  <span class="s">&#39;</span><span class="nv">$remote_addr</span> <span class="s">-</span> <span class="nv">$remote_user</span> <span class="s">[</span><span class="nv">$time_local]</span> <span class="s">&#34;</span><span class="nv">$request&#34;</span> <span class="s">&#39;</span>
+                      <span class="s">&#39;</span><span class="nv">$status</span> <span class="nv">$body_bytes_sent</span> <span class="s">&#34;</span><span class="nv">$http_referer&#34;</span> <span class="s">&#39;</span>
+                      <span class="s">&#39;&#34;</span><span class="nv">$http_user_agent&#34;</span> <span class="s">&#34;</span><span class="nv">$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+
+    <span class="kn">access_log</span>  <span class="s">/var/log/nginx/access.log</span>  <span class="s">main</span><span class="p">;</span>
+
+    <span class="kn">sendfile</span>        <span class="no">on</span><span class="p">;</span>
+    <span class="c1">#tcp_nopush     on;
+</span><span class="c1"></span>
+    <span class="kn">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+
+    <span class="c1">#gzip  on;
+</span><span class="c1"></span>
+    <span class="kn">include</span> <span class="s">/etc/nginx/conf.d/*.conf</span><span class="p">;</span>
+
+
+    <span class="kn">add_header</span>    <span class="s">X-Content-Type-Options</span> <span class="s">nosniff</span><span class="p">;</span>
+    <span class="kn">add_header</span>    <span class="s">X-Frame-Options</span> <span class="s">SAMEORIGIN</span><span class="p">;</span>
+    <span class="kn">add_header</span>    <span class="s">X-XSS-Protection</span> <span class="s">&#34;1</span><span class="p">;</span> <span class="kn">mode=block&#34;</span><span class="p">;</span>
+
+    <span class="kn">proxy_cache_path</span>    <span class="s">/var/www/example.com/cache/</span> <span class="s">keys_zone=one:10m</span> <span class="s">inactive=60m</span> <span class="s">use_temp_path=off</span><span class="p">;</span>
+    <span class="kn">server_tokens</span>       <span class="no">off</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+
+<h2 id="part-3-enable-tls-for-https-connections">Part 3: Enable TLS for HTTPS Connections</h2>
+
+<p>If a well-running HTTP site is all you&rsquo;re looking for, the configurations in this guide will meet that requirement. If you plan to serve your site over HTTPS, then continue to Part 3 of this series: <a href="/docs/web-servers/nginx/enable-tls-on-nginx-for-https-connections/">Enable TLS for HTTPS Connections</a>.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#configuration-notes">Configuration Notes</a></li>
+<li><a href="#host-multiple-websites">Host Multiple Websites</a></li>
+<li><a href="#basic-nginx-caching">Basic NGINX Caching</a></li>
+<li><a href="#http-response-header-fields">HTTP Response Header Fields</a>
+<ul>
+<li><a href="#disable-content-sniffing">Disable Content Sniffing</a></li>
+<li><a href="#limit-or-disable-content-embedding">Limit or Disable Content Embedding</a></li>
+<li><a href="#cross-site-scripting-xss-filter">Cross-Site Scripting (XSS) Filter</a></li>
+</ul></li>
+<li><a href="#configuration-recap">Configuration Recap</a></li>
+<li><a href="#part-3-enable-tls-for-https-connections">Part 3: Enable TLS for HTTPS Connections</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

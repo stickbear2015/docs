@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Configure PostgreSQL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide will show you how to tune PostgreSQL for better performance on your Linode">
+        <meta name="keywords" content="postgresql, clusters, databases, postgres, database configuration, database tuning, configure postgres">
+        
+        <meta property="og:title" content="Configure PostgreSQL">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/databases/postgresql/configure-postgresql/">
+        <meta property="og:description" content="PostgreSQL is a database server that focuses on standards compliance. Follow this guide to optimize PostgreSQL performance.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/databases/postgresql/configure-postgresql/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/databases/">Database Management Systems</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/databases/postgresql/">PostgreSQL</a>
+  
+</li>
+
+
+<li>
+  
+  Configure PostgreSQL
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Configure PostgreSQL</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-06-01T09:30:58-04:00">Friday, June 1, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Angel
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdatabases%2fpostgresql%2fconfigure-postgresql%2f&via=linode&text=Configure%20PostgreSQL" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdatabases%2fpostgresql%2fconfigure-postgresql%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdatabases%2fpostgresql%2fconfigure-postgresql%2f&t=Configure%20PostgreSQL" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Configure%20PostgreSQL%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdatabases%2fpostgresql%2fconfigure-postgresql%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/databases%5cpostgresql%5cconfigure-postgresql%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/databases%5cpostgresql%5cconfigure-postgresql%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="Configure_PostgreSQL.jpg" alt="Configure PostgreSQL" /></p>
+
+<h2 id="what-is-postgresql">What is PostgreSQL?</h2>
+
+<p><a href="https://www.postgresql.org/">PostgreSQL</a> is a popular, open source relational database system. Our <a href="/docs/databases/postgresql/">PostgreSQL section</a> has detailed instructions on how to install PostgreSQL on different distributions. These basic installations will be sufficient for many use cases; however, PostgreSQL provides many advanced configuration options that can help optimize your databases&rsquo;s performance in a production environment.</p>
+
+<p>PostgreSQL can be configured and tuned through a series of configuration files. In this guide you will learn about the configuration files and how to fine-tune your database to fit your specific needs.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>You should have a working installation of PostgreSQL on your system before beginning this guide. Go through our <a href="/docs/databases/postgresql/how-to-install-postgresql-on-ubuntu-16-04/">How to Install PostgreSQL on Ubuntu guide</a> to install PostgreSQL and create a sample database.
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The steps in this guide require root privileges. Be sure to run the steps below as <code>root</code> or with the <code>sudo</code> prefix. For more information on privileges, see our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</div>
+</blockquote>
+</p>
+
+<h2 id="postgresql-configuration-files">PostgreSQL Configuration Files</h2>
+
+<h3 id="understanding-postgresql-conf">Understanding postgresql.conf</h3>
+
+<p>Most global configuration settings are stored in <code>postgresql.conf</code>, which is created automatically when you install PostgreSQL. Open this file in your preferred text editor:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.5/main/postgresql.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-txt" data-lang="txt"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-txt" data-lang="txt"> -----------------------------
+# PostgreSQL configuration file
+# -----------------------------
+#
+# This file consists of lines of the form:
+#
+#   name = value
+#
+# (The &#34;=&#34; is optional.) Whitespace may be used. Comments are introduced with
+# &#34;#&#34; anywhere on a line. The complete list of parameter names and allowed
+# values can be found in the PostgreSQL documentation.</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The contents of the configuration file are broken up into different sections:</p>
+
+<table>
+<thead>
+<tr>
+<th>Directive</th>
+<th>Use</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>File Locations</td>
+<td>Defines where values of the database will be stored</td>
+</tr>
+
+<tr>
+<td>Connections and Authentications</td>
+<td>Allows you to define the settings for connections, security, and authentication</td>
+</tr>
+
+<tr>
+<td>Resource Usage</td>
+<td>Defines the parameters (memory, space) usable by PostgreSQL.</td>
+</tr>
+
+<tr>
+<td>Write Ahead Log</td>
+<td>Configures <em>Write-Ahead logging</em>, which if properly configured, can result in a lower amount of disk writes.</td>
+</tr>
+
+<tr>
+<td>Replication</td>
+<td>Control the way replications and replication data is handled by the server.</td>
+</tr>
+
+<tr>
+<td>Query Tuning</td>
+<td>This set of directives can help you optimize the process of querying to the database.</td>
+</tr>
+
+<tr>
+<td>Error Reporting and Logging</td>
+<td>Defines how and where the database logging will take place.</td>
+</tr>
+
+<tr>
+<td>Runtime Statistics</td>
+<td>Modifies the tracking of runtime data.</td>
+</tr>
+
+<tr>
+<td>Autovacuum Parameters</td>
+<td>A maintenance feature that runs a daemon and periodically reuses previously occupied disk space.</td>
+</tr>
+
+<tr>
+<td>Client Connection Defaults</td>
+<td>This is one of the directives that controls a wide range of features within PostgreSQL</td>
+</tr>
+
+<tr>
+<td>Lock Management</td>
+<td>Sets a timer that functions as a fail-safe. If the database is queried and locks-down, the timer will check for a <a href="https://www.postgresql.org/docs/9.1/static/explicit-locking.html#LOCKING-DEADLOCKS">dead-lock condition</a>, and will restore the database if it is found.</td>
+</tr>
+
+<tr>
+<td>Version/Platform Compatibility</td>
+<td>Allows you to set version-specific compatibility options</td>
+</tr>
+
+<tr>
+<td>Error Handling</td>
+<td>Defines the behavior upon an error.</td>
+</tr>
+
+<tr>
+<td>Config File Includes</td>
+<td>Lists the config files that will be included when Postgres looks for configuration files</td>
+</tr>
+
+<tr>
+<td>Customized Options</td>
+<td>Allows you to add settings that may not fit in a particular section, or to keep your settings organized within this section.</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Some of the directives in this configuration file are <strong>extremely</strong> use-case specific. Please consider all effects carefully before changing directives.</div>
+</blockquote>
+
+
+<h3 id="common-postgres-configuration-options">Common Postgres Configuration Options</h3>
+
+<p>Configuring a PostgreSQL database can be a complex process. Below are some basic configuration settings recommended when using PostgreSQL on a Linode. All of these options are explained in further detail in the <a href="https://wiki.postgresql.org/wiki/Tuning_Your_PostgreSQL_Server">PostgreSQL Tuning Guide</a>:</p>
+
+<table>
+<thead>
+<tr>
+<th>Directive</th>
+<th>Objective</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>listen_addresses = &lsquo;localhost&rsquo;</td>
+<td>By default, Postgres only listens on localhost. However, by editing this section and replacing <code>localhost</code> with an IP, you can force Postgres to listen on another IP. Use &lsquo;*&rsquo; to listen on all IP addresses.</td>
+</tr>
+
+<tr>
+<td>max_connections = 50</td>
+<td>Sets the exact maximum number of client connections allowed. The higher the setting the more resources Postgres will require. Adjust this value based on the size of your Linode and the traffic you expect your DB to receive.</td>
+</tr>
+
+<tr>
+<td>shared_buffers = 128MB</td>
+<td>As detailed in the <a href="https://www.postgresql.org/docs/current/static/runtime-config-resource.html#GUC-SHARED-BUFFERS">official documentation</a>, this directive is initially set to a low value. On the Linode platform, this can be &frac14; of the RAM on your Linode.</td>
+</tr>
+
+<tr>
+<td>wal_level</td>
+<td>It is important to consider <a href="https://www.postgresql.org/docs/9.1/static/wal-intro.html">Write-Ahead Logging</a> (WAL) when configuring your Postgres instance. WAL, can save your database in an emergency, by writing and logging at the same time. So your changes are written even if your machine loses power. Before configuring, read <a href="https://www.depesz.com/2011/07/14/write-ahead-log-understanding-postgresql-conf-checkpoint_segments-checkpoint_timeout-checkpoint_warning/">DSHL&rsquo;s guide to understanding WAL</a>, and the <a href="https://www.postgresql.org/docs/current/static/wal-reliability.html">official chapter on WAL Reliability</a>.</td>
+</tr>
+
+<tr>
+<td>synchronous_commit = off</td>
+<td>When using a Linode, it is okay to turn this Directive to <code>off</code>.</td>
+</tr>
+
+<tr>
+<td>archive_mode = on</td>
+<td>Turning archive mode on is a viable strategy to increase the redundancy of your backups.</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="tune-authentication-options-through-pg-hba-conf">Tune Authentication Options through pg_hba.conf</h3>
+
+<p>The <code>pg_hba.conf</code> file handles the default authentication options for client connections to the database. Entries in this file take the form:</p>
+
+<pre><code>  TYPE  DATABASE        USER            ADDRESS                 METHOD
+</code></pre>
+
+<p>The following entries are included by default:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.5/main/pg_hba.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">TYPE  DATABASE        USER            ADDRESS                 METHOD
+local   all             postgres                                peer
+
+local   all             all                                     peer
+
+host    all             all             127.0.0.1/32            md5
+
+host    all             all             ::1/128                 md5</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Each entry specifies how matching requests are authenticated. By default, if you type <code>psql</code> at the command line on the host where PostgreSQL is running, the <strong>peer</strong> authentication method will be used. It will attempt to log you in as the database user whose name matches the currently logged in Linux user. To require password authentication by default, set the <strong>METHOD</strong> field for the <strong>local</strong> entry to <strong>password</strong>.</p>
+
+<p>To allow a user on a remote system to log in to the <code>example</code> database using a non-hashed password, add a new line to this file, replacing <code>192.0.2.0</code> with the remote computer&rsquo;s public IP address:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.5/main/pg_hba_conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">host    example         exampleuser      192.0.2.0             password</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The entries in this table are read in order for each incoming connection attempt. The first entry that matches will be applied to the connection. As a result, more general configurations (matching all users, all databases, or all IP addresses) should come at the end of the file, and should generally have tighter restrictions. More specific matches with less stringent authentication methods (such as the example above) should be placed at the beginning of the list.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>See the <a href="https://www.postgresql.org/docs/9.3/static/auth-pg-hba-conf.html">official pg_hba documentation</a> for details about each of the configuration options.</div>
+</blockquote>
+
+
+<h3 id="match-system-users-to-database-users-with-pg-ident-conf">Match System Users to Database Users with pg_ident.conf</h3>
+
+<p>Sometimes, especially when connecting from remote hosts, a user&rsquo;s Linux username may not match their PostgreSQL database username. In these cases, you can specify a mapping in <code>/etc/postgresql/9.5/main/pg_ident.conf</code> to match each system user with the correct database user. Entries in this file take the form:</p>
+
+<pre><code>  MAPNAME     SYSTEM-USERNAME     PG-USERNAME
+</code></pre>
+
+<ul>
+<li><strong>MAPNAME</strong> can be arbitrary.</li>
+<li><strong>SYSTEM-USERNAME</strong> is the user&rsquo;s Linux username.</li>
+<li><strong>PG-USERNAME</strong> is the matching database user.</li>
+</ul>
+
+<p>In the following example, <code>exampleuser</code> can log in to postgres as the database user <code>db_user</code>:</p>
+
+<pre><code>  examplemap       exampleuser     db_user
+</code></pre>
+
+<p>If you specify a mapping in this file, you must add <code>map=map-name</code> after the authentication method in the appropriate entry in <code>pg_hba.conf</code>. To allow the example user from the earlier <code>pg_hba.conf</code> example to log in as <code>db_user</code>, the complete entry would look like this:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.5/main/pg_hba.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">host    example         exampleuser      192.0.2.0             password map=examplemap</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.postgresql.org/docs/">PostgreSQL Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-postgresql">What is PostgreSQL?</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#postgresql-configuration-files">PostgreSQL Configuration Files</a>
+<ul>
+<li><a href="#understanding-postgresql-conf">Understanding postgresql.conf</a></li>
+<li><a href="#common-postgres-configuration-options">Common Postgres Configuration Options</a></li>
+<li><a href="#tune-authentication-options-through-pg-hba-conf">Tune Authentication Options through pg_hba.conf</a></li>
+<li><a href="#match-system-users-to-database-users-with-pg-ident-conf">Match System Users to Database Users with pg_ident.conf</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

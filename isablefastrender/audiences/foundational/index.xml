@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Foundational on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/audiences/foundational/</link>
+    <description>Recent content in Foundational on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/audiences/foundational/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Introduction to Continuous Integration/Continuous Delivery (CI/CD)</title>
+      <link>http://localhost:1313/docs/development/ci/introduction-ci-cd/</link>
+      <pubDate>Wed, 18 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ci/introduction-ci-cd/</guid>
+      <description>What is Continuous Integration? In software development, integration is the process of incorporating changes like refactored code, new features, or bug fixes into the existing codebase.
+Traditionally, integration is performed in preparation of the deployment of a new release. This approach can lead to problems, as integrating multiple or large changes in one go may result in last-minute conflicts and bugs. Several strategies have emerged to mitigate these problems. Continuous Integration (CI) is one such solution: it creates a workflow where every commit made to the codebase is tested and built, and each developer on the project is expected to commit code at least once per day.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to Version Control</title>
+      <link>http://localhost:1313/docs/development/version-control/introduction-to-version-control/</link>
+      <pubDate>Wed, 18 Sep 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/introduction-to-version-control/</guid>
+      <description>In the Hosting a Website guide, you learned how to host your website by installing and configuring a web server, database, and PHP. Now it&amp;rsquo;s time to implement version control to protect your data and handle code updates smoothly. By the time you reach the end of this guide, you&amp;rsquo;ll know how to use many of the version control methods and tools used by large organizations.
+Getting Started A version control system is a special application that stores and manages every revision of your files and code.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started with Git</title>
+      <link>http://localhost:1313/docs/development/version-control/how-to-configure-git/</link>
+      <pubDate>Fri, 04 Sep 2009 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/how-to-configure-git/</guid>
+      <description>What is Git? Git is a distributed version control system. Git was designed and developed by Linus Torvalds for Linux kernel development. Git provides support for non-linear, distributed development, allowing multiple contributors to work on a project simultaneously. Git is the most popular distributed version control and source code management system. This guide will walk you through the basics of getting started with Git, from installing the software to using basic commands on both local and remote repositories (repo).</description>
+    </item>
+    
+    <item>
+      <title>How to Install Git on Linux, Mac or Windows</title>
+      <link>http://localhost:1313/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/</link>
+      <pubDate>Fri, 04 Sep 2009 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/</guid>
+      <description>Introduction to Git Git was designed and developed by Linus Torvalds for Linux kernel development. Git provides support for non-linear, distributed development, allowing multiple contributors to work on a project simultaneously. Git is the most popular distributed version control and source code management system.
+This guide explains how to install the latest, stable, prepackaged version git on GNU/Linux, Mac Osx, and Windows, using their respective package managers. Git can also be compiled from source and installed on any operating system.</description>
+    </item>
+    
+  </channel>
+</rss>

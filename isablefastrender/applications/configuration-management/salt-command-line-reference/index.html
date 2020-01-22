@@ -1,0 +1,1914 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>SaltStack Command Line Reference</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="A reference for the SaltStack command line interface.">
+        <meta name="keywords" content="salt, saltstack, cli, command line, reference">
+        
+        <meta property="og:title" content="SaltStack Command Line Reference">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/salt-command-line-reference/">
+        <meta property="og:description" content="A reference for the SaltStack command line interface.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/salt-command-line-reference/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  SaltStack Command Line Reference
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">SaltStack Command Line Reference</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-07T14:28:52-05:00">Monday, January 7, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    <a href="https://github.com/andystevensname">Andy Stevens
+      
+      <i class="fa fa-github"></i>
+      
+    </a>
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>Salt20</strong> for $20 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fsalt-command-line-reference%2f&via=linode&text=SaltStack%20Command%20Line%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fsalt-command-line-reference%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fsalt-command-line-reference%2f&t=SaltStack%20Command%20Line%20Reference" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=SaltStack%20Command%20Line%20Reference%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fsalt-command-line-reference%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5csalt-command-line-reference%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5csalt-command-line-reference%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><a href="https://github.com/saltstack/salt">SaltStack</a> is a powerful configuration management tool. The following is a quick-reference guide for Salt&rsquo;s command line interface (CLI).</p>
+
+<h2 id="salt">salt</h2>
+
+<p>Used to issue commands to minions in parallel. <code>salt</code> allows you to both control and query minions.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt -c /home/salt/conf test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>-s</code>, <code>--static</code></td>
+<td>Only return data after all minions have returned.</td>
+<td><code>salt --static</code></td>
+</tr>
+
+<tr>
+<td><code>--async</code></td>
+<td>Instead of waiting for a job on a minion or minions, print the job ID and the job completion.</td>
+<td><code>salt '*' pkg.install apache2 --async</code></td>
+</tr>
+
+<tr>
+<td><code>--subset</code></td>
+<td>Execute commands on a random subset of minions.</td>
+<td><code>salt '*' telegram.post_message message=&quot;Hello random 3!&quot; --subset 3</code></td>
+</tr>
+
+<tr>
+<td><code>-v</code>, <code>--verbose</code></td>
+<td>Print extra data, such as the job ID.</td>
+<td><code>salt 'minion1' user.add steve --verbose</code></td>
+</tr>
+
+<tr>
+<td><code>--hide-timeout</code></td>
+<td>Only print minions that can be reached.</td>
+<td><code>salt '*' test.ping --hide-timeout</code></td>
+</tr>
+
+<tr>
+<td><code>-b</code>, <code>--batch-size</code></td>
+<td>Execute on a batch or percentage of minions.</td>
+<td><code>salt '*' test.ping --batch-size 25%</code></td>
+</tr>
+
+<tr>
+<td><code>-a</code>, <code>--auth</code></td>
+<td>Use an external authentication medium. You will be prompted for credentials. Options are <code>auto</code>, <code>keystone</code>, <code>ldap</code>, and <code>pam</code>. Can be used with <code>-T</code>.</td>
+<td><code>salt -a pam '*' status.meminfo</code></td>
+</tr>
+
+<tr>
+<td><code>-T</code>, <code>--make-token</code></td>
+<td>Used with <code>-a</code>. Creates an authentication token in the active user&rsquo;s home directory that has a default 12 hour expiration time. Token expiration time is set in the Salt master config file.</td>
+<td><code>salt -T -a pam '*' status.cpuinfo</code></td>
+</tr>
+
+<tr>
+<td><code>--return</code></td>
+<td>Used to select an alternative returner. Options are <code>carbon</code>, <code>cassandra</code>, <code>couchbase</code>, <code>couchdb</code>, <code>elasticsearch</code>, <code>etcd</code>, <code>hipchat</code>, <code>local</code>, <code>local_cache</code>, <code>memcache</code>, <code>mongo</code>, <code>mysql</code>, <code>odbc</code>, <code>postgres</code>, <code>redis</code>, <code>sentry</code>, <code>slack</code>, <code>sms</code>, <code>smtp</code>, <code>sqlite3</code>, <code>syslog</code>, and <code>xmpp</code>.</td>
+<td><code>salt '*' status.all_status --return mongo</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--doc</code>, <code>--documentation</code></td>
+<td>Return all available documentation for a module function, or all functions if one is not provided.</td>
+<td><code>salt 'minion3' service.available -d</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt 'minion2' state.apply -l info</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/master</code></td>
+<td><code>salt '*' test.ping --log-file /home/salt/log</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>salt '*' test.ping --log-level all</code></td>
+</tr>
+
+<tr>
+<td><code>-E</code>, <code>--pcre</code></td>
+<td>Target expression will be interpreted as a Perl Compatible Regular Expression (PCRE) rather than a shell glob.</td>
+<td><code>salt -E 'minion[0-9]' service.reload apache2</code></td>
+</tr>
+
+<tr>
+<td><code>-L</code>, <code>--list</code></td>
+<td>Target expression will be interpreted as a comma-delimited list.</td>
+<td><code>salt -L 'minion1,minion2' service.show sshd</code></td>
+</tr>
+
+<tr>
+<td><code>-G</code>, <code>--grain</code></td>
+<td>Target expression in the form of a glob expression matches a Salt grain. &lt;grain value&gt;:&lt;glob expression&gt;.</td>
+<td><code>salt -G 'os:Ubuntu' service.available mysql</code></td>
+</tr>
+
+<tr>
+<td><code>--grain-pcre</code></td>
+<td>Target expression in the form of a Perl Compatible Regular Expression matches values returned by Salt grains on the minion.&lt;grain value&gt;:&lt;regular expression&gt;</td>
+<td><code>salt --grain-pcre 'os:Arch' service.restart apache2</code></td>
+</tr>
+
+<tr>
+<td><code>-I</code>, <code>--pillar</code></td>
+<td>Use pillar values instead of shell globs to identify targets.</td>
+<td><code>salt -I 'role:production' test.echo 'playback'</code></td>
+</tr>
+
+<tr>
+<td><code>--out</code></td>
+<td>Choose an alternative outputter to display returned data. Available outputters are: <code>grains</code>, <code>highstate</code>, <code>json</code>, <code>key</code>, <code>overstatestage</code>, <code>pprint</code>, <code>raw</code>, <code>txt</code>, <code>yaml</code>. Note: when using <code>--out json</code> you will probably want to also use <code>--static</code>.</td>
+<td><code>salt '*' test.version --out json --static</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-call">salt-call</h2>
+
+<p>Runs module functions on a minion instead of the master. It is used to run a standalone minion.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-call --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-call -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-call -c /home/salt/conf test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>-g</code>, <code>--grains</code></td>
+<td>Get the information generated by the Salt grains.</td>
+<td><code>salt-call --grains</code></td>
+</tr>
+
+<tr>
+<td><code>-m</code>, <code>--module-dirs</code></td>
+<td>Select an additional modules directory. You can provide this option multiple times for multiple directories.</td>
+<td><code>salt-call -m /home/salt/modules1 -m /home/salt/modules2</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--doc</code>, <code>--documentation</code></td>
+<td>Return all available documentation for module function, or all functions if one is not provided.</td>
+<td><code>salt-call system.get_system_time -d</code></td>
+</tr>
+
+<tr>
+<td><code>--master</code></td>
+<td>Choose which master to use. The minion must be authenticated with the master. If the master is omitted, the first master in the minion config will be used.</td>
+<td><code>salt-call --master master1</code></td>
+</tr>
+
+<tr>
+<td><code>--return</code></td>
+<td>Used to select an alternative returner. Options are <code>carbon</code>, <code>cassandra</code>, <code>couchbase</code>, <code>couchdb</code>, <code>elasticsearch</code>, <code>etcd</code>, <code>hipchat</code>, <code>local</code>, <code>local_cache</code>, <code>memcache</code>, <code>mongo</code>, <code>mysql</code>, <code>odbc</code>, <code>postgres</code>, <code>redis</code>, <code>sentry</code>, <code>slack</code>, <code>sms</code>, <code>smtp</code>, <code>sqlite3</code>, <code>syslog</code>, and <code>xmpp</code>.</td>
+<td><code>salt-call --return mongo status.all_status</code></td>
+</tr>
+
+<tr>
+<td><code>--local</code></td>
+<td>Run Salt as if there was no master running.</td>
+<td><code>salt-call --local system.get_system_time</code></td>
+</tr>
+
+<tr>
+<td><code>--file-root</code></td>
+<td>Set a directory as the base file directory.</td>
+<td><code>salt-call --file-root /home/salt</code></td>
+</tr>
+
+<tr>
+<td><code>--pillar-root</code></td>
+<td>Set a directory as the base pillar directory.</td>
+<td><code>salt-call --file-root /home/salt/pillar</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-call -l all test.exception 'oh no!'</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change log file path. Defaults to <code>/var/log/salt/minion</code>.</td>
+<td><code>salt-call --logfile /home/salt/log/minion test.exception 'oh no!'</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change logfile log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-call --log-file-level all test.exception 'oh no!'</code></td>
+</tr>
+
+<tr>
+<td><code>--out</code></td>
+<td>Choose an alternative outputter to display returned data. Available outputters are: <code>grains</code>, <code>highstate</code>, <code>json</code>, <code>key</code>, <code>overstatestage</code>, <code>pprint</code>, <code>raw</code>, <code>txt</code>, <code>yaml</code>.</td>
+<td><code>salt-call test.version --out json</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-cloud">salt-cloud</h2>
+
+<p>Used to provision virtual machines on public clouds with Salt.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-cloud --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-cloud -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-cloud -c /home/salt/conf</code></td>
+</tr>
+
+<tr>
+<td><code>-a</code>, <code>--action</code></td>
+<td>Perform a cloud provider specific action. Requires an instance.</td>
+<td><code>salt-cloud -a reboot testlinode</code></td>
+</tr>
+
+<tr>
+<td><code>-f</code>, <code>--function</code></td>
+<td>Perform a cloud provider specific function that does not apply to an instance. Requires a provider.</td>
+<td><code>salt-cloud -f clone my-linode-config linode_id=1234567 datacenter_id=2 plan_id=5</code></td>
+</tr>
+
+<tr>
+<td><code>-p</code>, <code>--profile</code></td>
+<td>Choose a profile from which to build cloud VMs.</td>
+<td><code>salt-cloud -p linode-1024 mynewlinode</code></td>
+</tr>
+
+<tr>
+<td><code>-m</code>, <code>--map</code></td>
+<td>Choose a map file from which to create your VMs. If a VM exists it will be skipped.</td>
+<td><code>salt-cloud -m /path/to/map</code></td>
+</tr>
+
+<tr>
+<td><code>-H</code>, <code>--hard</code></td>
+<td>Used when creating VMs with a map file. If set, will destroy all VMs not listed in the map file.</td>
+<td><code>salt-cloud -m /path/to/map -H</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--destroy</code></td>
+<td>Destroy the named VMs. Can be used with <code>-m</code> to provide a map of VMs to destroy.</td>
+<td><code>salt-cloud -m /path/to/map -d</code></td>
+</tr>
+
+<tr>
+<td><code>-P</code>, <code>--parallel</code></td>
+<td>Build VMs in parallel.</td>
+<td><code>salt-cloud -P -p linode-profile newlinode1 newlinode2</code></td>
+</tr>
+
+<tr>
+<td><code>-u</code>, <code>--update-boostrap</code></td>
+<td>Update salt-bootstrap.</td>
+<td><code>salt-cloud -u</code></td>
+</tr>
+
+<tr>
+<td><code>-y</code>, <code>--assume-yes</code></td>
+<td>Answer yes to all questions.</td>
+<td><code>salt-cloud -y -d linode1 linode2</code></td>
+</tr>
+
+<tr>
+<td><code>-k</code>, <code>-keep-tmp</code></td>
+<td>Do not remove /tmp files.</td>
+<td><code>salt-cloud -k -m /path/to/map</code></td>
+</tr>
+
+<tr>
+<td><code>--show-deploy-args</code></td>
+<td>Include deployment arguments in the return data.</td>
+<td><code>salt-cloud --show-deploy-args -m /path/to/map</code></td>
+</tr>
+
+<tr>
+<td><code>--script-args</code></td>
+<td>Arguments to be passed to the bootstrap script when deploying.</td>
+<td><code>salt-cloud -m /path/to/map --script-args '-h'</code></td>
+</tr>
+
+<tr>
+<td><code>-Q</code>, <code>--query</code></td>
+<td>Query nodes running on configured cloud providers.</td>
+<td><code>salt-cloud -Q</code></td>
+</tr>
+
+<tr>
+<td><code>-F</code>, <code>--full-query</code></td>
+<td>Query VMs and print all available information. Can be used with -m to provide a map.</td>
+<td><code>salt-cloud -F</code></td>
+</tr>
+
+<tr>
+<td><code>-S</code>, <code>--select-query</code></td>
+<td>Query VMs and print selected information. Can be used with -m to provide a map.</td>
+<td><code>salt-cloud -S</code></td>
+</tr>
+
+<tr>
+<td><code>--list-providers</code></td>
+<td>Display a list of configured providers.</td>
+<td><code>salt-cloud --list-providers</code></td>
+</tr>
+
+<tr>
+<td><code>--list-profiles</code></td>
+<td>Display a list of configured profiles. Supply a cloud provider, such as <code>linode</code>, or pass <code>all</code> to view all configured profiles.</td>
+<td><code>salt-cloud --list-profiles linode</code></td>
+</tr>
+
+<tr>
+<td><code>--list-locations</code></td>
+<td>Display a list of available locations. Supply a cloud provider, such as <code>linode</code>, or pass <code>all</code> to view all location for configured profiles.</td>
+<td><code>salt-cloud --list-locations linode</code></td>
+</tr>
+
+<tr>
+<td><code>--list-images</code></td>
+<td>Display a list of available images. Supply a cloud provider, such as <code>linode</code>, or pass <code>all</code> to view all images for configured profiles.</td>
+<td><code>salt-cloud --list-images linode</code></td>
+</tr>
+
+<tr>
+<td><code>--list-sizes</code></td>
+<td>Display a list of available sizes. Supply a cloud provider, such as <code>linode</code>, or pass <code>all</code> to view all sizes for configured profiles.</td>
+<td><code>salt-cloud --list-sizes linode</code></td>
+</tr>
+
+<tr>
+<td><code>--out</code></td>
+<td>Choose an alternative outputter to display returned data. Available outputters are: <code>grains</code>, <code>highstate</code>, <code>json</code>, <code>key</code>, <code>overstatestage</code>, <code>pprint</code>, <code>raw</code>, <code>txt</code>, <code>yaml</code>.</td>
+<td><code>salt-call test.version --out json</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-cp">salt-cp</h2>
+
+<p>Used to copy files from the master to all Salt minions that match a specific target expression.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-cp --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-cp -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-cp '*' -c /home/salt/conf /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>-t</code>, <code>--timeout</code></td>
+<td>The amount of seconds to wait for replies from minions. The default is 5 seconds.</td>
+<td><code>salt-cp '*' -t 25 /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-cp '*' -l all /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change log file path. Defaults to <code>/var/log/salt/master</code>.</td>
+<td><code>salt-cp '*' --logfile /home/salt/log/minion /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change logfile log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-cp '*' --log-file-level all /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>-E</code>, <code>--pcre</code></td>
+<td>Target expression will be interpreted as a Perl Compatible Regular Expression (PCRE) rather than a shell glob.</td>
+<td><code>salt-cp -E 'minion[0-9]' /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>-L</code>, <code>--list</code></td>
+<td>Target expression will be interpreted as a comma-delimited list.</td>
+<td><code>salt -L 'minion1,minion2' /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>-G</code>, <code>--grain</code></td>
+<td>Target expression matches a Salt grain. &lt;grain value&gt;:&lt;glob expression&gt;.</td>
+<td><code>salt -G 'os:Ubuntu' /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>--grain-pcre</code></td>
+<td>Target expression in the form of a Perl Compatible Regular Expression matches values returned by Salt grains on the minion.&lt;grain value&gt;:&lt;regular expression&gt;</td>
+<td><code>salt-cp --grain-pcre 'os:Arch' /file/to/copy /destination</code></td>
+</tr>
+
+<tr>
+<td><code>-C</code>, <code>--chunked</code></td>
+<td>Use chunked mode to copy files. Supports large files, recursive directories copying and compression.</td>
+<td><code>salt-cp -C /some/large/file /destination</code></td>
+</tr>
+
+<tr>
+<td><code>-n</code>, <code>--no-compression</code></td>
+<td>Disable gzip in chunked mode.</td>
+<td><code>salt-cp -C -n /some/large/file /destination</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-key">salt-key</h2>
+
+<p>Used to manage the Salt server public keys.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-key --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-key -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-key -c /home/salt/conf</code></td>
+</tr>
+
+<tr>
+<td><code>-u</code>, <code>--user</code></td>
+<td>Supply a user to run salt-key.</td>
+<td><code>salt-key --user steven</code></td>
+</tr>
+
+<tr>
+<td><code>-q</code>, <code>--quiet</code></td>
+<td>Suppress output</td>
+<td><code>salt-key -q</code></td>
+</tr>
+
+<tr>
+<td><code>-y</code>, <code>--yes</code></td>
+<td>Answer yes to all questions. Default is <code>False</code>.</td>
+<td><code>salt-key -y True</code></td>
+</tr>
+
+<tr>
+<td><code>--rotate-aes-key</code></td>
+<td>Setting to <code>False</code> prevents the key session from being refreshed when keys are deleted or rejected. Default is <code>True</code>.</td>
+<td><code>salt-key --rotate-aes-key False</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change log file path. Defaults to <code>/var/log/salt/minion</code>.</td>
+<td><code>salt-key --logfile /home/salt/log/minion -D</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change logfile log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-key --log-file-level all --accept '*'</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--list</code></td>
+<td>List public keys. <code>pre</code>, <code>un</code>, and <code>unaccepted</code> will list unaccepted/unsigned keys. <code>acc</code> or <code>accepted</code> will list accepted/signed keys. <code>rej</code> or <code>rejected</code> will list rejected keys. <code>all</code> will list all keys.</td>
+<td><code>salt-key -l all</code></td>
+</tr>
+
+<tr>
+<td><code>-a</code>, <code>--accept</code></td>
+<td>Accept a public key. Globs are supported.</td>
+<td><code>salt-key --accept 'minion*'</code></td>
+</tr>
+
+<tr>
+<td><code>-A</code>, <code>--accept-all</code></td>
+<td>Accept all pending keys.</td>
+<td><code>salt-key -A</code></td>
+</tr>
+
+<tr>
+<td><code>-r</code>, <code>--reject</code></td>
+<td>Reject a specific key. Globs are supported.</td>
+<td><code>salt-key -r 'minion*'</code></td>
+</tr>
+
+<tr>
+<td><code>-R</code>, <code>--reject-all</code></td>
+<td>Reject all pending keys.</td>
+<td><code>salt-key -R</code></td>
+</tr>
+
+<tr>
+<td><code>--include-all</code></td>
+<td>Include non-pending keys when accepting and rejecting.</td>
+<td><code>salt-key -r 'minion*' --include-all</code></td>
+</tr>
+
+<tr>
+<td><code>-p</code>, <code>--print</code></td>
+<td>Print a public key.</td>
+<td><code>salt-key --print 'minion1'</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--delete</code></td>
+<td>Delete a public key. Globs are supported.</td>
+<td><code>salt-key -d 'minion*'</code></td>
+</tr>
+
+<tr>
+<td><code>-D</code>, <code>--delete-all</code></td>
+<td>Delete all public keys.</td>
+<td><code>salt-key --delete-all -y</code></td>
+</tr>
+
+<tr>
+<td><code>-f</code>, <code>--finger</code></td>
+<td>Print a key&rsquo;s fingerprint.</td>
+<td><code>salt-key --finger 'minion1'</code></td>
+</tr>
+
+<tr>
+<td><code>-F</code>, <code>--finger-all</code></td>
+<td>Print all keys&rsquo; fingerprints.</td>
+<td><code>salt-key --F</code></td>
+</tr>
+
+<tr>
+<td><code>--gen-keys</code></td>
+<td>Set a name to generate a key-pair.</td>
+<td><code>salt-key --gen-keys newminion</code></td>
+</tr>
+
+<tr>
+<td><code>--gen-keys-dir</code></td>
+<td>Choose where to save newly generated key-pairs. Only works with <code>--gen-keys</code>.</td>
+<td><code>salt-key --gen-keys newminion --gen-keys-dir /home/salt/keypairs</code></td>
+</tr>
+
+<tr>
+<td><code>--keysize</code></td>
+<td>Set the keysize for a generated key. Must be a value of 2048 or higher. Only works with <code>--gen-keys</code>.</td>
+<td><code>salt-key --gen-keys newminion --keysize 4096</code></td>
+</tr>
+
+<tr>
+<td><code>--gen-signature</code></td>
+<td>Create a signature for the master&rsquo;s public key named master_pubkey_signature. This requires a new-signing-keypair which can be created with the <code>--auto-create</code> option.</td>
+<td><code>salt-key --gen-signature --auto-create</code></td>
+</tr>
+
+<tr>
+<td><code>--priv</code></td>
+<td>The private-key file with which to create a signature.</td>
+<td><code>salt-key --priv key.pem</code></td>
+</tr>
+
+<tr>
+<td><code>--signature-path</code></td>
+<td>The file path for the new signature.</td>
+<td><code>salt-key  --gen-signature --auto-create --signature-path /path/to/signature</code></td>
+</tr>
+
+<tr>
+<td><code>--pub</code></td>
+<td>The public-key file with which to create a signature.</td>
+<td><code>salt-key --gen-signature key.pub</code></td>
+</tr>
+
+<tr>
+<td><code>--auto-create</code></td>
+<td>Auto-create a signing key-pair.</td>
+<td><code>salt-key --gen-signature --auto-create</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-master">salt-master</h2>
+
+<p>A daemon used to control Salt minions.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-master --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-master -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-master -c /home/salt/conf</code></td>
+</tr>
+
+<tr>
+<td><code>-u</code>, <code>--user</code></td>
+<td>Supply a user to run salt-master.</td>
+<td><code>salt-master --user steven</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--daemon</code></td>
+<td>Run salt-master as daemon.</td>
+<td><code>salt-master -d</code></td>
+</tr>
+
+<tr>
+<td><code>--pid-file</code></td>
+<td>Specify the file path of the pidfile. Default is <code>/var/run/salt-master.pid</code></td>
+<td><code>salt-master --pid-file /path/to/new/pid</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-master -l info</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/master</code></td>
+<td><code>salt-master --log-file /home/salt/log</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>salt-master --log-level all</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-minion">salt-minion</h2>
+
+<p>A daemon that is controlled by a Salt master.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-minion --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-minion -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-minion -c /home/salt/conf</code></td>
+</tr>
+
+<tr>
+<td><code>-u</code>, <code>--user</code></td>
+<td>Supply a user to run salt-minion.</td>
+<td><code>salt-minion --user steven</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--daemon</code></td>
+<td>Run salt-minion as daemon.</td>
+<td><code>salt-minion -d</code></td>
+</tr>
+
+<tr>
+<td><code>--pid-file</code></td>
+<td>Specify the file path of the pidfile. Default is <code>/var/run/salt-minion.pid</code></td>
+<td><code>salt-minion --pid-file /path/to/new/pid</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-master -l info</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/minion</code></td>
+<td><code>salt-minion --log-file /home/salt/log</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>salt-minion --log-level all</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-run">salt-run</h2>
+
+<p>Runs a Salt runner on a Salt master.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-run --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-run -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-run -c /home/salt/conf foo.bar</code></td>
+</tr>
+
+<tr>
+<td><code>-t</code>, <code>--timeout</code></td>
+<td>The amount of seconds to wait for replies from minions. The default is 5 seconds.</td>
+<td><code>salt-run -t 25 foo.bar</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--doc</code>, <code>--documentation</code></td>
+<td>Return all available documentation for a module or runner.</td>
+<td><code>salt-run foo.bar -d</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-run -l info foo.bar</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/master</code></td>
+<td><code>salt-minion --log-file /home/salt/log foo.bar</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>salt-minion --log-level all foo.bar</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-ssh">salt-ssh</h2>
+
+<p>Use SSH transport to execute salt routines.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-ssh --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-ssh -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-ssh '*' -c /home/salt/conf test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>-r</code>, <code>--raw</code>, <code>--raw-shell</code></td>
+<td>Run a raw shell command.</td>
+<td><code>salt-ssh '*' -r echo 'test'</code></td>
+</tr>
+
+<tr>
+<td><code>--roster</code></td>
+<td>Choose which roster system to use. The default is the flat file roster.</td>
+<td><code>salt-ssh '192.168.0.0/16' --roster scan pkg.install apache2</code></td>
+</tr>
+
+<tr>
+<td><code>--roster-file</code></td>
+<td>Change the roster file directory. The default is the same directory as the master config file.</td>
+<td><code>salt-ssh 'minion1' --roster-file /path/to/roster test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--refresh</code>, <code>--refresh-cache</code></td>
+<td>Use to force refresh the target&rsquo;s data in the master side cache before the auto refresh timeframe has been reached.</td>
+<td><code>salt-ssh 'minion1' --refresh-cache status.diskstats</code></td>
+</tr>
+
+<tr>
+<td><code>--max-procs</code></td>
+<td>The number of minions to communicate with concurrently. In general, more connections mean faster communication. Default is 25.</td>
+<td><code>salt-ssh '*' --max-procs 50 test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>-v</code>, <code>--verbose</code></td>
+<td>Display job ID.</td>
+<td><code>salt-ssh '*' -v test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>-s</code>, <code>--static</code></td>
+<td>Return minion data as a grouping.</td>
+<td><code>salt-ssh '*' -s status.meminfo</code></td>
+</tr>
+
+<tr>
+<td><code>-w</code>, <code>--wipe</code></td>
+<td>Remove Salt files when the job is done.</td>
+<td><code>salt-ssh '*' -w state.apply</code></td>
+</tr>
+
+<tr>
+<td><code>-W</code>. <code>--rand-thin-dir</code></td>
+<td>Deploys to a random temp directory and cleans the directory when done.</td>
+<td><code>salt-ssh '*' -W state.apply</code></td>
+</tr>
+
+<tr>
+<td><code>--python2-bin</code></td>
+<td>File path to a python2 binary which has Salt installed.</td>
+<td><code>salt-ssh '*' --python2-bin /file/to/bin test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--python3-bin</code></td>
+<td>File path to a python3 binary which has Salt installed.</td>
+<td><code>salt-ssh '*' --python3-bin /file/to/bin test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--jid</code></td>
+<td>Supply a job ID instead of generating one.</td>
+<td><code>salt-ssh '*' -v --jid 00000000000000000000 test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--priv</code></td>
+<td>Supply which SSH private key to use for authentication.</td>
+<td><code>salt-ssh '*' --priv /path/to/privkey status.netstats</code></td>
+</tr>
+
+<tr>
+<td><code>-i</code>, <code>--ignore-host-keys</code></td>
+<td>Disable StrictHostKeyChecking, which suppresses asking for connection approval.</td>
+<td><code>salt-ssh '*' -i pkg.install mysql-client</code></td>
+</tr>
+
+<tr>
+<td><code>--no-host-keys</code></td>
+<td>Ignores SSH host keys. Useful if an error persists with <code>--ignore-host-keys</code>.</td>
+<td><code>salt-ssh '*' -i --no-host-keys pkg.install cowsay</code></td>
+</tr>
+
+<tr>
+<td><code>--user</code></td>
+<td>Supply the user to authenticate with.</td>
+<td><code>salt-ssh '*' --user steven -r cowsay 'hello!'</code></td>
+</tr>
+
+<tr>
+<td><code>--passwd</code></td>
+<td>Supply the password to authenticate with.</td>
+<td><code>salt-ssh 'minion2' --passwd p455w0rd system.reboot</code></td>
+</tr>
+
+<tr>
+<td><code>--askpass</code></td>
+<td>Request a password prompt.</td>
+<td><code>salt-ssh 'minion1' --askpass sys.doc</code></td>
+</tr>
+
+<tr>
+<td><code>--key-deploy</code></td>
+<td>Deploy the authorized SSH key to all minions.</td>
+<td><code>salt-ssh '*' --key-deploy --passwd test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--sudo</code></td>
+<td>Run command with elevated privileges.</td>
+<td><code>salt-ssh '*' -r --sudo somecommand</code></td>
+</tr>
+
+<tr>
+<td><code>--scan-ports</code></td>
+<td>A comma-separated list of ports to scan in the scan roster.</td>
+<td><code>salt-ssh '192.168.0.0/16' --roster scan --scan-ports 22,23 test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--scan-timeout</code></td>
+<td>Timeout for scan roster.</td>
+<td><code>salt-ssh '192.168.0.0/16' --roster scan --scan-timeout 100 test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-ssh -l info test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/ssh</code></td>
+<td><code>salt-ssh --log-file /home/salt/log test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>salt-ssh --log-level all test.ping</code></td>
+</tr>
+
+<tr>
+<td><code>-E</code>, <code>--pcre</code></td>
+<td>Target expression will be interpreted as a Perl Compatible Regular Expression (PCRE) rather than a shell glob.</td>
+<td><code>salt-ssh -E 'minion[0-9]' service.reload apache2</code></td>
+</tr>
+
+<tr>
+<td><code>--out</code></td>
+<td>Choose an alternative outputter to display returned data. Available outputters are: <code>grains</code>, <code>highstate</code>, <code>json</code>, <code>key</code>, <code>overstatestage</code>, <code>pprint</code>, <code>raw</code>, <code>txt</code>, <code>yaml</code>.</td>
+<td><code>salt-ssh '*' test.version --out json</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-syndic">salt-syndic</h2>
+
+<p>A minion set up on a master that allows for passing commands in from a higher master.</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-syndic --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-syndic -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-syndic -c /home/salt/conf</code></td>
+</tr>
+
+<tr>
+<td><code>-u</code>, <code>--user</code></td>
+<td>Supply a user to run salt-syndic.</td>
+<td><code>salt-syndic --user steven</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--daemon</code></td>
+<td>Run salt-syndic as daemon.</td>
+<td><code>salt-syndic -d</code></td>
+</tr>
+
+<tr>
+<td><code>--pid-file</code></td>
+<td>Specify the file path of the pidfile. Default is <code>/var/run/salt-syndic.pid</code></td>
+<td><code>salt-syndic --pid-file /path/to/new/pid</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-syndic -l info</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/master</code></td>
+<td><code>salt-syndic --log-file /home/salt/log</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>salt-syndic --log-level all</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="spm">spm</h2>
+
+<p>Salt Package Manager</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>-y</code>, <code>--yes</code></td>
+<td>Answer yes to all questions.</td>
+<td><code>spm remove -y apache</code></td>
+</tr>
+
+<tr>
+<td><code>-f</code>, <code>--force</code></td>
+<td>Force <code>spm</code> to perform an action it would normally refuse to perform.</td>
+<td></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>spm -l info install apache</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/spm</code></td>
+<td><code>spm --log-file /home/salt/log install mysql</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>spm --log-level all remove nginx</code></td>
+</tr>
+</tbody>
+</table>
+
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>update_repo</code></td>
+<td>Update locally configured repository metadata.</td>
+<td><code>spm update_repo</code></td>
+</tr>
+
+<tr>
+<td><code>install</code></td>
+<td>Install a package by name from a configured SPM repository.</td>
+<td><code>spm install nginx</code></td>
+</tr>
+
+<tr>
+<td><code>remove</code></td>
+<td>Remove a package.</td>
+<td><code>spm remove apache</code></td>
+</tr>
+
+<tr>
+<td><code>info</code></td>
+<td>Get an installed package&rsquo;s information.</td>
+<td><code>spm info mysql</code></td>
+</tr>
+
+<tr>
+<td><code>files</code></td>
+<td>List an installed package&rsquo;s files.</td>
+<td><code>spm files mongodb</code></td>
+</tr>
+
+<tr>
+<td><code>local</code></td>
+<td>Perform a command on a local package, not a package in a repository or an installed package. Does not work with <code>remove</code>.</td>
+<td><code>spm local install /path/to/package</code></td>
+</tr>
+
+<tr>
+<td><code>build</code></td>
+<td>Build a package.</td>
+<td><code>spm build /path/to/package</code></td>
+</tr>
+
+<tr>
+<td><code>create_repo</code></td>
+<td>Scan a directory for a valid SPM package and build an SPM-METADATA file in that directory.</td>
+<td><code>spm create_rep /path/to/package</code></td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="salt-api">salt-api</h2>
+
+<p>Used to start the Salt API</p>
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>--version</code></td>
+<td>Get the current version of Salt.</td>
+<td><code>salt-api --version</code></td>
+</tr>
+
+<tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>Display Salt commands and help text.</td>
+<td><code>salt-api -h</code></td>
+</tr>
+
+<tr>
+<td><code>-c</code>, <code>--config-dir</code></td>
+<td>Change the Salt configuration directory. The default is <code>/etc/salt</code>.</td>
+<td><code>salt-api -c /home/salt/conf</code></td>
+</tr>
+
+<tr>
+<td><code>-u</code>, <code>--user</code></td>
+<td>Supply a user to run salt-api.</td>
+<td><code>salt-api --user steven</code></td>
+</tr>
+
+<tr>
+<td><code>-d</code>, <code>--daemon</code></td>
+<td>Run salt-api as daemon.</td>
+<td><code>salt-api -d</code></td>
+</tr>
+
+<tr>
+<td><code>--pid-file</code></td>
+<td>Specify the file path of the pidfile. Default is <code>/var/run/salt-api.pid</code></td>
+<td><code>salt-api --pid-file /path/to/new/pid</code></td>
+</tr>
+
+<tr>
+<td><code>-l</code>, <code>--log-level</code></td>
+<td>Change console log level. Defaults to <code>warning</code>. Available options are <code>all</code>, <code>garbage</code>, <code>trace</code>, <code>debug</code>, <code>info</code>, <code>warning</code>, <code>error</code>, and <code>quiet</code>.</td>
+<td><code>salt-api -l info</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file</code></td>
+<td>Change the log file path. Defaults to <code>/var/log/salt/api</code></td>
+<td><code>salt-api --log-file /home/salt/log</code></td>
+</tr>
+
+<tr>
+<td><code>--log-file-level</code></td>
+<td>Change the logging level of the log file. Same options as <code>--log-level</code></td>
+<td><code>salt-api --log-level all</code></td>
+</tr>
+</tbody>
+</table>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.saltstack.com/en/latest/ref/cli/index.html">SaltStack Command Line Documentation</a></li>
+
+<li><a href="https://docs.saltstack.com/en/latest/ref/clouds/all/salt.cloud.clouds.linode.html">Linode Cloud Module</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#salt">salt</a></li>
+<li><a href="#salt-call">salt-call</a></li>
+<li><a href="#salt-cloud">salt-cloud</a></li>
+<li><a href="#salt-cp">salt-cp</a></li>
+<li><a href="#salt-key">salt-key</a></li>
+<li><a href="#salt-master">salt-master</a></li>
+<li><a href="#salt-minion">salt-minion</a></li>
+<li><a href="#salt-run">salt-run</a></li>
+<li><a href="#salt-ssh">salt-ssh</a></li>
+<li><a href="#salt-syndic">salt-syndic</a></li>
+<li><a href="#spm">spm</a></li>
+<li><a href="#salt-api">salt-api</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

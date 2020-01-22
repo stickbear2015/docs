@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Running a Mail Server</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide shows how to run an email server on a Linode. It shows how to install the mail service, configure components, create DNS records and SSL certificates, and manage users.">
+        <meta name="keywords" content="mail server, linode guide, running a mail server, Self-host Mail">
+        
+        <meta property="og:title" content="Running a Mail Server">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/email/running-a-mail-server/">
+        <meta property="og:description" content="Take control of your email with your own mail server. This guide explains how to install a mail server on your Linode, configure the necessary components and users, and send and receive your first emails.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/email/running-a-mail-server/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/email/">Email Server Guides</a>
+  
+</li>
+
+
+<li>
+  
+  Running a Mail Server
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Running a Mail Server</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-07T12:48:21-05:00">Monday, January 7, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2femail%2frunning-a-mail-server%2f&via=linode&text=Running%20a%20Mail%20Server" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2femail%2frunning-a-mail-server%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2femail%2frunning-a-mail-server%2f&t=Running%20a%20Mail%20Server" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Running%20a%20Mail%20Server%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2femail%2frunning-a-mail-server%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/email%5crunning-a-mail-server%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/email%5crunning-a-mail-server%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>This guide offers an overview of installing a mail server on your Linode. It covers mail server configuration, creating mail accounts, and basic overviews of tools relevant to hosting an email webserver.</p>
+
+<p><img src="mail_server_tg.png" alt="Running a Mail Server" title="Running Mail Server" /></p>
+
+<h2 id="should-you-run-a-mail-server">Should You Run a Mail Server?</h2>
+
+<p>If you do, you&rsquo;ll have control over your domain&rsquo;s email, but you&rsquo;ll also have to deal with the hassles associated with setting up a complex environment of software. Using a third-party mail service is easier, but you&rsquo;ll sacrifice control and flexibility. In this section, we consider the benefits and drawbacks to running your own mail server, as well as how to choose an <a href="#external-mail-services">external mail service</a>, if you decide to go that route.</p>
+
+<h3 id="benefits">Benefits</h3>
+
+<p>If you want or need full control of your email, running your own mail server might be ideal solution. Doing so allows you to store your own email, access the mail server&rsquo;s logs, and access the raw email files in a user&rsquo;s mailbox.</p>
+
+<p>Some benefits of running a mail server are:</p>
+
+<ul>
+<li>Full control over both the server and your email</li>
+<li>Pick the applications you want to use, and tune them for your needs</li>
+<li>View logs for incoming and outgoing messages</li>
+<li>View logs for connection and authorization attempts from local mail clients for IMAP, POP3, and SMTP</li>
+<li>Mail will cost no more than the price of your Linode</li>
+</ul>
+
+<h3 id="drawbacks">Drawbacks</h3>
+
+<p>Running your own mail server isn&rsquo;t for the faint of heart. Setting up the software is tricky, filtering spam can be difficult, and keeping everything running smoothly is challenging. You should carefully consider all of your options before deciding to run a mail server. Here are a couple of the drawbacks:</p>
+
+<ul>
+<li>Configuration is complicated</li>
+<li>Downtime can result in lost email</li>
+<li>Spam and virus filtering need to be tuned just right to block unwanted emails and allow legitimate ones</li>
+<li>If a spammer discovers an exploit, they could use your Linode to send spam, and your IP address could be black-listed</li>
+<li>No third party support to troubleshoot e-mail issues.</li>
+</ul>
+
+<p>You&rsquo;re responsible for everything related to your Linode. Maintaining, upgrading, and troubleshooting the mail server is your responsibility. Visit Linode&rsquo;s <a href="/tos">Terms of Service</a> for more information about acceptable use.</p>
+
+<h3 id="external-mail-services">External Mail Services</h3>
+
+<p>If the prospect of managing your own mail server is too daunting, you should consider using a third-party mail service. For a fee, these services provide managed mail servers and take care of all hosting, maintenance, and troubleshooting tasks. You won&rsquo;t have as much control if something goes wrong, but you also won&rsquo;t need to worry about the pitfalls of running a mail server.</p>
+
+<p>There are several third-party mail services available:</p>
+
+<ul>
+<li><a href="https://www.fastmail.fm">Fastmail</a></li>
+<li><a href="http://www.google.com/intl/en/enterprise/apps/business/">Google Apps</a> uses the familiar Gmail interface. Check out our guide to <a href="/docs/email/google-mail">using Google Apps with your Linode</a>.</li>
+<li><a href="https://login.microsoftonline.com/">Office 365</a> is the successor to Outlook.com and can support custom domains for email, amongst other services.</li>
+</ul>
+
+<p>If you decide to use an outside mail service, you will still need to set up <a href="/docs/networking/dns/dns-manager">DNS</a> for your mail and use the settings provided by the third-party mail service.</p>
+
+<h2 id="how-mail-servers-work">How Mail Servers Work</h2>
+
+<p>Every mail server that lets you send and receive email with a local mail client has three separate software components:</p>
+
+<ul>
+<li><p><strong>MTA</strong>: The <em>Mail Transfer Agent</em> relays mail between your Linode and the wider Internet, whether it&rsquo;s delivering an outside email to one of your users, or sending an email from one of your users. Accepted incoming mail gets added to the MTA&rsquo;s queue on the server.</p></li>
+
+<li><p><strong>MDA</strong>: The <em>Mail Delivery Agent</em> takes mail from the MTA&rsquo;s queue and saves it to individual mailboxes on your Linode.</p></li>
+
+<li><p><strong>IMAP/POP3 Server</strong>: Manages users and their mailboxes as they check their email over IMAP/POP3 connections.</p></li>
+</ul>
+
+<h3 id="the-mail-server-process">The Mail Server Process</h3>
+
+<ol>
+<li>An incoming message is directed to your Linode via DNS.</li>
+<li>Once it passes through the MTA and MDA, it is stored in the user&rsquo;s mailbox on the server.</li>
+<li>When the message is requested, the IMAP/POP3 server mediates the connection between your Linode and the user&rsquo;s local mail client.</li>
+<li>Outgoing mail is sent from the user&rsquo;s local mail client, processed by your Linode&rsquo;s MTA, and is then sent to its destination on the Internet.</li>
+</ol>
+
+<p><img src="1300-mail_server.jpg" alt="E-mail Process Diagram" title="E-mail Process Diagram" /></p>
+
+<h2 id="how-to-choose-mail-server-components">How to Choose Mail Server Components</h2>
+
+<p>There are several software packages that can be used as MTAs, MDAs, and IMAP/POP3 servers, and this section will present some of the most popular options.</p>
+
+<p>The examples in the <a href="#build-your-mail-server">later sections</a> of this guide use Postfix as the MTA and Dovecot as the MDA and IMAP/POP3 server.</p>
+
+<h3 id="mail-transfer-agents">Mail Transfer Agents</h3>
+
+<p>MTAs are responsible for handling SMTP connections to your Linode from both outside senders and your own users. When your Linode is asked to relay an email, it decides what to do with the email based on the rules you give it. The MTA delivers the message locally if it is sent to a user you host on your Linode, relays it to another server if it was sent from one of your authorized users, and rejects it if it&rsquo;s neither to nor from a user on your Linode.</p>
+
+<p>Here are the most popular MTA services available:</p>
+
+<ul>
+<li><a href="http://www.courier-mta.org">Courier Mail Server</a> comes with Courier-IMAP, which is the popular part of the Courier mail server suite, but Courier-MTA also includes mail relaying features. It&rsquo;s a simpler MTA but somewhat limited.</li>
+<li><a href="http://www.exim.org">Exim</a> is modern and oriented towards flexibility. It&rsquo;s secure, but not quite as security-oriented as Postfix. It&rsquo;s very customizable, but is one of the most complex MTAs to configure.</li>
+<li><a href="http://www.postfix.org">Postfix</a> is part of Linode&rsquo;s <a href="/docs/email/postfix/email-with-postfix-dovecot-and-mysql">recommended mail server build</a>. It&rsquo;s modern, security-oriented, and very flexible. It is slightly simpler to set up than Exim.</li>
+<li><a href="http://www.qmail.org/top.html">Qmail</a> is a modern MTAs and supports <a href="https://en.wikipedia.org/wiki/Maildir">Maildir-style</a> directories. Qmail has not received an update since 2007, but remains very popular.</li>
+<li><a href="http://www.sendmail.com/sm/open_source/">Sendmail</a> is a legacy MTA that has a large following and good support.</li>
+<li><a href="http://www.zimbra.com">Zimbra</a> is an all-in-one mail service. Zimbra offers a simple install, but few configurable options.</li>
+</ul>
+
+<h3 id="mail-delivery-agents">Mail Delivery Agents</h3>
+
+<p>MDAs move email from the MTA&rsquo;s queue to individual mailbox directories within your Linode, for example: your mailbox could be located at <code>/var/mail/example.com/user/</code>. MDAs are also known as Local Delivery Agents (LDAs). Different MTAs support different types of mailboxes. The most common types are the older <strong>mbox</strong> mailboxes which store all the messages together in a single file, and <strong>Maildir</strong> mailboxes which store each email in a separate file and support multiple folders. MDAs are often bundled with other mail-related applications.</p>
+
+<p>These are some of the most popular MDAs available:</p>
+
+<ul>
+<li><a href="http://www.cyrusimap.org/index.php">Cyrus&rsquo;s MDA</a> is part of the Cyrus IMAP/POP3 server. Cyrus is a modern, security-oriented IMAP/POP3 server designed to run on servers where users do not log in directly.</li>
+<li><a href="http://linux.die.net/man/8/deliver">Deliver</a> is a simple Linux mail delivery utility that is configured in the Imapd configuration files by default.</li>
+<li><a href="http://wiki2.dovecot.org/LDA">Dovecot&rsquo;s LDA</a> and <a href="http://wiki2.dovecot.org/LMTP">Dovecot&rsquo;s LMTP server</a> are part of the Dovecot IMAP/POP3 server. Dovecot is a lightweight, modern, and configurable mail server.</li>
+<li><a href="http://www.courier-mta.org/maildrop/">maildrop</a> is Courier&rsquo;s MDA. Courier is an all-in-one mail server.</li>
+<li><a href="http://www.postfix.org/OVERVIEW.html#delivering">Postfix&rsquo;s MDA</a> is part of the Postfix MTA software. Postfix is a modern, security-oriented, flexible MTA.</li>
+<li><a href="http://www.sendmail.com/sm/open_source/">Sendmail&rsquo;s MDA</a> is part of the Sendmail MTA software. Sendmail is an older MTA that is still popular.</li>
+</ul>
+
+<h3 id="imap-and-pop3-servers">IMAP and POP3 Servers</h3>
+
+<p>An IMAP or POP3 server handles connections from incoming IMAP or POP3 clients like Microsoft Outlook and Apple Mail. The server manages client access to the mailboxes and raw mail files so that the email is displayed in a modern way.</p>
+
+<p>Most servers and clients support both IMAP and POP3. POP3 clients connect to the server at specified intervals and download all of a user&rsquo;s messages without leaving copies on the server by default. POP3 was developed when most people used only one device to access one email account. IMAP is a newer protocol designed for multi-device users. IMAP clients stay continuously connected to the server and IMAP mailboxes mirror the mailboxes on your Linode. IMAP and POP3 both have secure versions (IMAPS and SSL-POP) which use SSL encryption for mail transfer. Always use the secure version whenever possible.</p>
+
+<p>Here are the most popular IMAP and POP3 servers available:</p>
+
+<ul>
+<li><a href="http://www.citadel.org">Citadel</a> is an all-in-one mail service that includes mail, calendars, instant messaging, mailing lists, and other collaboration tools. It&rsquo;s open source and geared towards small and medium-sized organizations. Linode has  guides for <a href="/docs/email/citadel/email-with-citadel-on-ubuntu-12-04-lts-precise-pangolin/">Citadel on Ubuntu 12.04</a> and <a href="/docs/email/citadel/email-with-citadel-on-debian-6-squeeze/">Citadel on Debian 6</a>.</li>
+<li><a href="http://www.courier-mta.org">Courier</a> has a very popular IMAP server called <a href="http://www.courier-mta.org/imap/">Courier IMAP</a>. It&rsquo;s an all-in-one mail server software suite, but Courier IMAP can be installed by itself if that&rsquo;s the only part you need.</li>
+<li><a href="http://www.cyrusimap.org/index.php">Cyrus</a> is a modern, security-oriented IMAP/POP3 server designed to work on sealed servers where users do not log in directly.</li>
+<li><a href="http://www.dbmail.org">DBMail</a> is an open source project that stores mail in databases instead of flat files.</li>
+<li><a href="http://www.dovecot.org">Dovecot</a> is a lightweight, modern, and configurable mail server, and is part of our <a href="/docs/email/postfix/email-with-postfix-dovecot-and-mysql/">recommended mail server build</a>.</li>
+<li><a href="http://www.xmailserver.org">Xmail</a> is a full-featured POP3 server, but does not support IMAP.</li>
+<li><a href="http://www.zimbra.com">Zimbra</a> is an all-in-one mail service that&rsquo;s much simpler to install than other options, but less customizable.</li>
+</ul>
+
+<h2 id="build-your-mail-server">Build Your Mail Server</h2>
+
+<h3 id="ssl-certificate">SSL Certificate</h3>
+
+<p>An SSL certificate encrypts connections to your mail server. It&rsquo;s possible to run a mail server without an SSL certificate, but it&rsquo;s not recommended.</p>
+
+<p>Any type of SSL certificate will work, but some certificates have different degrees of trustworthiness for your users. If you want the highest level of trustworthiness, you should <a href="/docs/security/ssl/obtain-a-commercially-signed-tls-certificate/">purchase a signed SSL certificate</a> from a reputable company.</p>
+
+<p>You can also use a free self-signed certificate if you are comfortable with the warnings it generates. You can make your own <a href="/docs/security/ssl/create-a-self-signed-tls-certificate/">self-signed SSL certificate</a>, or, if you&rsquo;re following our recommended build, you can use the one that comes with Dovecot by default.</p>
+
+<h3 id="software-installation">Software Installation</h3>
+
+<p>Install and configure the MTA, MDA, and IMAP/POP3 server. To help manage domains, email addresses, user credentials, aliases, etc., install a database server like MySQL or PostgreSQL.</p>
+
+<p>For detailed configuration instructions, see our <a href="/docs/email/postfix/email-with-postfix-dovecot-and-mysql/">Postfix, Dovecot, and MySQL</a> guide.</p>
+
+<p>For more mail server guides, including guides for older software versions and other mail-related services, visit our <a href="/docs/email/">Email Server Guides</a>.</p>
+
+<h3 id="dns-records">DNS Records</h3>
+
+<p>DNS records help email reach your Linode. The right DNS records also help designate your Linode as a legitimate mail server. In this section, you&rsquo;ll learn how to set the appropriate MX, SPF, and PTR records for your domain and Linode.</p>
+
+<h4 id="time-to-live-ttl">Time to Live (TTL)</h4>
+
+<p>You should lower the Time to Live (TTL) on your existing DNS records to the lowest allowed value at least 24-48 hours before you make any other DNS changes. That way, any changes you make later will propagate quickly.</p>
+
+<p>It&rsquo;s also a good idea to keep your old mail server running for at least 48 hours after you start directing mail to your Linode, just in case the DNS changes take a while to propagate.</p>
+
+<h4 id="mx-records">MX Records</h4>
+
+<p>MX records tell the Internet where to send your domain&rsquo;s email. If someone sends an email to <code>user@example.com</code>, the outgoing server looks up the DNS settings for the domain <code>example.com</code>. When it finds the MX record pointing to your Linode, it sends the message to your Linode.</p>
+
+<p>Create an MX record for each domain and subdomain for which you want to receive mail on your Linode.</p>
+
+<p>You can also set multiple MX records with different priorities for the same domain. This creates fallback mail servers for your domain in case the first one on the list is down. Lower numbers have a higher priority.</p>
+
+<p>Your MX record has a:</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>Domain</strong></th>
+<th align="center"><strong>TTL</strong></th>
+<th align="center"><strong>Type</strong></th>
+<th align="center"><strong>Priority</strong></th>
+<th><strong>Target</strong></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>example.com</td>
+<td align="center">86400</td>
+<td align="center">MX</td>
+<td align="center">10</td>
+<td>203.0.113.0</td>
+</tr>
+</tbody>
+</table>
+
+<p>A typical MX record looks like this:</p>
+
+<pre class="file terminal">
+  <code>
+example.com         86400   MX      10      example.com
+example.com         86400   MX      10      203.0.113.0
+mail.example.com    86400   MX      10      203.0.113.0
+</code>
+</pre>
+
+
+<p>If you use Linode&rsquo;s <a href="/docs/platform/manager/dns-manager/">DNS Manager</a>, point your MX records to a target domain or subdomain that resolves to your Linode. Make sure that domain or subdomain has an <em>A record</em> that points to the correct IP address.</p>
+
+<h4 id="spf-records">SPF Records</h4>
+
+<p>SPF records help establish the legitimacy of your mail server and reduce the chances of <em>spoofing</em>, which occurs when someone fakes the headers of an email to make it look like it&rsquo;s coming from your domain, even though it didn&rsquo;t. Spammers may try to do this to get around spam filters.</p>
+
+<p>An SPF record for your domain tells other receiving mail servers which outgoing server(s) are valid sources of email, so they can reject spoofed email from your domain that has originated from unauthorized servers.</p>
+
+<p>In your SPF record, list all the mail servers from which you send mail, and exclude all the others. Your SPF record will have a domain or subdomain, TTL type which is plain text, or SPF if your name server supports it, and text which starts with <code>v=spf1</code> and contains the SPF record settings.</p>
+
+<p>If your Linode is the only mail server you use, you should be able to use the example record below. With this SPF record, the receiving server will check the IP addresses of both the sending server and the IP address of <code>example.com</code>. If the IPs match, the check passes. If not, the check will &ldquo;soft fail&rdquo; (i.e., the message will be marked but will not automatically be rejected for failing the SPF check).</p>
+
+<pre class="file terminal">
+  <code>
+example.com     86400   TXT     "v=spf1 a ~all"
+</code>
+</pre>
+
+
+<p>Make sure your SPF records are not too strict. If you accidentally exclude a legitimate mail server, its messages could get marked as spam. Visit <a href="http://www.openspf.org/SPF_Record_Syntax">openspf.org</a> to learn how SPF records work and how to construct one that works for your setup. Their <a href="http://www.openspf.org/FAQ/Examples">examples</a> are also helpful.</p>
+
+<h4 id="reverse-dns">Reverse DNS</h4>
+
+<p><a href="/docs/networking/dns/configure-your-linode-for-reverse-dns">Set reverse DNS</a> for your mail server&rsquo;s domain or subdomain.</p>
+
+<p>The reverse DNS for your mail server must match the hostname of your Linode. If your Linode&rsquo;s reverse DNS and hostname do not match, email from your server may get rejected with the warning &ldquo;Reverse DNS does not match SMTP Banner.&rdquo;</p>
+
+<p>If you need to check or set the hostname, see our <a href="/docs/getting-started#setting-the-hostname">Getting Started</a> article.</p>
+
+<h2 id="spam-and-virus-protection-mail-clients-and-more">Spam and Virus Protection, Mail Clients, and More</h2>
+
+<p>At this point, you should have a basic mail server up and running. There&rsquo;s a bit more to do, however, if you want to provide your users with the best possible mail experience. This includes adding spam and virus filtering to protect your users, setting up mail clients, providing a webmail solution, and adding any extras you want, such as mailing lists.</p>
+
+<h3 id="configure-spam-and-virus-protection">Configure Spam and Virus Protection</h3>
+
+<p>Spam that originates from your Linode may be a violation of <a href="/tos">Linode&rsquo;s Terms of Service</a>, and may lead to your server being blacklisted by a <a href="https://mxtoolbox.com/blacklists.aspx">variety of organizations</a>.</p>
+
+<p>Take steps to ensure that your Linode is not used as an <em>open relay</em> server, which would allow anyone to send messages anywhere using your server. To prevent your Linode from being used as an open relay, make a list of allowed domains and users for your MTA, and make sure it rejects everything else.</p>
+
+<p>There are also a few other scenarios where your server could be sending spam. If your server or an installed application are hacked, or if a user&rsquo;s account is compromised, or if the emails you send are getting marked as spam by recipients. The best way to stay on top of outgoing spam is to keep an eye on your outgoing mail logs and pay attention to bounceback errors.</p>
+
+<p>Incoming spam can also be a problem. Spam filters help you deal with spam sent to your own users. They let you filter incoming messages based on origin, content, etc. Some spam contains viruses, which can cause more serious damage to recipients.</p>
+
+<p>Here are some of the most popular spam and virus filter services:</p>
+
+<ul>
+<li><a href="http://www.amavis.org">Amavis</a> is an open source content filter for email that integrates directly with your MTA. It does some checking on its own, and can also be used in conjunction with more robust spam and virus filters.</li>
+<li><a href="http://www.clamav.net/lang/en/">Clam AntiVirus</a> is a popular, free, and open-source virus scanner.</li>
+<li><a href="http://spamassassin.apache.org">SpamAssassin</a> is a very popular free spam filter.</li>
+<li><a href="https://sourceforge.net/projects/assp/">Anti-Spam SMTP Proxy Server</a> Anti-Spam SMTP Proxy Server implements multiple spam filters.</li>
+</ul>
+
+<h4 id="what-to-do-if-your-server-has-been-blacklisted">What to do if your server has been blacklisted</h4>
+
+<p>If your Linode is added to a <a href="https://mxtoolbox.com/blacklists.aspx">block list</a>, take steps to mitigate the source of the spam. Once mitigated, contact the mail provider that blocked you and follow their steps to be allowed to send mail again.</p>
+
+<h3 id="mail-clients">Mail Clients</h3>
+
+<p>Mail clients are an integral part of the email experience for your users. Microsoft Outlook, Apple Mail, and Mozilla Thunderbird are all examples of mail clients.</p>
+
+<p>Most mail clients are compatible with most mail servers – you just need to make a note of the settings you configured on the server side, and make sure you use compatible settings on the client side. Here are some clients to consider:</p>
+
+<ul>
+<li><strong>Protocols</strong>: Choose IMAP or POP3 for receiving, and SMTP for sending.</li>
+<li><strong>Encryption</strong>: Choose SSL and/or TLS encryption, based on your server settings.</li>
+<li><strong>Authentication</strong>: Make sure the format of the credentials entered in the mail client matches the format expected by the server. Sometimes just the &ldquo;user&rdquo; part of the email address is the username, and sometimes the entire email address, including the <code>@</code> sign, is the username. You can also have usernames that are not related to their corresponding email addresses, but this is not recommended.</li>
+<li><strong>Mailbox format</strong>: Make sure your users will be able to read, create, and use all of the folders they need.</li>
+<li><strong>Ports</strong>: Not only do your mail client(s) and server have to work on the same ports, but your internet service provider has to allow them as well.</li>
+</ul>
+
+<p>Here are some of the typical mail ports:</p>
+
+<ul>
+<li><code>110</code>: POP3</li>
+<li><code>995</code>: SSL-POP (encrypted)</li>
+<li><code>143</code>: IMAP</li>
+<li><code>993</code>: IMAPS (encrypted)</li>
+<li><code>25</code>: SMTP (sometimes blocked by ISPs)</li>
+<li><code>587</code>: SMTP (The preferred non-encrypted port for outgoing connections from mail clients. Use STARTTLS for encryption.)</li>
+<li><code>465</code>: SMTP (should only be used for legacy support)</li>
+</ul>
+
+<p>If you&rsquo;re using a firewall, be sure to edit the rules for your mail server&rsquo;s ports. See Linode&rsquo;s guide to <a href="/docs/security/securing-your-server/#configure-a-firewall">configuring a firewall</a> for more information.</p>
+
+<h3 id="webmail">Webmail</h3>
+
+<p>Webmail is a type of mail client that can be installed on your server and accessed from a web browser. It allows your users to access their email from your website (example: <code>http://example.com/mail</code>) anywhere they have access to the internet. Running a web server is a prerequisite for running a webmail client, so follow the <a href="/docs/hosting-website">Hosting a Website</a> guide if you want to run webmail on your Linode, in addition to installing a mail server.</p>
+
+<p>Here are some of the most popular webmail clients:</p>
+
+<ul>
+<li><a href="https://mailinabox.email/">Mail-in-a-box</a> is an all-in-one mail option that offers a hassle-free approach to setting up a mail server and webmail component.</li>
+<li><a href="http://www.citadel.org">Citadel</a> is an all-in-one mail service that includes mail, calendars, instant messaging, mailing lists, and other collaboration tools. It&rsquo;s open source and geared towards small and medium-sized organizations.</li>
+<li><a href="http://www.horde.org/apps/webmail">Horde Webmail</a> is an open-source IMAP client paired with some additional functions like account management and calendars.</li>
+<li><a href="http://roundcube.net">RoundCube</a> is an IMAP client with modern functionality and a clean layout.</li>
+<li><a href="http://squirrelmail.org">SquirrelMail</a> is a solid option, but has an older user interface.</li>
+<li><a href="http://www.zimbra.com">Zimbra</a> is an all-in-one mail service that&rsquo;s much simpler to install than other options, but less customizable.</li>
+</ul>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library toc-long nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#should-you-run-a-mail-server">Should You Run a Mail Server?</a>
+<ul>
+<li><a href="#benefits">Benefits</a></li>
+<li><a href="#drawbacks">Drawbacks</a></li>
+<li><a href="#external-mail-services">External Mail Services</a></li>
+</ul></li>
+<li><a href="#how-mail-servers-work">How Mail Servers Work</a>
+<ul>
+<li><a href="#the-mail-server-process">The Mail Server Process</a></li>
+</ul></li>
+<li><a href="#how-to-choose-mail-server-components">How to Choose Mail Server Components</a>
+<ul>
+<li><a href="#mail-transfer-agents">Mail Transfer Agents</a></li>
+<li><a href="#mail-delivery-agents">Mail Delivery Agents</a></li>
+<li><a href="#imap-and-pop3-servers">IMAP and POP3 Servers</a></li>
+</ul></li>
+<li><a href="#build-your-mail-server">Build Your Mail Server</a>
+<ul>
+<li><a href="#ssl-certificate">SSL Certificate</a></li>
+<li><a href="#software-installation">Software Installation</a></li>
+<li><a href="#dns-records">DNS Records</a>
+<ul>
+<li><a href="#time-to-live-ttl">Time to Live (TTL)</a></li>
+<li><a href="#mx-records">MX Records</a></li>
+<li><a href="#spf-records">SPF Records</a></li>
+<li><a href="#reverse-dns">Reverse DNS</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#spam-and-virus-protection-mail-clients-and-more">Spam and Virus Protection, Mail Clients, and More</a>
+<ul>
+<li><a href="#configure-spam-and-virus-protection">Configure Spam and Virus Protection</a>
+<ul>
+<li><a href="#what-to-do-if-your-server-has-been-blacklisted">What to do if your server has been blacklisted</a></li>
+</ul></li>
+<li><a href="#mail-clients">Mail Clients</a></li>
+<li><a href="#webmail">Webmail</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

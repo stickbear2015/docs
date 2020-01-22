@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Troubleshooting SSH</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Troubleshooting steps for when you can&#39;t connect to your Linode via SSH.">
+        <meta name="keywords" content="linux, reboot, lish, ssh">
+        
+        <meta property="og:title" content="Troubleshooting SSH">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/troubleshooting/troubleshooting-ssh/">
+        <meta property="og:description" content="Troubleshooting steps for when you can&#39;t connect to your Linode via SSH.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/troubleshooting/troubleshooting-ssh/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/troubleshooting/">Troubleshooting</a>
+  
+</li>
+
+
+<li>
+  
+  Troubleshooting SSH
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Troubleshooting SSH</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-14T15:02:23-05:00">Thursday, February 14, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2ftroubleshooting-ssh%2f&via=linode&text=Troubleshooting%20SSH" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2ftroubleshooting-ssh%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2ftroubleshooting-ssh%2f&t=Troubleshooting%20SSH" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Troubleshooting%20SSH%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2ftroubleshooting%2ftroubleshooting-ssh%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/troubleshooting%5ctroubleshooting-ssh%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/troubleshooting%5ctroubleshooting-ssh%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>This guide presents troubleshooting strategies for when you can&rsquo;t connect to your Linode via SSH. If you currently cannot <a href="/docs/tools-reference/linux-system-administration-basics/#the-ping-command">ping</a> your Linode, then your server also likely has more basic connection issues. If this is the case, you should instead follow the <a href="/docs/troubleshooting/troubleshooting-basic-connection-issues/">Troubleshooting Basic Connection Issues</a> guide. If you restore basic networking to your Linode but still can&rsquo;t access SSH, return to this guide.</p>
+
+<p>If you can access SSH but not other services, refer to the <a href="/docs/troubleshooting/troubleshooting-web-servers-databases-other-services/">Troubleshooting Web Servers, Databases, and Other Services</a> guide.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Where to go for help outside this guide
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>This guide explains how to use different troubleshooting commands on your Linode. These commands can produce diagnostic information and logs that may expose the root of your connection issues. For some specific examples of diagnostic information, this guide also explains the corresponding cause of the issue and presents solutions for it.</p>
+
+<p>If the information and logs you gather do not match a solution outlined here, consider searching the <a href="https://www.linode.com/community/questions/">Linode Community Site</a> for posts that match your system&rsquo;s symptoms. Or, post a new question in the Community Site and include your commands&rsquo; output.</p>
+
+<p>Linode is not responsible for the configuration or installation of software on your Linode. Refer to Linode&rsquo;s <a href="/docs/platform/billing-and-support/support/#scope-of-support">Scope of Support</a> for a description of which issues Linode Support can help with.</p>
+</div></div>
+</blockquote>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>Before troubleshooting your SSH service, familiarize yourself with the Linode Shell.</p>
+
+<h3 id="the-linode-shell-lish">The Linode Shell (Lish)</h3>
+
+<p><a href="/docs/platform/manager/using-the-linode-shell-lish/"><em>Lish</em></a> is a shell that provides access to your Linode&rsquo;s serial console. Lish does not establish a network connection to your Linode, so you can use it when your networking is down or SSH is inaccessible. While troubleshooting SSH, all commands you enter on your Linode will be performed from the Lish console.</p>
+
+<p>To learn about Lish in more detail, and for instructions on how to connect to your Linode via Lish, review the <a href="/docs/platform/manager/using-the-linode-shell-lish/">Using the Linode Shell (Lish)</a> guide. In particular, <a href="/docs/platform/manager/using-the-linode-shell-lish/#use-a-web-browser">using your web browser</a> is a fast and simple way to access Lish.</p>
+
+<h3 id="forgotten-your-password">Forgotten your Password?</h3>
+
+<p>If you have forgotten your Linux user&rsquo;s password, you will not be able to log in with Lish. You can reset the root password for your Linode with <a href="/docs/quick-answers/linode-platform/reset-the-root-password-on-your-linode-new-manager/">these instructions</a>. If you are logged in as root, you can change the password of another user with the <code>passwd</code> command:</p>
+
+<pre><code>passwd &lt;username&gt;
+</code></pre>
+
+<p>If you reset your password and can log in with Lish, try logging in with SSH, as that may have been the cause of your connection problems.</p>
+
+<h2 id="troubleshoot-unresponsive-ssh-connections">Troubleshoot Unresponsive SSH Connections</h2>
+
+<p>If your SSH connection attempts are timing out or are being immediately rejected, then your SSH daemon may not be running, or your firewall may be blocking SSH connections. This section will help troubleshoot these issues.</p>
+
+<p>If your connections are <em>not</em> timing out or being rejected, or if you are able to resolve these issues but you still can&rsquo;t access SSH because of rejected login attempts, then continue to the <a href="#troubleshoot-rejected-ssh-logins">Troubleshoot Rejected SSH Logins</a> section.</p>
+
+<h3 id="is-ssh-running">Is SSH Running?</h3>
+
+<ol>
+<li><p>To check on the status of your SSH daemon, run:</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>Distribution</strong></th>
+<th><strong>Command</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>systemd systems (Arch, Ubuntu 16.04+, Debian 8+, CentOS 7+, etc)</td>
+<td><code>sudo systemctl status sshd -l</code></td>
+</tr>
+
+<tr>
+<td>CentOS 6</td>
+<td><code>sudo service sshd status</code></td>
+</tr>
+
+<tr>
+<td>Ubuntu 14.04, Debian 7</td>
+<td><code>sudo service ssh status</code></td>
+</tr>
+</tbody>
+</table></li>
+
+<li><p>If the command reports the service is running, review the <a href="#is-ssh-running-on-a-non-standard-port">Is SSH Running on a Non-Standard Port?</a> section.</p></li>
+
+<li><p>If the command reports the service is not running, then try restarting it:</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>Distribution</strong></th>
+<th><strong>Command</strong></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>systemd systems</td>
+<td><code>sudo systemctl restart sshd</code></td>
+</tr>
+
+<tr>
+<td>CentOS 6</td>
+<td><code>sudo service sshd restart</code></td>
+</tr>
+
+<tr>
+<td>Ubuntu 14.04, Debian 7</td>
+<td><code>sudo service ssh restart</code></td>
+</tr>
+</tbody>
+</table></li>
+
+<li><p>Check the status of the service again. If it&rsquo;s still not running, view the logs for the service:</p>
+
+<table>
+<thead>
+<tr>
+<th><strong>Distribution</strong></th>
+<th><strong>Command</strong></th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>systemd systems</td>
+<td><code>sudo journalctl -u sshd -u ssh</code></td>
+</tr>
+
+<tr>
+<td>CentOS 6</td>
+<td><code>less /var/log/secure</code></td>
+</tr>
+
+<tr>
+<td>Ubuntu 14.04, Debian 7</td>
+<td><code>less /var/log/auth.log</code></td>
+</tr>
+</tbody>
+</table>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Review the <a href="/docs/quick-answers/linux/how-to-use-journalctl/">journalctl</a> and <a href="/docs/quick-answers/linux/how-to-use-less/">less</a> guides for help with navigating your logs when using those commands.</div>
+</blockquote>
+</li>
+
+<li><p>Review the <a href="#is-another-service-bound-on-the-same-port">Is Another Service Bound on the Same Port?</a> section. Then:</p>
+
+<ul>
+<li><p>If you can start the SSH service successfully, but your connections still time out or are rejected, then <a href="#review-firewall-rules">review your firewall rules</a>.</p></li>
+
+<li><p>If you can&rsquo;t get the service to start, try pasting your logs into a search engine or searching for your logs in the <a href="https://www.linode.com/community/questions/">Linode Community Site</a> to see if anyone else has run into similar issues. If you don&rsquo;t find any results, you can try asking about your issues in a new post on the Linode Community Site.</p></li>
+</ul></li>
+</ol>
+
+<h3 id="is-ssh-running-on-a-non-standard-port">Is SSH Running on a Non-Standard Port?</h3>
+
+<p>Run <code>netstat</code> on your Linode to check which port is used by SSH:</p>
+
+<pre><code>sudo netstat -plntu | grep ssh
+tcp        0      0 0.0.0.0:41              0.0.0.0:*               LISTEN      4433/sshd
+tcp6       0      0 :::41                   :::*                    LISTEN      4433/sshd
+</code></pre>
+
+<p>This example output shows that SSH is running on port 41. You can connect to SSH by manually specifying this port:</p>
+
+<pre><code>ssh username@192.0.2.4 -p 41
+</code></pre>
+
+<p>Alternatively, you can <a href="#bind-ssh-to-a-port-number">bind SSH</a> on the standard port (22).</p>
+
+<h3 id="is-another-service-bound-on-the-same-port">Is Another Service Bound on the Same Port?</h3>
+
+<p>Check your SSH logs for a message that looks like:</p>
+
+<pre class="file terminal">
+  <code>
+Jan 23 10:29:52 localhost sshd[4370]: error: Bind to port 22 on 0.0.0.0 failed: Address already in use.
+</code>
+</pre>
+
+
+<p>This error indicates that another service on your system is already using the same port that SSH binds to, and so SSH can&rsquo;t start. To resolve this issue, choose one of the following solutions.</p>
+
+<ul>
+<li><p><strong>Bind SSH to a different port</strong></p>
+
+<p>Follow instructions for <a href="#bind-ssh-to-a-port-number">setting SSH&rsquo;s port number</a>, and specify a different number than the one that is already in-use.</p></li>
+
+<li><p><strong>Stop the other service</strong></p>
+
+<ol>
+<li><p>Use the <code>netstat</code> command to discover which other process is using the same port:</p>
+
+<pre><code>sudo netstat -plntu | grep :22
+
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      4433/some-other-service
+tcp6       0      0 :::22                   :::*                    LISTEN      4433/some-other-service
+</code></pre></li>
+
+<li><p>Stop and disable that other service:</p>
+
+<pre><code>sudo systemctl stop some-other-service
+sudo systemctl disable some-other-service
+</code></pre>
+
+<p>Or, <a href="/docs/tools-reference/tools/use-killall-and-kill-to-stop-processes-on-linux/">kill</a> the process using the process ID listed next to the process name in the output from <code>netstat</code>.</p></li>
+</ol></li>
+
+<li><p><strong>Assign a different port to the other service</strong></p>
+
+<ol>
+<li><p>Use the <code>netstat</code> command to find out what service is bound to the same port.</p></li>
+
+<li><p>Then, change the configuration for that service to use a different port.</p></li>
+
+<li><p>Restart SSH.</p></li>
+</ol></li>
+</ul>
+
+<h3 id="bind-ssh-to-a-port-number">Bind SSH to a Port Number</h3>
+
+<ol>
+<li><p>Open <code>/etc/ssh/sshd_config</code> in your editor. Search for a line in this file that declares the port for SSH:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/ssh/sshd_config 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1">#Port 22</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Uncomment this line and provide a different number.</p></li>
+
+<li><p>Save the file and restart the SSH service.</p></li>
+</ol>
+
+<h3 id="review-firewall-rules">Review Firewall Rules</h3>
+
+<p>If your service is running but your connections still fail, your firewall (which is likely implemented by the <code>iptables</code> software) may be blocking the connections. To review your current firewall ruleset, run:</p>
+
+<pre><code>sudo iptables-save # displays IPv4 rules
+sudo ip6tables-save # displays IPv6 rules
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>Your deployment may be running FirewallD or UFW, which are frontends used to more easily manage your iptables rules. Run these commands to find out if you are running either package:</p>
+
+<pre><code>sudo ufw status
+sudo firewall-cmd --state
+</code></pre>
+
+<p>Review <a href="/docs/security/firewalls/configure-firewall-with-ufw/#ufw-status">How to Configure a Firewall with UFW</a> and <a href="/docs/security/firewalls/introduction-to-firewalld-on-centos/#firewall-zones">Introduction to FirewallD on CentOS</a> to learn how to manage and inspect your firewall rules with those packages.</p>
+</div>
+</blockquote>
+
+
+<p>Firewall rulesets can vary widely. Review the <a href="/docs/security/firewalls/control-network-traffic-with-iptables/">Control Network Traffic with iptables</a> guide to analyze your rules and determine if they are blocking connections. A rule which allows incoming SSH traffic could look like this:</p>
+
+<pre class="file terminal">
+  <code>
+-A INPUT -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW -j ACCEPT
+</code>
+</pre>
+
+
+<h3 id="disable-firewall-rules">Disable Firewall Rules</h3>
+
+<p>In addition to analyzing your firewall ruleset, you can also temporarily disable your firewall to test if it is interfering with your connections. Leaving your firewall disabled increases your security risk, so we recommend re-enabling it afterward with a modified ruleset that will accept your connections. Review <a href="/docs/security/firewalls/control-network-traffic-with-iptables/">Control Network Traffic with iptables</a> for help with this subject.</p>
+
+<ol>
+<li><p>Create a temporary backup of your current iptables rules:</p>
+
+<pre><code>sudo iptables-save &gt; ~/iptables.txt
+</code></pre></li>
+
+<li><p>Set the <code>INPUT</code>, <code>FORWARD</code> and <code>OUTPUT</code> packet policies as <code>ACCEPT</code>:</p>
+
+<pre><code>sudo iptables -P INPUT ACCEPT
+sudo iptables -P FORWARD ACCEPT
+sudo iptables -P OUTPUT ACCEPT
+</code></pre></li>
+
+<li><p>Flush the <code>nat</code> table that is consulted when a packet that creates a new connection is encountered:</p>
+
+<pre><code>sudo iptables -t nat -F
+</code></pre></li>
+
+<li><p>Flush the <code>mangle</code> table that is used for specialized packet alteration:</p>
+
+<pre><code>sudo iptables -t mangle -F
+</code></pre></li>
+
+<li><p>Flush all the chains in the table:</p>
+
+<pre><code>sudo iptables -F
+</code></pre></li>
+
+<li><p>Delete every non-built-in chain in the table:</p>
+
+<pre><code>sudo iptables -X
+</code></pre></li>
+
+<li><p>Repeat these steps with the <code>ip6tables</code> command to flush your IPv6 rules. Be sure to assign a different name to the IPv6 rules file (e.g. <code>~/ip6tables.txt</code>).</p></li>
+</ol>
+
+<h2 id="troubleshoot-rejected-ssh-logins">Troubleshoot Rejected SSH Logins</h2>
+
+<p>If SSH is listening and accepting connections but is rejecting login attempts, review these instructions:</p>
+
+<h3 id="is-root-login-permitted">Is Root Login Permitted?</h3>
+
+<p>SSH can be configured to disable logins for the root user. To check your SSH configuration, run:</p>
+
+<pre><code>grep PermitRootLogin /etc/ssh/sshd_config
+</code></pre>
+
+<p>If the value of the <code>PermitRootLogin</code> is <code>no</code>, then try logging in with another user. Or, set the value in <code>/etc/ssh/sshd_config</code> to <code>yes</code>, restart SSH, and try logging in as root again.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This option can also be set with the value <code>without-password</code>. If this value is used, root logins are accepted with public key authentication.</div>
+</blockquote>
+
+
+<h3 id="are-password-logins-accepted">Are Password Logins Accepted?</h3>
+
+<p>SSH can be configured to not accept passwords and instead accept public key authentication. To check your SSH configuration, run:</p>
+
+<pre><code>grep PasswordAuthentication /etc/ssh/sshd_config
+</code></pre>
+
+<p>If the value of the <code>PasswordAuthentication</code> is <code>no</code>, <a href="/docs/security/securing-your-server/#create-an-authentication-key-pair">create a key-pair</a>. Or, set the value in <code>/etc/ssh/sshd_config</code> to <code>yes</code>, restart SSH, and try logging in with your password again.</p>
+
+<h3 id="is-your-public-key-stored-on-the-server">Is your Public Key Stored on the Server?</h3>
+
+<p>If you prefer to use public key authentication, but your login attempts with your key are not working, double-check that the server has your public key. To check which keys are recognized for your user, run:</p>
+
+<pre><code>cat ~/.ssh/authorized_keys
+</code></pre>
+
+<p>If your public key is not listed in this file, add it to the file on a new line.</p>
+
+<p>On some systems, your authorized keys file may be listed in a different location. Run this command to show where your file is located:</p>
+
+<pre><code>grep AuthorizedKeysFile /etc/ssh/sshd_config
+</code></pre>
+
+<h3 id="collect-login-attempt-logs">Collect Login Attempt Logs</h3>
+
+<p>If the previous troubleshooting steps do not resolve your issues, collect more information about how your logins are failing:</p>
+
+<ul>
+<li><p>View your login attempts in the log files described in step 4 of <a href="#is-ssh-running">Is SSH Running?</a>. In particular, you can search these logs for your local IP address, and the results will show what error messages were recorded for your logins. To find out what your local IP is, visit a website like <a href="https://www.whatismyip.com/">https://www.whatismyip.com/</a>.</p></li>
+
+<li><p>Use your SSH client in verbose mode, which will show details for each part of the connection process. Verbose mode is invoked by passing the <code>-v</code> option. Passing more than one <code>v</code> increases the verbosity. You can use up to three <code>v</code>s:</p>
+
+<pre><code>ssh -v username@192.0.2.4
+ssh -vv username@192.0.2.4
+ssh -vvv username@192.0.2.4
+</code></pre></li>
+</ul>
+
+<p>Try pasting your logs into a search engine or searching for your logs in the <a href="https://www.linode.com/community/questions/">Linode Community Site</a> to see if anyone else has run into similar issues. If you don&rsquo;t find any results, you can try asking about your issues in a new post on the Linode Community Site.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#the-linode-shell-lish">The Linode Shell (Lish)</a></li>
+<li><a href="#forgotten-your-password">Forgotten your Password?</a></li>
+</ul></li>
+<li><a href="#troubleshoot-unresponsive-ssh-connections">Troubleshoot Unresponsive SSH Connections</a>
+<ul>
+<li><a href="#is-ssh-running">Is SSH Running?</a></li>
+<li><a href="#is-ssh-running-on-a-non-standard-port">Is SSH Running on a Non-Standard Port?</a></li>
+<li><a href="#is-another-service-bound-on-the-same-port">Is Another Service Bound on the Same Port?</a></li>
+<li><a href="#bind-ssh-to-a-port-number">Bind SSH to a Port Number</a></li>
+<li><a href="#review-firewall-rules">Review Firewall Rules</a></li>
+<li><a href="#disable-firewall-rules">Disable Firewall Rules</a></li>
+</ul></li>
+<li><a href="#troubleshoot-rejected-ssh-logins">Troubleshoot Rejected SSH Logins</a>
+<ul>
+<li><a href="#is-root-login-permitted">Is Root Login Permitted?</a></li>
+<li><a href="#are-password-logins-accepted">Are Password Logins Accepted?</a></li>
+<li><a href="#is-your-public-key-stored-on-the-server">Is your Public Key Stored on the Server?</a></li>
+<li><a href="#collect-login-attempt-logs">Collect Login Attempt Logs</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

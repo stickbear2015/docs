@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Java on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/languages/java/</link>
+    <description>Recent content in Java on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/languages/java/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>How to Deploy Spring Boot Applications on NGINX on Ubuntu 16.04</title>
+      <link>http://localhost:1313/docs/development/java/how-to-deploy-spring-boot-applications-nginx-ubuntu-16-04/</link>
+      <pubDate>Wed, 07 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/how-to-deploy-spring-boot-applications-nginx-ubuntu-16-04/</guid>
+      <description>What is Spring Boot? Spring Boot enables quick development of the Spring Framework by taking care of default configurations and allowing Java developers to focus on rapid prototyping. This guide shows how to create a simple Spring Boot application which is then exposed through an NGINX reverse proxy.
+Before You Begin You will need a Linode with both Java 8 and NGINX. If these are already installed on your Linode, skip to the next section.</description>
+    </item>
+    
+    <item>
+      <title>Install Java on Centos 7</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-centos/</link>
+      <pubDate>Thu, 01 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-centos/</guid>
+      <description>Java is a powerful programming language. Software written in Java can compile and run on any system. Unlike Python or C, Java does not come pre-installed on Linode distribution images. This guide installs the OpenJDK 8 runtime environment and development kit in CentOS 7. OpenJDK is the free and open-source implementation of the Java SE Development Kit.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>Install Java on Debian 8</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-debian/</link>
+      <pubDate>Thu, 01 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-debian/</guid>
+      <description>Java is a powerful programming language. Software written in Java can be compiled and run on any system. Unlike Python or C, Java does not come pre-installed on Linode distribution images. This guide installs the OpenJDK 7 runtime environment and development kit in Debian 8. OpenJDK is the free and open-source implementation of the Java SE Development Kit.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>Install Java on Ubuntu 16.04</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-ubuntu-16-04/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-ubuntu-16-04/</guid>
+      <description>Java is one of the world&amp;rsquo;s most popular programming languages. Java can be used to create anything from software to basic web applications.
+In this guide, we&amp;rsquo;ll install the Oracle Java development kit for building Java applications. We&amp;rsquo;ll also cover OpenJDK, an open-source alternative to the Oracle Java development kit.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>Install Oracle Java SE Development Kit 11 on Ubuntu</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-ubuntu-18-04/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-ubuntu-18-04/</guid>
+      <description>Java is one of the world&amp;rsquo;s most popular programming languages and can be used to create anything from software to basic web applications. Java was originally developed at Sun Microsystems, which was bought by Oracle. For this reason, Oracle&amp;rsquo;s Java platform is the most well known. However, there are other such as IBM Runtimes, Red Hat&amp;rsquo;s Open JDK, and Zulu.
+With the release of version 11, Oracle has updated the JDK license to be significantly different from previous versions.</description>
+    </item>
+    
+    <item>
+      <title>Install Apache Tomcat on Ubuntu 16.04</title>
+      <link>http://localhost:1313/docs/development/frameworks/apache-tomcat-on-ubuntu-16-04/</link>
+      <pubDate>Mon, 09 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/frameworks/apache-tomcat-on-ubuntu-16-04/</guid>
+      <description>Apache Tomcat is an open-source software implementation of the Java Servlet and Java Server Pages technologies. With this guide, you&amp;rsquo;ll run applications within Tomcat using the OpenJDK implementation of the Java development environment.
+Before You Begin  Ensure that your system is up to date and that you have completed the getting started guide. If you are new to Linux server administration, we recommend reviewing our beginner&amp;rsquo;s guide and the article concerning systems administration basics.</description>
+    </item>
+    
+    <item>
+      <title>Java Development with WildFly on CentOS 7</title>
+      <link>http://localhost:1313/docs/development/java/java-development-wildfly-centos-7/</link>
+      <pubDate>Fri, 18 Sep 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/java-development-wildfly-centos-7/</guid>
+      <description>JBoss AS (Renamed to WildFly) has been used for many years as one of the best known performing &amp;amp; free community Java Application Server. The attention even increased when Red Hat started providing commercial support to its enterprise version JBoss EAP with support to on-premises, virtual, or cloud. Red Hat also provides commercial support for Red Hat Enterprise Linux &amp;amp; building huge ecosystem of multiple products to serve its clients.</description>
+    </item>
+    
+  </channel>
+</rss>

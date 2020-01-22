@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Introduction to Linux Administration</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide introduces important sysadmin concepts and tools for new users who are managing a project on a Linode.">
+        <meta name="keywords" content="linux, sysadmin, administration">
+        
+        <meta property="og:title" content="Introduction to Linux Administration">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/quick-answers/linux-essentials/introduction-to-linux-administration/">
+        <meta property="og:description" content="This guide introduces important sysadmin concepts and tools for new users who are managing a project on a Linode.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/quick-answers/linux-essentials/introduction-to-linux-administration/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/quick-answers/">Quick Answers</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/quick-answers/linux-essentials/">Linux Essentials</a>
+  
+</li>
+
+
+<li>
+  
+  Introduction to Linux Administration
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Introduction to Linux Administration</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-05-31T12:52:43-04:00">Thursday, May 31, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Jared Kobos
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fintroduction-to-linux-administration%2f&via=linode&text=Introduction%20to%20Linux%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fintroduction-to-linux-administration%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fintroduction-to-linux-administration%2f&t=Introduction%20to%20Linux%20Administration" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Introduction%20to%20Linux%20Administration%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fquick-answers%2flinux-essentials%2fintroduction-to-linux-administration%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/quick-answers%5clinux-essentials%5cintroduction-to-linux-administration.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/quick-answers%5clinux-essentials%5cintroduction-to-linux-administration.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Linode offers a flexible and customizable cloud platform for your applications. This has advantages in terms of cost and control, but also means that many services which are included in shared hosting need to be manually deployed and configured for your needs. If you are new to self-hosting, you may not know everything that needs to be done. This guide introduces the concepts and tools that you will need to be familiar with when hosting your own applications on a Linode.</p>
+
+<h2 id="create-servers">Create Servers</h2>
+
+<p>You will have to choose the best region, plan size, type, and Linux distribution for your Linodes. For simple projects, a 2GB Linode is enough to get started. You should choose a data center close to your intended audience; if your project grows, you can scale your servers to additional regions.</p>
+
+<h2 id="users">Users</h2>
+
+<p>If you will be the only one working on your project, a single standard user account with <code>sudo</code> access should be all you need. However, if you have multiple users, you must create accounts for each of them and make sure they have the correct permissions. Every directory and file in a Linux system has permissions setting specifying who can read, write, or execute the file.</p>
+
+<p>Limited user accounts can only write to files in their home directories by default (located at <code>/home/username</code> for each user). In a common use case like hosting a website, the files for the website are often kept in <code>/var/www/html</code> or a similar directory. You can create a <code>web</code> group for editing the website and give that group access to the website files. Then you can add the user accounts for each collaborator to the <code>web</code> group. For more information, see our <a href="/docs/tools-reference/linux-users-and-groups/">Linux Users and Groups</a> guide.</p>
+
+<h2 id="backups">Backups</h2>
+
+<p>Making sure that all important data is backed up is one of a system administrator&rsquo;s most important tasks. Our <a href="/docs/quick-answers/linux-essentials/introduction-to-backups/">Introduction to Backups</a> guide explains how to find the best backup solution for your needs.</p>
+
+<h2 id="monitoring-and-diagnostic-tools">Monitoring and Diagnostic Tools</h2>
+
+<p>The dashboard in the Linode Manager provides basic information about your Linode&rsquo;s status, CPU and memory usage, and network traffic. Linode also offers the <a href="/docs/platform/longview/longview/">Longview</a> service, which provides much more detailed insight into your Linode. Sometimes, however, issues will occur on your system and you will have to investigate to determine their cause.</p>
+
+<p>Simple tools like <code>ping</code> and <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/">MTR</a>, which are available on most Linux distributions, are helpful in diagnosing network issues. There are also <a href="/docs/tools-reference/linux-system-administration-basics/#system-diagnostics">shell commands</a> used for checking memory usage, disk allocation, and running processes.</p>
+
+<p>Larger projects can benefit from more advanced monitoring tools, such as the <a href="/docs/databases/elasticsearch/visualize-apache-web-server-logs-using-elastic-stack-on-debian-8/">Elastic Stack</a>. The Elastic Stack provides dozens of services and plugins that can be used to record, index, and search different types of data, from webserver logs to geolocation data.</p>
+
+<h3 id="log-management">Log Management</h3>
+
+<p>Linux systems and applications maintain a number of logs, usually stored in <code>/var/log/</code>. Reviewing these logs with commands like <code>sudo tail -f /var/log/auth.log</code> is  good first step to take when troubleshooting a problem.</p>
+
+<p>Over time, or with more complicated applications, log files can become difficult to keep track of. In this case it is a good idea to install <a href="/docs/uptime/logs/use-logrotate-to-manage-log-files/">logrotate</a> to manage your log files.</p>
+
+<h2 id="containers-and-orchestration">Containers and Orchestration</h2>
+
+<p>It has become increasingly common practice to encapsulate components of an application in an easily reproducible container. All of the packages and configurations for the application are stored within the container, so that it is simple to deploy the application to a new server (often just a single command). Containerization also helps keep the components of your application modular and isolated.</p>
+
+<h3 id="docker">Docker</h3>
+
+<p>Docker is the most commonly used container platform. <a href="https://hub.docker.com">Docker Hub</a> is a public repository of thousands of images that can be used to easily build containers to run common applications, and <a href="/docs/applications/containers/how-to-use-docker-compose/">Docker Compose</a> is a tool for running multi-container applications.</p>
+
+<p>Read our guide on <a href="/docs/applications/containers/when-and-why-to-use-docker/">When and Why to Use Docker</a> to see if docker is a good choice for your project. To install and start working with Docker, use our <a href="/docs/applications/containers/how-to-install-docker-and-pull-images-for-container-deployment/">Install Docker</a> guide.</p>
+
+<h3 id="orchestration-tools">Orchestration Tools</h3>
+
+<p>For larger-scale projects, orchestration tools can be very helpful. These tools allow you to manage clusters of Linodes, including giving you the ability to quickly scale or perform rolling upgrades. If your application&rsquo;s audience is growing rapidly, having to manually create new Linodes, deploy your application to them, then connect each new Linode to your existing cluster is time consuming and error-prone. Similarly, making sure that a large fleet of Linodes is running the most up-to-date system packages and software versions can cause a lot of difficulty. With tools like <a href="https://kubernetes.io/">Kubernetes</a>, <a href="/docs/applications/configuration-management/getting-started-with-salt-basic-installation-and-setup/">Salt</a>, and <a href="/docs/applications/configuration-management/how-to-build-your-infrastructure-using-terraform-and-linode/">Terraform</a>, building out and managing your infrastructure becomes much easier.</p>
+
+<h2 id="advanced-topics">Advanced Topics</h2>
+
+<h3 id="load-balancing">Load Balancing</h3>
+
+<p>In a larger application with many users, it often becomes important to distribute the requests received across multiple web servers. Typically, a single server, known as a <em>load balancer</em>, will listen for requests on your IP address or domain name. The balancer then forwards the requests to backend servers. Linode includes a <a href="/docs/platform/nodebalancer/getting-started-with-nodebalancers/">NodeBalancer</a> service that will automatically balance load between attached backend nodes, and also includes monitoring and other features. If you would prefer to configure your own load balancers, start with our <a href="/docs/uptime/loadbalancing/how-to-use-haproxy-for-load-balancing/">HAProxy</a> guide.</p>
+
+<h3 id="set-up-an-email-server">Set Up an Email Server</h3>
+
+<p>With a Linode and a fully-qualified domain name (FQDN), you can set up a private email server with @your-domain.com addresses. Email server configuration can be quite complex, but fortunately there are free third-party solutions that can simplify the process. Start with our <a href="/docs/email/running-a-mail-server/">Running a Mail Server</a> guide, or consider <a href="/docs/email/how-to-create-an-email-server-with-mail-in-a-box/">Mail-in-a-Box</a> for an all-in-one solution.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="/docs/tools-reference/linux-system-administration-basics/">Linux System Administration Basics</a></li>
+
+<li><a href="https://developers.linode.com/">Linode API Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#create-servers">Create Servers</a></li>
+<li><a href="#users">Users</a></li>
+<li><a href="#backups">Backups</a></li>
+<li><a href="#monitoring-and-diagnostic-tools">Monitoring and Diagnostic Tools</a>
+<ul>
+<li><a href="#log-management">Log Management</a></li>
+</ul></li>
+<li><a href="#containers-and-orchestration">Containers and Orchestration</a>
+<ul>
+<li><a href="#docker">Docker</a></li>
+<li><a href="#orchestration-tools">Orchestration Tools</a></li>
+</ul></li>
+<li><a href="#advanced-topics">Advanced Topics</a>
+<ul>
+<li><a href="#load-balancing">Load Balancing</a></li>
+<li><a href="#set-up-an-email-server">Set Up an Email Server</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

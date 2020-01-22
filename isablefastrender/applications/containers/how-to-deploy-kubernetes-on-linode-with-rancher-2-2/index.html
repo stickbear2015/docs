@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Deploy Kubernetes on Linode with Rancher 2.2</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Create and manage Kubernetes clusters with Rancher and deploy apps from the Rancher app library.">
+        <meta name="keywords" content="rancher, docker, kubernetes, container">
+        
+        <meta property="og:title" content="How to Deploy Kubernetes on Linode with Rancher 2.2">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/how-to-deploy-kubernetes-on-linode-with-rancher-2-2/">
+        <meta property="og:description" content="Create and manage Kubernetes clusters with Rancher and deploy apps from the Rancher app library.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/how-to-deploy-kubernetes-on-linode-with-rancher-2-2/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  How to Deploy Kubernetes on Linode with Rancher 2.2
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Deploy Kubernetes on Linode with Rancher 2.2</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-03-26T10:51:31-04:00">Tuesday, March 26, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fhow-to-deploy-kubernetes-on-linode-with-rancher-2-2%2f&via=linode&text=How%20to%20Deploy%20Kubernetes%20on%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fhow-to-deploy-kubernetes-on-linode-with-rancher-2-2%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fhow-to-deploy-kubernetes-on-linode-with-rancher-2-2%2f&t=How%20to%20Deploy%20Kubernetes%20on%20Linode%20with%20Rancher%202.2" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Deploy%20Kubernetes%20on%20Linode%20with%20Rancher%202.2%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fhow-to-deploy-kubernetes-on-linode-with-rancher-2-2%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5chow-to-deploy-kubernetes-on-linode-with-rancher-2-2%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5chow-to-deploy-kubernetes-on-linode-with-rancher-2-2%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="rancher_title_graphic.png" alt="Rancher title graphic." /></p>
+
+<h2 id="what-is-rancher">What is Rancher?</h2>
+
+<p><a href="http://rancher.com/">Rancher</a> is a web application that provides an interactive and easy-to-use GUI for creating and managing Kubernetes clusters. Rancher has plugins for interacting with multiple cloud hosts, including Linode, and you can manage clusters across different hosting providers.</p>
+
+<p>Rancher also maintains a curated list of apps that offer simple configuration options and a click-to-deploy interface. If you prefer to deploy your apps from a Helm chart, you can do that too.</p>
+
+<h3 id="guide-outline">Guide Outline</h3>
+
+<p>This guide will show how to:</p>
+
+<ul>
+<li><p>Install Rancher on a Linode</p></li>
+
+<li><p>Deploy a Kubernetes cluster on Linode using Rancher</p></li>
+
+<li><p>Deploy an app from the Rancher app library to your cluster</p></li>
+
+<li><p>Take advantage of the Linode <a href="https://github.com/linode/linode-cloud-controller-manager">CCM</a> and <a href="https://github.com/linode/linode-blockstorage-csi-driver">CSI</a> for Kubernetes via Rancher.</p></li>
+</ul>
+
+<p>If you are not familiar with Kubernetes and container deployments, we recommend that you review our other guides on these subjects first.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div><p>This guide&rsquo;s example instructions will create several billable resources on your Linode account. If you do not want to keep using the example cluster that you create, be sure to <a href="#removing-the-cluster">remove it</a> when you have finished the guide.</p>
+
+<p>If you remove the resources afterward, you will only be billed for the hour(s) that the resources were present on your account.</p>
+</div>
+</blockquote>
+
+
+<h3 id="if-you-already-run-rancher">If You Already Run Rancher</h3>
+
+<p>If you already run Rancher and would like to start creating clusters on Linode, you can skip to the <a href="#activate-the-linode-node-driver-for-rancher">Activate the Linode Node Driver</a> and <a href="#deploy-a-kubernetes-cluster">Deploy a Kubernetes Cluster</a> sections. The <a href="#deploy-an-app-from-the-rancher-app-library">Deploy an App</a> section will show how you can take advantage of the Linode CCM and CSI.</p>
+
+<p>You may need to update your local Rancher installation to see the Linode node driver as an option.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>The Rancher web application will run on a Linode in your Cloud Manager account. Create and prepare the Linode that will run Rancher:</p>
+
+<ol>
+<li><p>Create a Linode running Ubuntu 18.04 in the data center of your choice. Follow the <a href="/docs/getting-started/">Getting Started</a> guide for instructions on setting up your server. It is recommended that you create a 2GB Linode or larger.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You will be able to create Kubernetes clusters in any Linode data center from the Rancher UI, even if your Rancher Linode is located in a different region.</div>
+</blockquote>
+</li>
+
+<li><p>The Rancher web application is run inside a Docker container, so you will also need to install Docker CE on your Linode. Follow the instructions for <a href="/docs/applications/containers/install-docker-ce-ubuntu-1804">installing Docker CE on Ubuntu 18.04</a> and then return to this guide.</p></li>
+</ol>
+
+<p>You will also need to generate an API token and prepare a domain zone:</p>
+
+<ol>
+<li><p>Rancher will need a Linode APIv4 token from your Linode account in order to create your cluster. Review the instructions from the <a href="/docs/platform/api/getting-started-with-the-linode-api/#get-an-access-token">Getting Started with the Linode API</a> guide to get a token.</p></li>
+
+<li><p>The <a href="#set-up-dns-for-the-wordpress-app">Set Up DNS</a> section of this guide will assign an address to this guide&rsquo;s example app. In order to do so, you must already have a domain zone created in the Linode Cloud Manager. If you do not have a zone created, review the instructions from our <a href="/docs/platform/manager/dns-manager/#domain-zones">DNS Manager</a> guide.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you haven&rsquo;t purchased a domain name, then you can read along with the DNS section of this guide without implementing it in your own cluster.</div>
+</blockquote>
+</li>
+</ol>
+
+<h2 id="install-rancher">Install Rancher</h2>
+
+<p>After you have your Linode up and running with Docker, you can then install and run Rancher:</p>
+
+<ol>
+<li><p>Log in to your Linode via SSH:</p>
+
+<pre><code>ssh your_user@192.0.2.0
+</code></pre></li>
+
+<li><p>Create a <code>rancher</code> directory inside <code>/opt</code>; this folder will hold settings and keys for Rancher:</p>
+
+<pre><code>sudo mkdir -p /opt/rancher
+</code></pre></li>
+
+<li><p>Run Rancher:</p>
+
+<pre><code>docker run -d -p 80:80 -p 443:443 \
+  --restart=unless-stopped \
+  -v /opt/rancher:/var/lib/rancher \
+  rancher/rancher:latest
+</code></pre>
+
+<ul>
+<li>The <code>--restart</code> option ensures that the application will be restarted if the Linode is ever rebooted.</li>
+<li>The <code>-v</code> option binds the <code>/opt/rancher</code> directory on the Linode to the container so that the application can persist its data.</li>
+</ul></li>
+
+<li><p>Visit your Linode&rsquo;s IP address in your browser. Your browser will display an SSL certificate warning, but you can bypass it.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you are interested in setting up an SSL certificate with Rancher, you may consider also creating an NGINX container with an SSL certificate that proxies traffic to the Rancher container.</div>
+</blockquote>
+</li>
+
+<li><p>You should see a welcome screen from Rancher. Enter a new password for the default administrative user for Rancher (which is named <code>admin</code>) and click <strong>Continue</strong>:</p>
+
+<p><img src="first-load-screen.png" alt="Rancher first load screen" title="The password-entry form that appears when you first visit your Rancher site in a browser" /></p></li>
+
+<li><p>The server URL entry form will appear, which should already show your Rancher server&rsquo;s IP address. Click the <strong>Save URL</strong> button to continue:</p>
+
+<p><img src="enter-server-url.png" alt="Rancher enter server URL screen" title="The server URL entry form" /></p></li>
+
+<li><p>The default home page for your Rancher app will appear. This page normally displays a list of all of your Kubernetes clusters. Since you have not created a cluster yet, a placeholder image is shown instead:</p>
+
+<p><img src="global-clusters-page-no-clusters.png" alt="Rancher enter server URL screen" title="The server URL entry form" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The main interface for navigating Rancher is via the blue navigation bar that spans the top of the page. The items in this navigation bar will change when you view different parts of the application.</div>
+</blockquote>
+</li>
+
+<li><p>Before you can create your first cluster, you will need to enable Linode&rsquo;s integration with Rancher. Proceed to the <a href="#activate-the-linode-node-driver-for-rancher">Activate the Linode Node Driver for Rancher</a> section.</p></li>
+</ol>
+
+<h3 id="activate-the-linode-node-driver-for-rancher">Activate the Linode Node Driver for Rancher</h3>
+
+<p>Rancher includes two kinds of integrations with hosting providers:</p>
+
+<ul>
+<li><p>A <em>cluster driver</em> allows Rancher to create and administer a cloud host-launched Kubernetes cluster. In a host-launched Kubernetes cluster, your hosting platform operates the new cluster&rsquo;s control plane and etcd components, while you provision and configure your worker nodes (via Rancher as well).</p></li>
+
+<li><p>A <em>node driver</em> allows Rancher to create and administer a Rancher-launched Kubernetes cluster. Rancher will directly provision your control plane and etcd nodes along with your worker nodes. Your cloud host does not manage your control plane and etcd components.</p></li>
+</ul>
+
+<p>Rancher is shipped with a node driver for Linode, but it is inactive by default. To activate the Linode node driver:</p>
+
+<ol>
+<li><p>Click on <strong>Tools</strong> from the main navigation bar and select <strong>Drivers</strong> from the dropdown menu.</p>
+
+<p><img src="drivers-menu-option.png" alt="Rancher Drivers menu option highlighted" title="Select the Drivers option from the Tools dropdown menu" /></p></li>
+
+<li><p>Click on the <strong>Node Drivers</strong> tab:</p>
+
+<p><img src="node-drivers-tab-highlighted.png" alt="Rancher Node Drivers tab highlighted" title="Click on the Node Drivers tab" /></p></li>
+
+<li><p>Scroll down to Linode&rsquo;s driver. Click the corresponding <strong>more options ellipsis</strong> and click on the <strong>Activate</strong> item in the dropdown menu that appears:</p>
+
+<p><img src="activate-linode-node-driver.png" alt="Rancher activate Linode node driver" title="Activate the Linode node driver in the Rancher interface" /></p></li>
+
+<li><p>Activating the Linode node driver <strong>does not</strong> install the Linode CCM and CSI for your new clusters. Further instructions for enabling these features are listed in the <a href="#deploy-a-kubernetes-cluster">Deploy a Kubernetes Cluster</a> section. You should wait until the node driver is listed as <strong>Active</strong> before moving on.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            What are the Linode CCM and CSI?
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper">The <a href="https://github.com/linode/linode-cloud-controller-manager">CCM</a> (Cloud Controller Manager) and <a href="https://github.com/linode/linode-blockstorage-csi-driver">CSI</a> (Container Storage Interface) are Kubernetes addons published by Linode. These addons provide additional integrations with the Linode cloud platform. Specifically, you can use them to create NodeBalancers, DNS records, and Block Storage Volumes.</div></div>
+</blockquote></li>
+</ol>
+
+<h2 id="deploy-a-kubernetes-cluster">Deploy a Kubernetes Cluster</h2>
+
+<h3 id="add-a-node-template">Add a Node Template</h3>
+
+<p><em>Node templates</em> are used by Rancher to provision cluster nodes. When you create a node template, you can specify configuration parameters, like the region, instance type, and Linux image that should be used for any node in the cluster. You can set different templates for different clusters, which allows you to choose the right resources for your different workloads.</p>
+
+<p>Before provisioning your cluster, you will need to add the node template it will use. To add a node template:</p>
+
+<ol>
+<li><p>Click on your <strong>User Avatar</strong> icon in the upper right-hand corner and select <strong>Node Templates</strong>.</p>
+
+<p><img src="add-node-template-profile.png" alt="Click on the User Avatar icon" title="Click on your User Avatar icon in the upper right-hand corner and select Node Templates" /></p></li>
+
+<li><p>On the <em>Node Templates</em> page, click on the <strong>Add Template</strong> button in the upper right-hand corner.</p></li>
+
+<li><p>The <em>Add Node Template</em> dialog will appear, select Linode from the list of providers and enter in your Linode APIv4 token in the <strong>API Token</strong> field.</p>
+
+<p><img src="add-node-template-api-token.png" alt="Add Node Template dialog window" title="Select Linode from the list of providers and enter in your Linode APIv4 token" /></p></li>
+
+<li><p>Click on the <strong>Next: Configure Instances</strong> button.</p></li>
+
+<li><p>Another dialog will appear which accepts options for your new node template. Under the <strong>Instance Options</strong> section, set the preferred region, instance type, and Linux image for your nodes, along with any Cloud Manager <a href="/docs/quick-answers/linode-platform/tags-and-groups/">tags</a> you’d like to apply to your nodes.</p>
+
+<p><img src="add-node-template-linode-options.png" alt="Rancher Add Node Template form - Linode options" title="The Linode options in the Add Node Template form" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>We recommend that you choose a Linode 2GB or higher for the nodes in a Kubernetes cluster. The Block Storage service has not been deployed to our Atlanta (US-Southeast) data center. Since this guide will use Block Storage Volumes in its example cluster, please choose a different region when creating your node template.</div>
+</blockquote>
+</li>
+
+<li><p>Enter a name for your template. This can be arbitrary, but it&rsquo;s helpful to call it something that will help you remember the options you set in the template form, like <code>newark-linode8gb-ubuntu1804</code>.</p>
+
+<p><img src="add-node-template-form-template-name.png" alt="Rancher Add Node Template form - template name" title="The template name field in the Add Node Template form" /></p></li>
+
+<li><p>When finished with the form, click the <strong>Create</strong> button.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>All other node template settings are optional and will not be used in this guide. You do not need to set a password for the nodes created through this template; Rancher will generate one automatically. As well, Rancher provides command-line access to the Kubernetes API for your cluster, so logging into your nodes generally isn&rsquo;t needed.</div>
+</blockquote>
+</li>
+
+<li><p>You will be returned to the <em>Node Templates</em> page where your node template will be visible.</p>
+
+<p><img src="add-node-template-list.png" alt="Rancher Node Template list page" title="You will be returned to the *Node Templates* page where the node template you just created should be visible." /></p></li>
+</ol>
+
+<h3 id="provision-a-cluster">Provision a Cluster</h3>
+
+<ol>
+<li><p>Return to the home page by hovering over the <strong>Global</strong> dropdown menu in the main navigation bar and then clicking the <strong>Global</strong> menu item:</p>
+
+<p><img src="navigate-back-to-global-view.gif" alt="Rancher return to the global view" title="Navigate back to the home page by selecting the Global menu option in the main navigation bar" /></p></li>
+
+<li><p>Click on the <strong>Add Cluster</strong> button. The <strong>Add Cluster</strong> form will appear.</p></li>
+
+<li><p>Select the Linode driver from the <strong>From nodes in an infrastructure provider</strong> section:</p>
+
+<p><img src="add-cluster-form-linode-node-driver-selected.png" alt="Rancher Add Cluster form - Linode node driver selected" title="Linode node driver selected in the Add Cluster form" /></p></li>
+
+<li><p>Enter a name for your cluster in the <strong>Cluster Name</strong> field. The name for our example cluster will be <code>example-cluster</code>.</p></li>
+
+<li><p>In the <strong>Node Pools</strong> section, under the <em>Template</em> column, you should see the node template you created in the previous section of this guide. Set a value for the <strong>Name Prefix</strong> field. For each Linode that Rancher creates for that node pool, the Linode will be prefixed according to the name you set (e.g. if the name prefix is <code>example-cluster-</code>, then your Linodes will be named <code>example-cluster-1</code>, <code>example-cluster-2</code>, etc.</p>
+
+<p><img src="add-cluster-form-add-node-template-button-highlighted.png" alt="Rancher Add Cluster form - Add Node Template button highlighted" title="Linode node driver selected in the Add Cluster form" /></p>
+
+<ul>
+<li><p>A <em>node pool</em> is Rancher’s method for creating the nodes (Linodes) that form your cluster. You specify how many nodes should be in a node pool, along with the node template for those nodes in that pool. If Rancher later detects that one of the nodes has lost connectivity with the cluster, it will automatically create a new one.</p></li>
+
+<li><p>When configuring a node pool, you also specify which of your cluster’s components operate on the nodes in the pool. For example, you can have one pool that only runs your cluster’s etcd database, another pool which only runs your control plane components (the Kubernetes API server, scheduler, and controller manager), and a third pool which runs your application workloads.</p></li>
+</ul></li>
+
+<li><p>Set the value for the <strong>Count</strong> field to <code>3</code>. Rancher will create 3 Linodes for the node pool.</p></li>
+
+<li><p>Toggle on the checkboxes for <strong>etcd</strong>, <strong>Control Plane</strong>, and <strong>Worker</strong>. In our example cluster, the nodes for this node pool will run each of these components. Your configured form should look like the following:</p>
+
+<p><img src="add-cluster-form-3-node-all-role-pool.png" alt="Rancher Add Node Template form - single node pool configuration" title="A node pool with a count of 3 that runs all cluster components" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>When you set up a cluster for production, avoid having a node pool that runs your workloads alongside your etcd or control plane components. An example node pool configuration which splits the etcd and control plane components from your workloads would look like the following:</p>
+
+<p><img src="add-cluster-form-example-production-node-pools.png" alt="Rancher Add Node Template form - example production node pool configuration" title="An example node pool configuration for a production cluster" /></p>
+
+<p>Review Rancher&rsquo;s <a href="https://rancher.com/docs/rancher/v2.x/en/cluster-provisioning/production/">Production Ready Cluster</a> documentation for more guidance on setting up production clusters.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>The last part in creating your cluster is to configure Linode&rsquo;s CCM and CSI. In the <strong>Cluster Options</strong> section, toggle on the <strong>Custom</strong> option for the <strong>Cloud Provider</strong> field, then click on the <strong>Edit as YAML</strong> button above the section.</p>
+
+<p><img src="add-cluster-form-custom-cloud-provider.png" alt="Rancher Add Node Template form - example production node pool configuration" title="An example node pool configuration for a production cluster" /></p></li>
+
+<li><p>A text editor will appear:</p>
+
+<p><img src="add-cluster-yaml-editor.png" alt="Rancher Add Cluster form - YAML editor" title="YAML editor for the Add Cluster form" /></p></li>
+
+<li><p>Insert the following snippet <strong>before the first line in the editor</strong> (above the <code>addon_job_timeout</code> declaration):</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">addons_include:
+  - https://linode.github.io/rancher-ui-driver-linode/releases/v0.2.0/linode-addons.yml
+addons: <span class="p">|</span>-
+  ---
+  apiVersion: v1
+  kind: Secret
+  metadata:
+    name: linode
+    namespace: kube-system
+  stringData:
+    token: <span class="s2">&#34;...&#34;</span>
+    region: <span class="s2">&#34;...&#34;</span>
+  ---</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Insert your Linode APIv4 token in the <code>token</code> field from this snippet. Also, enter the label for your node template&rsquo;s data center in the <code>region</code> field. This label should be lower-case (e.g. <code>us-east</code> instead of <code>US-East</code>).</p></li>
+
+<li><p>Scroll down in the editor to the <code>services</code> section. Remove the existing <code>services</code> section and replace it with this snippet:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">services:
+  etcd:
+    backup_config:
+      interval_hours: <span class="m">12</span>
+      retention: <span class="m">6</span>
+    creation: <span class="s2">&#34;12h&#34;</span>
+    extra_args:
+      heartbeat-interval: <span class="m">500</span>
+      election-timeout: <span class="m">5000</span>
+    retention: <span class="s2">&#34;72h&#34;</span>
+    snapshot: <span class="nb">true</span>
+  kube-api:
+    always_pull_images: <span class="nb">false</span>
+    pod_security_policy: <span class="nb">false</span>
+    service_node_port_range: <span class="s2">&#34;30000-32767&#34;</span>
+    extra_args:
+      feature-gates: <span class="s2">&#34;PersistentLocalVolumes=true,VolumeScheduling=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true&#34;</span>
+  kubelet:
+    fail_swap_on: <span class="nb">false</span>
+    extra_args:
+      cloud-provider: <span class="s2">&#34;external&#34;</span>
+      feature-gates: <span class="s2">&#34;PersistentLocalVolumes=true,VolumeScheduling=true,CSINodeInfo=true,CSIDriverRegistry=true,BlockVolume=true,CSIBlockVolume=true&#34;</span>
+  kube-controller:
+    extra_args:
+      cloud-provider: <span class="s2">&#34;external&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>After you finish with both of these steps, your YAML should resemble <a href="completed-cluster-config.yml">this completed snippet</a>.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>Avoid copying and pasting the entire completed snippet example, as it has some variable values outside of the <code>addons_include</code>, <code>addons</code>, and <code>services</code> sections that may not match your deployment (e.g. the <code>kubernetes_version</code> setting).</p>
+
+<p>Instead, compare your YAML file with the completed example to ensure you have inserted the <code>addons_include</code>, <code>addons</code>, and <code>services</code> sections in the right places.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>Click the <strong>Create</strong> button below the YAML editor. You will be returned to the global home page, and your new cluster will be listed (in the <strong>Provisioning</strong> state):</p>
+
+<p><img src="global-home-page-new-cluster-provisioning.png" alt="Rancher Global home page with new cluster listed" title="New cluster listed in global home page" /></p></li>
+
+<li><p>If you visit the list of your Linodes in the Linode Cloud Manager, you will see the new nodes in your cluster:</p>
+
+<p><img src="cloud-manager-linodes-provisioning.png" alt="Linode Cloud Manager - new cluster nodes" title="New cluster nodes listed in Linode Cloud Manager" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If your nodes do not not appear in the Linode Cloud Manager as expected, then you may have run into a limit on the number of resources allowed on your Linode account. Contact <a href="/docs/platform/billing-and-support/support/">Linode Support</a> if you believe this may be the case.</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="explore-the-new-cluster">Explore the New Cluster</h3>
+
+<ol>
+<li><p>To inspect your new cluster, click on its name in the global list of clusters:</p>
+
+<p><img src="global-home-page-new-cluster-provisioning-cluster-name-highlighted.png" alt="Rancher home page - new cluster highlighted" title="New cluster listed in global home page, cluster name highlighted" /></p>
+
+<p>Or, hover over the <strong>Global</strong> menu and then select the name of the new cluster:</p>
+
+<p><img src="global-home-page-cluster-selection-menu-cluster-name-highlighted.png" alt="Rancher cluster selection menu" title="Rancher cluster selection menu with new cluster highlighted" /></p></li>
+
+<li><p>Your cluster&rsquo;s dashboard will appear. If it is still provisioning, it will display a placeholder graphic:</p>
+
+<p><img src="cluster-dashboard-provisioning.png" alt="Rancher cluster dashboard" title="Rancher cluster dashboard with placeholder graphic" /></p></li>
+
+<li><p>Note that the items in the main navigation bar will change when viewing a cluster:</p>
+
+<p><img src="cluster-navigation-bar.png" alt="Rancher navigation bar - cluster mode" title="Rancher navigation bar - cluster mode" /></p></li>
+
+<li><p>Click on the <strong>Nodes</strong> main menu item:</p>
+
+<p><img src="cluster-navigation-bar-nodes-highlighted.png" alt="Rancher cluster navigation bar - Nodes highlighted" title="Rancher cluster navigation bar - Nodes highlighted" /></p></li>
+
+<li><p>A list of your cluster&rsquo;s nodes will appear. If they are still provisioning, they will be labelled with the most recent step in the provisioning sequence:</p>
+
+<p><img src="cluster-nodes-list-provisioning.png" alt="Rancher cluster nodes list - provisioning" title="Rancher cluster nodes list - provisioning" /></p>
+
+<p>When the nodes finish provisioning, the <strong>Active</strong> label will be displayed:</p>
+
+<p><img src="cluster-nodes-list-active.png" alt="Rancher cluster nodes list - active" title="Rancher cluster nodes list - active" /></p></li>
+
+<li><p>When your nodes have finished provisioning, click the <strong>Cluster</strong> item in the navigation bar to navigate back to the dashboard. A summary of the cluster&rsquo;s resource usage is displayed:</p>
+
+<p><img src="cluster-dashboard.png" alt="Rancher cluster dashboard" title="Rancher cluster dashboard" /></p></li>
+</ol>
+
+<h3 id="load-the-kubectl-command-line">Load the Kubectl Command Line</h3>
+
+<p>In addition to managing your cluster via Rancher&rsquo;s interactive UI, Rancher also provides command-line access to your cluster&rsquo;s Kubernetes API:</p>
+
+<ul>
+<li><p>From your cluster&rsquo;s dashboard, click the <strong>Launch kubectl</strong> button:</p>
+
+<p><img src="cluster-dashboard-kubectl-highlighted.png" alt="Rancher cluster dashboard - kubectl button highlighted" title="Rancher cluster dashboard - kubectl button highlighted" /></p>
+
+<p>A new dialog will appear with a command-line prompt. You are able to use kubectl to interact with your cluster:</p>
+
+<p><img src="cluster-dashboard-kubectl-prompt.png" alt="Rancher kubectl web CLI" title="Rancher kubectl web CLI" /></p></li>
+
+<li><p>Alternatively, you can use the <code>kubectl</code> CLI from your local computer <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">if you have it installed</a>. From your cluster&rsquo;s dashboard in Rancher, click on the <strong>Kubeconfig File</strong> button:</p>
+
+<p><img src="cluster-dashboard-kubeconfig-highlighted.png" alt="Rancher cluster dashboard - kubeconfig button highlighted" title="Rancher cluster dashboard - kubeconfig button highlighted" /></p>
+
+<p>A new dialog will appear with the correct kubeconfig for your cluster. Copy the contents of the configuration to a file on your computer. Then, pass it as an option when using the CLI:</p>
+
+<pre><code>kubectl --kubeconfig /path/to/your/local/kube.config get pods
+</code></pre></li>
+</ul>
+
+<h3 id="rancher-projects">Rancher Projects</h3>
+
+<p>Rancher introduces an organizational concept called <a href="https://rancher.com/docs/rancher/v2.x/en/k8s-in-rancher/projects-and-namespaces/"><em>projects</em></a>. Projects group together Kubernetes namespaces and allows you to perform actions across all namespaces in a project, like adjusting administrative access to them.</p>
+
+<ol>
+<li><p>To view your cluster&rsquo;s projects, click on the cluster selection menu in Rancher&rsquo;s navigation bar, then hover over your cluster in the dropdown menu&rsquo;s <strong>Clusters</strong> list:</p>
+
+<p><img src="cluster-selection-menu-show-projects.png" alt="Rancher cluster selection menu - list of projects" title="Rancher cluster selection menu - list of projects" /></p>
+
+<p>A new cluster created through Rancher will have a <em>Default</em> project and a <em>System</em> project.</p></li>
+
+<li><p>Options for creating new projects are exposed under the navigation bar&rsquo;s <strong>Projects/Namespaces</strong> item:</p>
+
+<p><img src="cluster-navigation-bar-projects-namespaces-highlighted.png" alt="Rancher cluster navigation bar - Projects/Namespaces highlighted" title="Rancher cluster navigation bar - Projects/Namespaces highlighted" /></p>
+
+<p>However, this guide will deploy its example app to the Default project.</p></li>
+
+<li><p>Navigate to the Default project. Click on the cluster selection menu in Rancher&rsquo;s navigation bar, then hover over your cluster in the dropdown menu&rsquo;s <strong>Clusters</strong> list, and then click on the <strong>Default</strong> item that appears:</p>
+
+<p><img src="cluster-selection-menu-default-project-highlighted.png" alt="Rancher cluster selection menu - Default project highlighted" title="Rancher cluster selection menu - Default project highlighted" /></p></li>
+
+<li><p>The <strong>Workloads</strong> view for the project will appear, but it will be empty, as no apps have been deployed yet. Also, note that the items in the navigation bar will change when viewing a project:</p>
+
+<p><img src="default-project-navigation-bar.png" alt="Rancher navigation bar - project mode" title="Rancher navigation bar - project mode" /></p></li>
+</ol>
+
+<h2 id="deploy-an-app-from-the-rancher-app-library">Deploy an App from the Rancher App Library</h2>
+
+<p>Rancher provides a library of apps which offer easy setup through Rancher&rsquo;s UI. The apps in this curated library are based on existing <a href="https://helm.sh/docs/developing_charts/"><em>Helm charts</em></a>.</p>
+
+<p>A Helm chart is a popular format for describing Kubernetes resources. Rancher extends the Helm chart format with some additional configuration files, and this extended packaging is referred to as a <a href="https://rancher.com/docs/rancher/v2.x/en/catalog/custom/#chart-types"><em>Rancher chart</em></a>. The additional information in the Rancher chart format is used to create interactive forms for configuring the app through the Rancher UI.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>It is possible to enable <a href="https://rancher.com/docs/rancher/v2.x/en/catalog/">more app catalogs</a> than just Rancher&rsquo;s curated library, including a catalog of stable Helm charts. These other apps will not feature Rancher&rsquo;s easy setup forms and will instead require manual entry of configuration options.</div>
+</blockquote>
+
+
+<p>To test out deploying an app on your new cluster, launch the WordPress app from the Rancher library. This app will also take advantage of Linode&rsquo;s Block Storage, NodeBalancer, and DNS services (via the CCM and CSI):</p>
+
+<ol>
+<li><p>From the Default project in your new cluster, click on the <strong>Apps</strong> item in the navigation bar:</p>
+
+<p><img src="default-project-navigation-bar-apps-highlighted.png" alt="Rancher project navigation bar - Apps highlighted" title="Rancher project navigation bar - Apps highlighted" /></p></li>
+
+<li><p>The <strong>Apps</strong> view for your project will appear, but it will show a placeholder image because no apps have been deployed yet. Click on this view&rsquo;s <strong>Launch</strong> button.</p></li>
+
+<li><p>A list of apps will appear. Scroll down to the WordPress app and click its <strong>View Details</strong> button:</p>
+
+<p><img src="app-catalog-list-wordpress.png" alt="WordPress app in Rancher app library catalog" title="WordPress app in Rancher app library catalog" /></p></li>
+
+<li><p>The setup form for the WordPress app will appear. In the <strong>Wordpress Settings</strong> section, enter a username, password, and email for your WordPress admin user:</p>
+
+<p><img src="wordpress-app-form-wordpress-settings.png" alt="Rancher WordPress setup form - WordPress Settings" title="Rancher WordPress setup form - WordPress Settings" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Avoid using symbols in the password you enter, as some symbols can cause syntax errors for this Rancher chart.</div>
+</blockquote>
+</li>
+
+<li><p>In the <strong>Database Settings</strong> section, enter a password for WordPress&rsquo; database user. Then set <strong>MariaDB Persistent Volume Enabled</strong> to <strong>True</strong> and select the <strong>linode-block-storage</strong> option from the <strong>Default StorageClass for MariaDB</strong> dropdown menu:</p>
+
+<p><img src="wordpress-app-form-database-settings.png" alt="Rancher WordPress setup form - Database Settings" title="Rancher WordPress setup form - Database Settings" /></p>
+
+<p>These settings will result in your database deployment keeping its data in a Linode Block Storage Volume.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The default value for the <strong>MariaDB Volume Size</strong> field is 8GiB, but the minimum size for a Block Storage Volume is 10Gib. The Linode CSI will automatically upgrade any persistent volume claims that are smaller than 10GiB to 10GiB.</div>
+</blockquote>
+</li>
+
+<li><p>In the <strong>Services and Load Balancing</strong> section, set <strong>Expose app using Layer 7 Load Balancer</strong> to <strong>False</strong>, then choose the <strong>L4 Balancer</strong> option from the <strong>WordPress Service Type</strong> dropdown menu:</p>
+
+<p><img src="wordpress-app-form-services-and-load-balancing-settings.png" alt="Rancher WordPress setup form - Services and Load Balancing Settings" title="Rancher WordPress setup form - Services and Load Balancing Settings" /></p>
+
+<p>Selecting the L4 Balancer option will result in the creation of a Linode NodeBalancer.</p></li>
+
+<li><p>Click the <strong>Launch</strong> button at the bottom of the form.</p></li>
+
+<li><p>You will be directed back to the project&rsquo;s <strong>Apps</strong> view, where your new WordPress app will be listed. The listing will show a red bar with the number 2 below it. 2 represents the number of pods in the app, and the red color indicates that they are not available yet.</p></li>
+
+<li><p>Click on the name of the app:</p>
+
+<p><img src="default-project-app-view-wordpress-provisioning-link-highlighted.png" alt="Rancher deployed apps list - WordPress app in middle of provisioning" title="Rancher deployed apps list - WordPress app in middle of provisioning" /></p></li>
+
+<li><p>A detail view for the app will appear. The <strong>Workloads</strong> section will show the MariaDB and WordPress deployments for your app. They may still be in the middle of provisioning:</p>
+
+<p><img src="wordpress-app-workloads-provisioning.png" alt="Rancher app detail view - Workloads section" title="Rancher app detail view - Workloads section" /></p>
+
+<p>When the deployments finish provisioning, they will display the <strong>Active</strong> label and the red bars under the <strong>Scale</strong> column will turn green.</p></li>
+
+<li><p>The <strong>Endpoints</strong> section displays the address of the NodeBalancer that was created for your app. After your deployments have finished provisioning, click on the HTTP NodeBalancer endpoint:</p>
+
+<p><img src="wordpress-app-http-nodebalancer-endpoint-highlighted.png" alt="Rancher app detail view - NodeBalancer HTTP endpoint highlighted" title="Rancher app detail view - NodeBalancer HTTP endpoint highlighted" /></p>
+
+<p>Your WordPress site should open in a new browser tab.</p></li>
+
+<li><p>Visit the wp-login.php page on your site (e.g. at <code>http://your-nodebalancer-name.newark.nodebalancer.linode.com/wp-login.php</code>). You should be able to login with the WordPress admin username and password you specified earlier in the app&rsquo;s form.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you view the Volumes and NodeBalancers areas of the Linode Cloud Manager, you should see the new Volume and NodeBalancer that were created for this app. They will have random alphanumeric names like <code>pvc77e0c083490411e9beabf23c916b1</code>.</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="set-up-dns-for-the-wordpress-app">Set Up DNS for the WordPress App</h3>
+
+<p>You can currently visit your new app from the NodeBalancer&rsquo;s generic subdomain. With the Linode CCM, it&rsquo;s also possible to assign a custom domain or subdomain to your app:</p>
+
+<ol>
+<li><p>In the detail view for your WordPress app, scroll down to the <strong>Services</strong> section.</p></li>
+
+<li><p>Click on the <strong>more options ellipsis</strong> for the <strong>wordpress-wordpress</strong> service, then click on the <strong>View/Edit YAML</strong> item in the dropdown menu that appears:</p>
+
+<p><img src="wordpress-app-wordpress-service-view-edit-yaml.png" alt="Rancher Services section - View/Edit YAML option highlighted" title="Rancher Services section - View/Edit YAML option highlighted" /></p></li>
+
+<li><p>A YAML editor for the service will appear. Find the <code>annotations</code> section under the <code>metadata</code> sections, then insert this line:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">metadata:
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: wordpress.example.com</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Replace <code>wordpress.example.com</code> with the address you want to use for your app. As a reminder, <code>example.com</code> needs to exist as a domain zone on your Linode account. If you&rsquo;re not sure if you&rsquo;ve inserted the new line in the right location, compare your YAML with <a href="wordpress-service-example-metadata-section.yml">this snippet</a> of an updated <code>metadata</code> section.</p></li>
+
+<li><p>Click the <strong>Save</strong> button below the YAML editor.</p></li>
+
+<li><p>The Linode CCM will create a DNS record in your domain&rsquo;s zone and automatically assign the IP of your NodeBalancer to it. If you visit the domain&rsquo;s zone in the Linode Cloud Manager, the new A record should appear.</p></li>
+
+<li><p>It may take some time for Linode&rsquo;s DNS database to update, so if you don&rsquo;t see the record show up in the Cloud Manager immediately, try refreshing it after a few minutes.</p>
+
+<p>After the record becomes visible in the Cloud Manager, it can also take time for the DNS change to <a href="/docs/platform/manager/dns-manager/#wait-for-propagation">propagate</a> to your local ISP. After the DNS change has propagated, you should be able to view your WordPress app by navigating to the address you set up.</p></li>
+</ol>
+
+<h2 id="scaling-your-cluster-and-app">Scaling your Cluster and App</h2>
+
+<p>Rancher makes it easy to scale the number of nodes in your cluster and to scale the number of replica pods in your app&rsquo;s deployments.</p>
+
+<h3 id="scale-your-cluster">Scale your Cluster</h3>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>The example instructions in this section will add nodes to your cluster, which will add further billable services to your account. You can read these instructions without performing them on your own account if you prefer.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Return to the home page by hovering over the <strong>Global</strong> dropdown menu in the main navigation bar and then clicking the <strong>Global</strong> menu item:</p>
+
+<p><img src="navigate-back-to-global-view.gif" alt="Rancher return to the global view" title="Navigate back to the home page by selecting the Global menu option in the main navigation bar" /></p></li>
+
+<li><p>Your cluster will show up on the page that appears. Click on the <strong>more options ellipsis</strong> corresponding to the cluster and then click on the <strong>Edit</strong> item from the dropdown menu:</p>
+
+<p><img src="global-home-page-edit-cluster-highlighted.png" alt="Rancher global list of clusters - Edit option highlighted" title="Rancher global list of clusters - Edit option highlighted" /></p></li>
+
+<li><p>The same form that you completed when creating your cluster will appear. In the <strong>Node Pools</strong> section, increase the count of your pool:</p>
+
+<p><img src="edit-cluster-adjust-node-pool-count.png" alt="Rancher edit cluster form - node pool count highlighted" title="Rancher edit cluster form - node pool count highlighted" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Your example cluster&rsquo;s nodes all run etcd, so you can only scale the node pool to a count of 1, 3, or 5. If you had a separate node pool for your workloads, you could scale it freely to any count.</div>
+</blockquote>
+</li>
+
+<li><p>Click the <strong>Save</strong> button at the bottom of the form. You will be redirected to the dashboard for the cluster.</p></li>
+
+<li><p>The dashboard will report that the cluster is updating. When the new nodes have finished provisioning and are registered with Kubernetes, the dashboard will show that all components and nodes are responding normally.</p></li>
+</ol>
+
+<h3 id="scale-your-app">Scale your App</h3>
+
+<p>Rancher also provides an easy way to scale your app&rsquo;s deployments:</p>
+
+<ol>
+<li><p>Navigate to the Default project of your cluster:</p>
+
+<p><img src="cluster-selection-menu-default-project-highlighted.png" alt="Rancher cluster selection menu - Default project highlighted" title="Rancher cluster selection menu - Default project highlighted" /></p></li>
+
+<li><p>Click on the <strong>Apps</strong> item in the navigation bar:</p>
+
+<p><img src="default-project-navigation-bar-apps-highlighted.png" alt="Rancher project navigation bar - Apps highlighted" title="Rancher project navigation bar - Apps highlighted" /></p></li>
+
+<li><p>Click on the name of the WordPress app:</p>
+
+<p><img src="default-project-app-view-wordpress-provisioned-link-highlighted.png" alt="Rancher deployed apps list - WordPress app completed provisioning" title="Rancher deployed apps list - WordPress app completed provisioning" /></p></li>
+
+<li><p>In the <strong>Workloads</strong> section, click on the <strong>wordpress-wordpress</strong> link in the <strong>Name</strong> column for that deployment:</p>
+
+<p><img src="wordpress-app-wordpress-workload-link-highlighted.png" alt="Rancher WordPress workloads - deployment name highlighted" title="Rancher WordPress workloads - deployment name highlighted" /></p></li>
+
+<li><p>A detail view for the deployment will appear. In the <strong>Config Scale</strong> section at the top, click on the <strong>+</strong> button to increase the replica count for the deployment by one (to a total of 2):</p>
+
+<p><img src="wordpress-workload-config-scale-highlighted.png" alt="Rancher WordPress deployment detail view - config scale highlighted" title="Rancher WordPress deployment detail view - config scale highlighted" /></p></li>
+
+<li><p>A second pod will appear in the <strong>Pods</strong> section on this page, and there will be an <strong>Updating</strong> label at the top of the page. You may see a series of warning messages about the new pod not being available. Eventually, the new pod will be labelled as <strong>Running</strong>.</p></li>
+</ol>
+
+<h2 id="set-up-github-authentication">Set Up GitHub Authentication</h2>
+
+<p>In addition to manually creating users that can access your Rancher application, you can also enable GitHub authentication and then invite GitHub users:</p>
+
+<ol>
+<li><p>From the Global home page, click on the <strong>Security</strong> item in the navigation bar and then select <strong>Authentication</strong> from the dropdown menu:</p>
+
+<p><img src="security-menu-authentication-highlighted.png" alt="Rancher Security navigation bar item - Authentication highlighted" title="Rancher Security navigation bar item - Authentication highlighted" /></p></li>
+
+<li><p>Choose GitHub from the authentication options listed:</p>
+
+<p><img src="authentication-github-selected.png" alt="Rancher Authentication page - GitHub option selected" title="Rancher Authentication page - GitHub option selected" /></p></li>
+
+<li><p>In a new browser window, visit the <a href="https://github.com/settings/developers">developer settings</a> of your account on the GitHub website. Click the <strong>Register a new application</strong> button under the <strong>OAuth Apps</strong> section.</p></li>
+
+<li><p>Fill out the form that appears. Use the values that Rancher lists under the Authentication page that you have open in your original browser window, then click the <strong>Register application</strong> button:</p>
+
+<p><img src="authentication-github-form-values.png" alt="Rancher generated GitHub OAuth form values" title="Rancher generated GitHub OAuth form values" /></p></li>
+
+<li><p>You will be directed to the detail view for your new OAuth application. Copy the <strong>ClientID</strong> and <strong>Client Secret</strong> values displayed on this page. Paste these into the form at the bottom of Rancher&rsquo;s Authentication page:</p>
+
+<p><img src="authentication-client-id-secret-form.png" alt="Rancher Authentication page - Client ID and Secret form" title="Rancher Authentication page - Client ID and Secret form" /></p></li>
+
+<li><p>Click the <strong>Authenticate with GitHub</strong> button. A new browser window will appear that asks you to confirm the access request.</p></li>
+
+<li><p>Confirm the access request. Rancher will show a new page with further options for controlling access to your Rancher site.</p></li>
+
+<li><p>To invite GitHub users to your Rancher site, enter them in the search field in the <strong>Site Access</strong> section and select the correct user from the search results. Then, click the <strong>Save</strong> button:</p>
+
+<p><img src="authentication-site-access-form.png" alt="Rancher Authentication page - search for and add GitHub users" title="Rancher Authentication page - search for and add GitHub users" /></p></li>
+</ol>
+
+<h2 id="removing-the-cluster">Removing the Cluster</h2>
+
+<p>To remove the cluster:</p>
+
+<ol>
+<li><p>Navigate to the Global home page.</p></li>
+
+<li><p>Click on the <strong>more options ellipsis</strong> for your cluster, then select the <strong>Delete</strong> option from the dropdown menu that appears:</p>
+
+<p><img src="global-home-page-delete-cluster-highlighted.png" alt="Rancher global cluster list - delete option highlighted" title="Rancher global cluster list - delete option highlighted" /></p></li>
+
+<li><p>Confirm in the Linode Cloud Manager that all the Linodes, Volumes, NodeBalancers, and DNS records from the cluster are deleted.</p></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="http://rancher.com/docs/">Rancher Official Docs</a></li>
+
+<li><a href="https://github.com/linode/linode-cloud-controller-manager">Linode CCM</a></li>
+
+<li><a href="https://github.com/linode/linode-blockstorage-csi-driver">Linode CSI</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library toc-long nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-rancher">What is Rancher?</a>
+<ul>
+<li><a href="#guide-outline">Guide Outline</a></li>
+<li><a href="#if-you-already-run-rancher">If You Already Run Rancher</a></li>
+</ul></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#install-rancher">Install Rancher</a>
+<ul>
+<li><a href="#activate-the-linode-node-driver-for-rancher">Activate the Linode Node Driver for Rancher</a></li>
+</ul></li>
+<li><a href="#deploy-a-kubernetes-cluster">Deploy a Kubernetes Cluster</a>
+<ul>
+<li><a href="#add-a-node-template">Add a Node Template</a></li>
+<li><a href="#provision-a-cluster">Provision a Cluster</a></li>
+<li><a href="#explore-the-new-cluster">Explore the New Cluster</a></li>
+<li><a href="#load-the-kubectl-command-line">Load the Kubectl Command Line</a></li>
+<li><a href="#rancher-projects">Rancher Projects</a></li>
+</ul></li>
+<li><a href="#deploy-an-app-from-the-rancher-app-library">Deploy an App from the Rancher App Library</a>
+<ul>
+<li><a href="#set-up-dns-for-the-wordpress-app">Set Up DNS for the WordPress App</a></li>
+</ul></li>
+<li><a href="#scaling-your-cluster-and-app">Scaling your Cluster and App</a>
+<ul>
+<li><a href="#scale-your-cluster">Scale your Cluster</a></li>
+<li><a href="#scale-your-app">Scale your App</a></li>
+</ul></li>
+<li><a href="#set-up-github-authentication">Set Up GitHub Authentication</a></li>
+<li><a href="#removing-the-cluster">Removing the Cluster</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

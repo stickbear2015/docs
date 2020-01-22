@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Use Linode&#39;s One-Click Apps</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="How to deploy a One-Click App using the Linode Cloud Manager.">
+        <meta name="keywords" content="manager, cloud, app, one click">
+        
+        <meta property="og:title" content="How to Use Linode&#39;s One-Click Apps">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/platform/one-click/how-to-use-one-click-apps-at-linode/">
+        <meta property="og:description" content="How to deploy a One-Click App using the Linode Cloud Manager.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/platform/one-click/how-to-use-one-click-apps-at-linode/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/">Linode Platform</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/one-click/">One-Click Apps</a>
+  
+</li>
+
+
+<li>
+  
+  How to Use Linode&#39;s One-Click Apps
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Use Linode&#39;s One-Click Apps</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-04-08T11:59:05-04:00">Monday, April 8, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fone-click%2fhow-to-use-one-click-apps-at-linode%2f&via=linode&text=How%20to%20Use%20Linode%26%2339%3bs%20One-Click%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fone-click%2fhow-to-use-one-click-apps-at-linode%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fone-click%2fhow-to-use-one-click-apps-at-linode%2f&t=How%20to%20Use%20Linode%27s%20One-Click%20Apps" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Use%20Linode%27s%20One-Click%20Apps%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fplatform%2fone-click%2fhow-to-use-one-click-apps-at-linode%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/platform%5cone-click%5chow-to-use-one-click-apps-at-linode%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/platform%5cone-click%5chow-to-use-one-click-apps-at-linode%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>One-Click Apps help you easily deploy and configure software on a Linode from a list of various apps that are built into the Linode <a href="https://cloud.linode.com">Cloud Manager</a>, without the hassle of using the command line. Of course, you&rsquo;ll still have full access to your Linode if you want to log in to your server and have a more hands-on approach later on.</p>
+
+<p>When a One-Click App is deployed, a new Linode is created and the appropriate software is installed with the configurations you provide. One-Click Apps does not install software to already-existing Linodes in your account. This guide presents instructions for where to find One-Click Apps in the Cloud Manager and how deploy WordPress blogs, WooCommerce stores, your favorite game servers, and more.</p>
+
+<h2 id="deploying-an-app">Deploying an App</h2>
+
+<ol>
+<li><p>Log in the the Linode <a href="https://cloud.linode.com">Cloud Manager</a>.</p></li>
+
+<li><p>Click <strong>Create</strong> at the top of the screen and choose <strong>Linode</strong> from the dropdown menu that appears:</p>
+
+<p><img src="one-click-create-a-linode.png" alt="Click 'Create' at the top of the screen and choose 'Linode' from the dropdown menu." title="Click 'Create' at the top of the screen and choose 'Linode' from the dropdown menu." /></p></li>
+
+<li><p>The Linode creation page will appear. Select the <strong>One-Click</strong> tab:</p>
+
+<p><img src="one-click-select-one-click-tab.png" alt="Select the 'One-Click' tab on the Create New Linode page." /></p></li>
+
+<li><p>The <strong>Create From</strong> section of the page&rsquo;s form will appear. Ensure that the <strong>One-Click Apps</strong> tab is selected in this section:</p>
+
+<p><img src="one-click-create-from-one-click-apps.png" alt="The `One-Click` menu." /></p></li>
+
+<li><p>Select the app you would like to create. For this example, WordPress will be selected:</p>
+
+<p><img src="one-click-select-wordpress.png" alt="Select WordPress." /></p></li>
+
+<li><p>After the <strong>Select App</strong> section you&rsquo;ll find a new section with additional configuration options specific to your app. Fill out the required options; they will be marked with an asterisk. In the case of WordPress, you&rsquo;ll find fields for the WordPress administrator&rsquo;s username, password, and e-mail address.</p>
+
+<p><img src="one-click-wordpress-config-options.png" alt="Fill out the required Options fields, which are marked with an asterisk." /></p>
+
+<p>You can fill out additional options by clicking on <strong>Show Advanced Options</strong>. For the WordPress example, these options are the site&rsquo;s title and a field for an <a href="/docs/security/authentication/use-public-key-authentication-with-ssh/">SSH key</a>. If you enter an SSH key, you will be able to use it later to log in to your Linode (<a href="/docs/getting-started/#connect-to-your-linode-via-ssh">via SSH</a>).</p></li>
+
+<li><p>The <strong>Select an Image</strong> section displays that Debian is pre-selected. This is the underlying operating system that your Linode will run.</p></li>
+
+<li><p>Under the <strong>Region</strong> section, choose which data center you would like your app to be deployed. Choose a region that is close to your audience&rsquo;s geographic location. When you are closer to your data center, your network speeds will generally be higher, and your network latency will be lower.</p></li>
+
+<li><p>Choose which plan you&rsquo;d like to use under the <strong>Linode Plan</strong> section. Your plan specifies the hardware resources assigned to your server. The resources that you need are determined by the requirements of your app. Linode&rsquo;s plans are split into four types: Nanode, Standard, Dedicated CPU, and High Memory.</p>
+
+<p>For small sites like WordPress blogs a 1GB Nanode is usually enough, and for video game servers a 2GB or 4GB Standard Linode is often a good choice. Some game servers may benefit from the Dedicated CPU plans. Our <a href="/docs/platform/how-to-choose-a-linode-plan/">How to Choose a Linode Plan</a> guide presents more information about the different use-cases for each plan.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>You can always upgrade your Linode later if you need more memory, CPU cores, or any of the other hardware resources. Also, you can downgrade your plan if you think you don&rsquo;t need as much as you&rsquo;re currently using. Furthermore, you can change plan types entirely, like going from a Standard Linode to a Dedicated CPU Linode.</p>
+
+<p>Review the <a href="/docs/platform/disk-images/resizing-a-linode/">Resizing a Linode</a> guide for upgrading and downgrading instructions. When downgrading your plan, the size of your Linode&rsquo;s disk must fit within the new plan&rsquo;s disk space allocation.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>For this example, a 1GB Nanode is selected.</p>
+
+<p><img src="one-click-pick-plan.png" alt="Choose a plan." /></p></li>
+
+<li><p>Create a label and (optionally) select tags for your Linode. The label is your Linode&rsquo;s name and must be unique among all the Linodes on your account. <a href="/docs/quick-answers/linode-platform/tags-and-groups/">Tags</a> are used to organize your Linodes within the Cloud Manager.</p></li>
+
+<li><p>Create a root password. This is <strong>not</strong> the password for your WordPress site, game, or other application. Instead, this is the password for the Linode server. You will need it if you ever decide to perform maintenance on your server in the future.</p>
+
+<p>It is strongly recommended that you create a long, complex, and unique password and store it somewhere secure for future reference. If you forget your root password, check out our <a href="/docs/quick-answers/linode-platform/reset-the-root-password-on-your-linode/">Reset the Root Password on Your Linode</a> guide to create a new one.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>A strong password is the first step in securing your server and avoiding potential vulnerabilities for anyone trying to exploit your server. For more information on securing your server, check out our <a href="/docs/security/securing-your-server/">How to Secure Your Server</a> guide.</div>
+</blockquote>
+</li>
+
+<li><p>Click <strong>Create</strong>. You will be taken to the Linode&rsquo;s Dashboard where you can monitor the status of your Linode&rsquo;s creation.</p>
+
+<p>Once your Linode has been created, the Cloud Manager will then start to deploy your app in the background. <strong>This will take several minutes</strong>. Once your app has been deployed it will be available at the IP address of the Linode you created. If you visit your IP address before the app is ready, try again a few minutes later.</p></li>
+</ol>
+
+<h2 id="accessing-your-app">Accessing Your App</h2>
+
+<p>Depending on the type of app you created, the app will be accessible in different ways. All the ways to access your app require the IP address of your Linode. Follow the instructions below to find your IP address.</p>
+
+<ol>
+<li><p>Log in to the <a href="https://cloud.linode.com">Cloud Manager</a>.</p></li>
+
+<li><p>Navigate to the Linodes page by clicking on the <strong>Linodes</strong> link in the sidebar.</p></li>
+
+<li><p>Find the Linode that you created. The IP address is a series of four numbers separated by periods. In the grid view of the Linodes page, your IP address will be located underneath the data center name for your Linode:</p>
+
+<p><img src="one-click-ip-address-grid.png" alt="Highlight of a Linode's IP address in grid view." /></p></li>
+
+<li><p>In list view, your IP address will be under the <strong>IP Addresses</strong> column in the row that lists your Linode:</p>
+
+<p><img src="one-click-ip-address-list.png" alt="Highlight of a Linode's IP address in list view." /></p></li>
+
+<li><p>Alternatively, you can find your IP address by navigating to the <strong>Networking</strong> tab of your Linode&rsquo;s detail page. The address is displayed under the <strong>Address</strong> column in the <strong>IPv4</strong> table:</p>
+
+<p><img src="one-click-networking-tab.png" alt="View your IP address from the Networking tab of the Linode detail page." /></p></li>
+
+<li><p>Copy your IP address. For apps like WordPress, WooCommerce, and Drupal, you can navigate to the IP address in your browser to visit your installation. For game servers, connect to the IP address in-game to play on your new server. Other apps like MERN, LAMP, and WireGuard will require you to SSH into your Linode to access or provide more customized configurations.</p></li>
+</ol>
+
+<h2 id="adding-a-domain-name-for-your-app">Adding a Domain Name for Your App</h2>
+
+<p>For websites like WordPress, WooCommerce, and Drupal, it&rsquo;s much more desirable to have a domain name rather than using an IP address to access your app.</p>
+
+<p>For information on how to add a domain name to your app, visit our <a href="/docs/platform/manager/dns-manager/">DNS Manager</a> guide. Specifically, you will want to <a href="/docs/platform/manager/dns-manager/#add-dns-records">set up an <em>A record</em></a> and assign your IP address to it. For more general information about how DNS works, review the the <a href="/docs/networking/dns/dns-records-an-introduction/">DNS Records: An Introduction</a> guide.</p>
+
+<h2 id="connecting-to-your-server-remotely">Connecting to your Server Remotely</h2>
+
+<p>Every One-Click App is deployed to its own Linode instance, and you can access the operating system for your app&rsquo;s server if you choose to. To gain command-line access to your server, <a href="/docs/getting-started/#connect-to-your-linode-via-ssh">log in using a Secure Shell (SSH) client</a> on your computer.</p>
+
+<p>When logging in over SSH, use <code>root</code> as the username, and supply the root password that you specified when you deployed your app. Follow our <a href="/docs/getting-started/#connect-to-your-linode-via-ssh">Getting Started guide</a> to learn more about connecting to your Linode via SSH. If you use Windows at home, our <a href="/docs/networking/ssh/using-ssh-on-windows/">Using SSH on Windows</a> guide has special instructions for Windows SSH clients. If you&rsquo;re new to Linux, some of the guides in our <a href="/docs/quick-answers/linux/">Linux</a> and <a href="/docs/quick-answers/linux-essentials/">Linux Essentials</a> sections may be useful.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#deploying-an-app">Deploying an App</a></li>
+<li><a href="#accessing-your-app">Accessing Your App</a></li>
+<li><a href="#adding-a-domain-name-for-your-app">Adding a Domain Name for Your App</a></li>
+<li><a href="#connecting-to-your-server-remotely">Connecting to your Server Remotely</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

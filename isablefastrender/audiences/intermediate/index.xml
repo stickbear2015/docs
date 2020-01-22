@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Intermediate on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/audiences/intermediate/</link>
+    <description>Recent content in Intermediate on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/audiences/intermediate/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Install GitLab on Ubuntu 18.04</title>
+      <link>http://localhost:1313/docs/development/version-control/install-gitlab-on-ubuntu-18-04/</link>
+      <pubDate>Fri, 04 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/install-gitlab-on-ubuntu-18-04/</guid>
+      <description>GitLab is a complete solution for all aspects of your software development life-cycle. At its core, GitLab serves as your centralized Git repository. It also features built-in tools that represent every task in your development workflow, from planning to testing to releasing. You can host your own GitLab instance on a Linode, instead of using third-party hosting. Self-hosting your software development with GitLab offers total control of your codebase while providing an easy to use interface for team members.</description>
+    </item>
+    
+    <item>
+      <title>Use Buildbot for Software Testing on Ubuntu 18.04</title>
+      <link>http://localhost:1313/docs/development/ci/use-buildbot-for-software-testing-on-ubuntu/</link>
+      <pubDate>Thu, 06 Sep 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ci/use-buildbot-for-software-testing-on-ubuntu/</guid>
+      <description>Buildbot is an open source system for testing software projects. In this guide, you will set up a Linode as a Buildbot server to use as a continuous integration platform to test code. Similarly to hosted solutions like Travis CI, Buildbot is an automated testing platform that can watch for code changes, test a project&amp;rsquo;s code, and send notifications regarding build failures.
+Before you Begin  Familiarize yourself with Linode&amp;rsquo;s Getting Started guide and complete the steps for deploying and setting up a Linode running Ubuntu 18.</description>
+    </item>
+    
+    <item>
+      <title>Immutable Infrastructure</title>
+      <link>http://localhost:1313/docs/development/ci/what-is-immutable-infrastructure/</link>
+      <pubDate>Fri, 10 Aug 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ci/what-is-immutable-infrastructure/</guid>
+      <description>What is Immutable Infrastructure? Within a Continuous Delivery model it is crucial to automate a repeatable and reliable process for software deployment. The more you scale, the more complicated this task can become. You need granular control over all components of your stack across many servers and the ability to test how components will interact within their deployed environment.
+An immutable server infrastructure provides a level of control and testability to maintain a healthy and stable environment for all components that never deviate from a source definition.</description>
+    </item>
+    
+    <item>
+      <title>Install and Configure Selenium Grid on Ubuntu 16.04 for Automated Testing</title>
+      <link>http://localhost:1313/docs/development/nodejs/install-configure-selenium-grid-ubuntu-16-04/</link>
+      <pubDate>Fri, 09 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/install-configure-selenium-grid-ubuntu-16-04/</guid>
+      <description>What is Selenium Grid? Selenium is a browser automation library with bindings for most common programming languages. It is most often used for testing web applications, but can also be used to automate any task that a web browser can perform. In contrast to similar tools such as Nightmare.js, Selenium can run tasks or tests on any version of any major browser. This can make it more complicated to get running, but allows you to test your application&amp;rsquo;s behavior on exactly the platforms that users are likely to need.</description>
+    </item>
+    
+    <item>
+      <title>How to Deploy Spring Boot Applications on NGINX on Ubuntu 16.04</title>
+      <link>http://localhost:1313/docs/development/java/how-to-deploy-spring-boot-applications-nginx-ubuntu-16-04/</link>
+      <pubDate>Wed, 07 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/how-to-deploy-spring-boot-applications-nginx-ubuntu-16-04/</guid>
+      <description>What is Spring Boot? Spring Boot enables quick development of the Spring Framework by taking care of default configurations and allowing Java developers to focus on rapid prototyping. This guide shows how to create a simple Spring Boot application which is then exposed through an NGINX reverse proxy.
+Before You Begin You will need a Linode with both Java 8 and NGINX. If these are already installed on your Linode, skip to the next section.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to PySpark</title>
+      <link>http://localhost:1313/docs/development/python/introduction-to-pyspark/</link>
+      <pubDate>Mon, 05 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/introduction-to-pyspark/</guid>
+      <description>What is PySpark? Apache Spark is a big-data processing engine with several advantages over MapReduce. Spark offers greater simplicity by removing much of the boilerplate code seen in Hadoop. In addition, since Spark handles most operations in memory, it is often faster than MapReduce, where data is written to disk after each operation.
+PySpark is a Python API for Spark. This guide shows how to install PySpark on a single Linode.</description>
+    </item>
+    
+    <item>
+      <title>View IoT Data with ThingsBoard</title>
+      <link>http://localhost:1313/docs/development/iot/install-thingsboard-iot-dashboard/</link>
+      <pubDate>Tue, 30 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/iot/install-thingsboard-iot-dashboard/</guid>
+      <description>What is ThingsBoard? ThingsBoard is an open source platform for collecting and visualizing data from Internet of Things devices. Data from any number of devices can be sent to a cloud server where it can be viewed or shared through a customizable dashboard.
+This guide will show how to install ThingsBoard on a Linode and use a Raspberry Pi to send simple telemetry data to a cloud dashboard.
+Note This guide will use a Raspberry Pi 3 with a Sense HAT.</description>
+    </item>
+    
+    <item>
+      <title>Monitor Filesystem Events with Pyinotify</title>
+      <link>http://localhost:1313/docs/development/monitor-filesystem-events-with-pyinotify/</link>
+      <pubDate>Thu, 07 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/monitor-filesystem-events-with-pyinotify/</guid>
+      <description>File system monitoring through inotify can be interfaced through Python using pyinotify. This guide will demonstrate how to use a Python script to monitor a directory then explore practical uses by incorporating async modules or running additional threads.
+Install Python 3  Download and install Miniconda:
+curl -OL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh bash Miniconda3-latest-Linux-x86_64.sh  You will be prompted several times during the installation process. Review the terms and conditions and select &amp;ldquo;yes&amp;rdquo; for each prompt.</description>
+    </item>
+    
+    <item>
+      <title>Use Scrapy to Extract Data From HTML Tags</title>
+      <link>http://localhost:1313/docs/development/python/use-scrapy-to-extract-data-from-html-tags/</link>
+      <pubDate>Mon, 04 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/use-scrapy-to-extract-data-from-html-tags/</guid>
+      <description>Scrapy is a Python framework for creating web scraping applications. It provides a programming interface to crawl the web by identifying new links, and extracts structured data from the downloaded content.
+This guide will provide you with instructions to build a spider which recursively checks all &amp;lt;a&amp;gt; tags of a website and tracks broken links. This guide is written for Python version 3.4 or above, and with Scrapy version 1.</description>
+    </item>
+    
+    <item>
+      <title>How to Set Up a Task Queue with Celery and RabbitMQ</title>
+      <link>http://localhost:1313/docs/development/python/task-queue-celery-rabbitmq/</link>
+      <pubDate>Thu, 30 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/task-queue-celery-rabbitmq/</guid>
+      <description>Celery is a Python Task-Queue system that handle distribution of tasks on workers across threads or network nodes. It makes asynchronous task management easy. Your application just need to push messages to a broker, like RabbitMQ, and Celery workers will pop them and schedule task execution.
+Celery can be used in multiple configuration. Most frequent uses are horizontal application scaling by running resource intensive tasks on Celery workers distributed across a cluster, or to manage long asynchronous tasks in a web app, like thumbnail generation when a user post an image.</description>
+    </item>
+    
+    <item>
+      <title>How to Automate Builds with Jenkins on Ubuntu</title>
+      <link>http://localhost:1313/docs/development/ci/automate-builds-with-jenkins-on-ubuntu/</link>
+      <pubDate>Tue, 14 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ci/automate-builds-with-jenkins-on-ubuntu/</guid>
+      <description>Jenkins is an open-source automation server that allows you to build pipelines to automate the process of building, testing, and deploying applications. In this guide, you will implement a basic workflow to speed up your Continuous Integration and Continuous Delivery (CI/CD) process.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode’s hostname and timezone.
+ Complete the sections of our Securing Your Server guide to create a standard user account, harden SSH access and remove unnecessary network services.</description>
+    </item>
+    
+    <item>
+      <title>How to Develop and Deploy Your Applications Using Wercker</title>
+      <link>http://localhost:1313/docs/development/ci/how-to-develop-and-deploy-your-applications-using-wercker/</link>
+      <pubDate>Mon, 06 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ci/how-to-develop-and-deploy-your-applications-using-wercker/</guid>
+      <description>What is Wercker? Wercker is a software automation tool that aims to improve the Continuous-Integration and Continuous-Delivery (CI/CD) process for developers and organizations. It enables the creation of automated workflows, or pipelines, which specify a series of tasks or commands that are run on your code whenever a change is pushed to the source repository.
+This guide will use three example Go apps to demonstrate the basics of Wercker setup and configuration, and show how these can be used to create different kinds of workflows.</description>
+    </item>
+    
+    <item>
+      <title>Use Nightmare.js to Automate Headless Browsing</title>
+      <link>http://localhost:1313/docs/development/nodejs/use-nightmarejs-to-automate-headless-browsing/</link>
+      <pubDate>Mon, 09 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/use-nightmarejs-to-automate-headless-browsing/</guid>
+      <description>Nightmare.js is a high-level browser automation library, designed to automate browsing tasks for sites that don&amp;rsquo;t have APIs. The library itself is a wrapper around Electron, which Nightmare.js uses as a browser to interact with web sites. This guide helps you install Nightmare.js on Ubuntu 16.04 and run automation scripts without the need for a graphical user interface.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>How to Unbundle nginx from Omnibus GitLab for Serving Multiple Websites</title>
+      <link>http://localhost:1313/docs/development/version-control/how-to-unbundle-nginx-from-omnibus-gitlab-for-serving-multiple-websites/</link>
+      <pubDate>Mon, 29 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/how-to-unbundle-nginx-from-omnibus-gitlab-for-serving-multiple-websites/</guid>
+      <description>Omnibus GitLab is a software package (or software stack) that allows you to easily install and run GitLab on your Linode. This guide walks you through the process of installing and setting up your own nginx server on a typical Omnibus installation. Using the method outlined here, you are not forced to use Omnibus&amp;rsquo;s default settings, and can create as many virtual hosts as you need for hosting multiple websites and apps on the same server as your GitLab.</description>
+    </item>
+    
+    <item>
+      <title>Install Gogs on Debian 9 with nginx and PostgreSQL</title>
+      <link>http://localhost:1313/docs/development/version-control/install-gogs-on-debian/</link>
+      <pubDate>Fri, 09 Oct 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/install-gogs-on-debian/</guid>
+      <description>Gogs is a self-hosted Git service, similar to GitLab. It is written in Go and aims to be the easiest and most painless way to set up self-hosted Git service. Gogs is one of the best choices if you need to set up a private Git repository, but don&amp;rsquo;t want to pay for the private plans on other Git services.
+This tutorial shows you how to install and configure Gogs, using PostgreSQL for the database server and nginx for the reverse proxy server.</description>
+    </item>
+    
+    <item>
+      <title>Java Development with WildFly on CentOS 7</title>
+      <link>http://localhost:1313/docs/development/java/java-development-wildfly-centos-7/</link>
+      <pubDate>Fri, 18 Sep 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/java-development-wildfly-centos-7/</guid>
+      <description>JBoss AS (Renamed to WildFly) has been used for many years as one of the best known performing &amp;amp; free community Java Application Server. The attention even increased when Red Hat started providing commercial support to its enterprise version JBoss EAP with support to on-premises, virtual, or cloud. Red Hat also provides commercial support for Red Hat Enterprise Linux &amp;amp; building huge ecosystem of multiple products to serve its clients.</description>
+    </item>
+    
+    <item>
+      <title>How to Install Node.js and NGINX on Debian</title>
+      <link>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs-and-nginx-on-debian/</link>
+      <pubDate>Wed, 14 Jan 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs-and-nginx-on-debian/</guid>
+      <description>Node.js is a JavaScript platform which can serve dynamic, responsive content. JavaScript is usually a client-side, browser language like HTML or CSS. However, Node.js is a server-side, JavaScript platform, comparable to PHP. Node.js often works with other popular server applications like NGINX or Apache. In this guide, NGINX is configured to handle front-end, static file requests, and Node.js is configured to handle back-end file requests.
+Install and Configure NGINX This guide can be started immediately after terminal login on a new Linode, it&amp;rsquo;s written for the root user.</description>
+    </item>
+    
+    <item>
+      <title>Install GitLab on Ubuntu 14.04 (Trusty Tahr)</title>
+      <link>http://localhost:1313/docs/development/version-control/install-gitlab-on-ubuntu-14-04-trusty-tahr/</link>
+      <pubDate>Thu, 04 Sep 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/install-gitlab-on-ubuntu-14-04-trusty-tahr/</guid>
+      <description>GitLab is a free git repository management application based on Ruby on Rails. It is an interesting alternative if you want to host your own git repositories, since third-party hosting is not always the best option when writing private or closed-source software.
+GitLab provides a .deb package which contains GitLab Community Edition and all its dependencies (Ruby, PostgreSQL, Redis, Nginx, Unicorn and other gems) already compiled. Installing this package is straightforward.</description>
+    </item>
+    
+  </channel>
+</rss>

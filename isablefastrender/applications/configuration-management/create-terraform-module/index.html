@@ -1,0 +1,1791 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Create a Terraform Module</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Create a Terraform module that deploys a Linode instance from a StackScript.">
+        <meta name="keywords" content="terraform, resource, modules, provider">
+        
+        <meta property="og:title" content="Create a Terraform Module">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/create-terraform-module/">
+        <meta property="og:description" content="Create a Terraform module that deploys a Linode instance from a StackScript.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/create-terraform-module/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Create a Terraform Module
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Create a Terraform Module</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-18T17:29:11-05:00">Tuesday, December 18, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fcreate-terraform-module%2f&via=linode&text=Create%20a%20Terraform%20Module" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fcreate-terraform-module%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fcreate-terraform-module%2f&t=Create%20a%20Terraform%20Module" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Create%20a%20Terraform%20Module%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fcreate-terraform-module%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5ccreate-terraform-module%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5ccreate-terraform-module%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Terraform modules allow you to better organize your configuration code and make the code reusable. You can host your Terraform modules on remote version control services, like GitHub, for others to use. The <a href="https://registry.terraform.io/">Terraform Module Registry</a> hosts community modules that you can reuse for your own Terraform configurations, or you can publish your own modules for consumption by the Terraform community.</p>
+
+<p>In this guide you will create a <em>Linode StackScripts</em> module. This module will deploy a Linode instance from a StackScript you will create. This module will include nested modules that split up the required resources between the <em>root module</em>, a <code>linode_instance</code> module, and a <code>stackscripts</code> module.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Install Terraform on your local computer using the steps found in the <strong>Install Terraform</strong> section of the <a href="https://linode.com/docs/applications/configuration-management/how-to-build-your-infrastructure-using-terraform-and-linode/#install-terraform">Use Terraform to Provision Linode Environments</a> guide. Your Terraform project directory should be named <code>linode_stackscripts</code>.</p></li>
+
+<li><p>Terraform requires an API access token. Follow the <a href="/docs/platform/api/getting-started-with-the-linode-api-new-manager/#get-an-access-token">Getting Started with the Linode API</a> guide to obtain a token.</p></li>
+
+<li><p>Complete the steps in the <strong>Configure Git</strong> section of the <a href="/docs/development/version-control/how-to-configure-git/#configure-git">Getting Started with Git</a> guide.</p></li>
+
+<li><p>Review <a href="/docs/applications/configuration-management/deploy-a-wordpress-site-using-terraform-and-linode-stackscripts/">Deploy a WordPress Site using Terraform and StackScripts</a> to familiarize yourself with the Linode provider&rsquo;s StackScript resource.</p></li>
+</ol>
+
+<h2 id="standard-module-structure">Standard Module Structure</h2>
+
+<p>Terraform&rsquo;s standard module structure provides guidance on file and directory layouts for reusable modules. If you would like to make your module public to the Terraform community, the recommended layout allows Terraform to generate documentation and index modules for the <a href="https://registry.terraform.io/">Terraform Module Registry</a>.</p>
+
+<ul>
+<li><p>The primary module structure requirement is that a <em>root module</em> must exist. The root module is the directory that holds the Terraform configuration files that are applied to build your desired infrastructure. These files provide an entry point into any nested modules you might utilize.</p></li>
+
+<li><p>Any module should include, at minimum, a <code>main.tf</code>, a <code>variables.tf</code>, and an <code>outputs.tf</code> file.  This naming convention is recommended, but not enforced.</p>
+
+<ul>
+<li><p>If using nested modules to split up your infrastructure&rsquo;s required resources, the <code>main.tf</code> file holds all your module blocks and any needed resources not contained within your nested modules. A simple module&rsquo;s <code>main.tf</code> file, without any nested modules, declares all resources within this file.</p></li>
+
+<li><p>The <code>variables.tf</code> and <code>outputs.tf</code> files contain input variable and output variable declarations. All variables and outputs should include descriptions.</p></li>
+</ul></li>
+
+<li><p>If using nested modules, they should be located in a root module&rsquo;s subdirectory named <code>modules/</code>.</p></li>
+
+<li><p>If your modules will be hosted on Terraform&rsquo;s Module Registry, root modules and any nested modules should contain a <code>README.MD</code> file with a description that explains the module&rsquo;s intended use.</p></li>
+
+<li><p>You can provide examples in a root module&rsquo;s subdirectory named <code>examples</code>.</p></li>
+</ul>
+
+<h2 id="create-the-linode-stackscripts-module">Create the Linode StackScripts Module</h2>
+
+<p>The Linode Stackscripts module will included two nested modules that split up the required resources between the <strong>root module</strong>, a <code>linodes</code> module, and a <code>stackscripts</code> module. When you are done creating all required Terraform files your directory structure will look as follows:</p>
+
+<pre class="file terminal">
+  <code>
+linode_stackscripts/
+├── main.tf
+├── outputs.tf
+├── secrets.tfvars
+├── terraform
+├── terraform.tfvars
+├── variables.tf
+└── modules/
+&emsp;&emsp;&emsp;&emsp;├── linodes/
+&emsp;&emsp;&emsp;&emsp;│&emsp;&emsp; ├── main.tf
+&emsp;&emsp;&emsp;&emsp;│&emsp;&emsp; ├── variables.tf
+&emsp;&emsp;&emsp;&emsp;│&emsp;&emsp; └── outputs.tf
+&emsp;&emsp;&emsp;&emsp;└── stackscripts/
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ├── main.tf
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; ├── variables.tf
+&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; └── outputs.tf
+</code>
+</pre>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Your <code>linode_stackscripts</code> directory will likely contain other files related to the Terraform installation you completed prior to beginning the steps in this guide.</div>
+</blockquote>
+
+
+<h3 id="create-the-linodes-module">Create the Linodes Module</h3>
+
+<p>In this section, you will create the <code>linodes</code> module which will be in charge of creating your Linode instance. This module contains a <code>main.tf</code> file and corresponding <code>variables.tf</code> and <code>outputs.tf</code> files.</p>
+
+<ol>
+<li><p>If your Terraform project directory is not named <code>linode_stackscripts</code>, rename it before beginning and move into that directory:</p>
+
+<pre><code>mv terraform linode_stackscripts
+cd linode_stackscripts
+</code></pre></li>
+
+<li><p>Create the <code>modules</code> and <code>linodes</code> subdirectories:</p>
+
+<pre><code>mkdir -p modules/linodes
+</code></pre></li>
+
+<li><p>Using your preferred text editor, create a <code>main.tf</code> file in <code>modules/linodes/</code> with the following resources:</p>
+
+<dl class="file">
+
+
+<dt>
+		linode_stackscripts/modules/linodes/main.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">locals <span class="o">{</span>
+    <span class="nv">key</span> <span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_sshkey&#34;</span> <span class="s2">&#34;main_key&#34;</span> <span class="o">{</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key_label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">ssh_key</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">chomp</span><span class="p">(file(local.key))</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_instance&#34;</span> <span class="s2">&#34;linode_id&#34;</span> <span class="o">{</span>
+    <span class="nv">image</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.image</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.type</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">authorized_keys</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_sshkey</span><span class="p">.main_key.ssh_key</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.root_pass</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_data</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_data</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>main.tf</code> file declares a <code>linode_instance</code> resource that deploys a Linode using a StackScript. Notice that all argument values use interpolation syntax to access variable values. You will declare the variables next and provide the variable values in the root module&rsquo;s <code>terraform.tfvars</code> file. Using separate files for variable declaration and assignment parameterizes your configurations and allows them to be reused as modules.</p>
+
+<p>Let’s take a closer look at each block in the <code>main.tf</code> configuration file.</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">locals <span class="o">{</span>
+    <span class="nv">key</span> <span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_sshkey&#34;</span> <span class="s2">&#34;main_key&#34;</span> <span class="o">{</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key_label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">ssh_key</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">chomp</span><span class="p">(file(local.key))</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<ul>
+<li><p>The <code>locals</code> stanza declares a local variable <code>key</code> whose value will be provided by an input variable.</p></li>
+
+<li><p>The <code>linode_sshkey</code> resource will create Linode SSH Keys tied to your Linode account. These keys can be reused for future Linode deployments once the resource has been created. <code>ssh_key = &quot;${chomp(file(local.key))}&quot;</code> uses Terraform’s built-in function <code>file()</code> to provide a local file path to the public SSH key’s location. The location of the file path is the value of the local variable <code>key</code>. The <code>chomp()</code> built-in function removes trailing new lines from the SSH key.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you do not already have SSH keys, follow the steps in the <strong>Create an Authentication Key-pair</strong> section of the <a href="/docs/security/securing-your-server/#create-an-authentication-key-pair">Securing Your Server Guide</a>.</div>
+</blockquote>
+</li>
+</ul>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">resource <span class="s2">&#34;linode_instance&#34;</span> <span class="s2">&#34;linode_id&#34;</span> <span class="o">{</span>
+    <span class="nv">image</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.image</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.type</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">authorized_keys</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_sshkey</span><span class="p">.main_key.ssh_key</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.root_pass</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_data</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_data</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>linode_instance</code> resource creates a Linode instance with the listed arguments. Please note the following information:</p>
+
+<ul>
+<li><p>The <code>authorized_keys</code> argument uses the SSH public key provided by the <code>linode_sshkey</code> resource in the previous stanza. This argument expects a value of type list, so the value must be wrapped in brackets.</p></li>
+
+<li><p>To use an existing Linode StackScript you must use the <code>stackscript_id</code> argument and provide a valid ID as a value. Every StackScript is assigned a unique ID upon creation. Later on in the guide, you will create your own StackScript and expose its ID as an output variable in order to use its ID to deploy your Linode instance.</p></li>
+
+<li><p>StackScripts support user defined data. This means a StackScript can use the <code>UDF</code> tag to create a variable whose value must be provided by the user of the script. This allows users to customize the behavior of a StackScript on a per-deployment basis. Any required <code>UDF</code> variable can be defined using the <code>stackscript_data</code> argument.</p></li>
+</ul></li>
+
+<li><p>Create the <code>variables.tf</code> file to define your resource&rsquo;s required variables:</p>
+
+<dl class="file">
+
+
+<dt>
+		linode_stackscripts/modules/linodes/variables.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">variable <span class="s2">&#34;key&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Public SSH Key&#39;s path.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;key_label&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;new SSH key label&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;image&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Image to use for Linode instance&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;linode/ubuntu18.04&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;label&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The Linode&#39;s label is for display purposes only, but must be unique.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;default-linode&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;region&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The region where your Linode will be located.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;us-east&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;type&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Your Linode&#39;s plan type.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;g6-standard-1&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;authorized_keys&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;SSH Keys to use for the Linode.&#34;</span>
+  <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;list&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;root_pass&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Your Linode&#39;s root user&#39;s password.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript_id&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Stackscript ID.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript_data&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Map of required StackScript UDF data.&#34;</span>
+  <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;map&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<ul>
+<li><p>Modules must include a description for each input variable to help document your configuration’s usage. This will make it easier for anyone else to use this module.</p></li>
+
+<li><p>Every variable can contain a default value. The default value is only used if no other value is provided. For example, if you have a favorite Linux distribution, you may want to provide it as your image variable’s default value. In this case, <code>linode/ubuntu18.04</code> is set as the default value.</p></li>
+
+<li><p>You can declare a <code>type</code> for each variable. If no <code>type</code> is provided, the variable will default to <code>type = &quot;string&quot;</code>.</p></li>
+
+<li><p>Notice that the <code>stackscript_data</code> variable is of <code>type = &quot;map&quot;</code>. This will allow you to provide values for as many <code>UDF</code> variables as your StackScript requires.</p></li>
+</ul></li>
+
+<li><p>Create the <code>outputs.tf</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/modules/linodes/outputs.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">output <span class="s2">&#34;sshkey_linode&#34;</span> <span class="o">{</span>
+  <span class="nv">value</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_sshkey</span><span class="p">.main_key.ssh_key</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>outputs.tf</code> file exposes any values from the resources you declared in the <code>main.tf</code> file. Any exposed values can be used by any other module within the root module. The <code>sshkey_linode</code> output variable exposes the <code>linode_sshkey</code> resource&rsquo;s public key.</p></li>
+</ol>
+
+<p>Now that the <code>linodes</code> module is complete, in the next section, you will create the <code>stackscripts</code> module.</p>
+
+<h3 id="create-the-stackscripts-module">Create the StackScripts Module</h3>
+
+<p>In this section you will create the StackScripts module. This module creates a <code>linode_stackscripts</code> resource which you can use to create and modify your own Linode StackScript.</p>
+
+<ol>
+<li><p>Ensure you are in the <code>linode_stackscripts</code> directory and create the <code>stackscripts</code> subdirectory:</p>
+
+<pre><code>mkdir modules/stackscripts
+</code></pre></li>
+
+<li><p>Using your preferred text editor, create a <code>main.tf</code> file in <code>modules/stackscripts/</code> with the following resource:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/modules/stackscripts/main.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">resource <span class="s2">&#34;linode_stackscript&#34;</span> <span class="s2">&#34;default&#34;</span> <span class="o">{</span>
+  <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_label</span><span class="si">}</span><span class="s2">&#34;</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.description</span><span class="si">}</span><span class="s2">&#34;</span>
+  <span class="nv">script</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript</span><span class="si">}</span><span class="s2">&#34;</span>
+  <span class="nv">images</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_image</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+  <span class="nv">rev_note</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.rev_note</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>main.tf</code> file creates the <code>linode_stackscript</code> resource and provides the required configurations. All argument values use interpolation syntax to access input variable values. You will declare the input variables next and provide the variable values in the root module’s <code>terraform.tfvars</code> file. For more information on StackScripts see the <a href="https://www.linode.com/docs/platform/stackscripts/">Automate Deployments with StackScripts</a> guide and the <a href="https://developers.linode.com/api/v4#tag/StackScripts">Linode APIv4</a> documentation.</p></li>
+
+<li><p>Create the <code>variables.tf</code> file to define your resource&rsquo;s required variables:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/modules/stackscripts/variables.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">variable <span class="s2">&#34;stackscript_label&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The StackScript&#39;s label is for display purposes only.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;description&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;A description for the StackScript.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The script to execute when provisioning a new Linode with this StackScript.&#34;</span>
+<span class="o">}</span>
+variable <span class="s2">&#34;stackscript_image&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34; A list of Image IDs representing the Images that this StackScript is compatible for deploying with.&#34;</span>
+  <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;list&#34;</span>
+<span class="o">}</span>
+variable <span class="s2">&#34;rev_note&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;This field allows you to add notes for the set of revisions made to this StackScript.&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>outputs.tf</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/modules/stackscripts/output.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">output <span class="s2">&#34;stackscript_id&#34;</span> <span class="o">{</span>
+  <span class="nv">value</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_stackscript</span><span class="p">.default.id</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>outputs.tf</code> file exposes the value of the <code>linode_stackscript</code> resource&rsquo;s ID. Every StackScript is assigned a unique ID upon creation. You will need this ID when creating your root module.</p></li>
+</ol>
+
+<p>You have now created the StackScripts module and are ready to use both modules within the root module. You will complete this work in the next section.</p>
+
+<h3 id="create-the-root-module">Create the Root Module</h3>
+
+<p>The root module will call the <code>linode</code> and <code>stackscripts</code> modules, satisfy their required variables and then apply those configurations to build your desired infrastructure. These configurations deploy a Linode based on a StackScript you will define in this section. When using nested modules, the modules will be hidden from your root configuration, so you&rsquo;ll have to re-expose any variables and outputs you require.</p>
+
+<ol>
+<li><p>Ensure you are in the <code>linode_stackscripts</code> directory and create the <code>main.tf</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		linode_stackscripts/main.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">provider <span class="s2">&#34;linode&#34;</span> <span class="o">{</span>
+    <span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.token</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+module <span class="s2">&#34;stackscripts&#34;</span> <span class="o">{</span>
+    <span class="nb">source</span> <span class="o">=</span> <span class="s2">&#34;./modules/stackscripts&#34;</span>
+    <span class="nv">stackscript_label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.description</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_image</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_image</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">rev_note</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.rev_note</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+module <span class="s2">&#34;linodes&#34;</span> <span class="o">{</span>
+    <span class="nb">source</span> <span class="o">=</span> <span class="s2">&#34;./modules/linodes&#34;</span>
+    <span class="nv">key</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">key_label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key_label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">image</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.image</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.type</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.root_pass</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">authorized_keys</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">module</span><span class="p">.linodes.sshkey_linode</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">module</span><span class="p">.stackscripts.stackscript_id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_data</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_data</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>main.tf</code> file uses the <code>linodes</code> and <code>stackscripts</code> modules that were created in the previous sections and provides the required arguments. All argument values use interpolation syntax to access variable values, which you will declare in a <code>variables.tf</code> file and then provide corresponding values for in a <code>terraform.tfvars</code> file.</p>
+
+<p>Let&rsquo;s review each block:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">provider <span class="s2">&#34;linode&#34;</span> <span class="o">{</span>
+    <span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.token</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The first stanza declares Linode as the provider that will manage the lifecycle of any resources declared throughout the configuration file. The Linode provider requires your Linode APIv4 token for authentication.</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">module <span class="s2">&#34;stackscripts&#34;</span> <span class="o">{</span>
+    <span class="nb">source</span> <span class="o">=</span> <span class="s2">&#34;./modules/stackscripts&#34;</span>
+    <span class="nv">stackscript_label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.description</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_image</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_image</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">rev_note</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.rev_note</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The next stanza instructs Terraform to create an instance of the <code>stackscripts</code> module and instantiate any of the resources defined within the module. The <code>source</code> attribute provides the location of the child module&rsquo;s source code and is required whenever you create an instance of a module. All other attributes are determined by the module. Notice that all the attributes included in the module block correspond to the <code>linode_stackscript</code> resource&rsquo;s arguments declared in the <code>main.tf</code> file of the <code>stackscripts</code> module.</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">module <span class="s2">&#34;linodes&#34;</span> <span class="o">{</span>
+    <span class="nb">source</span> <span class="o">=</span> <span class="s2">&#34;./modules/linodes&#34;</span>
+    <span class="nv">key</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">key_label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.key_label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">image</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.image</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">group</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.group</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.type</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.root_pass</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">authorized_keys</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">module</span><span class="p">.linodes.sshkey_linode</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">module</span><span class="p">.stackscripts.stackscript_id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_data</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_data</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This stanza creates an instance of the <code>linodes</code> module and then instantiates the resources you defined in the module. Notice that <code>authorized_keys = [ &quot;${module.linodes.sshkey_id}&quot; ]</code> and <code>stackscript_id = &quot;${module.stackscripts.stackscript_id}&quot;</code> both access values exposed as output variables by the <code>linodes</code> and <code>stackscripts</code> modules. Any module&rsquo;s exposed output variables can be referenced in your root module&rsquo;s <code>main.tf</code> file.</p></li>
+
+<li><p>Create the <code>variables.tf</code> file to declare the input variables required by the module instances:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/variables.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">variable <span class="s2">&#34;token&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34; Linode API token&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript_label&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The StackScript&#39;s label is for display purposes only.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;description&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;A description for the StackScript.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The script to execute when provisioning a new Linode with this StackScript.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript_image&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;A list of Image IDs representing the Images that this StackScript is compatible for deploying with.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;rev_note&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;This field allows you to add notes for the set of revisions made to this StackScript.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;key&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Public SSH Key&#39;s path.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;key_label&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;New SSH key label.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;image&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Image to use for Linode instance.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;linode/ubuntu18.04&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;label&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The Linode&#39;s label is for display purposes only, but must be unique.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;default-linode&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;region&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The region where your Linode will be located.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;us-east&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;type&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Your Linode&#39;s plan type.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;g6-standard-1&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;root_pass&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Your Linode&#39;s root user&#39;s password.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript_data&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Map of required StackScript UDF data.&#34;</span>
+  <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;map&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>outputs.tf</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/outputs.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">output <span class="s2">&#34;stackscript_id&#34;</span> <span class="o">{</span>
+  <span class="nv">value</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">module</span><span class="p">.stackscripts.stackscript_id</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In the <code>outputs.tf</code> file you will re-expose the output variables exposed by the <code>stackscripts</code> module.</p></li>
+
+<li><p>Create the <code>terraform.tfvars</code> file to provide values for all input variables defined in the <code>variables.tf</code> file. This file will exclude any values that provide sensitive data, like passwords and API tokens. A file containing sensitive values will be created in the next step:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/terraform.tfvars  
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">key</span> <span class="o">=</span> <span class="s2">&#34;~/.ssh/id_rsa.pub&#34;</span>
+<span class="nv">key_label</span> <span class="o">=</span> <span class="s2">&#34;my-ssh-key&#34;</span>
+<span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;my-linode&#34;</span>
+stackscript_data <span class="o">{</span>
+  <span class="nv">my_username</span> <span class="o">=</span> <span class="s2">&#34;username&#34;</span>
+  <span class="nv">my_hostname</span> <span class="o">=</span> <span class="s2">&#34;linode-hostname&#34;</span>
+<span class="o">}</span>
+<span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;base-ubuntu-deployment&#34;</span>
+<span class="nv">stackscript_label</span> <span class="o">=</span> <span class="s2">&#34;base-ubuntu-deployment&#34;</span>
+<span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;A base deployment for Ubuntu 18.04 that creates a limited user account.&#34;</span>
+<span class="nv">stackscript</span> <span class="o">=</span> <span class="s">&lt;&lt;EOF
+</span><span class="s">#!/bin/bash
+</span><span class="s"># &lt;UDF name=&#34;my_hostname&#34; Label=&#34;Linode&#39;s Hostname&#34; /&gt;
+</span><span class="s"># &lt;UDF name=&#34;my_username&#34; Label=&#34;Limited user account&#34; /&gt;
+</span><span class="s"># &lt;UDF name=&#34;my_password&#34; Label=&#34;Limited user account&#39;s password&#34; /&gt;
+</span><span class="s"># &lt;UDF name=&#34;my_userpubkey&#34; Label=&#34;Limited user account&#39;s public key&#34; /&gt;
+</span><span class="s">
+</span><span class="s">source &lt;ssinclude StackScriptID=&#34;1&#34;&gt;
+</span><span class="s">
+</span><span class="s">set -x
+</span><span class="s">
+</span><span class="s">MY_IP=system_primary_ip
+</span><span class="s">system_set_hostname &#34;$MY_HOSTNAME&#34;
+</span><span class="s">system_add_host_entry &#34;$MY_IP&#34; &#34;$MY_HOSTNAME&#34;
+</span><span class="s">user_add_sudo &#34;$MY_USERNAME&#34; &#34;$MY_PASSWORD&#34;
+</span><span class="s">user_add_pubkey &#34;$MY_USERNAME&#34; &#34;$MY_USERPUBKEY&#34;
+</span><span class="s">ssh_disable_root
+</span><span class="s">goodstuff
+</span><span class="s">EOF</span>
+<span class="nv">stackscript_image</span> <span class="o">=</span> <span class="s2">&#34;linode/ubuntu18.04&#34;</span>
+<span class="nv">rev_note</span> <span class="o">=</span> <span class="s2">&#34;First revision of my StackScript created with the Linode Terraform provider.&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>terraform.tfvars</code> file supplies all values required by the <code>linodes</code> and <code>stackscripts</code> modules. Ensure you replace any values with your own values when using this example file.</p>
+
+<p>The <code>stackscript</code> variable provides the actual contents of the StackScript you create. This example StackScript requires four <code>UDF</code> values: <code>my_hostname</code>, <code>my_username</code>, <code>my_password</code>, and <code>my_userpubkey</code>. The <code>my_hostname</code> and <code>my_username</code> values are supplied by the <code>stackscript_data</code> map. The <code>my_password</code> and <code>my_userpubkey</code> values will be provided in the next step.</p>
+
+<p>The StackScript will then use these values to create a limited user account; set a hostname; add a host entry; add the created user to the <code>sudo</code> group; disable SSH access for the root user; and install vim, wget, and less. This StackScript uses bash functions defined in the Linode Community <a href="https://www.linode.com/stackscripts/view/1">StackScript Bash Library</a>.</p></li>
+
+<li><p>Create a file named <code>secrets.tfvars</code> to hold any sensitive values:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/secrets.tfvars 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;my-linode-api-token&#34;</span>
+<span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;my-secure-root-password&#34;</span>
+stackscript_data <span class="o">{</span>
+  <span class="nv">my_password</span> <span class="o">=</span> <span class="s2">&#34;my-limited-users-password&#34;</span>
+  <span class="nv">my_userpubkey</span> <span class="o">=</span> <span class="s2">&#34;my-public-ssh-key&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This file contains all sensitive data needed for your Linode deployment. Ensure you replace all values with your own secure passwords and your Linode account&rsquo;s APIv4 token. This file should never be tracked in version control software and should be listed in your <code>.gitignore</code> file if using <a href="https://github.com/">GitHub</a>.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>There are several other options available for secrets management with Terraform. For more information on this subject, see <a href="/docs/applications/configuration-management/secrets-management-with-terraform">Secrets Management with Terraform</a>.</div>
+</blockquote>
+</li>
+</ol>
+
+<p>You are now ready to apply your <code>linode_stackscripts</code> module&rsquo;s Terraform configuration. These steps will be completed in the next section.</p>
+
+<h2 id="initialize-plan-and-apply-the-terraform-configuration">Initialize, Plan and Apply the Terraform Configuration</h2>
+
+<p>Whenever a new provider is used in a Terraform configuration, it must first be initialized. The initialization process downloads and installs the provider’s plugin and performs any other steps needed for its use. Before applying your configuration, it is also useful to view your configuration’s execution plan before making any actual changes to your infrastructure. In this section, you will complete all these steps.</p>
+
+<ol>
+<li><p>Initialize the Linode provider. Ensure you are in the <code>linode_stackscripts</code> directory before running this command:</p>
+
+<pre><code>terraform init
+</code></pre>
+
+<p>You will see a message that confirms that the provider plugins have been successfully initialized.</p></li>
+
+<li><p>Run the Terraform plan command:</p>
+
+<pre><code>terraform plan -var-file=&quot;secrets.tfvars&quot; -var-file=&quot;terraform.tfvars&quot;
+</code></pre>
+
+<p>Terraform plan won’t take any action or make any changes on your Linode account. Instead, an analysis is done to determine which actions (i.e. Linode instance creations, deletions, or modifications) are required to achieve the state described in your configuration.</p></li>
+
+<li><p>You are now ready to create the infrastructure defined in your root module&rsquo;s <code>main.tf</code> configuration file:</p>
+
+<pre><code>terraform apply -var-file=&quot;secrets.tfvars&quot; -var-file=&quot;terraform.tfvars&quot;
+</code></pre>
+
+<p>Since you are using multiple variable value files, you must call each file individually using the <code>var-file</code> argument. You will be prompted to confirm the <code>apply</code> action. Type <em>yes</em> and hit <strong>enter</strong>. Terraform will begin to create the resources you’ve defined throughout this guide. This process will take a couple of minutes to complete. Once the infrastructure has been successfully built you will see a similar output:</p>
+
+<pre class="file terminal">
+  <code>
+  Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+    </code>
+</pre>
+</li>
+
+<li><p>To verify the deployment, retrieve your Linode instance&rsquo;s IP address:</p>
+
+<pre><code>terraform show | grep 'ip_address'
+</code></pre>
+
+<p>You should see a similar output:</p>
+
+<pre class="file terminal">
+  <code>
+        ip_address = 192.0.2.0
+      </code>
+</pre>
+</li>
+
+<li><p>Open a new shell session and SSH into your Linode using the IP address you retrieved in the previous step and the username you defined in the <code>terraform.tfvars</code> file&rsquo;s <code>my_username</code> variable:</p>
+
+<pre><code>ssh username@192.0.2.0
+</code></pre>
+
+<p>You should be able to access your Linode and then verify that what you defined in the StackScript was executed.</p></li>
+</ol>
+
+<h2 id="version-control-your-terraform-module">Version Control Your Terraform Module</h2>
+
+<p>To make the <code>linode_stackscripts</code> module available to other team members, you can version control it using <a href="https://github.com/">GitHub</a>. Before completing the steps in this section, ensure you have completed the steps in the <strong>Configure Git</strong> section of the <a href="/docs/development/version-control/how-to-configure-git/#configure-git">Getting Started with Git</a> guide.</p>
+
+<ol>
+<li><p>In the <code>linode_stackscripts</code> directory create a <code>.gitignore</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode_stackscripts/.gitignore 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">secrets.tfvars
+.terraform/
+terraform/
+terraform.tfstate</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If there are any files related to the Terraform installation steps completed before beginning this guide (i.e zip files and checksum files), you can remove these files from the <code>linode_stackscripts</code> directory, since you should not track them in version control and they are no longer necessary.</div>
+</blockquote>
+</li>
+
+<li><p>Initialize the git repository:</p>
+
+<pre><code>git init
+</code></pre>
+
+<p>Stage all the files you’ve created so far for your first commit:</p>
+
+<pre><code>git add -A
+</code></pre></li>
+
+<li><p>Commit all the <code>linode_stackscripts</code> files:</p>
+
+<pre><code>git commit -m &quot;Initial commit&quot;
+</code></pre></li>
+
+<li><p>Navigate to your GitHub account and <a href="https://help.github.com/articles/creating-a-new-repository/">create a new repository</a>. Ensure you name the repository the same name as that of your Terraform module. In this example, the GitHub repository will be named <code>linode_stackscripts</code>.</p></li>
+
+<li><p>At the top of your GitHub repository&rsquo;s <strong>Quick Setup</strong> page, copy the remote repository URL.</p></li>
+
+<li><p>Return to your local computer&rsquo;s <code>linode_stackscripts</code> directory and add the URL for the remote repository:</p>
+
+<pre><code>git remote add origin https://github.com/my-github/linode_stackscripts.git
+</code></pre></li>
+
+<li><p>Push your local <code>linode_stackscripts</code> repository to your remote GitHub repository:</p>
+
+<pre><code>git push -u origin master
+</code></pre></li>
+</ol>
+
+<p>Your Terraform module is now tracked via GitHub and can be used, shared and modified by anyone who has access to your GitHub account.</p>
+
+<h3 id="invoking-your-github-hosted-module">Invoking Your GitHub-Hosted Module</h3>
+
+<p>In the future, you can source this module from GitHub within your Terraform module declarations. You would write your module block like the following:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">module <span class="s2">&#34;linode_stackscripts&#34;</span> <span class="o">{</span>
+    <span class="nb">source</span> <span class="o">=</span> <span class="s2">&#34;github.com/username/linode_stackscripts&#34;</span>
+
+    VARIABLES HERE
+    . . .
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.terraform.io/docs/providers/linode/r/instance.html">Linode Terraform Provider</a></li>
+
+<li><a href="https://www.terraform.io/docs/modules/create.html">Terraform - Creating Modules</a></li>
+
+<li><a href="https://www.terraform.io/docs/modules/sources.html">Terraform - Module Sources</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#standard-module-structure">Standard Module Structure</a></li>
+<li><a href="#create-the-linode-stackscripts-module">Create the Linode StackScripts Module</a>
+<ul>
+<li><a href="#create-the-linodes-module">Create the Linodes Module</a></li>
+<li><a href="#create-the-stackscripts-module">Create the StackScripts Module</a></li>
+<li><a href="#create-the-root-module">Create the Root Module</a></li>
+</ul></li>
+<li><a href="#initialize-plan-and-apply-the-terraform-configuration">Initialize, Plan and Apply the Terraform Configuration</a></li>
+<li><a href="#version-control-your-terraform-module">Version Control Your Terraform Module</a>
+<ul>
+<li><a href="#invoking-your-github-hosted-module">Invoking Your GitHub-Hosted Module</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

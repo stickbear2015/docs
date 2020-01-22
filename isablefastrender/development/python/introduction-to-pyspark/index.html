@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Introduction to PySpark</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Learn how to install and use PySpark on your Linode for distributed computing. In this guide, we will use an example of counting words in a corpus to learn the PySpark API.">
+        <meta name="keywords" content="big data, spark, nltk, mapreduce, pyspark, hadoop">
+        
+        <meta property="og:title" content="Introduction to PySpark">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/development/python/introduction-to-pyspark/">
+        <meta property="og:description" content="Learn how to install and use PySpark on your Linode for distributed computing. In this guide, we will use an example of counting words in a corpus to learn the PySpark API.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/development/python/introduction-to-pyspark/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/">Development</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/python/">Python</a>
+  
+</li>
+
+
+<li>
+  
+  Introduction to PySpark
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Introduction to PySpark</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-04T17:06:42-05:00">Monday, February 4, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Sam Foo
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2fintroduction-to-pyspark%2f&via=linode&text=Introduction%20to%20PySpark" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2fintroduction-to-pyspark%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2fintroduction-to-pyspark%2f&t=Introduction%20to%20PySpark" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Introduction%20to%20PySpark%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdevelopment%2fpython%2fintroduction-to-pyspark%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/development%5cpython%5cintroduction-to-pyspark%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/development%5cpython%5cintroduction-to-pyspark%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+<blockquote class="dedicated_cpu_link">
+  <strong class="callout-title">Dedicated CPU instances are available!</strong>
+  <div>Linode's Dedicated CPU instances are ideal for CPU-intensive workloads like those discussed in this guide. To learn more about Dedicated CPU, read our <a href="https://blog.linode.com/2019/02/05/introducing-linode-dedicated-cpu-instances?utm_source=library&utm_medium=banner&utm_campaign=dedicated_cpu">blog post</a>. To upgrade an existing Linode to a Dedicated CPU instance, review the <a href="/docs/platform/disk-images/resizing-a-linode/">Resizing a Linode</a> guide.</div>
+</blockquote>
+
+            
+
+<p><img src="PySpark.jpg" alt="Introduction to PySpark" /></p>
+
+<h2 id="what-is-pyspark">What is PySpark?</h2>
+
+<p><a href="https://spark.apache.org/">Apache Spark</a> is a big-data processing engine with several advantages over MapReduce. Spark offers greater simplicity by removing much of the boilerplate code seen in Hadoop. In addition, since Spark handles most operations in memory, it is often faster than MapReduce, where data is written to disk after each operation.</p>
+
+<p>PySpark is a Python API for Spark. This guide shows how to install PySpark on a single Linode. PySpark&rsquo;s API will be introduced through an analysis of text files by counting the top five most frequent words used in every Presidential inaugural address.</p>
+
+<h2 id="install-prerequisites">Install Prerequisites</h2>
+
+<p>The installation process requires the installation of Scala, which has Java JDK 8 as a dependency. Miniconda will be used to handle PySpark installation as well as downloading the data through NLTK.</p>
+
+<h3 id="miniconda">Miniconda</h3>
+
+
+
+
+
+<!-- Installation instructions for Python 3. -->
+
+<ol>
+<li><p>Download and install Miniconda:</p>
+
+<pre><code>curl -OL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+</code></pre></li>
+
+<li><p>You will be prompted several times during the installation process. Review the terms and conditions and select &ldquo;yes&rdquo; for each prompt.</p></li>
+
+<li><p>Restart your shell session for the changes to your PATH to take effect.</p></li>
+
+<li><p>Check your Python version:</p>
+
+<pre><code>python --version
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="java-jdk-8">Java JDK 8</h3>
+
+
+
+
+
+<p>The steps in this section will install the Java 8 JDK on Ubuntu 16.04. For other distributions, see the <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/install/linux_jdk.html#BJFGGEFG">official docs</a>.</p>
+
+<ol>
+<li><p>Install <code>software-properties-common</code> to easily add new repositories:</p>
+
+<pre><code>sudo apt-get install software-properties-common
+</code></pre></li>
+
+<li><p>Add the Java PPA:</p>
+
+<pre><code>sudo add-apt-repository ppa:webupd8team/java
+</code></pre></li>
+
+<li><p>Update the source list:</p>
+
+<pre><code>sudo apt-get update
+</code></pre></li>
+
+<li><p>Install the Java JDK 8:</p>
+
+<pre><code>sudo apt-get install oracle-java8-installer
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="scala">Scala</h3>
+
+<p>When used with Spark, Scala makes several API calls to Spark that are not supported with Python. Although Scala offers better performance than Python, Python is much easier to write and has a greater range of libraries. Depending on the use case, Scala might be preferable over PySpark.</p>
+
+<ol>
+<li><p>Download the Debian package and install.</p>
+
+<pre><code>wget https://downloads.lightbend.com/scala/2.12.4/scala-2.12.4.deb
+sudo dpkg -i scala-2.12.4.deb
+</code></pre></li>
+</ol>
+
+<h2 id="install-pyspark">Install PySpark</h2>
+
+<ol>
+<li><p>Using Miniconda, create a new virtual environment:</p>
+
+<pre><code>conda create -n linode_pyspark python=3
+source activate linode_pyspark
+</code></pre></li>
+
+<li><p>Install PySpark and the <a href="http://www.nltk.org/">Natural Language Toolkit (NLTK)</a>:</p>
+
+<pre><code>conda install -c conda-forge pyspark nltk
+</code></pre></li>
+
+<li><p>Start PySpark. There will be a few warnings because the configuration is not set up for a cluster.</p>
+
+<pre><code>pyspark
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Python 3.6.3 |Anaconda, Inc.| (default, Nov 20 2017, 20:41:42)
+[GCC 7.2.0] on linux
+Type "help", "copyright", "credits" or "license" for more information.
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties
+Setting default log level to "WARN".
+...
+Welcome to
+      ____              __
+     / __/__  ___ _____/ /__
+    _\ \/ _ \/ _ `/ __/  '_/
+   /__ / .__/\_,_/_/ /_/\_\   version 2.2.1
+       /_/
+
+Using Python version 3.6.3 (default, Nov 20 2017 20:41:42)
+SparkSession available as 'spark'.
+>>>
+</code>
+</pre>
+</li>
+</ol>
+
+<h2 id="download-sample-data">Download Sample Data</h2>
+
+<p>The data used in this guide is a compilation of text files of every Presidential inaugural address from 1789 to 2009. This dataset is available from NLTK. Miniconda and the NLTK package have built-in functionality to simplify downloading from the command line.</p>
+
+<ol>
+<li><p>Import NLTK and download the text files. In addition to the corpus, download a list of stop words.</p>
+
+<pre><code>import nltk
+nltk.download('inaugural')
+nltk.download('stopwords')
+</code></pre></li>
+
+<li><p>Import the file objects and show a list of available text files downloaded from the NLTK package.</p>
+
+<pre><code>from nltk.corpus import inaugural, stopwords
+inaugural.fileids()
+</code></pre>
+
+<p>This should return a list of text files of the Inaugural Address from George Washington to Barack Obama.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The files are located in <code>/home/linode/nltk_data/corpora/inaugural/</code> where <code>linode</code> is the username.</div>
+</blockquote>
+</li>
+</ol>
+
+<p>Although it is possible to accomplish most objectives of this guide purely with Python, the aim is to demonstrate the PySpark API, which will also work with data distributed across a cluster.</p>
+
+<h2 id="pyspark-api">PySpark API</h2>
+
+<p>Spark utilizes the concept of a Resilient Distributed Dataset (RDD). The RDD is characterized by:</p>
+
+<ul>
+<li>Immutability - Changes to the data returns a new RDD rather than modifying an existing one</li>
+<li>Distributed - Data can exist on a cluster and be operated on in parallel</li>
+<li>Partitioned - More partitions allow work to be distributed among the cluster but too many partitions create unnecessary overhead in scheduling</li>
+</ul>
+
+<p>This portion of the guide will focus on how to load data into PySpark as an RDD. Then, some of the PySpark API is demonstrated through simple operations like counting. Finally, more complex methods like functions like filtering and aggregation will be used to count the most frequent words in inaugural addresses.</p>
+
+<h3 id="read-data-into-pyspark">Read Data into PySpark</h3>
+
+<p>Since PySpark is run from the shell, SparkContext is already bound to the variable <code>sc</code>. For standalone programs running outside of the shell, SparkContext needs to be imported. The SparkContext object represents the entry point for Spark&rsquo;s functionality.</p>
+
+<ol>
+<li><p>Read from the collection of text files from NLTK, taking care to specify the absolute path of the text files. Assuming the corpus was downloaded though the method described above, replace <code>linode</code> with your Unix username:</p>
+
+<pre><code>text_files = sc.textFile(&quot;file:///home/linode/nltk_data/corpora/inaugural/*.txt&quot;)
+</code></pre></li>
+
+<li><p>There are two types of operations in Spark: <strong>transformations</strong> and <strong>actions</strong>. Transformations are lazy loaded operations that return an RDD. However, this means Spark does not actually compute the transformations until an <strong>action</strong> requires returning a result. An example of an action is the <code>count()</code> method, which counts the total number of lines in all the files:</p>
+
+<pre><code>&gt;&gt;&gt; text_files.count()
+2873
+</code></pre></li>
+</ol>
+
+<h3 id="clean-and-tokenize-data">Clean and Tokenize Data</h3>
+
+<ol>
+<li><p>To count words, the sentences must be tokenized. Before this can be done, remove all punctuation and convert all of the words to lowercase to simplify counting:</p>
+
+<pre><code>import string
+removed_punct = text_files.map(lambda sent: sent.translate({ord(c): None for c in string.punctuation}).lower())
+</code></pre>
+
+<p>Since <code>map</code> is a transformation, the function is not applied until an action takes place.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If a step is unclear, try <code>.collect()</code> to see the intermediary outputs.</div>
+</blockquote>
+</li>
+
+<li><p>Tokenize the sentences:</p>
+
+<pre><code>tokenize = removed_punct.flatMap(lambda sent: sent.split(&quot; &quot;))
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Similar to Python&rsquo;s <code>map</code> function, PySpark&rsquo;s <code>map</code> returns an RDD with an equal number of elements (2873, in this example). <code>flatMap</code> allows transformation of an RDD to another size which is needed when tokenizing words.</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="filter-and-aggregate-data">Filter and Aggregate Data</h3>
+
+<ol>
+<li><p>Through method chaining, multiple transformations can be used instead of creating a new reference to an RDD each step. <code>reduceByKey</code> is the transformation that counts each word by aggregating each word value pair.</p>
+
+<pre><code>result = tokenize.map(lambda word: (word, 1))\
+.reduceByKey(lambda a, b: a + b)
+</code></pre></li>
+
+<li><p>Stopwords (such as &ldquo;a&rdquo;, &ldquo;an&rdquo;, &ldquo;the&rdquo;, etc) should be removed because those words are used frequently in the English language but provide no value in this context. While filtering, clean the data by removing empty strings. Results are then sorted via <code>takeOrdered</code> with the top five most frequent words returned.</p>
+
+<pre><code>words = stopwords.words('english')
+
+result.filter(lambda word: word[0] not in words and word[0] != '')\
+.takeOrdered(5, key = lambda x: -x[1])
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+[('government', 557), ('people', 553), ('us', 455), ('upon', 369), ('must', 346)]
+</code>
+</pre>
+
+
+<p>Among the top five words, &ldquo;government&rdquo; is the most frequent word with a count of 557 with &ldquo;people&rdquo; at a close 553. The transformations and action can be summarized concisely. Remember to replace <code>linode</code> with your Unix username.</p></li>
+
+<li><p>The operations can be summarized as:</p>
+
+<pre><code>import string
+from nltk.corpus import stopwords
+
+words = stopwords.words('english')
+
+sc.textFile(&quot;file:///home/linode/nltk_data/corpora/inaugural/*.txt&quot;)\
+  .map(lambda sent: sent.translate({ord(c): None for c in string.punctuation}).lower())\
+  .flatMap(lambda sent: sent.split(&quot; &quot;))\
+  .map(lambda word: (word, 1))\
+  .reduceByKey(lambda a, b: a + b)\
+  .filter(lambda word: word[0] not in words and word[0] != '')\
+  .takeOrdered(5, key = lambda x: -x[1])
+</code></pre></li>
+</ol>
+
+<p>PySpark has many additional capabilities, including DataFrames, SQL, streaming, and even a machine learning module. Refer to the <a href="https://spark.apache.org/docs/latest/api/python/">PySpark documentation</a> for a comprehensive list.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.usenix.org/system/files/conference/nsdi12/nsdi12-final138.pdf">AMPLab Paper on RDDs</a></li>
+
+<li><a href="https://spark.apache.org/">Spark Documentation</a></li>
+
+<li><a href="https://spark.apache.org/docs/latest/api/python/#">PySpark Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-pyspark">What is PySpark?</a></li>
+<li><a href="#install-prerequisites">Install Prerequisites</a>
+<ul>
+<li><a href="#miniconda">Miniconda</a></li>
+<li><a href="#java-jdk-8">Java JDK 8</a></li>
+<li><a href="#scala">Scala</a></li>
+</ul></li>
+<li><a href="#install-pyspark">Install PySpark</a></li>
+<li><a href="#download-sample-data">Download Sample Data</a></li>
+<li><a href="#pyspark-api">PySpark API</a>
+<ul>
+<li><a href="#read-data-into-pyspark">Read Data into PySpark</a></li>
+<li><a href="#clean-and-tokenize-data">Clean and Tokenize Data</a></li>
+<li><a href="#filter-and-aggregate-data">Filter and Aggregate Data</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

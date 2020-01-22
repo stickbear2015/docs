@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Connect Docker Containers</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide will show you how to link Docker containers using a Node.js application and PostgreSQL.">
+        <meta name="keywords" content="docker, containers, database, container communication">
+        
+        <meta property="og:title" content="How to Connect Docker Containers">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/docker-container-communication/">
+        <meta property="og:description" content="Learn to link Docker containers using a Node.js application and PostgreSQL through a simple &#39;Hello World&#39; application.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/docker-container-communication/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  How to Connect Docker Containers
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Connect Docker Containers</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-24T10:08:37-04:00">Friday, August 24, 2018</time> by Jared Kobos</small>
+  <small class="contributed-by">
+  
+  Written by Jared Kobos
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdocker-container-communication%2f&via=linode&text=How%20to%20Connect%20Docker%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdocker-container-communication%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdocker-container-communication%2f&t=How%20to%20Connect%20Docker%20Containers" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Connect%20Docker%20Containers%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fdocker-container-communication%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cdocker-container-communication%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cdocker-container-communication%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="connect-docker-containers.jpg" alt="Connect Docker Containers" /></p>
+
+<p>When using <a href="https://www.docker.com">Docker</a> to containerize your applications, it is common practice to run each component of the application in a separate container. For example, a website might have a web server, application, and database, each running in its own container.</p>
+
+<p>Configuring the containers to communicate with each other and the host machine can be a challenge. This guide will use a simple example app to demonstrate the basics of Docker container communication. The app will consist of a Node.js app that reads data from a PostgreSQL database.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<h3 id="install-docker-ce">Install Docker CE</h3>
+
+<p>You will need a Linode with Docker CE installed to follow along with the steps in this guide.</p>
+
+
+
+
+
+<!-- Install Docker CE using the official Docker repositories. -->
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>docker run hello-world
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h2 id="example-node-js-application">Example Node.js Application</h2>
+
+<p>The example app used throughout this guide will be a simple Node.js app that will read &ldquo;Hello world&rdquo; from a PostgreSQL database and print it to the console. In this section, you will build and test the app on your Linode without using containers.</p>
+
+<h3 id="install-and-configure-postgresql">Install and Configure PostgreSQL</h3>
+
+<ol>
+<li><p>Update your system:</p>
+
+<pre><code>sudo apt update &amp;&amp; sudo apt upgrade
+</code></pre></li>
+
+<li><p>Install PostGreSQL:</p>
+
+<pre><code>sudo apt install postgresql postgresql-contrib
+</code></pre></li>
+
+<li><p>Change the <code>postgres</code> user&rsquo;s password:</p>
+
+<pre><code>sudo passwd postgres
+</code></pre></li>
+
+<li><p>Set a password for the <code>postgres</code> database user:</p>
+
+<pre><code>su - postgres
+psql -d template1 -c &quot;ALTER USER postgres WITH PASSWORD 'newpassword';&quot;
+</code></pre></li>
+
+<li><p>Create a database for the example app and connect to it:</p>
+
+<pre><code>createdb nodejs
+psql nodejs
+</code></pre></li>
+
+<li><p>Add &ldquo;Hello world&rdquo; to the database:</p>
+
+<pre><code>nodejs=# CREATE TABLE hello (message varchar);
+nodejs=# INSERT INTO hello VALUES ('Hello world');
+nodejs=# \q
+</code></pre></li>
+
+<li><p>Create a dump of the database for later use:</p>
+
+<pre><code>pg_dumpall &gt; backup.sql
+</code></pre></li>
+
+<li><p>Sign out as the <code>postgres</code> Linux user:</p>
+
+<pre><code>exit
+</code></pre></li>
+
+<li><p>Copy the data dump to your home directory:</p>
+
+<pre><code>sudo cp /var/lib/postgresql/backup.sql ~/.
+</code></pre></li>
+
+<li><p>Since you will be connecting to this database from a container (which will have an IP address other than <code>locahost</code>), you will need to edit the PostgreSQL config file to allow connections from remote addresses. Open <code>/etc/postgresql/9.5/main/postgresql.conf</code> in a text editor. Uncomment the <code>listen_addresses</code> line and set it to &lsquo;*&rsquo;:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.5/main/postgresql.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># CONNECTIONS AND AUTHENTICATION</span>
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+<span class="c1"># - Connection Settings -</span>
+
+<span class="nv">listen_addresses</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span>                  <span class="c1"># what IP address(es) to listen on;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Enable and start the <code>postgresql</code> service:</p>
+
+<pre><code>sudo systemctl enable postgresql
+sudo systemctl start postgresql
+</code></pre></li>
+</ol>
+
+<h3 id="create-a-hello-world-app">Create a Hello World App</h3>
+
+<ol>
+<li><p>Install Node and NPM:</p>
+
+<pre><code>curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install nodejs
+</code></pre></li>
+
+<li><p>Navigate to the home directory and create a directory:</p>
+
+<pre><code>cd
+mkdir app &amp;&amp; cd app
+</code></pre></li>
+
+<li><p>Using a text editor, create <code>app.js</code> and add the following content:</p>
+
+<dl class="file">
+
+
+<dt>
+		app.js 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">const <span class="o">{</span> Client <span class="o">}</span> <span class="o">=</span> require<span class="o">(</span><span class="s1">&#39;pg&#39;</span><span class="o">)</span>
+
+const <span class="nv">client</span> <span class="o">=</span> new Client<span class="o">({</span>
+  user: <span class="s1">&#39;postgres&#39;</span>,
+  host: <span class="s1">&#39;localhost&#39;</span>,
+  database: <span class="s1">&#39;nodejs&#39;</span>,
+  password: <span class="s1">&#39;newpassword&#39;</span>,
+  port: <span class="m">5432</span>
+<span class="o">})</span>
+
+client.connect<span class="o">()</span>
+
+client.query<span class="o">(</span><span class="s1">&#39;SELECT * FROM hello&#39;</span>, <span class="o">(</span>err, res<span class="o">)</span> <span class="o">=</span>&gt; <span class="o">{</span>
+  console.log<span class="o">(</span>res.rows<span class="o">[</span><span class="m">0</span><span class="o">]</span>.message<span class="o">)</span>
+  client.end<span class="o">()</span>
+<span class="o">})</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This app uses the <code>pg</code> NPM module (node-postgres) to connect to the database created in the previous section. It then queries the &lsquo;hello&rsquo; table (which returns the &ldquo;Hello world&rdquo; message) and logs the response to the console. Replace <code>'newpassword'</code> with the <code>postgres</code> database user password you set in the previous section.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The <code>pg</code> module can also use environment variables to configure the client connection. This is the recommended option for production apps. Read more about environment variables in the <a href="https://node-postgres.com/features/connecting">node-postgres documentation</a>.</div>
+</blockquote>
+</li>
+
+<li><p>Install the <code>pg</code> module:</p>
+
+<pre><code>npm install pg
+</code></pre></li>
+
+<li><p>Test the app:</p>
+
+<pre><code>node app.js
+</code></pre>
+
+<p>If the database is configured correctly, &ldquo;Hello world&rdquo; will be displayed on the console.</p></li>
+</ol>
+
+<h2 id="connect-container-to-docker-host">Connect Container to Docker Host</h2>
+
+<p>This section illustrates a use case where the Node.js app is run from a Docker container, and connects to a database that is running on the Docker host.</p>
+
+<h3 id="set-up-docker-container">Set Up Docker Container</h3>
+
+<ol>
+<li><p>Return to your home directory:</p>
+
+<pre><code>cd
+</code></pre></li>
+
+<li><p>Create a Dockerfile to run the Node.js app:</p>
+
+<dl class="file">
+
+
+<dt>
+		Dockerfile 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">FROM debian
+
+RUN apt update -y <span class="o">&amp;&amp;</span> apt install -y gnupg curl
+RUN curl -sL https://deb.nodesource.com/setup_8.x <span class="p">|</span> bash - <span class="o">&amp;&amp;</span> apt install -y nodejs
+COPY app/ /home/
+
+ENTRYPOINT tail -F /dev/null</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>The image built from this Dockerfile will copy the <code>app/</code> directory to the new image. Edit <code>app.js</code> to allow the app to connect to the <code>database</code> host instead of <code>localhost</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		app/app.js 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">const <span class="nv">client</span> <span class="o">=</span> new Client<span class="o">({</span>
+  user: <span class="s1">&#39;postgres&#39;</span>,
+  host: <span class="s1">&#39;database&#39;</span>,
+  database: <span class="s1">&#39;nodejs&#39;</span>,
+  password: <span class="s1">&#39;newpassword&#39;</span>,
+  port: <span class="m">5432</span>
+<span class="o">})</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Build an image from the Dockerfile:</p>
+
+<pre><code>docker build -t node_image .
+</code></pre></li>
+</ol>
+
+<h3 id="connect-container-to-database">Connect Container to Database</h3>
+
+<ol>
+<li><p>Docker automatically sets up a default  <strong>bridge network</strong>, accessed through the <code>docker0</code> network interface. Use <code>ifconfig</code> or <code>ip</code> to view this interface:</p>
+
+<pre><code>ifconfig docker0
+</code></pre>
+
+<p>The output will resemble the following:</p>
+
+<p><pre class="file terminal">
+  <code>
+docker0   Link encap:Ethernet  HWaddr 02:42:1e:e8:39:54
+  inet addr:172.17.0.1  Bcast:0.0.0.0  Mask:255.255.0.0
+  inet6 addr: fe80::42:1eff:fee8:3954/64 Scope:Link
+  UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+  RX packets:3848 errors:0 dropped:0 overruns:0 frame:0
+  TX packets:5084 errors:0 dropped:0 overruns:0 carrier:0
+  collisions:0 txqueuelen:0
+  RX bytes:246416 (246.4 KB)  TX bytes:94809688 (94.8 MB)
+</code>
+</pre>
+
+The internal IP address of the Docker host (your Linode) is 172.17.0.1.</p></li>
+
+<li><p>Allow PostgreSQL to accept connections from the Docker interface. Open <code>/etc/postgresql/9.5/main/pg_hba.conf</code> in a text editor and add the following line:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.5/main/pg_hba.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">host    all             postgres        <span class="m">172</span>.17.0.0/16           password</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Since 172.17.0.1 is the IP of the Docker host, all of the containers on the host will have an IP address in the range 172.17.0.0/16.</p></li>
+
+<li><p>Restart the database:</p>
+
+<pre><code>sudo systemctl restart postgresql
+</code></pre></li>
+
+<li><p>Start the container:</p>
+
+<pre><code>docker run -d --add-host=database:172.17.0.1 --name node_container node_image
+</code></pre>
+
+<p>The <code>--add-host</code> option defines a <code>database</code> host, which points to the IP address of the Docker host. Declaring the <code>database</code> host at runtime, rather than hard-coding the IP address in the app, helps keep the container reusable.</p></li>
+
+<li><p>From within the container, use <code>ping</code> to test the connection to the <code>database</code> host:</p>
+
+<pre><code>docker exec -it node_container ping database
+</code></pre></li>
+
+<li><p>Each Docker container is also assigned its own IP address from within the 172.17.0.0/16 block. Find the IP address of this container with <code>ip</code>:</p>
+
+<pre><code>docker exec -it node_container ip addr show eth0
+</code></pre>
+
+<p>You can test this connection by pinging this address from the Docker host.</p></li>
+
+<li><p>Run the app:</p>
+
+<pre><code>docker exec -it node_container node home/app.js
+</code></pre></li>
+</ol>
+
+<p>If the configuration was successful, the program should display the &ldquo;Hello world&rdquo; console output as before.</p>
+
+<h2 id="connect-two-containers">Connect Two Containers</h2>
+
+<p>In this section, both the app and database will be running in separate containers. You can use the <a href="https://hub.docker.com/_/postgres/">official postgres image</a> from Docker Hub and load in the SQL dump created earlier.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>You should not store production database data inside a Docker container. Containers should be treated as ephemeral entities: if a container unexpectedly crashes or is restarted, all data in the database will be lost.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Stop and remove the Node.js container:</p>
+
+<pre><code>docker stop node_container
+docker rm node_container
+</code></pre></li>
+
+<li><p>Pull the <code>postgres</code> image:</p>
+
+<pre><code>docker pull postgres
+</code></pre></li>
+
+<li><p>Make sure your <code>backup.sql</code> file is in your current working directory, then run the <code>postgres</code> image:</p>
+
+<pre><code>docker run -d -v `pwd`:/backup/ --name pg_container postgres
+</code></pre>
+
+<p>The <code>-v</code> option mounts your current working directory to the <code>/backup/</code> directory on the new container.</p></li>
+
+<li><p>The new container will automatically start the postgres database and create the postgres user. Enter the container and load the SQL dump:</p>
+
+<pre><code>docker exec -it pg_container bash
+cd backup
+psql -U postgres -f backup.sql postgres
+exit
+</code></pre></li>
+
+<li><p>Run the node image again. This time, instead of <code>--add-host</code>, use the <code>--link</code> option to connect the container to pg_container:</p>
+
+<pre><code>docker run -d --name node_container --link=pg_container:database node_image
+</code></pre>
+
+<p>This will link the <code>pg_container</code> under the hostname <code>database</code>.</p></li>
+
+<li><p>Open <code>/etc/hosts</code> in node_container to confirm that the link has been made:</p>
+
+<pre><code>docker exec -it node_container cat /etc/hosts
+</code></pre>
+
+<p>There should be a line similar to the following:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">172.17.0.2  database  pg_container</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This shows that <code>pg_container</code> has been assigned to the IP address 172.17.0.2, and is linked to this container via the hostname <code>database</code>, as expected.</p></li>
+
+<li><p>Since the Node.js app is still expecting to connect to a PostgreSQL database on the <code>database</code> host, no further changes are necessary. You should be able to run the app as before:</p>
+
+<pre><code>docker exec -it node_container node home/app.js
+</code></pre></li>
+</ol>
+
+<h2 id="using-docker-compose">Using Docker Compose</h2>
+
+<p>Using the <code>--link</code> or <code>--host</code> options every time you launch your containers can be cumbersome. If your server or any of the containers crash, they must be manually reconnected. This is not an ideal situation for any application that requires constant availability. Fortunately, Docker provides <strong>Docker Compose</strong> to manage multiple containers and automatically link them together when they are launched. This section will use Docker Compose to reproduce the results of the previous section.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>For a more comprehensive explanation of Docker Compose and how to write <code>docker-compose.yml</code> configuration files, see our complete <a href="/docs/applications/containers/how-to-use-docker-compose/">Docker Compose</a> guide.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Install Docker Compose:</p>
+
+<pre><code>sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+</code></pre></li>
+
+<li><p>In the same directory as your Dockerfile, create a <code>docker-compose.yml</code> file with the following content:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">version: <span class="s1">&#39;3&#39;</span>
+
+services:
+  database:
+    image: postgres
+    container_name: pg_container
+    volumes:
+       - pgdata:/var/lib/postgresql/data
+
+  app:
+    build: .
+    container_name: node_container
+    links:
+     - database
+    environment:
+      - <span class="nv">PGPASSWORD</span><span class="o">=</span>newpassword
+      - <span class="nv">PGUSER</span><span class="o">=</span>postgres
+      - <span class="nv">PGDATABASE</span><span class="o">=</span>nodejs
+      - <span class="nv">PGHOST</span><span class="o">=</span>database
+      - <span class="nv">PGPORT</span><span class="o">=</span><span class="m">5432</span>
+    depends_on:
+      - database
+
+volumes:
+  pgdata: <span class="o">{}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When you run Docker Compose with this file, it will create the <code>pg_container</code> and <code>node_container</code> from the previous section. As before, the database container will use the official PostgreSQL image, while the app container will be built from your Dockerfile. The <code>links</code> entry serves the same function as the <code>--link</code> option in the <code>run</code> command used earlier.</p></li>
+
+<li><p>Docker Compose also allows you to set up environment values, so you can simplify the app to use these rather than having the values hard-coded. Edit <code>app.js</code> to remove these values:</p>
+
+<dl class="file">
+
+
+<dt>
+		app.js 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">const <span class="nv">express</span> <span class="o">=</span> require<span class="o">(</span><span class="s1">&#39;express&#39;</span><span class="o">)</span>
+const <span class="o">{</span> Client <span class="o">}</span> <span class="o">=</span> require<span class="o">(</span><span class="s1">&#39;pg&#39;</span><span class="o">)</span>
+
+const <span class="nv">client</span> <span class="o">=</span> new Client<span class="o">()</span>
+
+client.connect<span class="o">()</span>
+
+client.query<span class="o">(</span><span class="s1">&#39;SELECT * FROM hello&#39;</span>, <span class="o">(</span>err, res<span class="o">)</span> <span class="o">=</span>&gt; <span class="o">{</span>
+  console.log<span class="o">(</span>res.rows<span class="o">[</span><span class="m">0</span><span class="o">]</span>.message<span class="o">)</span>
+  client.end<span class="o">()</span>
+<span class="o">})</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Remove the previous containers:</p>
+
+<pre><code>docker rm -f node_container pg_container
+</code></pre></li>
+
+<li><p>Use Docker Compose to bring up the containers:</p>
+
+<pre><code>docker-compose up -d
+</code></pre></li>
+
+<li><p>Load the example data into the new container:</p>
+
+<pre><code>docker cp backup.sql pg_container:/
+docker exec -it pg_container psql -U postgres -f backup.sql postgres
+</code></pre></li>
+
+<li><p>Run <code>app.js</code> from the app container:</p>
+
+<pre><code>docker exec -it node_container node home/app.js
+</code></pre></li>
+</ol>
+
+<p>The app should run as before.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>By default, Docker automatically assigns an IP address to each container and to the Docker host. You can manually connect services between containers by using these addresses (assuming that your firewall allows the connection).</p>
+
+<p>However, Docker also provides a number of convenient wrappers around these connections to help you speed up and simplify the connection process. You can connect your Docker host to a container with a unique hostname, or directly link two containers. Using Docker Compose can simplify this process even further by allowing you to declare connections in the <code>docker-compose.yml</code> file so that they are automatically established when the containers are brought up.</p>
+
+<p>There are other connection options that were not covered in this guide. For example, you can run a container using <code>--net=&quot;host&quot;</code>, which will share that container&rsquo;s network stack with the Docker host: <code>localhost</code> on the container will point to <code>localhost</code> on the Docker host. You can also expose ports on each Docker container, or configure the default bridge network for more flexibility. For a more in-depth discussion of these options, see the links in the More Info section below.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.docker.com/engine/userguide/networking/default_network/container-communication/">Docker: Understanding Container Communication</a></li>
+
+<li><a href="https://rominirani.com/docker-tutorial-series-part-8-linking-containers-69a4e5bf50fb">Linking Containers</a></li>
+
+<li><a href="https://deis.com/blog/2016/connecting-docker-containers-1/">Connecting Containers</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#install-docker-ce">Install Docker CE</a></li>
+</ul></li>
+<li><a href="#example-node-js-application">Example Node.js Application</a>
+<ul>
+<li><a href="#install-and-configure-postgresql">Install and Configure PostgreSQL</a></li>
+<li><a href="#create-a-hello-world-app">Create a Hello World App</a></li>
+</ul></li>
+<li><a href="#connect-container-to-docker-host">Connect Container to Docker Host</a>
+<ul>
+<li><a href="#set-up-docker-container">Set Up Docker Container</a></li>
+<li><a href="#connect-container-to-database">Connect Container to Database</a></li>
+</ul></li>
+<li><a href="#connect-two-containers">Connect Two Containers</a></li>
+<li><a href="#using-docker-compose">Using Docker Compose</a></li>
+<li><a href="#conclusion">Conclusion</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

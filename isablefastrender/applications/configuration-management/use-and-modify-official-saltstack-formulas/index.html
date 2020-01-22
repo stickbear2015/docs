@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Use and Modify Official SaltStack Formulas</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Learn how to use and modify official SaltStack formulas to manage your infrastructure.">
+        <meta name="keywords" content="salt, formulas, git">
+        
+        <meta property="og:title" content="Use and Modify Official SaltStack Formulas">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/use-and-modify-official-saltstack-formulas/">
+        <meta property="og:description" content="Learn how to use and modify official SaltStack formulas to manage your infrastructure.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/use-and-modify-official-saltstack-formulas/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Use and Modify Official SaltStack Formulas
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Use and Modify Official SaltStack Formulas</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-07T14:28:52-05:00">Monday, January 7, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>Salt20</strong> for $20 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fuse-and-modify-official-saltstack-formulas%2f&via=linode&text=Use%20and%20Modify%20Official%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fuse-and-modify-official-saltstack-formulas%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fuse-and-modify-official-saltstack-formulas%2f&t=Use%20and%20Modify%20Official%20SaltStack%20Formulas" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Use%20and%20Modify%20Official%20SaltStack%20Formulas%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fuse-and-modify-official-saltstack-formulas%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5cuse-and-modify-official-saltstack-formulas%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5cuse-and-modify-official-saltstack-formulas%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="salt-state-files">Salt State Files</h2>
+
+<p>The SaltStack Platform is made up of two primary components: A remote execution engine which handles bi-directional communication for any node within your infrastructure (master and minions), and a configuration management system which maintains all infrastructure nodes in a defined state. Salt&rsquo;s configuration management system is known as the <em>Salt State</em> system. A Salt state is declared within a <em>Salt State file</em> (SLS) using YAML syntax and represents the information Salt needs to configure minions. A Salt Formula is a collection of related SLS files that will achieve a common configuration.</p>
+
+<p>SaltStack&rsquo;s GitHub page contains Salt formulas for commonly needed configurations, like creating and managing SSL/TLS certificates, installing and configuring the Apache HTTP Server, installing and configuring a WordPress site and many other useful formulas. You can easily add any of these pre-written formulas to your own Salt state tree using GitHub.</p>
+
+<p>This guide will use GitHub to fork and modify SaltStack&rsquo;s <a href="https://github.com/saltstack-formulas/timezone-formula">timezone formula</a> and then use the formula on a Salt master to configure the time zone on two minions.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>If you are new to SaltStack, read <a href="/docs/applications/configuration-management/beginners-guide-to-salt/">A Beginner&rsquo;s Guide to Salt</a> to familiarize yourself with basic Salt concepts.</p></li>
+
+<li><p>Download Git on your local computer by following our <a href="/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/">How to Install Git on Linux, Mac or Windows</a> guide.</p></li>
+
+<li><p>Familiarize yourself with Git using our <a href="/docs/development/version-control/how-to-configure-git/">Getting Started with Git</a> guide.</p></li>
+
+<li><p>Make sure you have <a href="/docs/development/version-control/how-to-configure-git/#configure-git">configured git</a> on your local computer.</p></li>
+
+<li><p>Use the <a href="/docs/applications/configuration-management/getting-started-with-salt-basic-installation-and-setup/">Getting Started with Salt - Basic Installation and Setup</a> guide to set up a Salt Master and two Salt minions: one running Ubuntu 18.04 and the second running CentOS 7.</p></li>
+
+<li><p>Complete the sections of our <a href="/docs/security/securing-your-server/">Securing Your Server</a> to create a standard user account, harden SSH access and remove unnecessary network services.</p></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The steps in this guide require root privileges. Be sure to run the steps below with the <code>sudo</code> prefix. For more information on privileges, see our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</div>
+</blockquote>
+
+
+<h2 id="overview-of-the-saltstack-time-zone-formula">Overview of the SaltStack Time Zone Formula</h2>
+
+<p>In this section, we will take a closer look at SaltStack&rsquo;s <code>timezone-formula</code>, which can be used to configure a minion&rsquo;s time zone. A high-level overview of all the formula&rsquo;s state files and Jinja templates will be provided. Salt best practices recommends that formulas should separate the data that a state needs from the state itself to increase the flexibility and reusability of state files. We will observe how this is achieved in the time zone formula.</p>
+
+<ol>
+<li><p>In your browser, navigate to the <code>timezone-formula</code> on <a href="https://github.com/saltstack-formulas/timezone-formula">SaltStack&rsquo;s GitHub page</a>. The <code>README</code> file is displayed and contains basic information about the formula. It notes the following details:</p>
+
+<ul>
+<li>The purpose of the formula: to configure the time zone.</li>
+<li>The available states: <code>timezone</code></li>
+<li>The provided default values: <code>timezone: 'Europe/Berlin' utc: True</code></li>
+</ul>
+
+<p>The repository&rsquo;s <code>FORMULA</code> file includes additional details, including the supported OS families (Debian, RedHat, SUSE, Arch, FreeBSD), a summary, description and release number.</p></li>
+
+<li><p>Viewing the <code>timezone-formula</code>, click on the <code>timezone</code> directory to view its contents. You should see the following files:</p>
+
+<p><img src="timezone-files.png" alt="View the time zone formula files" /></p></li>
+
+<li><p>Take a look at the contents of the <code>init.sls</code> file that defines the timezone state:</p>
+
+<dl class="file">
+
+
+<dt>
+		timezone/init.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># This state configures the timezone.</span>
+
+<span class="o">{</span>%- <span class="nb">set</span> <span class="nv">timezone</span> <span class="o">=</span> salt<span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span><span class="s1">&#39;timezone:name&#39;</span>, <span class="s1">&#39;Europe/Berlin&#39;</span><span class="o">)</span> %<span class="o">}</span>
+<span class="o">{</span>%- <span class="nb">set</span> <span class="nv">utc</span> <span class="o">=</span> salt<span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span><span class="s1">&#39;timezone:utc&#39;</span>, True<span class="o">)</span> %<span class="o">}</span>
+<span class="o">{</span>% from <span class="s2">&#34;timezone/map.jinja&#34;</span> import confmap with context %<span class="o">}</span>
+
+timezone_setting:
+  timezone.system:
+    - name: <span class="o">{{</span> timezone <span class="o">}}</span>
+    - utc: <span class="o">{{</span> utc <span class="o">}}</span>
+
+timezone_packages:
+  pkg.installed:
+    - name: <span class="o">{{</span> confmap.pkgname <span class="o">}}</span>
+
+timezone_symlink:
+  file.symlink:
+    - name: <span class="o">{{</span> confmap.path_localtime <span class="o">}}</span>
+    - target: <span class="o">{{</span> confmap.path_zoneinfo <span class="o">}}{{</span> timezone <span class="o">}}</span>
+    - force: <span class="nb">true</span>
+    - require:
+      - pkg: <span class="o">{{</span> confmap.pkgname <span class="o">}}</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Salt will interpret the name of this file as <code>timezone</code>, since any <code>init.sls</code> file in a subdirectory is referred to by the path of the directory.</p>
+
+<p>This state file contains three state declarations, <code>timezone_setting</code>, <code>timezone_packages</code> and <code>timezone_symlink</code>. Below is a description of the configuration each declaration will accomplish on a Salt minion.</p>
+
+<ul>
+<li><p><code>timezone.system</code>: This state uses Salt&rsquo;s <a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.timezone.html">timezone state module</a> to manage the timezone for the minion. The values for <code>name</code> and <code>utc</code> are derived from the corresponding Salt master&rsquo;s Pillar file. This is accomplished in the two variable assignment at the top of the file: <code>{%- set timezone = salt['pillar.get']('timezone:name', 'Europe/Berlin') %}</code> and <code>{%- set utc = salt['pillar.get']('timezone:utc', True) %}</code>.</p></li>
+
+<li><p><code>timezone_packages:</code> This state ensures that the package needed to configure time zones is installed on the minion. This value is derived from the <code>confmap</code> variable that is imported from the <code>map.jinja</code> file. The import is declared at the top of the file with the <code>{% from &quot;timezone/map.jinja&quot; import confmap with context %}</code> import statement. Later in this section, you will inspect the <code>map.jinja</code> file.</p></li>
+
+<li><p><code>timezone_symlink</code>: This state creates a symbolic link from the path defined in <code>name</code> to the location defined in <code>target</code>. This state will only execute if the <code>timezone_packages</code> state is executed successfully. This requirement is denoted by the <code>require</code> statement.</p></li>
+</ul></li>
+
+<li><p>Next, inspect the <code>map.jinja</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		timezone/map.jinja 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">{</span>% import_yaml <span class="s2">&#34;timezone/defaults.yaml&#34;</span> as defaults %<span class="o">}</span>
+<span class="o">{</span>% import_yaml <span class="s2">&#34;timezone/osfamilymap.yaml&#34;</span> as osfamilymap %<span class="o">}</span>
+
+<span class="o">{</span>% <span class="nb">set</span> <span class="nv">osfam</span> <span class="o">=</span> salt<span class="o">[</span><span class="s1">&#39;grains.filter_by&#39;</span><span class="o">](</span>
+                                        osfamilymap,
+                                        <span class="nv">grain</span><span class="o">=</span><span class="s1">&#39;os_family&#39;</span>
+                                        <span class="o">)</span> or <span class="o">{}</span> %<span class="o">}</span>
+
+<span class="o">{</span>% <span class="k">do</span> salt<span class="o">[</span><span class="s1">&#39;defaults.merge&#39;</span><span class="o">](</span>defaults, osfam<span class="o">)</span> %<span class="o">}</span>
+
+<span class="o">{</span>%- <span class="nb">set</span> <span class="nv">confmap</span> <span class="o">=</span> salt<span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span>
+                                <span class="s1">&#39;timezone:lookup&#39;</span>,
+                                <span class="nv">default</span><span class="o">=</span>defaults,
+                                <span class="nv">merge</span><span class="o">=</span>True,
+                                <span class="o">)</span> %<span class="o">}</span>
+      </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>map.jinja</code> file allows the formula to abstract static defaults into a dictionary that contains platform specific data. The two main dictionaries are defined in the repository&rsquo;s <code>timezone/defaults.yaml</code> and <code>timezone/osfamilymap.yaml</code> files. The <code>defaults.yml</code> file serves as a base dictionary containing values shared by all OSes, while the <code>osfamilymap.yml</code> file stores any values that are different from the base values. Any file throughout the formula could make use of these dictionary values by importing the <code>map.jinja</code> file. In addition, any dictionary values can be overridden in a Pillar file. Overidding dictionary values will be discussed in the <a href="#modify-your-saltstack-formula">Modify Your SaltStack Formula</a> section.</p></li>
+
+<li><p>Open the <code>timezone/defaults.yaml</code> file and the <code>timezone/osfamilymap,yaml</code> file to view the data stored in those files:</p>
+
+<dl class="file">
+
+
+<dt>
+		timezone/defaults.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">    path_localtime: /etc/localtime
+    path_zoneinfo: /usr/share/zoneinfo/
+    pkgname: tzdata
+      </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<dl class="file">
+
+
+<dt>
+		timezone/osfamilymap.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">    Suse:
+      pkgname: timezone
+    FreeBSD:
+      pkgname: zoneinfo
+    Gentoo:
+      pkgname: sys-libs/timezone-data
+      </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The values defined in these YAML files are used in the <code>init.sls</code> file.</p></li>
+
+<li><p>Open the <code>pillar.example</code> file to review its contents:</p>
+
+<dl class="file">
+
+
+<dt>
+		pillar.example 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">  timezone:
+    name: <span class="s1">&#39;Europe/Berlin&#39;</span>
+    utc: True
+      </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This file provides an example for you to use when creating your own Pillar file on the Salt master. The <code>init.sls</code> file uses the values for <code>name</code> and <code>utc</code> in its <code>timezone_setting</code> state declaration. The value for <code>name</code> will set the time zone for your minion. The boolean value for <code>utc</code> determines whether or not to set the minion&rsquo;s hardware clock to UTC.</p>
+
+<p>Refer to <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones">tz database time zones</a> to view a list of all available time zones. Since Pillar files contain sensitive data, you should not version control this file. In the <a href="#create-the-pillar">Create the Pillar</a> section, you will create a Pillar file directly on your Salt master.</p>
+
+<p>Now that you understand the structure of the SaltStack time zone formula, in the next section you will fork the formula&rsquo;s repository on GitHub  and clone the forked formula to your local computer.</p></li>
+</ol>
+
+<h2 id="fork-and-clone-the-saltstack-timezone-formula">Fork and Clone the SaltStack TimeZone Formula</h2>
+
+<p>In this section you will fork the <code>timezone-formula</code> from the official SaltStack GitHub page to your GitHub account and clone it to a local repository.</p>
+
+<ol>
+<li><p>In your browser, navigate to the <code>timezone-formula</code> on <a href="https://github.com/saltstack-formulas/timezone-formula">SaltStack&rsquo;s GitHub page</a>. If you have not yet logged into your GitHub account, click on the <strong>Sign in</strong> link at the top of the page and log in.</p></li>
+
+<li><p>Fork the timezone-formula from the SaltStack formula&rsquo;s GitHub page:</p>
+
+<p><img src="fork-timezone-formula.png" alt="Fork SaltStack timezone formula" /></p>
+
+<p>Once the formula has been forked, you will be redirected to your GitHub account&rsquo;s own fork of the timezone formula.</p></li>
+
+<li><p>Viewing your fork of the timezone formula, click on the <strong>Clone or download</strong> button and copy the URL:</p>
+
+<p><img src="clone-timezone-formula.png" alt="Fork SaltStack timezone formula" /></p></li>
+
+<li><p>On your local computer, clone the timezone formula:</p>
+
+<pre><code>git clone https://github.com/my-github/timezone-formula.git
+</code></pre></li>
+
+<li><p>Move into the <code>timezone-formula</code> directory:</p>
+
+<pre><code>cd timezone-formula
+</code></pre></li>
+
+<li><p>Display the contents of the <code>timezone-formula</code> directory:</p>
+
+<pre><code>ls
+</code></pre>
+
+<p>You should see the following output:</p>
+
+<pre class="file terminal">
+  <code>
+      FORMULA        README.rst     pillar.example timezone
+      </code>
+</pre>
+</li>
+
+<li><p>When you clone a repository, Git will automatically set the <code>origin</code> remote to the location of the forked repository. Verify the configured remotes for your <code>timezone-formula</code> repository:</p>
+
+<pre><code>git remote -v
+</code></pre>
+
+<p>Your output should be similar to what is displayed below, however, it will point to your own fork of the <code>timezone-formula</code> repository:</p>
+
+<pre class="file terminal">
+  <code>
+  origin	https://github.com/my-github/timezone-formula.git (fetch)
+  origin	https://github.com/my-github/timezone-formula.git (push)
+      </code>
+</pre>
+
+
+<p>You can add the official SaltStack timezone formula as the <code>upstream</code> remote, so you can easily pull any changes made to the formula by the repository&rsquo;s maintainers or contribute back to the project. This step is not required.</p>
+
+<pre><code>git remote add upstream https://github.com/saltstack-formulas/timezone-formula
+</code></pre>
+
+<p>You now have a local copy of your forked <code>timezone-formula</code>. In the next section, you will modify the formula to update the <code>init.sls</code> file.</p></li>
+</ol>
+
+<h2 id="modify-your-saltstack-formula">Modify Your SaltStack Formula</h2>
+
+<p>In this section, you will modify the time zone formula to improve how the formula follows Salt best practices related to lookup dictionaries. You can similarly modify any SaltStack formula for your infrastructure&rsquo;s specific requirements, if needed.</p>
+
+<p>As discussed in the <a href="#overview">Overview of the SaltStack Time Zone Formula</a> section, the <code>timezone/defaults.yaml</code> file and the <code>timezone/osfamily.map</code> file provide dictionaries of values that are used by the <code>init.sls</code> state. These YAML file dictionary values can be overridden in a Pillar file that also stores any sensitive data needed by the <code>init.sls</code> state.</p>
+
+<p>When structuring Pillar data, Salt&rsquo;s official documentation states that it is a best practice to make formulas expect all formula-related parameters to be placed under a second-level <code>lookup</code> key.  Currently, the <code>init.sls</code> file&rsquo;s <code>timezone</code> and <code>utc</code> variables expect the Pillar data to be structured differently. You will update these two variable statements to expect a second-level <code>lookup</code> key.</p>
+
+<ol>
+<li><p>Create a new branch in your local repository to begin modifying the timezone-formula:</p>
+
+<pre><code>git checkout -b update-variable-statements
+</code></pre></li>
+
+<li><p>Open the <code>init.sls</code> file in a text editor and modify its <code>timezone</code> and <code>utc</code> variable statements to match the example file:</p>
+
+<dl class="file">
+
+
+<dt>
+		timezone/init.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># This state configures the timezone.</span>
+
+<span class="o">{</span>%- <span class="nb">set</span> <span class="nv">timezone</span> <span class="o">=</span> salt<span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span><span class="s1">&#39;timezone:lookup:name&#39;</span>, <span class="s1">&#39;Europe/Berlin&#39;</span><span class="o">)</span> %<span class="o">}</span>
+<span class="o">{</span>%- <span class="nb">set</span> <span class="nv">utc</span> <span class="o">=</span> salt<span class="o">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="o">](</span><span class="s1">&#39;timezone:lookup:utc&#39;</span>, True<span class="o">)</span> %<span class="o">}</span>
+<span class="o">{</span>% from <span class="s2">&#34;timezone/map.jinja&#34;</span> import confmap with context %<span class="o">}</span>
+
+timezone_setting:
+  timezone.system:
+    - name: <span class="o">{{</span> timezone <span class="o">}}</span>
+    - utc: <span class="o">{{</span> utc <span class="o">}}</span>
+
+timezone_packages:
+  pkg.installed:
+    - name: <span class="o">{{</span> confmap.pkgname <span class="o">}}</span>
+
+timezone_symlink:
+  file.symlink:
+    - name: <span class="o">{{</span> confmap.path_localtime <span class="o">}}</span>
+    - target: <span class="o">{{</span> confmap.path_zoneinfo <span class="o">}}{{</span> timezone <span class="o">}}</span>
+    - force: <span class="nb">true</span>
+    - require:
+      - pkg: <span class="o">{{</span> confmap.pkgname <span class="o">}}</span>
+      </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>init.sls</code> file now expects a second-level lookup key when retrieving the specified Pillar values. Following this convention will make it easier to override dictionary values in your Pillar file. You will create a Pillar file in the <a href="#installing-a-salt-formula">Installing a Salt Formula</a> section of this guide.</p></li>
+
+<li><p>Use Git to view which files have been changed before staging them:</p>
+
+<pre><code>git status
+</code></pre>
+
+<p>Your output should resemble the following:</p>
+
+<pre class="file terminal">
+  <code>
+On branch update-variable-statements
+Changes not staged for commit:
+  &nbsp&nbsp(use "git add &ltfile&gt..." to update what will be committed)
+  &nbsp&nbsp(use "git checkout -- &ltfile&gt..." to discard changes in working directory)
+
+  &nbsp&nbspmodified:   timezone/init.sls
+
+no changes added to commit (use "git add" and/or "git commit -a")
+    </code>
+</pre>
+</li>
+
+<li><p>Stage and commit the changes you made to the <code>init.sls</code> file.</p>
+
+<pre><code>git add -A
+git commit -m 'My commit message'
+</code></pre></li>
+
+<li><p>Push your changes to your fork:</p>
+
+<pre><code>git push origin update-variable-statements
+</code></pre></li>
+
+<li><p>Navigate to your timezone formula&rsquo;s remote GitHub repository and create a pull request against your fork&rsquo;s <code>master</code> branch.</p>
+
+<p><img src="update-variables-pull-request.png" alt="Submit a pull request" /></p>
+
+<p>Make sure you select your own fork of the time zone formula as the <code>base fork</code>, otherwise you will submit a pull request against the official SaltStack timezone formula&rsquo;s repository, which is not the intended behavior for this example.</p>
+
+<p><img src="create-pull-request.png" alt="Create a pull request" /></p>
+
+<p>If you are satisfied with the changes in the pull request, merge the pull request into your <code>master</code> branch.</p>
+
+<p><img src="merge-pull-request.png" alt="Merge a pull request" /></p></li>
+</ol>
+
+<p>In the next section, you will add your forked <code>timezone-formula</code> to your Salt master, create a Pillar file for the <code>timezone-formula</code> and apply the changes to your minions.</p>
+
+<h2 id="install-a-salt-formula">Install a Salt Formula</h2>
+
+<p>There are two ways to use a Salt Formula: you can add the formula as a GitFS Remote, which will allow you to directly serve the files hosted on your GitHub account, or you can add the formula directly to the Salt master using Git&rsquo;s clone mechanism. This section will cover both ways to use Salt formulas.</p>
+
+<h3 id="manually-add-a-salt-formula-to-your-master">Manually Add a Salt Formula to your Master</h3>
+
+<ol>
+<li><p>Navigate to your fork of the timezone-formula, click on the <strong>Clone or download</strong> button and copy the repository&rsquo;s URL to your clipboard.</p></li>
+
+<li><p>SSH into your Salt master. Replace the <code>username</code> with your limited user account and replace <code>198.51.100.0</code> with your Linode&rsquo;s IP address:</p>
+
+<pre><code>ssh username@198.51.100.0
+</code></pre></li>
+
+<li><p>Create a formulas directory and go to the new directory:</p>
+
+<pre><code>mkdir -p /srv/formulas
+cd /srv/formulas
+</code></pre></li>
+
+<li><p>If your Salt master does not already have Git installed, install Git using your system&rsquo;s package manager:</p>
+
+<p><strong>Ubuntu/Debian</strong></p>
+
+<pre><code>apt-get update
+apt-get install git
+</code></pre>
+
+<p><strong>Centos</strong></p>
+
+<pre><code>yum update
+yum install git
+</code></pre></li>
+
+<li><p>Clone the repository into the <code>/srv/formulas</code> directory. Make sure you replace <code>git-username</code> with your own username:</p>
+
+<pre><code>git clone https://github.com/git-username/timezone-formula.git
+</code></pre></li>
+</ol>
+
+<h3 id="add-a-salt-formula-as-a-gitfs-remote">Add a Salt Formula as a GitFS Remote</h3>
+
+<p>GitFs allows Salt to serve files directly from remote git repositories. This is a convenient way to use Salt formulas with the added flexibility and power that remote version control systems provide, like collaboration and easy rollback to previous versions of your formulas.</p>
+
+<ol>
+<li><p>On the Salt master, install the Python interface to Git:</p>
+
+<pre><code>sudo apt-get install python-git
+</code></pre></li>
+
+<li><p>Edit the Salt master configuration file to use GitFs as a fileserver backend. Make sure the lines listed below are uncommented in your master configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/salt/master 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">fileserver_backend:
+  - gitfs
+  - roots</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When using multiple backends, you should list all backends in the order you want them to be searched. <code>roots</code> is the fileserver backend used to serve files from any of the master&rsquo;s directories listed in the <code>file_roots</code> configuration.</p></li>
+
+<li><p>In the same Salt master configuration file, add the location of your timezone formula&rsquo;s GitHub repository. Ensure you have uncommented <code>gitfs_remote</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/salt/master 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">gitfs_remotes:
+  - https://github.com/git-username/timezone-formula.git</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Uncomment the gitfs_provider declaration and set its value to gitpython:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/salt/master 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">gitfs_provider: gitpython</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Restart the Salt master to apply the new configurations:</p>
+
+<pre><code>sudo systemctl restart salt-master
+</code></pre></li>
+</ol>
+
+<h3 id="add-a-salt-formula-to-the-top-file">Add a Salt Formula to the Top File</h3>
+
+<p>To include your timezone formula in your Salt state tree, you must add it to your top file.</p>
+
+<ol>
+<li><p>Create the <code>/srv/salt</code> directory if it does not already exist:</p>
+
+<pre><code>mkdir /srv/salt
+</code></pre></li>
+
+<li><p>Add the <code>timezone</code> state declared in the <code>timezone-formula</code> to your top file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/top.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">base:
+  <span class="s1">&#39;*&#39;</span>:
+    - timezone
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The example Top file declares one environment, the <code>base</code> environment that targets all minions and applies the <code>timezone</code> state to them. This top file could easily contain several states that already exist in your state tree, like an <code>apache</code> state, a <code>wordpress</code> state, etc., and several environments that target different minions. Any Salt formula can be easily dropped-in to the top file and will be applied to the targeted minions the next time you run a highstate.</p></li>
+</ol>
+
+<h3 id="create-the-pillar">Create the Pillar</h3>
+
+<ol>
+<li><p>Create a directory to store your formula&rsquo;s Pillar file:</p>
+
+<pre><code>mkdir -p /srv/pillar
+</code></pre></li>
+
+<li><p>Create a Pillar file to store the data that will be used by your timezone formula:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/pillar/timezone.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">timezone:
+  lookup:
+    <span class="o">{</span>%- <span class="k">if</span> grains<span class="o">[</span><span class="s1">&#39;os_family&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;Debian&#39;</span> %<span class="o">}</span>
+    name: America/New_York
+    <span class="o">{</span>%- <span class="k">else</span> %<span class="o">}</span>
+    name: <span class="s1">&#39;Europe/Berlin&#39;</span>
+    <span class="o">{</span>%- endif %<span class="o">}</span>
+    utc: True
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>timezone.sls</code> Pillar file was created from the <code>pillar.example</code> file provided in the SaltStack timezone formula. The example was modified to add Jinja control statements that will assign a different timezone on any minion that is a Debian family OS. You can replace any of the timezone <code>name</code> values to your preferred timezone or add additional Jinja logic, if necessary. For an introduction to Jinja, read the <a href="/docs/applications/configuration-management/introduction-to-jinja-templates-for-salt">Introduction to Jinja Templates for Salt</a>.</p>
+
+<p>You can also override any of the dictionary values defined in the <code>timezone/defaults.yaml</code> or <code>timezone/osfamilymap.yaml</code> in the Pillar file using Salt&rsquo;s lookup dictionary convention. For example, if you wanted to override the <code>pkgname</code> value defined in <code>timezone/defaults.yaml</code> your Pillar file might look like the following example:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/pillar/timezone.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">timezone:
+  lookup:
+    <span class="o">{</span>%- <span class="k">if</span> grains<span class="o">[</span><span class="s1">&#39;os_family&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;Debian&#39;</span> %<span class="o">}</span>
+    name: America/New_York
+    <span class="o">{</span>%- <span class="k">else</span> %<span class="o">}</span>
+    name: <span class="s1">&#39;Europe/Berlin&#39;</span>
+    <span class="o">{</span>%- endif %<span class="o">}</span>
+    utc: True
+    pkgname: timezone
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>If you cloned the timezone-formula to your master instead of adding the formula as a GitFS remote, add the timezone-formula&rsquo;s directory to the Salt master&rsquo;s <code>file_roots</code> configuration:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/salt/master 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">file_roots:
+  base:
+    - /srv/salt/
+    - /srv/formulas/timezone-formula
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Add the Pillar to the Pillar&rsquo;s top file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/pillar/top.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">base:
+  <span class="s1">&#39;*&#39;</span>:
+    - timezone
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Configure the location of the Pillar file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/salt/master 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">pillar_roots:
+  base:
+    - /srv/pillar
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Restart the Salt master for the new configurations to take effect on the Salt master:</p>
+
+<pre><code>sudo systemctl restart salt-master
+</code></pre></li>
+
+<li><p>Run a highstate to your minion to apply the state defined in the timezone formula:</p>
+
+<pre><code>sudo salt '*' state.apply
+</code></pre></li>
+</ol>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>To learn how to create your own Salt formulas and how to organize your formula&rsquo;s states in a logical and modular way, read our <a href="/docs//applications/configuration-management/automate-a-static-site-deployment-with-salt/#initialize-the-salt-minion-s-formula">Automate Static Site Deployments with Salt, Git, and Webhooks</a> guide.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html">Salt Formulas</a></li>
+
+<li><a href="https://docs.saltstack.com/en/latest/topics/tutorials/gitfs.html">Git Fileserver Backend Walkthrough</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#salt-state-files">Salt State Files</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#overview-of-the-saltstack-time-zone-formula">Overview of the SaltStack Time Zone Formula</a></li>
+<li><a href="#fork-and-clone-the-saltstack-timezone-formula">Fork and Clone the SaltStack TimeZone Formula</a></li>
+<li><a href="#modify-your-saltstack-formula">Modify Your SaltStack Formula</a></li>
+<li><a href="#install-a-salt-formula">Install a Salt Formula</a>
+<ul>
+<li><a href="#manually-add-a-salt-formula-to-your-master">Manually Add a Salt Formula to your Master</a></li>
+<li><a href="#add-a-salt-formula-as-a-gitfs-remote">Add a Salt Formula as a GitFS Remote</a></li>
+<li><a href="#add-a-salt-formula-to-the-top-file">Add a Salt Formula to the Top File</a></li>
+<li><a href="#create-the-pillar">Create the Pillar</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

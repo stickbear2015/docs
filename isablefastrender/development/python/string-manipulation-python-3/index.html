@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>String Manipulation in Python 3</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Strings are one of the most commonly used data types in Python. This guide will show how to create, manipulate, and format strings using Python 3.">
+        <meta name="keywords" content="python, string, f string, format string, python 3">
+        
+        <meta property="og:title" content="String Manipulation in Python 3">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/development/python/string-manipulation-python-3/">
+        <meta property="og:description" content="Strings are one of the most commonly used data types in Python. This guide will show how to create, manipulate, and format strings using Python 3.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/development/python/string-manipulation-python-3/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/">Development</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/python/">Python</a>
+  
+</li>
+
+
+<li>
+  
+  String Manipulation in Python 3
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">String Manipulation in Python 3</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-18T14:31:59-05:00">Tuesday, December 18, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Jared Kobos
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2fstring-manipulation-python-3%2f&via=linode&text=String%20Manipulation%20in%20Python%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2fstring-manipulation-python-3%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2fstring-manipulation-python-3%2f&t=String%20Manipulation%20in%20Python%203" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=String%20Manipulation%20in%20Python%203%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdevelopment%2fpython%2fstring-manipulation-python-3%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/development%5cpython%5cstring-manipulation-python-3%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/development%5cpython%5cstring-manipulation-python-3%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="strings-in-python">Strings in Python</h2>
+
+<p>Strings are one of the most basic data types in Python, used to represent textual data. Almost every application involves working with strings, and Python&rsquo;s <code>str</code> class provides a number of methods to make string manipulation easy.</p>
+
+<h2 id="basic-string-operations">Basic String Operations</h2>
+
+<h3 id="define-a-string">Define a String</h3>
+
+<p>Strings are denoted with either single or double quotes:</p>
+
+<pre><code>string_1  = &quot;Example string #1&quot;
+string_2 = 'Example string #2'
+</code></pre>
+
+<p>Both methods are equivalent. If a string is delimited with double quotes, any double quotation marks within the string will need to be escaped with a backslash (<code>\</code>):</p>
+
+<pre><code>&quot;My teacher said \&quot;Don't forget your homework.\&quot;&quot;
+</code></pre>
+
+<p>Similarly, in single-quoted strings you will need to escape any apostrophes or single-quoted expressions:</p>
+
+<pre><code>'This is Linode\'s documentation site.'
+</code></pre>
+
+<h3 id="subset-strings">Subset Strings</h3>
+
+<p>Python does not have a Character data type. To access individual characters within a string, use bracket notation. Like lists, Python strings are zero-indexed, so the first character of a string can be accessed with <code>[0]</code>:</p>
+
+<pre><code>string_3 = &quot;This is a string.&quot;
+first_letter = string_3[0]
+</code></pre>
+
+<p>To access a range of letters from a larger string, use slicing:</p>
+
+<pre><code>string_3[0:4]
+</code></pre>
+
+<p>This will return all characters starting from the number before the colon (0, or the first character) up to but not including the index after the colon (4). In this case, the first four letters of the string are returned:</p>
+
+<pre class="file terminal">
+  <code>
+'This'
+</code>
+</pre>
+
+
+<h3 id="string-operators">String Operators</h3>
+
+<p>The <code>+</code> and <code>*</code> operators are overridden for the string class, making it possible to add and multiply strings. Strings in Python are immutable. They cannot be modified after being created.</p>
+
+<p>Using the <code>add</code> operator to combine strings is called concatenation. The strings for first and last name remain unchanged. Concatenating the two strings returns a new string.</p>
+
+<pre><code>first_name = &quot;Abraham&quot;
+last_name = &quot; Lincoln&quot;
+first_name + last_name
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Abraham Lincoln
+</code>
+</pre>
+
+
+<p>Multiplication can be used to generate multiple copies of strings:</p>
+
+<pre><code>&quot;a&quot; * 10
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+'aaaaaaaaaa'
+</code>
+</pre>
+
+
+<h2 id="string-methods">String Methods</h2>
+
+<p>Many basic string manipulation tasks can be handled with built-in methods. For example, to convert a string to uppercase letters, use <code>upper</code>:</p>
+
+<pre><code>'example string'.upper()
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+EXAMPLE STRING
+</code>
+</pre>
+
+
+<p>To remove extra whitespace from the beginning or end of a string, use <code>strip</code>:</p>
+
+<pre><code>'example '.strip()
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+'example'
+</code>
+</pre>
+
+
+<p>Strings can be split into a list of substrings with <code>split</code>. By default, Python will use a blank space as a delimiter, which is useful for splitting a sentence into individual words:</p>
+
+<pre><code>'This string has five words'.split()
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+['This', 'string', 'has', 'five', 'words']
+</code>
+</pre>
+
+
+<p>Specify a different delimiter by passing the character(s) as an argument to <code>split</code>:</p>
+
+<pre><code>'one,two,three,four,five'.split(',')
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+['one', 'two', 'three', 'four', 'five']
+</code>
+</pre>
+
+
+<p>The inverse operation of <code>split</code> is <code>join</code>, which will combine a list of strings into a single string. The <code>join</code> method must be called on a string that will be used to separate the list entries in the final string:</p>
+
+<pre><code>' '.join(['This', 'string', 'has', 'five', 'words'])
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+'This string has five words'
+</code>
+</pre>
+
+
+<pre><code>','.join(['one', 'two', 'three', 'four', 'five'])
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+'one,two,three,four,five'
+</code>
+</pre>
+
+
+<p>For a full list of available string methods, see the <a href="https://docs.python.org/3/library/stdtypes.html#string-methods">official documentation</a>.</p>
+
+<h2 id="string-formatting">String Formatting</h2>
+
+<p>Often strings need to be built on the fly, based on the state of the application. For example, you may want to customize an error message with information about the values that caused the error. There are several ways to accomplish this in Python; this section will review two of the most commonly used methods in Python 3.</p>
+
+<h3 id="str-format">str.format()</h3>
+
+<p>Prior to Python 3.6, the <code>str.format()</code> method was arguably the easiest and most convenient way to format strings. Each string object has access to the <code>format</code> method, which allows substituting values into the string at designated locations:</p>
+
+<pre><code>name, age = &quot;Alice&quot;, 26
+string_template = 'My name is {0} and I am {1} years old.'
+string_template.format(name, age)
+</code></pre>
+
+<p>The <code>format</code> method is called on the <code>string_template</code> object. <code>format</code> takes as arguments a comma-separated list of variables to insert into the string calling the method. The variables will be substituted into the bracketed portions of the string. The first argument (<code>name</code> is argument zero, since Python lists are zero-indexed) is substituted into the string in place of <code>{0}</code>, and <code>age</code> is substituted for <code>{1}</code>. Any number of substitutions can be made in this way.</p>
+
+<p>If numbers between the brackets are omitted, Python will substitute the variables in the order in which they are passed to <code>format</code>:</p>
+
+<pre><code>snack, hobby = &quot;avocado&quot;, &quot;tail recursion&quot;
+string_template = 'My name is {} and I am {} years old. I enjoy {} and {}.'
+string_template.format(name, age, snack, hobby)
+</code></pre>
+
+<p>This is equivalent to:</p>
+
+<pre><code>'My name is {0} and I am {1} years old. I enjoy {2} and {3}.'
+</code></pre>
+
+<p>This syntax is often shortened by combining the string declaration and <code>str.format</code> method call into a single statement:</p>
+
+<pre><code>'My name is {} and I am {} years old. I enjoy {} and {}.'.format(name, age, snack, hobby)
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+'My name is Alice and I am 26 years old. I enjoy avocado and tail recursion.'
+</code>
+</pre>
+
+
+<p>Finally, recall that a variable is just one type of expression in Python, and other expressions can usually be used in place of a variable. This is true when formatting strings, where arbitrary expressions can be passed to <code>str.format</code>:</p>
+
+<pre><code>fahrenheit = 54
+'The temperature is {} degrees F ({} degrees C).'.format(fahrenheit, int((fahrenheit - 32) * (5/9.0)))
+</code></pre>
+
+<h3 id="f-strings">f-strings</h3>
+
+<p>Python 3.6 introduced a simpler way to format strings: formatted string literals, usually referred to as <strong>f-strings</strong>.</p>
+
+<pre><code>ram, region = 4, 'us-east'
+f'This Linode has {ram}GB of RAM, and is located in the {region} region.'
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+'This Linode has 4GB of RAM, and is located in the us-east region.'
+</code>
+</pre>
+
+
+<p>The <code>f</code> at the beginning of the above string designates it as an f-string. The syntax is similar to the <code>str.format()</code> method. Variable names can be placed directly inside the string itself enclosed in brackets rather than in a function call following the string. This makes f-strings more compact and readable.</p>
+
+<p>Any Python expression can be placed inside the brackets in an f-string, giving them even more flexibility:</p>
+
+<pre><code>orders = [14.99,19.99,10]
+f'You have {len(orders)} items in your cart, for a total cost of ${sum(orders)}.'
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+'You have 3 items in your cart, for a total cost of $44.98.'
+</code>
+</pre>
+
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.python.org/3.6/reference/lexical_analysis.html#f-strings">Official f-strings Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#strings-in-python">Strings in Python</a></li>
+<li><a href="#basic-string-operations">Basic String Operations</a>
+<ul>
+<li><a href="#define-a-string">Define a String</a></li>
+<li><a href="#subset-strings">Subset Strings</a></li>
+<li><a href="#string-operators">String Operators</a></li>
+</ul></li>
+<li><a href="#string-methods">String Methods</a></li>
+<li><a href="#string-formatting">String Formatting</a>
+<ul>
+<li><a href="#str-format">str.format()</a></li>
+<li><a href="#f-strings">f-strings</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Choose a Control Panel</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Control panels offer simplfied GUIs for complicated Linux system administrastion tasks.">
+        <meta name="keywords" content="control panel, cpanel, whm, plesk, vesta, vestacp, virtualmin, virtualmin pro, webmin">
+        
+        <meta property="og:title" content="How to Choose a Control Panel">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/websites/cms/how-to-choose-a-control-panel/">
+        <meta property="og:description" content="Control panels offer simplfied GUIs for complicated Linux system administrastion tasks.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/websites/cms/how-to-choose-a-control-panel/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/">Website Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/cms/">Control Panels &amp; Content Management Systems</a>
+  
+</li>
+
+
+<li>
+  
+  How to Choose a Control Panel
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Choose a Control Panel</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-02T13:46:59-04:00">Thursday, August 2, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Nathan Melehan
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2fhow-to-choose-a-control-panel%2f&via=linode&text=How%20to%20Choose%20a%20Control%20Panel" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2fhow-to-choose-a-control-panel%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2fhow-to-choose-a-control-panel%2f&t=How%20to%20Choose%20a%20Control%20Panel" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Choose%20a%20Control%20Panel%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fwebsites%2fcms%2fhow-to-choose-a-control-panel%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/websites%5ccms%5chow-to-choose-a-control-panel%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/websites%5ccms%5chow-to-choose-a-control-panel%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="what-is-a-control-panel">What is a Control Panel?</h2>
+
+<p>On Linux systems, a control panel is a graphical user interface (GUI) that displays a simplified set of controls for your system. Control panels are capable of installing, configuring, and updating common software packages and performing Linux system administration tasks. Common features are:</p>
+
+<ul>
+<li><p>File management</p></li>
+
+<li><p>Web servers</p></li>
+
+<li><p>Databases</p></li>
+
+<li><p>Nameservers</p></li>
+
+<li><p>Email</p></li>
+
+<li><p>Firewalls</p></li>
+
+<li><p>Logging, monitoring, and analytics</p></li>
+</ul>
+
+<h2 id="why-use-a-control-panel">Why Use a Control Panel?</h2>
+
+<p>The GUI provided by a control panel helps beginner Linux users run a server without needing expertise with the command line interface. These GUIs hide much of the complexity inherent in Linux administration, and they often provide one-click interfaces for processes that would otherwise involve a number of steps.</p>
+
+<p>Some control panels also offer a command-line interface (CLI) which perform equivalent functions to those exposed by the GUI. These tools provide a compromise between the convenience of the control panel&rsquo;s higher-level functionality and the automation capabilities of the command line.</p>
+
+<p>Control panels often come with robust community support networks. In some cases, the organizations that author the control panel software also provide optional paid support packages.</p>
+
+<h3 id="caveats-when-using-a-control-panel">Caveats when Using a Control Panel</h3>
+
+<ul>
+<li><p>Control panels often enforce a specific style of directory structure and configuration syntax across your server. Any changes you make to your server should be via the interfaces provided by the control panel. Any changes you may make outside of those interfaces are likely to be overwritten or ignored by the control panel.</p></li>
+
+<li><p>Control panels generally should not be installed on existing servers with software and services already installed. Instead, install control panels on new deployments.</p></li>
+
+<li><p>Control panels are generally simple to use, but they can also have their own amount of complexity that needs to be accounted for.</p></li>
+
+<li><p>Some control panels require a paid subscription to use.</p></li>
+
+<li><p>Some control panels are only compatible with specific Linux distributions.</p></li>
+</ul>
+
+<h2 id="how-to-choose-a-control-panel">How to Choose a Control Panel</h2>
+
+<p>When considering which control panel to use, review the following factors:</p>
+
+<ul>
+<li><p><strong>Cost</strong> to use the control panel, if any.</p></li>
+
+<li><p><strong>User interface</strong>: Does the control panel&rsquo;s UI appeal to you, and is it easy to understand?</p></li>
+
+<li><p><strong>Features</strong> available in the control panel.</p></li>
+
+<li><p><strong>Community support</strong>: Is there is a community forum, and do the members seem friendly/helpful?</p></li>
+
+<li><p><strong>Documentation</strong>: Is it easy to understand, and are there articles for most/all of the features?</p></li>
+
+<li><p><strong>Paid support</strong> (if desired): Is it available, and what is the cost?</p></li>
+
+<li><p><strong>Frequency of updates</strong>: Is the control panel actively maintained, and are security updates promptly issued?</p></li>
+
+<li><p><strong>Distributions supported</strong>: Can you install the control panel on your preferred Linux distribution?</p></li>
+</ul>
+
+<h2 id="control-panel-comparison">Control Panel Comparison</h2>
+
+<p>There are a large number of control panels that have been published over time, but some do not meet the criteria listed above. Here are a few popular options to consider:</p>
+
+<table>
+<thead>
+<tr>
+<th>Control Panel</th>
+<th>Cost</th>
+<th>Supported Linux Distributions</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><a href="#cpanel">CPanel</a></td>
+<td>From $20/month</td>
+<td>CentOS/RHEL, CloudLinux</td>
+</tr>
+
+<tr>
+<td><a href="#plesk">Plesk</a></td>
+<td>From $10/month</td>
+<td>CentOS/RHEL, CloudLinux, Debian, Ubuntu</td>
+</tr>
+
+<tr>
+<td><a href="#vestacp">VestaCP</a></td>
+<td>Free, paid support available</td>
+<td>CentOS/RHEL, Debian, Ubuntu</td>
+</tr>
+
+<tr>
+<td><a href="#virtualmin">Virtualmin</a></td>
+<td>Free, Virtualmin Pro available from $6/month</td>
+<td>CentOS/RHEL, Debian, Ubuntu, SuSE</td>
+</tr>
+</tbody>
+</table>
+
+<h3 id="cpanel">CPanel</h3>
+
+<p><a href="https://cpanel.com">CPanel</a> is a proprietary, closed-source, privately-owned control panel first released in 1996.</p>
+
+<p><img src="cpanel-screenshot.png" alt="CPanel screenshot" /></p>
+
+<p>CPanel is actually composed of two products:</p>
+
+<ul>
+<li>CPanel itself, which is an interface for managing software, files, services and so on (e.g. a web server, email server, etc).</li>
+<li>WHM (short for Web Host Manager), which provisions separate CPanel accounts. Multiple CPanel accounts can be present on one server, and WHM is the administrative interface for higher-level functions for managing those accounts.</li>
+</ul>
+
+<p>Each CPanel account is correlated with a primary domain that its services are assigned to. Additional secondary domains can be assigned to a CPanel account via <a href="https://blog.cpanel.com/managing-multiple-domains-from-a-single-cpanel-account/"><em>addon domains</em></a>.</p>
+
+<p>WHM is often used by web hosting resellers. In this capacity, you use WHM to create CPanel accounts on your Linode and sell access to them to clients. WHM allows you to create custom visual branding for the account so that you can represent your reselling business to your clients in their CPanel interface.</p>
+
+<p>CPanel&rsquo;s subscription cost starts at $20/month. When buying a subscription for use on a Linode, choose the <a href="https://cpanel.com/pricing/"><em>VPS</em> license type</a>. A free CPanel subscription is also included for each of your Linodes if you are a <a href="/managed/">Linode Managed</a> subscriber.</p>
+
+<p>CPanel offers a <a href="https://forums.cpanel.net">community forum</a>, <a href="https://documentation.cpanel.net">documentation library</a>, and <a href="https://cpanel.com/support/">technical support</a> as part of your subscription.</p>
+
+<p>A full list of CPanel&rsquo;s features is available on the <a href="https://documentation.cpanel.net/display/68Docs/cPanel+Features+List">documentation site</a>. <a href="https://cpanel.com/demo/">Demo sites</a> are available for you test out the interfaces of CPanel and WHM.</p>
+
+<h3 id="plesk">Plesk</h3>
+
+<p><a href="https://plesk.com">Plesk</a> is a proprietary, closed-source, privately-owned control panel first released in 2001.</p>
+
+<p><img src="plesk-screenshot.png" alt="Plesk screenshot" /></p>
+
+<p>Like CPanel, Plesk provides the ability to create <a href="https://docs.plesk.com/en-US/onyx/administrator-guide/about-plesk/plesk-users.70561/">individual customer accounts</a>, and these customer accounts can configure web services, email services, and other applications. Beyond this core functionality, Plesk can also orchestrate <a href="https://docs.plesk.com/en-US/onyx/multi-server-guide/about-plesk-multi-server.77093/">multi-server deployments</a>. In this configuration, a Plesk management node coordinates with individual service nodes.</p>
+
+<p>Plesk&rsquo;s subscription cost starts at $10/month. When buying a subscription for use on a Linode, choose a <a href="https://www.plesk.com/pricing/"><em>VPS</em> license type</a>. Plesk tiers its features across <a href="https://www.plesk.com/editions/">three different editions</a>.</p>
+
+<p>Plesk offers a <a href="https://talk.plesk.com">community forum</a>, <a href="https://docs.plesk.com/en-US/onyx/">documentation library</a>, <a href="https://www.plesk.com/professional-services/">paid technical support</a>, and <a href="https://www.plesk.com/professional-services/">paid professional services</a>. A full list of features is available on the <a href="https://www.plesk.com">Plesk marketing site</a>.</p>
+
+<h3 id="vestacp">VestaCP</h3>
+
+<p><a href="https://vestacp.com">VestaCP</a> (also referred to as just <em>Vesta</em>) is an <a href="https://github.com/serghey-rodin/vesta">open-source</a> control panel released under the GNU General Public License (GPL) Version 3.</p>
+
+<p><img src="vesta-screenshot.png" alt="Vesta screenshot" /></p>
+
+<p>Vesta is a free alternative that offers a <a href="https://vestacp.com/features/">similar feature set</a> to paid options like CPanel and Plesk. Vesta provides <a href="https://vestacp.com/install/">easy install scripts</a> for specific combinations of services.</p>
+
+<p>While the core of Vesta is free, <a href="https://vestacp.com/pricing/">paid commercial plugins</a> for two functions can be purchased: a web file manager and SFTP chroot restricted access. <a href="https://vestacp.com/new/support/">Paid support</a> is available starting at $60/hour.</p>
+
+<p>Vesta offers a <a href="https://forum.vestacp.com">community forum</a> and <a href="https://vestacp.com/docs/">documentation library</a>. <a href="https://demo.vestacp.com">A demo site</a> is available for you test out Vesta&rsquo;s interfaces.</p>
+
+<h3 id="virtualmin">Virtualmin</h3>
+
+<p><a href="https://www.virtualmin.com/">Virtualmin</a> is a free, <a href="https://github.com/virtualmin">open-source</a> control panel licensed under the GPL. A paid Virtualmin Pro edition is also available.</p>
+
+<p><img src="virtualmin-screenshot.png" alt="Virtualmin screenshot" /></p>
+
+<p>Virtualmin is <a href="https://www.virtualmin.com/webmin-and-virtualmin">related to</a> and built on top of <a href="http://www.webmin.com/">Webmin</a>, and the relationship between the two is similar to WHM and CPanel. Webmin is an interface for common control panel functions, and Virtualmin is used to manage multiple Webmin users.</p>
+
+<p><a href="https://www.virtualmin.com/buy/virtualmin">Virtualmin Pro</a> starts from $6/month for 10 domains, and tiers with higher numbers of domains can be purchased. Virtualmin Pro includes more installable applications, a WYSIWYG website editor, and premium support. A full comparison of features between Virtualmin, Virtualmin Pro, and other control panels is listed on the <a href="https://www.virtualmin.com/vs">Virtualmin marketing site</a></p>
+
+<p>Virtualmin offers a <a href="https://www.virtualmin.com/forum">community forum</a> and <a href="https://www.virtualmin.com/documentation">documentation library</a>.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Once you&rsquo;ve decided on a control panel, deploy a Linode and follow the appropriate installation instructions:</p>
+
+<ul>
+<li><p><a href="https://documentation.cpanel.net/display/68Docs/Installation+Guide">CPanel</a></p></li>
+
+<li><p><a href="https://docs.plesk.com/en-US/onyx/deployment-guide/plesk-installation-and-upgrade-on-single-server/1click-plesk-installation/installing-plesk-for-linux-in-one-click.76444/">Plesk</a></p></li>
+
+<li><p><a href="https://vestacp.com/install/">VestaCP</a></p></li>
+
+<li><p><a href="https://www.virtualmin.com/download.html">Virtualmin</a></p></li>
+</ul>
+
+<p>As a reminder, this guide only presents a few options from the many different control panels that are available, so you may wish to continue researching other products.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-a-control-panel">What is a Control Panel?</a></li>
+<li><a href="#why-use-a-control-panel">Why Use a Control Panel?</a>
+<ul>
+<li><a href="#caveats-when-using-a-control-panel">Caveats when Using a Control Panel</a></li>
+</ul></li>
+<li><a href="#how-to-choose-a-control-panel">How to Choose a Control Panel</a></li>
+<li><a href="#control-panel-comparison">Control Panel Comparison</a>
+<ul>
+<li><a href="#cpanel">CPanel</a></li>
+<li><a href="#plesk">Plesk</a></li>
+<li><a href="#vestacp">VestaCP</a></li>
+<li><a href="#virtualmin">Virtualmin</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

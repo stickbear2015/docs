@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>A Beginner&#39;s Guide to Kubernetes</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="An introduction to Kubernetes concepts and components.">
+        <meta name="keywords" content="kubernetes, k8s, beginner, architecture">
+        
+        <meta property="og:title" content="A Beginner&#39;s Guide to Kubernetes">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/beginners-guide-to-kubernetes/">
+        <meta property="og:description" content="An introduction to Kubernetes concepts and components.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/beginners-guide-to-kubernetes/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  A Beginner&#39;s Guide to Kubernetes
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">A Beginner&#39;s Guide to Kubernetes</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-05-16T16:00:45-04:00">Thursday, May 16, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fbeginners-guide-to-kubernetes%2f&via=linode&text=A%20Beginner%26%2339%3bs%20Guide%20to%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fbeginners-guide-to-kubernetes%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fbeginners-guide-to-kubernetes%2f&t=A%20Beginner%27s%20Guide%20to%20Kubernetes" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=A%20Beginner%27s%20Guide%20to%20Kubernetes%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fbeginners-guide-to-kubernetes%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cbeginners-guide-to-kubernetes%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cbeginners-guide-to-kubernetes%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><em>Kubernetes</em>, often referred to as <em>k8s</em>, is an open source container orchestration system that helps deploy and manage containerized applications. Developed by Google starting in 2014 and written in the Go language, Kubernetes is quickly becoming the standard way to architect horizontally-scalable applications. This guide will explain the major parts and concepts of Kubernetes.</p>
+
+<h2 id="containers">Containers</h2>
+
+<p>Kubernetes is a container orchestration tool and, therefore, needs a container runtime installed to work. In practice, the default container runtime for Kubernetes is <a href="https://www.docker.com/">Docker</a>, though other runtimes like <a href="https://coreos.com/rkt/">rkt</a>, and <a href="https://linuxcontainers.org/lxd/introduction/">LXD</a> will also work. With the advent of the <a href="https://github.com/kubernetes/community/blob/master/contributors/devel/sig-node/container-runtime-interface.md">Container Runtime Interface (CRI)</a>, which hopes to standardize the way Kubernetes interacts with containers, other options like <a href="https://containerd.io/">containerd</a>, <a href="https://cri-o.io/">cri-o</a>, and <a href="https://github.com/kubernetes/frakti">Frakti</a> have also become available. This guide assumes you have a working knowledge of containers and the examples will all use Docker as the container runtime.</p>
+
+<h2 id="kubernetes-api">Kubernetes API</h2>
+
+<p>Kubernetes is built around a robust RESTful API. Every action taken in Kubernetes, be it inter-component communication or user command, interacts in some fashion with the Kubernetes API. The goal of the API is to help facilitate the desired state of the Kubernetes cluster. If you want X instances of your application running and have Y currently active, the API will take the required steps to get to X, whether this means creating, or destroying resources. To create this desired state, you create <em>objects</em>, which are normally represented by YAML files called <em>manifests</em>, and apply them through the command line with the <strong>kubectl</strong> tool.</p>
+
+<h2 id="kubectl">kubectl</h2>
+
+<p>kubectl is a command line tool used to interact with the Kubernetes cluster. It offers a host of features, including the ability to create, stop, and delete resources, describe active resources, and auto scale resources. For more information on the types of commands and resources you can use with kubectl, consult the <a href="https://kubernetes.io/docs/reference/kubectl/overview/">Kubernetes kubectl documentation</a>.</p>
+
+<h2 id="kubernetes-master-nodes-and-control-plane">Kubernetes Master, Nodes, and Control Plane</h2>
+
+<p>At the highest level of Kubernetes, there exist two kinds of servers, a <em>Master</em> and a <em>Node</em>. These servers can be Linodes, VMs, or physical servers. Together, these servers form a <em>cluster</em>.</p>
+
+<h3 id="nodes">Nodes</h3>
+
+<p>Kubernetes Nodes are worker servers that run your application. The number of Nodes is determined by the user, and they are created by the user. In addition to running your application, each Node runs two processes:</p>
+
+<ul>
+<li><strong>kubelet</strong> receives descriptions of the desired state of a <a href="#pods">Pod</a> from the API server, and ensures the Pod is healthy, and running on the Node.</li>
+<li><strong>kube-proxy</strong> is a networking proxy that proxies the UDP, TCP, and SCTP networking of each Node, and provides load balancing. This is only used to connect to <a href="#services">Services</a>.</li>
+</ul>
+
+<h3 id="kubernetes-master">Kubernetes Master</h3>
+
+<p>The Kubernetes Master is normally a separate server responsible for maintaining the desired state of the cluster. It does this by telling the Nodes how many instances of your application it should run and where. The Kubernetes Master runs three processes:</p>
+
+<ul>
+<li><strong>kube-apiserver</strong> is the front end for the Kubernetes API server.</li>
+<li><strong>kube-controller-manager</strong> is a daemon that manages the Kubernetes control loop. For more on Controllers, see the <a href="#controllers">Controllers section</a>.</li>
+<li><strong>kube-scheduler</strong> is a function that looks for newly created Pods that have no Nodes, and assigns them a Node based on a host of requirements. For more information on kube-scheduler, consult the <a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/">Kubernetes kube-scheduler documentation</a>.</li>
+</ul>
+
+<p>Additionally, the Kubernetes Master runs the database <strong>etcd</strong>. Etcd is a highly available key-value store that provides the backend database for Kubernetes.</p>
+
+<p>Together, kube-apiserver, kube-controller-manager, kube-scheduler, and etcd form what is known as the <em>control plane</em>. The control plane is responsible for making decisions about the cluster, and pushing it toward the desired state.</p>
+
+<h2 id="kubernetes-objects">Kubernetes Objects</h2>
+
+<p>In Kubernetes, there are a number of objects that are abstractions of your Kubernetes system&rsquo;s desired state. These objects represent your application, its networking, and disk resources &ndash; all of which together form your application.</p>
+
+<h3 id="pods">Pods</h3>
+
+<p>In Kubernetes, all containers exist within <em>Pods</em>. Pods are the smallest unit of the Kubernetes architecture, and can be viewed as a kind of wrapper for your container. Each Pod is given its own IP address with which it can interact with other Pods within the cluster.</p>
+
+<p>Usually, a Pod contains only one container, but a Pod can contain multiple containers if those containers need to share resources. If there is more than one container in a Pod, these containers can communicate with one another via localhost.</p>
+
+<p>Pods in Kubernetes are &ldquo;mortal,&rdquo; which means that they are created, and destroyed depending on the needs of the application. For instance, you might have a web app backend that sees a spike in CPU usage. This might cause the cluster to scale up the amount of backend Pods from two to ten, in which case eight new Pods would be created. Once the traffic subsides, the Pods might scale back to two, in which case eight pods would be destroyed.</p>
+
+<p>It is important to note that Pods are destroyed without respect to which Pod was created first. And, while each Pod has its own IP address, this IP address will only be available for the life-cycle of the Pod.</p>
+
+<p>Below is an example of a Pod manifest:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-apache-pod.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Pod<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-pod<span class="w">
+</span><span class="w"> </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">   </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-container<span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>httpd</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Each manifest has four necessary parts:</p>
+
+<ul>
+<li>The version of the API in use</li>
+<li>The kind of resource you&rsquo;d like to define</li>
+<li>Metadata about the resource</li>
+<li>Though not required by all objects, a spec which describes the desired behavior of the resource is necessary for most objects and controllers.</li>
+</ul>
+
+<p>In the case of this example, the API in use is <code>v1</code>, and the <code>kind</code> is a Pod. The metadata field is used for applying a name, labels, and annotations. Names are used to differentiate resources, while labels are used to group like resources. Labels will come into play more when defining <a href="#services">Services</a> and <a href="#deployments">Deployments</a>. Annotations are for attaching arbitrary data to the resource.</p>
+
+<p>The spec is where the desired state of the resource is defined. In this case, a Pod with a single Apache container is desired, so the <code>containers</code> field is supplied with a name, &lsquo;apache-container&rsquo;, and an image, the latest version of Apache. The image is pulled from <a href="https://hub.docker.com">Docker Hub</a>, as that is the default container registry for Kubernetes.</p>
+
+<p>For more information on the type of fields you can supply in a Pod manifest, refer to the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#pod-v1-core">Kubernetes Pod API documentation</a>.</p>
+
+<p>Now that you have the manifest, you can create the Pod using the <code>create</code> command:</p>
+
+<pre><code>kubectl create -f my-apache-pod.yaml
+</code></pre>
+
+<p>To view a list of your pods, use the <code>get pods</code> command:</p>
+
+<pre><code>kubectl get pods
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>NAME         READY   STATUS    RESTARTS   AGE
+apache-pod   1/1     Running   0          16s
+</code></pre>
+
+<p>To quickly view which Node the Pod exists on, issue the <code>get pods</code> command with the <code>-o=wide</code> flag:</p>
+
+<pre><code>kubectl get pods -o=wide
+</code></pre>
+
+<p>To retrieve information about the Pod, issue the <code>describe</code> command:</p>
+
+<pre><code>kubcetl describe pod apache-pod
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>...
+Events:
+Type    Reason     Age    From                       Message
+----    ------     ----   ----                       -------
+Normal  Scheduled  2m38s  default-scheduler          Successfully assigned default/apache-pod to mycluster-node-1
+Normal  Pulling    2m36s  kubelet, mycluster-node-1  pulling image &quot;httpd&quot;
+Normal  Pulled     2m23s  kubelet, mycluster-node-1  Successfully pulled image &quot;httpd&quot;
+Normal  Created    2m22s  kubelet, mycluster-node-1  Created container
+Normal  Started    2m22s  kubelet, mycluster-node-1  Started container
+</code></pre>
+
+<p>To delete the Pod, issue the <code>delete</code> command:</p>
+
+<pre><code>kubectl delete pod apache-pod
+</code></pre>
+
+<h3 id="services">Services</h3>
+
+<p><em>Services</em> group identical Pods together to provide a consistent means of accessing them. For instance, you might have three Pods that are all serving a website, and all of those Pods need to be accessible on port 80. A Service can ensure that all of the Pods are accessible at that port, and can load balance traffic between those Pods. Additionally, a Service can allow your application to be accessible from the internet. Each Service is given an IP address and a corresponding local DNS entry. Additionally, Services exist across Nodes. If you have two replica Pods on one Node and an additional replica Pod on another Node, the service can include all three Pods. There are four types of Service:</p>
+
+<ul>
+<li><strong>ClusterIP</strong>: Exposes the Service internally to the cluster. This is the default setting for a Service.</li>
+<li><strong>NodePort</strong>: Exposes the Service to the internet from the IP address of the Node at the specified port number. You can only use ports in the 30000-32767 range.</li>
+<li><strong>LoadBalancer</strong>: This will create a load balancer assigned to a fixed IP address in the cloud, so long as the cloud provider supports it. In the case of Linode, this is the responsibility of the <a href="https://github.com/linode/linode-cloud-controller-manager">Linode Cloud Controller Manager</a>, which will create a NodeBalancer for the cluster. This is the best way to expose your cluster to the internet.</li>
+<li><strong>ExternalName</strong>: Maps the service to a DNS name by returning a CNAME record redirect. ExternalName is good for directing traffic to outside resources, such as a database that is hosted on another cloud.</li>
+</ul>
+
+<p>Below is an example of a Service manifest:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-apache-service.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Service<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>apache-service<span class="w">
+</span><span class="w">  </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>type<span class="p">:</span><span class="w"> </span>NodePort<span class="w">
+</span><span class="w">  </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>port<span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">    </span>targetPort<span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">    </span>nodePort<span class="p">:</span><span class="w"> </span><span class="m">30020</span><span class="w">
+</span><span class="w">  </span>selector<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>web</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The above example Service uses the <code>v1</code> API, and its <code>kind</code> is Service. Like the Pod example in the previous section, this manifest has a name and a label. Unlike the Pod example, this spec uses the <code>ports</code> field to define the exposed port on the container (<code>port</code>), and the target port on the Pod (<code>targetPort</code>). The <code>type</code> <code>NodePort</code> unlocks the use of <code>nodePort</code> field, which allows traffic on the host Node at that port. Lastly, the <code>selector</code> field is used to target only the Pods that have been assigned the <code>app: web</code> label.</p>
+
+<p>For more information on Services, visit the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#service-v1-core">Kubernetes Service API documentation</a>.</p>
+
+<p>To create the Service from the YAML file, issue the create command:</p>
+
+<pre><code>kubectl create -f my-apache-service.yaml
+</code></pre>
+
+<p>To view a list of running services, issue the <code>get services</code> command:</p>
+
+<pre><code>kubectl get services
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>NAME             TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+apache-service   NodePort    10.99.57.13   &lt;none&gt;        80:30020/TCP   54s
+kubernetes       ClusterIP   10.96.0.1     &lt;none&gt;        443/TCP        46h
+</code></pre>
+
+<p>To retrieve more information about your Service, issue the <code>describe</code> command:</p>
+
+<pre><code>kubectl describe service apache-service
+</code></pre>
+
+<p>To delete the Service, issue the delete command:</p>
+
+<pre><code>kubcetl delete service apache-service
+</code></pre>
+
+<h3 id="volumes">Volumes</h3>
+
+<p>A <em>Volume</em> in Kubernetes is a way to share file storage between containers in a Pod. Kubernetes Volumes differ from Docker volumes because they exist inside the Pod rather than inside the container. When a container is restarted the Volume persists. Note, however, that these Volumes are still tied to the lifecycle of the Pod, so if the Pod is destroyed the Volume will be destroyed with it.</p>
+
+<p>Linode also offers a <a href="https://github.com/linode/linode-blockstorage-csi-driver">Container Storage Interface (CSI) driver</a> that allows the cluster to persist data on a Block Storage volume.</p>
+
+<p>Below is an example of how to create and use a Volume by creating a Pod manifest:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-apache-pod-with-volume.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Pod<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>apache-with-volume<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-storage-volume<span class="w">
+</span><span class="w">    </span>emptyDir<span class="p">:</span><span class="w"> </span>{}<span class="w">
+</span><span class="w">
+</span><span class="w">  </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-container<span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">    </span>volumeMounts<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-storage-volume<span class="w">
+</span><span class="w">      </span>mountPath<span class="p">:</span><span class="w"> </span>/data/apache-data</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>A Volume has two unique aspects to its definition. In this example, the first aspect is the <code>volumes</code> block that defines the type of Volume you want to create, which in this case is a simple empty directory (<code>emptyDir</code>). The second aspect is the <code>volumeMounts</code> field within the container&rsquo;s <code>spec</code>. This field is given the name of the Volume you are creating and a mount path within the container.</p>
+
+<p>There are a number of different Volume types you could create in addition to <code>emptyDir</code> depending on your cloud host. For more information on Volume types, visit the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#volume-v1-core">Kubernetes Volumes API documentation</a>.</p>
+
+<h3 id="namespaces">Namespaces</h3>
+
+<p>Namespaces are virtual clusters that exist within the Kubernetes cluster that help to group and organize objects. Every cluster has at least three namespaces: <code>default</code>, <code>kube-system</code>, and <code>kube-public</code>. When interacting with the cluster it is important to know which Namespace the object you are looking for is in, as many commands will default to only showing you what exists in the <code>default</code> namespace. Resources created without an explicit namespace will be added to the <code>default</code> namespace.</p>
+
+<p>Namespaces consist of alphanumeric characters, dashes (<code>-</code>), and periods (<code>.</code>).</p>
+
+<p>Here is an example of how to define a Namespace with a manifest:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-namespace.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Namespace<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>my-app</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>To create the Namespace, issue the <code>create</code> command:</p>
+
+<pre><code>kubcetl create -f my-namespace.yaml
+</code></pre>
+
+<p>Below is an example of a Pod with a Namespace:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-apache-pod-with-namespace.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Pod<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>apache-pod<span class="w">
+</span><span class="w">  </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w">  </span>namespace<span class="p">:</span><span class="w"> </span>my-app<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-container<span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>httpd</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>To retrieve resources in a certain Namespace, use the <code>-n</code> flag.</p>
+
+<pre><code>kubectl get pods -n my-app
+</code></pre>
+
+<p>You should see a list of Pods within your namespace:</p>
+
+<pre><code>NAME         READY   STATUS    RESTARTS   AGE
+apache-pod   1/1     Running   0          7s
+</code></pre>
+
+<p>To view Pods in all Namespaces, use the <code>--all-namespaces</code> flag.</p>
+
+<pre><code>kubectl get pods --all-namespaces
+</code></pre>
+
+<p>To delete a Namespace, issue the <code>delete namespace</code> command. Note that this will delete all resources within that Namespace:</p>
+
+<pre><code>kubectl delete namespace my-app
+</code></pre>
+
+<p>For more information on Namespaces, visit the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#namespace-v1-core">Kubernetes Namespaces API documentation</a></p>
+
+<h2 id="controllers">Controllers</h2>
+
+<p>A Controller is a control loop that continuously watches the Kubernetes API and tries to manage the desired state of certain aspects of the cluster. There are a number of controllers. Below is a short reference of the most popular controllers you might interact with.</p>
+
+<h3 id="replicasets">ReplicaSets</h3>
+
+<p>As has been mentioned, Kubernetes allows an application to scale horizontally. A <em>ReplicaSet</em> is one of the controllers responsible for keeping a given number of replica Pods running. If one Pod goes down in a ReplicaSet, another will be created to replace it. In this way, Kubernetes is <em>self-healing</em>. However, for most use cases it is recommended to use a <a href="#deployments">Deployment</a> instead of a ReplicaSet.</p>
+
+<p>Below is an example of a ReplicaSet:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-apache-replicaset.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>apps/v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>ReplicaSet<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>apache-replicaset<span class="w">
+</span><span class="w">  </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>replicas<span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span><span class="w">  </span>selector<span class="p">:</span><span class="w">
+</span><span class="w">    </span>matchLabels<span class="p">:</span><span class="w">
+</span><span class="w">      </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w">  </span>template<span class="p">:</span><span class="w">
+</span><span class="w">    </span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">      </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">        </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w">    </span>spec<span class="p">:</span><span class="w">
+</span><span class="w">      </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-container<span class="w">
+</span><span class="w">        </span>image<span class="p">:</span><span class="w"> </span>httpd</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>There are three main things to note in this ReplicaSet. The first is the <code>apiVersion</code>, which is <code>apps/v1</code>. This differs from the previous examples, which were all <code>apiVersion: v1</code>, because ReplicaSets do not exist in the <code>v1</code> core. They instead reside in the <code>apps</code> group of <code>v1</code>. The second and third things to note are the <code>replicas</code> field and the <code>selector</code> field. The <code>replicas</code> field defines how many replica Pods you want to be running at any given time. The <code>selector</code> field defines which Pods, matched by their label, will be controlled by the ReplicaSet.</p>
+
+<p>To view your ReplicaSets, issue the <code>get replicasets</code> command:</p>
+
+<pre><code>kubectl get replicasets
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>NAME                DESIRED   CURRENT   READY   AGE
+apache-replicaset   5         5         0       5s
+</code></pre>
+
+<p>This output shows that of the five desired replicas, there are 5 currently active, but zero of those replicas are available. This is because the Pods are still booting up. If you issue the command again, you will see that all five have become ready:</p>
+
+<pre><code>NAME                DESIRED   CURRENT   READY   AGE
+apache-replicaset   5         5         5       86s
+</code></pre>
+
+<p>You can view the Pods the ReplicaSet created by issuing the <code>get pods</code> command:</p>
+
+<pre><code>NAME                      READY   STATUS    RESTARTS   AGE
+apache-replicaset-5rsx2   1/1     Running   0          31s
+apache-replicaset-8n52c   1/1     Running   0          31s
+apache-replicaset-jcgn8   1/1     Running   0          31s
+apache-replicaset-sj422   1/1     Running   0          31s
+apache-replicaset-z8g76   1/1     Running   0          31s
+</code></pre>
+
+<p>To delete a ReplicaSet, issue the <code>delete replicaset</code> command:</p>
+
+<pre><code>kubectl delete replicaset apache-replicaset
+</code></pre>
+
+<p>If you issue the <code>get pods</code> command, you will see that the Pods the ReplicaSet created are in the process of terminating:</p>
+
+<pre><code>NAME                      READY   STATUS        RESTARTS   AGE
+</code></pre>
+
+<p>apache-replicaset-bm2pn   0/1     Terminating   0          3m54s</p>
+
+<p>In the above example, four of the Pods have already terminated, and one is in the process of terminating.</p>
+
+<p>For more information on ReplicaSets, view the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#replicaset-v1-apps">Kubernetes ReplicaSets API documentation</a>.</p>
+
+<h3 id="deployments">Deployments</h3>
+
+<p>A <em>Deployment</em> can manage a ReplicaSet, so it shares the ability to keep a defined number of replica pods up and running. A Deployment can also update those Pods to resemble the desired state by means of rolling updates. For example, if you wanted to update a container image to a newer version, you would create a Deployment, and the controller would update the container images one by one until the desired state is achieved. This ensures that there is no downtime when updating or altering your Pods.</p>
+
+<p>Below is an example of a Deployment:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-apache-deployment.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>apps/v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Deployment<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>apache-deployment<span class="w">
+</span><span class="w">  </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>replicas<span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span><span class="w">  </span>selector<span class="p">:</span><span class="w">
+</span><span class="w">    </span>matchLabels<span class="p">:</span><span class="w">
+</span><span class="w">      </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w">  </span>template<span class="p">:</span><span class="w">
+</span><span class="w">    </span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">      </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">        </span>app<span class="p">:</span><span class="w"> </span>web<span class="w">
+</span><span class="w">    </span>spec<span class="p">:</span><span class="w">
+</span><span class="w">      </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache-container<span class="w">
+</span><span class="w">        </span>image<span class="p">:</span><span class="w"> </span>httpd<span class="p">:</span><span class="m">2.4</span>.<span class="m">35</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The only noticeable difference between this Deployment and the example given in the ReplicaSet section is the <code>kind</code>. In this example we have chosen to initially install Apache 2.4.35. If you wanted to update that image to Apache 2.4.38, you would issue the following command:</p>
+
+<pre><code>kubectl --record deployment.apps/apache-deployment set image deployment.v1.apps/apache-deployment apache-container=httpd:2.4.38
+</code></pre>
+
+<p>You&rsquo;ll see a confirmation that the images have been updated:</p>
+
+<pre><code>deployment.apps/apache-deployment image updated
+</code></pre>
+
+<p>To see for yourself that the images have updated, you can grab the Pod name from the <code>get pods</code> list:</p>
+
+<pre><code>kubectl get pods
+
+NAME                                 READY   STATUS    RESTARTS   AGE
+apache-deployment-574c8c4874-8zwgl   1/1     Running   0          8m36s
+apache-deployment-574c8c4874-9pr5j   1/1     Running   0          8m36s
+apache-deployment-574c8c4874-fbs46   1/1     Running   0          8m34s
+apache-deployment-574c8c4874-nn7dl   1/1     Running   0          8m36s
+apache-deployment-574c8c4874-pndgp   1/1     Running   0          8m33s
+</code></pre>
+
+<p>Issue the <code>describe</code> command to view all of the available details of the Pod:</p>
+
+<pre><code>kubectl describe pod apache-deployment-574c8c4874-pndgp
+</code></pre>
+
+<p>You&rsquo;ll see a long list of details, of which the container image is included:</p>
+
+<pre><code>....
+
+Containers:
+  apache-container:
+    Container ID:   docker://d7a65e7993ab5bae284f07f59c3ed422222100833b2769ff8ee14f9f384b7b94
+    Image:          httpd:2.4.38
+
+....
+</code></pre>
+
+<p>For more information on Deployments, visit the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/#deployment-v1-apps">Kubernetes Deployments API documentation</a></p>
+
+<h3 id="jobs">Jobs</h3>
+
+<p>A <em>Job</em> is a controller that manages a Pod that is created for a single, or set, of tasks. This is handy if you need to create a Pod that performs a single function, or calculates a value. The deletion of the Job will delete the Pod.</p>
+
+<p>Below is an example of a Job that simply prints &ldquo;Hello World!&rdquo; and ends:</p>
+
+<dl class="file">
+
+
+<dt>
+		my-job.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>batch/v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Job<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>hello-world<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>template<span class="p">:</span><span class="w">
+</span><span class="w">    </span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">      </span>name<span class="p">:</span><span class="w"> </span>hello-world<span class="w">
+</span><span class="w">    </span>spec<span class="p">:</span><span class="w">
+</span><span class="w">      </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>output<span class="w">
+</span><span class="w">        </span>image<span class="p">:</span><span class="w"> </span>debian<span class="w">
+</span><span class="w">        </span>command<span class="p">:</span><span class="w">
+</span><span class="w">         </span>-<span class="w"> </span><span class="s2">&#34;bin/bash&#34;</span><span class="w">
+</span><span class="w">         </span>-<span class="w"> </span><span class="s2">&#34;-c&#34;</span><span class="w">
+</span><span class="w">         </span>-<span class="w"> </span><span class="s2">&#34;echo &#39;Hello World!&#39;&#34;</span><span class="w">
+</span><span class="w">      </span>restartPolicy<span class="p">:</span><span class="w"> </span>Never</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>To create the Job, issue the <code>create</code> command:</p>
+
+<pre><code>kubectl create -f my-job.yaml
+</code></pre>
+
+<p>To see if the job has run, or is running, issue the <code>get jobs</code> command:</p>
+
+<pre><code>kubectl get jobs
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>NAME          COMPLETIONS   DURATION   AGE
+hello-world   1/1           9s         8m23s
+</code></pre>
+
+<p>To get the Pod of the Job, issue the <code>get pods</code> command:</p>
+
+<pre><code>kubectl get pods
+</code></pre>
+
+<p>You should see an output like the following:</p>
+
+<pre><code>NAME                               READY   STATUS             RESTARTS   AGE
+hello-world-4jzdm                  0/1     Completed          0          9m44s
+</code></pre>
+
+<p>You can use the name of the Pod to inspect its output by consulting the log file for the Pod:</p>
+
+<pre><code>kubectl get logs hello-world-4jzdm
+</code></pre>
+
+<p>To delete the Job, and its Pod, issue the <code>delete</code> command:</p>
+
+<pre><code>kubectl delete job hello-world
+</code></pre>
+
+<h2 id="networking">Networking</h2>
+
+<p>Networking in Kubernetes was designed to make it simple to port existing apps from VMs to containers, and subsequently, Pods. The basic requirements of the Kubernetes networking model are:</p>
+
+<ol>
+<li>Pods can communicate with each other across Nodes without the use of <a href="https://whatismyipaddress.com/nat">NAT</a></li>
+<li>Agents on a Node, like kubelet, can communicate with all of a Node&rsquo;s Pods</li>
+<li>In the case of Linux, Pods in a Node&rsquo;s host network can communicate to all other Pods without NAT.</li>
+</ol>
+
+<p>Though the rules of the Kubernetes networking model are simple, the implementation of those rules is an advanced topic. Because Kubernetes does not come with its own implementation, it is up to the user to provide a networking model.</p>
+
+<p>Two of the most popular options are <a href="https://github.com/coreos/flannel#flannel">Flannel</a> and <a href="https://docs.projectcalico.org/v2.0/getting-started/kubernetes/">Calico</a>. Flannel is a networking overlay that meets the functionality of the Kubernetes networking model by supplying a layer 3 network fabric, and is relatively easy to set up. Calico enables networking, and networking policy through the <a href="https://kubernetes.io/docs/concepts/services-networking/network-policies/">NetworkPolicy API</a> to provide simple virtual networking.</p>
+
+<p>For more information on the Kubernetes networking model, and ways to implement it, consult the <a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">cluster networking documentation</a>.</p>
+
+<h2 id="advanced-topics">Advanced Topics</h2>
+
+<p>There are a number of advanced topics in Kubernetes. Below are a few you might find useful as you progress in Kubernetes:</p>
+
+<ul>
+<li><a href="https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/">StatefulSets</a> can be used when creating stateful applications.</li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">DaemonSets</a> can be used to ensure each Node is running a certain Pod. This is useful for log collection, monitoring, and cluster storage.</li>
+<li><a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/">Horizontal Pod Autoscaling</a> can automatically scale your deployments based on CPU usage.</li>
+<li><a href="https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs/">CronJobs</a> can schedule <a href="#jobs">Jobs</a> to run at certain times.</li>
+<li><a href="https://kubernetes.io/docs/concepts/policy/resource-quotas/">ResourceQuotas</a> are helpful when working with larger groups where there is a concern that some teams might take up too many resources.</li>
+</ul>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Now that you are familiar with Kubernetes concepts and components, you can follow the <a href="/docs/applications/containers/getting-started-with-kubernetes/">Getting Started with Kubernetes: Use kubeadm to Deploy a Cluster on Linode</a> guide. This guide provides a hands-on activity to continue learning about Kubernetes. If you would like to deploy a Kubernetes cluster on Linode for production use, we recommend using one of the following methods, instead:</p>
+
+<ul>
+<li><a href="/docs/applications/containers/how-to-deploy-kubernetes-on-linode-with-k8s-alpha-cli/">How to Deploy Kubernetes on Linode with the k8s-alpha CLI</a></li>
+<li><a href="/docs/applications/containers/how-to-deploy-kubernetes-on-linode-with-rancher-2-2/">How to Deploy Kubernetes on Linode with Rancher 2.2</a></li>
+</ul>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.13/">Kubernetes API Documentation</a></li>
+
+<li><a href="https://kubernetes.io/docs/concepts/">Kubernetes Concepts Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#containers">Containers</a></li>
+<li><a href="#kubernetes-api">Kubernetes API</a></li>
+<li><a href="#kubectl">kubectl</a></li>
+<li><a href="#kubernetes-master-nodes-and-control-plane">Kubernetes Master, Nodes, and Control Plane</a>
+<ul>
+<li><a href="#nodes">Nodes</a></li>
+<li><a href="#kubernetes-master">Kubernetes Master</a></li>
+</ul></li>
+<li><a href="#kubernetes-objects">Kubernetes Objects</a>
+<ul>
+<li><a href="#pods">Pods</a></li>
+<li><a href="#services">Services</a></li>
+<li><a href="#volumes">Volumes</a></li>
+<li><a href="#namespaces">Namespaces</a></li>
+</ul></li>
+<li><a href="#controllers">Controllers</a>
+<ul>
+<li><a href="#replicasets">ReplicaSets</a></li>
+<li><a href="#deployments">Deployments</a></li>
+<li><a href="#jobs">Jobs</a></li>
+</ul></li>
+<li><a href="#networking">Networking</a></li>
+<li><a href="#advanced-topics">Advanced Topics</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

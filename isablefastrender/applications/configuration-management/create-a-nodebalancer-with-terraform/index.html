@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Create a NodeBalancer with Terraform</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="How to create a NodeBalancer and Nodes with Terraform.">
+        <meta name="keywords" content="terraform, nodebalancer, node, balancer, provider, linode">
+        
+        <meta property="og:title" content="Create a NodeBalancer with Terraform">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/create-a-nodebalancer-with-terraform/">
+        <meta property="og:description" content="How to create a NodeBalancer and Nodes with Terraform.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/create-a-nodebalancer-with-terraform/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Create a NodeBalancer with Terraform
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Create a NodeBalancer with Terraform</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-03-06T10:11:35-05:00">Wednesday, March 6, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fcreate-a-nodebalancer-with-terraform%2f&via=linode&text=Create%20a%20NodeBalancer%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fcreate-a-nodebalancer-with-terraform%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fcreate-a-nodebalancer-with-terraform%2f&t=Create%20a%20NodeBalancer%20with%20Terraform" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Create%20a%20NodeBalancer%20with%20Terraform%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fcreate-a-nodebalancer-with-terraform%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5ccreate-a-nodebalancer-with-terraform%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5ccreate-a-nodebalancer-with-terraform%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Terraform allows you to represent Infrastructure as Code (IaC). You can use it to manage infrastructure, speed up deployments, and share your infrastructure&rsquo;s configuration files within a team. In this guide you will use Terraform to create a NodeBalancer that distributes traffic between two Linodes.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div><p>The configurations and commands used in this guide will result in multiple billable resources being added to your account. Be sure to monitor your account closely in the Linode Cloud Manager to avoid unwanted charges. See the <a href="/docs/platform/billing-and-support/billing-and-payments-new-manager/">Billings and Payments</a> guide for more details.</p>
+
+<p>If you would like to stop billing for the resources created in this guide, <a href="#optional-remove-the-nodebalancer-resources">remove them</a> when you have finished your work.</p>
+</div>
+</blockquote>
+
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>You should have Terraform installed in your development environment, and have a working knowledge of Terraform resource configuration and the <a href="https://www.terraform.io/docs/providers/linode/index.html">Linode provider</a>. For more information on how to install and use Terraform, check out our <a href="/docs/applications/configuration-management/how-to-build-your-infrastructure-using-terraform-and-linode/">Use Terraform to Provision Linode Environments</a> guide.</p></li>
+
+<li><p>Terraform requires an API access token. Follow the <a href="/docs/platform/api/getting-started-with-the-linode-api-new-manager/#get-an-access-token">Getting Started with the Linode API</a> guide to obtain a token.</p></li>
+
+<li><p>Create a <code>terraform_nodebalancer</code> directory on your computer for the Terraform project you will create in this guide. All files you create in this guide should be placed in this directory, and you should run all commands from this directory. This new project should not be created inside another Terraform project directory, including the one you may have made when previously following <a href="/docs/applications/configuration-management/how-to-build-your-infrastructure-using-terraform-and-linode/">Use Terraform to Provision Linode Environments</a>.</p></li>
+</ol>
+
+<h2 id="create-a-terraform-configuration-file">Create a Terraform Configuration File</h2>
+
+<h3 id="create-a-provider-block">Create a Provider Block</h3>
+
+<p>The first step to take when creating a Terraform configuration file is to create a <em>provider block</em>. This block lets Terraform know which provider to use. The only configuration value that the Linode provider needs is an API access token.</p>
+
+<p>Create a file named <code>nodebalancer.tf</code> in your Terraform project directory. You will be adding to this file throughout the guide. Add the provider block to the file:</p>
+
+<dl class="file">
+
+
+<dt>
+		nodebalancer.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">provider <span class="s2">&#34;linode&#34;</span> <span class="o">{</span>
+    <span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.token</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This provider block uses variable interpolation to access the value of your API token. You will create input variables in a separate <code>variables.tf</code> file later in the <a href="#define-terraform-variables">Define Terraform Variables</a> section of this guide. Any input variables you define within the <code>variables.tf</code> file are available from the <code>var</code> dictionary using dot notation. You will be using variable interpolation and referencing variables with dot notation throughout this guide.</p>
+
+<h3 id="create-a-nodebalancer-resource">Create a NodeBalancer Resource</h3>
+
+<p>Create a NodeBalancer resource in the <code>nodebalancer.tf</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		nodebalancer.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+
+resource <span class="s2">&#34;linode_nodebalancer&#34;</span> <span class="s2">&#34;example-nodebalancer&#34;</span> <span class="o">{</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;examplenodebalancer&#34;</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>linode_nodebalancer</code> resource supplies two labels. The first label, <code>example-nodebalancer</code>, is used internally by Terraform. The second label, <code>examplenodebalancer</code>, is used to reference your NodeBalancer in tools like the Manager and the Linode CLI. The region for this NodeBalancer is supplied with the variable <code>region</code>.</p>
+
+<h3 id="create-nodebalancer-config-resources">Create NodeBalancer Config Resources</h3>
+
+<p>In addition to the NodeBalancer resource, you must supply at least one NodeBalancer Configuration resource. This resource defines ports, protocol, health checks, and session stickiness, among other options, that the NodeBalancer might use. For this example, you will create a NodeBalancer configuration for HTTP access on port 80, but you could also create one for HTTPS access on port 443 if you have <a href="/docs/security/ssl/install-lets-encrypt-to-create-ssl-certificates/">SSL/TLS certificates</a>:</p>
+
+<dl class="file">
+
+
+<dt>
+		nodebalancer.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+
+resource <span class="s2">&#34;linode_nodebalancer_config&#34;</span> <span class="s2">&#34;example-nodebalancer-config&#34;</span> <span class="o">{</span>
+    <span class="nv">nodebalancer_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_nodebalancer</span><span class="p">.example-nodebalancer.id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">port</span> <span class="o">=</span> <span class="m">80</span>
+    <span class="nv">protocol</span> <span class="o">=</span> <span class="s2">&#34;http&#34;</span>
+    <span class="nv">check</span> <span class="o">=</span> <span class="s2">&#34;http_body&#34;</span>
+    <span class="nv">check_path</span> <span class="o">=</span> <span class="s2">&#34;/healthcheck/&#34;</span>
+    <span class="nv">check_body</span> <span class="o">=</span> <span class="s2">&#34;healthcheck&#34;</span>
+    <span class="nv">check_attempts</span> <span class="o">=</span> <span class="m">30</span>
+    <span class="nv">check_timeout</span> <span class="o">=</span> <span class="m">25</span>
+    <span class="nv">check_interval</span> <span class="o">=</span> <span class="m">30</span>
+    <span class="nv">stickiness</span> <span class="o">=</span> <span class="s2">&#34;http_cookie&#34;</span>
+    <span class="nv">algorithm</span> <span class="o">=</span> <span class="s2">&#34;roundrobin&#34;</span>
+<span class="o">}</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The NodeBalancer Config resource requires a NodeBalancer ID, which is populated in the first line with the variable <code>linode_nodebalancer.example-nodebalancer.id</code>. Because the <code>nodebalancer_id</code> argument references a NodeBalancer that has not been created yet, you can use this variable as a placeholder to reference the NodeBalancer ID. Terraform will automatically know to create the NodeBalancer resource before it creates any other resources that reference it. In this way you can craft intricate infrastructure that references its own parts, without having to worry about the order the resources appear in the Terraform configuration or whether or not the resources already exist.</p>
+
+<p>As far as settings go, the health check is set to <code>http_body</code>, meaning that the health check will look for the string set by <code>check_body</code> within the body of the page set at <code>check_path</code>. The NodeBalancer will take a node out of rotation after 30 failed check attempts. Each check will wait for a response for 25 seconds before it is considered a failure, with 30 seconds between checks. Additionally, the session stickiness setting has been set to <code>http_cookie</code>. This means that the user will continue to be sent to the same server by the use of a session cookie. The algorithm has been set to <code>roundrobin</code>, which will sort users evenly across your backend nodes based on which server was accessed last.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Review the <a href="/docs/platform/nodebalancer/nodebalancer-reference-guide">NodeBalancer Reference Guide</a> for a full list of NodeBalancer configuration options.</div>
+</blockquote>
+
+
+<h3 id="create-nodebalancer-node-resources">Create NodeBalancer Node Resources</h3>
+
+<p>The third part of setting up a NodeBalancer in Terraform is creating the NodeBalancer Node resource. This resource contains information about the individual Nodes and how they pertain to the NodeBalancer and NodeBalancer Configuration resources.</p>
+
+<dl class="file">
+
+
+<dt>
+		nodebalancer.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+
+resource <span class="s2">&#34;linode_nodebalancer_node&#34;</span> <span class="s2">&#34;example-nodebalancer-node&#34;</span> <span class="o">{</span>
+    <span class="nv">count</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.node_count</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">nodebalancer_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_nodebalancer</span><span class="p">.example-nodebalancer.id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">config_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_nodebalancer_config</span><span class="p">.example-nodebalancer-config.id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;example-node-</span><span class="si">${</span><span class="nv">count</span><span class="p">.index + 1</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">address</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">element</span><span class="p">(linode_instance.example-instance.*.private_ip_address, count.index)</span><span class="si">}</span><span class="s2">:80&#34;</span>
+    <span class="nv">mode</span> <span class="o">=</span> <span class="s2">&#34;accept&#34;</span>
+<span class="o">}</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This resource&rsquo;s <code>count</code> argument will be populated with the <code>node_count</code> input variable you will define later on in this guide. The <code>count</code> argument tells Terraform that it should provision <code>node_count</code> number of Nodes.</p>
+
+<p>Because provisioning more than one node creates a loop in the Terraform process, where the step for creating a node is repeated, you can use the <code>count.index</code> variable to keep track of which iteration Terraform is on in the loop. The interpolation <code>{count.index + 1}</code> in the node&rsquo;s <code>label</code> argument tells Terraform that you&rsquo;d like each of the nodes to be labeled sequentially, and because <code>count.index</code> starts at zero, you&rsquo;d like the count to begin at one.</p>
+
+<p><code>linode_instance.example-instance.*.private_ip_address</code> references the private IP addresses of the yet-to-be-created Linode instances. In the next step, the Linode Instance resources will be labeled <code>example-instance</code>. Terraform has access to some attributes for each of the resources it creates, and <code>private_ip_address</code> is one of the available attributes from a Linode Instance resource. Because there will be two Linode instances created during the same step, Terraform groups these sets of attributes in a list. The <code>element()</code> function allows you to grab a single item from a list based on the item index. Here, instead of providing a hard-coded number for the index you can instead provide <code>count.index</code>. In this way the first NodeBalancer Node will reference the private IP address of the first Linode instance, and the second NodeBalancer Node will reference the private IP address of the second instance.</p>
+
+<h3 id="create-a-linode-instance-resource">Create a Linode Instance Resource</h3>
+
+<p>Now that you have the NodeBalancer configured, you need to supply it with a Linode Instance resource. This resource will allow Terraform to know which instances it needs to create to meet the demand of our NodeBalancer example.</p>
+
+<dl class="file">
+
+
+<dt>
+		nodebalancer.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+
+resource <span class="s2">&#34;linode_instance&#34;</span> <span class="s2">&#34;example-instance&#34;</span> <span class="o">{</span>
+    <span class="nv">count</span>  <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.node_count</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span>  <span class="o">=</span> <span class="s2">&#34;example-instance-</span><span class="si">${</span><span class="nv">count</span><span class="p">.index + 1</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">group</span> <span class="o">=</span> <span class="s2">&#34;nodebalancer-example&#34;</span>
+    <span class="nv">tags</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&#34;nodebalancer-example&#34;</span><span class="o">]</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;g6-nanode-1&#34;</span>
+    <span class="nv">image</span> <span class="o">=</span> <span class="s2">&#34;linode/ubuntu18.10&#34;</span>
+    <span class="nv">authorized_keys</span> <span class="o">=</span> <span class="o">[</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">chomp</span><span class="p">(file(var.ssh_key))</span><span class="si">}</span><span class="s2">&#34;</span><span class="o">]</span>
+    <span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">random_string</span><span class="p">.password.result</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">private_ip</span> <span class="o">=</span> <span class="nb">true</span>
+
+    provisioner <span class="s2">&#34;remote-exec&#34;</span> <span class="o">{</span>
+        <span class="nv">inline</span> <span class="o">=</span> <span class="o">[</span>
+            <span class="c1"># install NGINX</span>
+            <span class="s2">&#34;export PATH=</span><span class="nv">$PATH</span><span class="s2">:/usr/bin&#34;</span>,
+
+            <span class="s2">&#34;apt-get -q update&#34;</span>,
+            <span class="s2">&#34;mkdir -p /var/www/html/&#34;</span>,
+            <span class="s2">&#34;mkdir -p /var/www/html/healthcheck&#34;</span>,
+            <span class="s2">&#34;echo healthcheck &gt; /var/www/html/healthcheck/index.html&#34;</span>,
+            <span class="s2">&#34;echo node </span><span class="si">${</span><span class="nv">count</span><span class="p">.index + 1</span><span class="si">}</span><span class="s2"> &gt; /var/www/html/index.html&#34;</span>,
+            <span class="s2">&#34;apt-get -q -y install nginx&#34;</span>,
+        <span class="o">]</span>
+
+        connection <span class="o">{</span>
+            <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;ssh&#34;</span>
+            <span class="nv">user</span> <span class="o">=</span> <span class="s2">&#34;root&#34;</span>
+            <span class="nv">password</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">random_string</span><span class="p">.password.result</span><span class="si">}</span><span class="s2">&#34;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The above resource uses the same <code>count</code> argument as the NodeBalancer Node resource that was configured in the previous step. Also, the <code>label</code> argument is being sequentially incremented in a similar fashion to the NodeBalancer Node.</p>
+
+<p>The <code>authorized_keys</code> argument is supplied an SSH key input variable that will be defined later in this guide. It is passed to the <code>file()</code> function, which reads the contents of a file into a string. That string is then passed to the <code>chomp()</code> function, which strips any extra whitespace.</p>
+
+<p><code>root_pass</code> is given the result of the <code>random_string</code> resource that will be defined later in this guide.</p>
+
+<p>The last thing of note in this Linode Instance resource is the <code>remote-exec</code> Provisioner block. This block contains two other components, the <code>inline</code> list and <code>connection</code> block. <code>inline</code> is a list of commands that Terraform will execute on the Linode instance once the Linode instance has booted. In this example, the inline commands will: update the Linode instance, create the necessary directory structure for NGINX, create the health check file and the more generalized <code>index.html</code> file, and install NGINX.</p>
+
+<p>The <code>connection</code> block explains to Terraform how it should gain access to the Linode instance in order to run the commands supplied by the <code>inline</code> list. In this case, Terraform will gain access over SSH, logging in as the <code>root</code> user.</p>
+
+<h3 id="create-an-output">Create an Output</h3>
+
+<p>The last step that you&rsquo;ll take in creating <code>nodebalancer.tf</code> is adding an output. Terraform will add this information to the end of it&rsquo;s output in the terminal. Outputs can be any information from your configuration you would like to expose. Below is an example that will display the public IP address of the NodeBalancer:</p>
+
+<dl class="file">
+
+
+<dt>
+		nodebalancer.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+
+output <span class="s2">&#34;NodeBalancer IP Address&#34;</span> <span class="o">{</span>
+    <span class="nv">value</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_nodebalancer</span><span class="p">.example-nodebalancer.0.ipv4</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="define-terraform-variables">Define Terraform Variables</h2>
+
+<p>You will now declare all variables required by your Terraform configuration in a <code>variables.tf</code> file.</p>
+
+<ol>
+<li><p>Create a file called <code>variables.tf</code>. This file will create the variables referenced in the configuration of your NodeBalancer and Nodes. You will supply values to the variables in another step.</p>
+
+<dl class="file">
+
+
+<dt>
+		variables.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">variable <span class="s2">&#34;token&#34;</span> <span class="o">{</span>
+    <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Your APIv4 Access Token&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;region&#34;</span> <span class="o">{</span>
+    <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The datacenter where your NodeBalancer and Nodes will reside. E.g., &#39;us-east&#39;.&#34;</span>
+    <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;us-west&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;node_count&#34;</span> <span class="o">{</span>
+    <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The amount of backend Nodes to create.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;ssh_key&#34;</span> <span class="o">{</span>
+    <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The local file location of the SSH key that will be transferred to each Linode.&#34;</span>
+    <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;~/.ssh/id_rsa.pub&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;random_string&#34;</span> <span class="s2">&#34;password&#34;</span> <span class="o">{</span>
+    <span class="nv">length</span> <span class="o">=</span> <span class="m">32</span>
+    <span class="nv">special</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="nv">upper</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="nv">lower</span> <span class="o">=</span> <span class="nb">true</span>
+    <span class="nv">number</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Terraform allows each variable to have its own description and default value. These variables will have their values populated through the use of a <code>terraform.tfvars</code> file that you will create in the next step. Separating the variable definitions from their values helps to keep sensitive data from entering your Terraform code, should you choose to include your code in a version control system like Git.</p>
+
+<p>In addition to the variables you defined above, there is also a <code>random_string</code> resource with the label <code>password</code>. This resource is provided by the <a href="https://www.terraform.io/docs/providers/random/index.html">Random provider</a>, and will generate a random string of 32 characters, including uppercase characters, lowercase characters, and numbers. This string will be the root password for your backend Nodes. If you would rather have exact control over your passwords, you can define a password here in <code>variables.tf</code> and set the value for that password in <code>terraform.tfvars</code> in the next step.</p></li>
+
+<li><p>Create the <code>terraform.tfvars</code> file and supply values for the <code>token</code>, <code>region</code>, and <code>node_count</code> variables. This example uses the <code>us-east</code> regional datacenter, and the <code>node_count</code> is two.</p>
+
+<dl class="file">
+
+
+<dt>
+		terraform.tfvars 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;your_api_token&#34;</span>
+<span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;us-east&#34;</span>
+<span class="nv">node_count</span> <span class="o">=</span> <span class="m">2</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When Terraform runs, it looks for a file named <code>terraform.tfvars</code>, or files with the extension <code>*.auto.tfvars</code>, and populates the Terraform variables with those values. If your SSH key is at a file location that is different than the default value, i.e., it does not exist at <code>~/.ssh/id_rsa.pub</code>, then you will need to add that value to <code>terraform.tfvars</code>.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you want to use an input variable&rsquo;s default value defined in the <code>variables.tf</code> file, you can omit providing a value for that variable in the <code>terraform.tfvars</code> file.</div>
+</blockquote>
+
+
+<p>Feel free to change any of the values in the <code>terraform.tfvars</code> file to your liking. For a list of regional datacenter IDs, you can use the cURL command to query the API:</p>
+
+<pre><code>curl https://api.linode.com/v4/regions
+</code></pre></li>
+</ol>
+
+<h2 id="initializing-planning-and-applying-the-terraform-state">Initializing, Planning, and Applying the Terraform State</h2>
+
+<p>Because this guide employs two providers (Linode and Random) that you might not have installed on your local development environment, you&rsquo;ll need to run the <code>init</code> command to install them.</p>
+
+<pre><code>terraform init
+</code></pre>
+
+<p>You should see a message that Terraform has been successfully initialized.</p>
+
+<p>To review the Terraform plan of action defined in the <code>nodebalancer.tf</code> file, run the <code>plan</code> command:</p>
+
+<pre><code>terraform plan
+</code></pre>
+
+<p>You should see a lengthy output with all the <code>create</code> actions that will take place. Review the output, taking note that the <code>&lt;computed&gt;</code> values you see will be defined on creation. Once you are satisfied with the proposed actions, it&rsquo;s time to apply them.</p>
+
+<p>Run the <code>apply</code> command:</p>
+
+<pre><code>terraform apply
+</code></pre>
+
+<p>You will be prompted to approve the <code>apply</code> action. Type <em>yes</em> and hit <strong>Enter</strong>. Terraform will begin to create the resources you have configured in the previous steps. This will take a few minutes, after which you will start to see the output of the the <code>remote-exec</code> commands you defined in your Linode instance resource. Once all of the actions are completed you should see output like the following:</p>
+
+<pre class="file terminal">
+  <code>
+Apply complete! Resources: 7 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+NodeBalancer IP Address = 104.237.148.131
+</code>
+</pre>
+
+
+<p>Navigate to your NodeBalancer IP address and view your NodeBalancer in action. You have successfully created a NodeBalancer and backend nodes in Terraform.</p>
+
+<h3 id="optional-remove-the-nodebalancer-resources">(Optional) Remove the NodeBalancer Resources</h3>
+
+<p>If you are done with the resources you just created, you can remove them with the <code>destroy</code> command</p>
+
+<pre><code>terraform destroy
+</code></pre>
+
+<p>This command will prompt you to confirm the action.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.terraform.io/docs/providers/linode/index.html">Terraform Linode Provider Reference</a></li>
+
+<li><a href="https://www.terraform.io/docs/providers/linode/r/nodebalancer.html">linode_nodebalancer Resource Reference</a></li>
+
+<li><a href="https://www.terraform.io/docs/providers/linode/r/nodebalancer_config.html">linode_nodebalancer_config Resource Reference</a></li>
+
+<li><a href="https://www.terraform.io/docs/providers/linode/r/nodebalancer_node.html">linode_nodebalancer_node Resource Reference</a></li>
+
+<li><a href="https://www.terraform.io/docs/providers/linode/r/instance.html">linode_instance Resource Reference</a></li>
+
+<li><a href="https://www.terraform.io/docs/providers/random/index.html">Terraform Random Provider Reference</a></li>
+
+<li><a href="https://www.terraform.io/docs/configuration/interpolation.html#supported-built-in-functions">Terraform Built-In Function Reference</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#create-a-terraform-configuration-file">Create a Terraform Configuration File</a>
+<ul>
+<li><a href="#create-a-provider-block">Create a Provider Block</a></li>
+<li><a href="#create-a-nodebalancer-resource">Create a NodeBalancer Resource</a></li>
+<li><a href="#create-nodebalancer-config-resources">Create NodeBalancer Config Resources</a></li>
+<li><a href="#create-nodebalancer-node-resources">Create NodeBalancer Node Resources</a></li>
+<li><a href="#create-a-linode-instance-resource">Create a Linode Instance Resource</a></li>
+<li><a href="#create-an-output">Create an Output</a></li>
+</ul></li>
+<li><a href="#define-terraform-variables">Define Terraform Variables</a></li>
+<li><a href="#initializing-planning-and-applying-the-terraform-state">Initializing, Planning, and Applying the Terraform State</a>
+<ul>
+<li><a href="#optional-remove-the-nodebalancer-resources">(Optional) Remove the NodeBalancer Resources</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

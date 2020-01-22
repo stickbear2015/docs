@@ -1,0 +1,2475 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Getting Started with Puppet - Basic Installation and Setup</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Basic instructions to set up and configure a Puppet master and agents using Ubuntu and CentOS servers.">
+        <meta name="keywords" content="puppet installation, configuration change management, server automation">
+        
+        <meta property="og:title" content="Getting Started with Puppet - Basic Installation and Setup">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/getting-started-with-puppet-6-1-basic-installation-and-setup/">
+        <meta property="og:description" content="Basic instructions to set up and configure a Puppet master and agents using Ubuntu and CentOS servers.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/getting-started-with-puppet-6-1-basic-installation-and-setup/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Getting Started with Puppet - Basic Installation and Setup
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Getting Started with Puppet - Basic Installation and Setup</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-16T10:43:17-05:00">Wednesday, January 16, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fgetting-started-with-puppet-6-1-basic-installation-and-setup%2f&via=linode&text=Getting%20Started%20with%20Puppet%20-%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fgetting-started-with-puppet-6-1-basic-installation-and-setup%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fgetting-started-with-puppet-6-1-basic-installation-and-setup%2f&t=Getting%20Started%20with%20Puppet%20-%20Basic%20Installation%20and%20Setup" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Getting%20Started%20with%20Puppet%20-%20Basic%20Installation%20and%20Setup%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fgetting-started-with-puppet-6-1-basic-installation-and-setup%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5cgetting-started-with-puppet-6-1-basic-installation-and-setup%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5cgetting-started-with-puppet-6-1-basic-installation-and-setup%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><a href="https://puppetlabs.com/">Puppet</a> is a configuration management tool that simplifies system administration. Puppet uses a client/server model in which your managed nodes, running a process called the Puppet <em>agent</em>, talk to and pull down configuration profiles from a Puppet <em>master</em>.</p>
+
+<!--
+Tnis graphic doesn't have the same title as the new title for this doc.
+
+![Install and Configure Puppet](install-puppet-title.png "Install and Configure Puppet")
+-->
+
+<p>Puppet deployments can range from small groups of servers up to enterprise-level operations. This guide will demonstrate how to install Puppet 6.1 on three servers:</p>
+
+<ul>
+<li>A Puppet master running Ubuntu 18.04</li>
+<li>A managed Puppet node running Ubuntu 18.04</li>
+<li>A managed Puppet node running CentOS 7</li>
+</ul>
+
+<p>After installation, the next section will show you how to secure these servers via Puppet. This section will demonstrate core features of the Puppet language.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Most guides will instruct you to follow the <a href="/docs/security/securing-your-server/">How to Secure your Server</a> guide before proceeding. Because Puppet will be used to perform this task, you should begin this guide as the <code>root</code> user. A limited user with administrative privileges will be configured via Puppet in later steps.</div>
+</blockquote>
+
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>The following table displays example system information for the servers that will be deployed in this guide:</p>
+
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>OS</th>
+<th>Hostname</th>
+<th>FQDN</th>
+<th>IP</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Puppet master</td>
+<td>Ubuntu 18.04</td>
+<td>puppet</td>
+<td>puppet.example.com</td>
+<td>192.0.2.2</td>
+</tr>
+
+<tr>
+<td>Node 1 (Ubuntu)</td>
+<td>Ubuntu 18.04</td>
+<td>puppet-agent-ubuntu</td>
+<td>puppet-agent-ubuntu.example.com</td>
+<td>192.0.2.3</td>
+</tr>
+
+<tr>
+<td>Node 2 (CentOS)</td>
+<td>CentOS 7</td>
+<td>puppet-agent-centos</td>
+<td>puppet-agent-centos.example.com</td>
+<td>192.0.2.4</td>
+</tr>
+</tbody>
+</table>
+
+<p>You can choose different hostnames and fully qualified domain names (FQDN) for each of your servers, and the IP addresses for your servers will be different from the example addresses listed. You will need to have a registered domain name in order to specify FQDNs for your servers.</p>
+
+<p>Throughout this guide, commands and code snippets will reference the values displayed in this table. Wherever such a value appears, replace it with your own value.</p>
+
+<h3 id="create-your-linodes">Create your Linodes</h3>
+
+<ol>
+<li><p>Create three Linodes corresponding to the servers listed in the table above. Your Puppet master Linode should have at least four CPU cores; the <a href="https://www.linode.com/pricing">Linode 8GB</a> plan is recommended. The two other nodes can be of any plan size, depending on how you intend to use them after Puppet is installed and configured.</p></li>
+
+<li><p><a href="/docs/getting-started/#set-the-timezone">Configure your timezone</a> on your master and agent nodes so that they all have the same time data.</p></li>
+
+<li><p><a href="/docs/getting-started/#set-the-hostname">Set the hostname</a> for each server.</p></li>
+
+<li><p><a href="/docs/networking/dns/using-your-systems-hosts-file/">Set the FQDN</a> for each Linode by editing the servers&rsquo; <code>/etc/hosts</code> files.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Example content for the hosts file
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>You can model the contents of your <code>/etc/hosts</code> files on these snippets:</p>
+
+<dl class="file">
+
+
+<dt>
+        Master 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1   localhost
+<span class="m">192</span>.0.2.2   puppet.example.com puppet
+
+<span class="c1"># The following lines are desirable for IPv6 capable hosts</span>
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+<dl class="file">
+
+
+<dt>
+        Node 1 (Ubuntu) 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1   localhost
+<span class="m">192</span>.0.2.3   puppet-agent-ubuntu.example.com puppet-agent-ubuntu
+
+<span class="c1"># The following lines are desirable for IPv6 capable hosts</span>
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+<dl class="file">
+
+
+<dt>
+        Node 2 (CentOS) 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+<span class="m">192</span>.0.2.4   puppet-agent-centos.example.com puppet-agent-centos</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</div></div>
+</blockquote></li>
+
+<li><p><a href="/docs/platform/manager/dns-manager/#add-records">Set up DNS records</a> for your Linodes&rsquo; FQDNs. For each Linode, create a new <em>A record</em> with the name specified by its FQDN and assign it to that Linode&rsquo;s IP address.</p>
+
+<p>If you don&rsquo;t use Linode&rsquo;s name servers for your domain, consult your name server authority&rsquo;s website for instructions on how to edit your DNS records.</p>
+
+
+
+
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Updating DNS records at common nameserver authorities
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper">The following support documents describe how to update DNS records at common nameserver authorities:</p>
+
+<ul>
+<li><a href="https://support.cloudflare.com/hc/en-us/articles/200168686-What-do-I-do-if-I-changed-my-server-IP-address-or-hosting-provider-">CloudFlare</a></li>
+<li><a href="https://www.godaddy.com/help/manage-dns-zone-files-680">GoDaddy</a></li>
+<li><a href="https://help.dreamhost.com/hc/en-us/articles/215414867-How-do-I-add-custom-DNS-records">DreamHost</a></li>
+<li><a href="https://doc.gandi.net/en/dns/zone">Gandi</a></li>
+<li><a href="https://www.1and1.com/help/domains/configuring-your-ip-address/connecting-a-domain-to-a-static-ip-address/">1&amp;1</a></li>
+<li><a href="http://www.networksolutions.com/support/how-to-manage-advanced-dns-records/">Network Solutions</a></li>
+<li><a href="https://my.bluehost.com/hosting/help/559">Bluehost</a></li>
+<li><a href="https://support.hostgator.com/articles/manage-dns-records-with-hostgatorenom">HostGator</a></li>
+<li><a href="https://www.namecheap.com/support/knowledgebase/article.aspx/319/2237/how-can-i-set-up-an-a-address-record-for-my-domain">Namecheap</a></li>
+<li><a href="https://help.hover.com/hc/en-us/articles/217282457-How-to-Edit-DNS-records-A-AAAA-CNAME-MX-TXT-SRV-">Hover</a></li>
+</ul></div></div>
+</blockquote>
+
+
+
+</li>
+</ol>
+
+<h2 id="puppet-master">Puppet Master</h2>
+
+<h3 id="install-the-puppet-server-software">Install the Puppet Server Software</h3>
+
+<p>The Puppet master runs the <code>puppetserver</code> service, which is responsible for compiling and supplying configuration profiles to your managed nodes.</p>
+
+<p>The <code>puppetserver</code> service has the Puppet agent service as a dependency (which is just called <code>puppet</code> when running on your system). This means that the agent software will also be installed and can be run on your master. Because your master can run the agent service, you can configure your master via Puppet just as you can configure your other managed nodes.</p>
+
+<ol>
+<li><p>Log in to your Puppet master via SSH (as root):</p>
+
+<pre><code>ssh root@puppet.example.com
+</code></pre></li>
+
+<li><p>Download the Puppet repository, update your system packages, and install <code>puppetserver</code>:</p>
+
+<pre><code>wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+dpkg -i puppet-release-bionic.deb
+apt update
+apt install puppetserver
+</code></pre></li>
+</ol>
+
+<h3 id="configure-the-server-software">Configure the Server Software</h3>
+
+<ol>
+<li><p>Use the <code>puppet config</code> command to set values for the <code>dns_alt_names</code> setting:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet config set dns_alt_names 'puppet,puppet.example.com' --section main
+</code></pre>
+
+<p>If you inspect the configuration file, you&rsquo;ll see that the setting has been added:</p>
+
+<pre><code>cat /etc/puppetlabs/puppet/puppet.conf
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+[main]
+dns_alt_names = puppet,puppet.example.com
+# ...
+</code>
+</pre>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>The <code>puppet</code> command by default is not added to your PATH. Using Puppet&rsquo;s interactive commands requires a full file path. To avoid this, update your PATH for your existing shell session:</p>
+
+<pre><code>export PATH=/opt/puppetlabs/bin:$PATH
+</code></pre>
+
+<p>A more permanent solution would be to add this to your <code>.profile</code> or <code>.bashrc</code> files.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>Update your Puppet master&rsquo;s <code>/etc/hosts</code> to resolve your managed nodes&rsquo; IP addresses. For example, your <code>/etc/hosts</code> file might look like the following:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1   localhost
+<span class="m">192</span>.0.2.2   puppet.example.com puppet
+
+<span class="m">192</span>.0.2.3   puppet-agent-ubuntu.example.com puppet-agent-ubuntu
+<span class="m">192</span>.0.2.4   puppet-agent-centos.example.com puppet-agent-centos
+
+<span class="c1"># The following lines are desirable for IPv6 capable hosts</span>
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This snippet incorporates the FQDN declaration described in the <a href="#create-your-linodes">Create your Linodes</a> section.</div>
+</blockquote>
+</li>
+
+<li><p>Start and enable the <code>puppetserver</code> service:</p>
+
+<pre><code>systemctl start puppetserver
+systemctl enable puppetserver
+</code></pre>
+
+<p>By default, the Puppet master listens for client connections on port 8140. If the <code>puppetserver</code> service fails to start, check that the port is not already in use:</p>
+
+<pre><code>netstat -anpl | grep 8140
+</code></pre></li>
+</ol>
+
+<h2 id="puppet-agents">Puppet Agents</h2>
+
+<h3 id="install-puppet-agent">Install Puppet Agent</h3>
+
+<ol>
+<li><p>On your managed node running <strong>Ubuntu 18.04</strong>, install the <code>puppet-agent</code> package:</p>
+
+<pre><code>wget https://apt.puppetlabs.com/puppet-release-bionic.deb
+dpkg -i puppet-release-bionic.deb
+apt update
+apt install puppet-agent
+</code></pre></li>
+
+<li><p>On your managed node running <strong>CentOS 7</strong>, enter:</p>
+
+<pre><code>rpm -Uvh https://yum.puppet.com/puppet/puppet-release-el-7.noarch.rpm
+yum install puppet-agent
+</code></pre></li>
+</ol>
+
+<h3 id="configure-puppet-agent">Configure Puppet Agent</h3>
+
+<ol>
+<li><p>Modify your managed nodes&rsquo; hosts files to resolve the Puppet master&rsquo;s IP. To do so, add a line like:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">192</span>.0.2.2    puppet.example.com puppet</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Example content for the hosts file
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>You can model the contents of your managed nodes&rsquo; <code>/etc/hosts</code> files on the following snippets. These incorporate the FQDN declarations described in the <a href="#create-your-linodes">Create your Linodes</a> section:</p>
+
+<dl class="file">
+
+
+<dt>
+        Node 1 (Ubuntu) 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1   localhost
+<span class="m">192</span>.0.2.3   puppet-agent-ubuntu.example.com puppet-agent-ubuntu
+
+<span class="m">192</span>.0.2.2   puppet.example.com puppet
+
+<span class="c1"># The following lines are desirable for IPv6 capable hosts</span>
+::1     localhost ip6-localhost ip6-loopback
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+<dl class="file">
+
+
+<dt>
+        Node 2 (CentOS) 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+<span class="m">192</span>.0.2.4   puppet-agent-centos.example.com puppet-agent-centos
+
+<span class="m">192</span>.0.2.2   puppet.example.com puppet</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</div></div>
+</blockquote></li>
+
+<li><p>On each managed node, use the <code>puppet config</code> command to set the value for your <code>server</code> setting to the FQDN of the master:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet config set server 'puppet.example.com' --section main
+</code></pre>
+
+<p>If you inspect the configuration file on the nodes, you&rsquo;ll see that the setting has been added:</p>
+
+<pre><code>cat /etc/puppetlabs/puppet/puppet.conf
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+[main]
+server = puppet.example.com
+# ...
+</code>
+</pre>
+</li>
+
+<li><p>Use the <code>puppet resource</code> command to start and enable the Puppet agent service:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet resource service puppet ensure=running enable=true
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>On systemd systems, the above command is equivalent to using these two <code>systemctl</code> commands:</p>
+
+<pre><code>systemctl start puppet
+systemctl enable puppet
+</code></pre>
+</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="generate-and-sign-certificates">Generate and Sign Certificates</h3>
+
+<p>Before your managed nodes can receive configurations from the master, they first need to be authenticated:</p>
+
+<ol>
+<li><p>On your <strong>Puppet agents</strong>, generate a certificate for the Puppet master to sign:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet agent -t
+</code></pre>
+
+<p>This command will output an error, stating that no certificate has been found. This error is because the generated certificate needs to be approved by the Puppet master.</p></li>
+
+<li><p>Log in to your <strong>Puppet master</strong> and list the certificates that need approval:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppetserver ca list
+</code></pre>
+
+<p>It should output a list with your agent nodes&rsquo; hostnames.</p></li>
+
+<li><p>Approve the certificates:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppetserver ca sign --certname puppet-agent-ubuntu.example.com,puppet-agent-centos.example.com
+</code></pre></li>
+
+<li><p>Return to the <strong>Puppet agent</strong> nodes and run the Puppet agent again:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet agent -t
+</code></pre>
+
+<p>You should see something like the following:</p>
+
+<pre class="file terminal">
+  <code>
+Info: Downloaded certificate for hostname.example.com from puppet
+Info: Using configured environment 'production'
+Info: Retrieving pluginfacts
+Info: Retrieving plugin
+Info: Retrieving locales
+Info: Caching catalog for hostname.example.com
+Info: Applying configuration version '1547066428'
+Info: Creating state file /opt/puppetlabs/puppet/cache/state/state.yaml
+Notice: Applied catalog in 0.02 seconds
+</code>
+</pre>
+</li>
+</ol>
+
+<h2 id="add-modules-to-configure-agent-nodes">Add Modules to Configure Agent Nodes</h2>
+
+<p>The Puppet master and agent nodes are now functional, but they are not secure. Based on concepts from the <a href="/docs/security/securing-your-server/">How to Secure your Server</a> guide, a limited user and a firewall should be configured. This can be done on all nodes through the creation of basic Puppet modules, shown below.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This is not meant to provide a basis for a fully-hardened server, and is intended only as a starting point. Alter and add firewall rules and other configuration options, depending on your specific needs.</div>
+</blockquote>
+
+
+<p>Puppet modules are Puppet&rsquo;s prescribed way of organizing configuration code to serve specific purposes, like installing and configuration an application. You can create custom modules, or you can download and use modules published on <a href="https://forge.puppet.com/">Puppet Forge</a>.</p>
+
+<h3 id="add-a-limited-user">Add a Limited User</h3>
+
+<p>To create a new limited user on your nodes, you will create and apply a new module called <code>accounts</code>. This module will employ the <a href="https://puppet.com/docs/puppet/6.1/types/user.html"><code>user</code> resource</a>.</p>
+
+<ol>
+<li><p>From the <strong>Puppet master</strong>, navigate to the <code>/etc/puppetlabs/code/environments/production/modules</code> directory. When a managed node requests its configuration from the master, the Puppet server process will look in this location for your modules:</p>
+
+<pre><code>cd /etc/puppetlabs/code/environments/production/modules/
+</code></pre></li>
+
+<li><p>Create the directory for a new <code>accounts</code> module:</p>
+
+<pre><code>mkdir accounts
+cd accounts
+</code></pre></li>
+
+<li><p>Create the following directories inside the <code>accounts</code> module:</p>
+
+<pre><code>mkdir {examples,files,manifests,templates}
+</code></pre>
+
+<table>
+<thead>
+<tr>
+<th>Directory</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>manifests</code></td>
+<td>The Puppet code which powers the module</td>
+</tr>
+
+<tr>
+<td><code>files</code></td>
+<td>Static files to be copied to managed nodes</td>
+</tr>
+
+<tr>
+<td><code>templates</code></td>
+<td>Template files to be copied to managed nodes that can e customized with variables</td>
+</tr>
+
+<tr>
+<td><code>examples</code></td>
+<td>Example code which shows how to use the module</td>
+</tr>
+</tbody>
+</table>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Review Puppet&rsquo;s <a href="https://puppet.com/docs/puppet/6.1/modules_fundamentals.html#module-structure">Module fundamentals</a> article for more information on how a module is structured.</div>
+</blockquote>
+</li>
+
+<li><p>Navigate to the <code>manifests</code> directory:</p>
+
+<pre><code>cd manifests
+</code></pre></li>
+
+<li><p>Any file which contains Puppet code is called a <em>manifest</em>, and each manifest file ends in <code>.pp</code>. When located inside a module, a manifest should only define one class. If a module&rsquo;s manifests directory has an <code>init.pp</code> file, the class definition it contains is considered the main class for the module. The class definition inside <code>init.pp</code> should have the same name as the module.</p>
+
+<p>Create an <code>init.pp</code> file with the contents of the following snippet. Replace all instances of <code>username</code> with a username of your choosing:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">user</span> <span class="p">{</span> <span class="s">&#39;username&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">ensure</span>      <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">home</span>        <span class="o">=&gt;</span> <span class="s">&#39;/home/username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">shell</span>       <span class="o">=&gt;</span> <span class="s">&#39;/bin/bash&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">managehome</span>  <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">gid</span>         <span class="o">=&gt;</span> <span class="s">&#39;username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>ensure</code></td>
+<td>Ensures that the user exists if set to <code>present</code>, or does not exist if set to <code>absent</code></td>
+</tr>
+
+<tr>
+<td><code>home</code></td>
+<td>The path for the user&rsquo;s home directory</td>
+</tr>
+
+<tr>
+<td><code>managehome</code></td>
+<td>Controls whether a home directory should be created when creating the user</td>
+</tr>
+
+<tr>
+<td><code>shell</code></td>
+<td>The path to the shell for the user</td>
+</tr>
+
+<tr>
+<td><code>gid</code></td>
+<td>The user&rsquo;s primary group</td>
+</tr>
+</tbody>
+</table></li>
+
+<li><p>Although the class declares what the user&rsquo;s primary group should be, it will not create the group itself. Create a new file called <code>groups.pp</code> inside the <code>manifests</code> directory with the following contents. Replace <code>username</code> with your chosen username:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/groups.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span><span class="p">::</span><span class="na">groups</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="na">group</span> <span class="p">{</span> <span class="s">&#39;username&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">ensure</span>  <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Your <code>accounts</code> class can <a href="https://puppet.com/docs/puppet/6.1/lang_classes.html#declaring-classes">declare</a> your new <code>accounts::groups</code> class for use within the <code>accounts</code> class scope. Open your <code>init.pp</code> in your editor and enter a new <code>include</code> declaration at the beginning of the class:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">include</span> <span class="na">accounts</span><span class="p">::</span><span class="na">groups</span><span class="c">
+</span><span class="c">
+</span><span class="c">  # ...</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>The new user should have administrative privileges. Because we have agent nodes on both Debian- and Red Hat-based systems, the new user needs to be in the <code>sudo</code> group on Debian systems, and the <code>wheel</code> group on Red Hat systems.</p>
+
+<p>This value can be set dynamically through the use of <a href="https://puppet.com/docs/puppet/6.1/lang_facts_and_builtin_vars.html">Puppet <em>facts</em></a>. The facts system collects system information about your nodes and makes it available in your manifests.</p>
+
+<p>Add a selector statement to the top of your <code>accounts</code> class:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="nv">$rootgroup</span> <span class="o">=</span> <span class="nv">$osfamily</span> <span class="o">?</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="s">&#39;Debian&#39;</span>  <span class="o">=&gt;</span> <span class="s">&#39;sudo&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="s">&#39;RedHat&#39;</span>  <span class="o">=&gt;</span> <span class="s">&#39;wheel&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="k">default</span>   <span class="o">=&gt;</span> <span class="k">warning</span><span class="p">(</span><span class="s">&#39;This distribution is not supported by the Accounts module&#39;</span><span class="p">),</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">include</span> <span class="na">accounts</span><span class="p">::</span><span class="na">groups</span><span class="c">
+</span><span class="c">
+</span><span class="c">  # ...</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This code defines the value for the <code>$rootgroup</code> variable by checking the value of <code>$osfamily</code>, which is one of Puppet&rsquo;s <a href="https://puppet.com/docs/facter/6.1/core_facts.html">core facts</a>. If the value for <code>$osfamily</code> does not match Debian or Red Hat, the <code>default</code> value will output a warning that the distribution selected is not supported by this module.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The Puppet Configuration Language executes code from top to bottom. Because the <code>user</code> resource declaration will reference the <code>$rootgroup</code> variable, you must define <code>$rootgroup</code> <em>before</em> the <code>user</code> declaration.</div>
+</blockquote>
+</li>
+
+<li><p>Update the user resource to include the <code>groups</code> option as follows:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="c"># ...</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">user</span> <span class="p">{</span> <span class="s">&#39;username&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>  <span class="na">ensure</span>      <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">home</span>        <span class="o">=&gt;</span> <span class="s">&#39;/home/username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">shell</span>       <span class="o">=&gt;</span> <span class="s">&#39;/bin/bash&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">managehome</span>  <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">gid</span>         <span class="o">=&gt;</span> <span class="s">&#39;username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">groups</span>      <span class="o">=&gt;</span> <span class="s">&#34;$rootgroup&#34;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="c">
+</span><span class="c">
+</span><span class="c"># ...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The value <code>&quot;$rootgroup&quot;</code> is enclosed in double quotes <code>&quot; &quot;</code> instead of single quotes <code>' '</code> because it is a variable which needs to be interpolated in your code.</p></li>
+
+<li><p>The final value that needs to be added is the user&rsquo;s password. Since we do not want to use plain text, the password should be supplied to Puppet as a SHA1 digest, which is supported by default. Generate a digest with the <code>openssl</code> command:</p>
+
+<pre><code>openssl passwd -1
+</code></pre>
+
+<p>You will be prompted to enter your password. A hashed password will be output. Copy this value to your clipboard.</p></li>
+
+<li><p>Update the user resource to include the <code>password</code> option as follows; insert your copied password hash as the value for the option:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="c"># ...</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">user</span> <span class="p">{</span> <span class="s">&#39;username&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>  <span class="na">ensure</span>      <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">home</span>        <span class="o">=&gt;</span> <span class="s">&#39;/home/username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">shell</span>       <span class="o">=&gt;</span> <span class="s">&#39;/bin/bash&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">managehome</span>  <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">gid</span>         <span class="o">=&gt;</span> <span class="s">&#39;username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">groups</span>      <span class="o">=&gt;</span> <span class="s">&#34;$rootgroup&#34;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="na">password</span>    <span class="o">=&gt;</span> <span class="s">&#39;your_password_hash&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="c">
+</span><span class="c">
+</span><span class="c"># ...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>The hashed password <strong>must</strong> be included in single quotes <code>' '</code>.</div>
+</blockquote>
+</li>
+
+<li><p>After saving your changes, use the Puppet parser to ensure that the code is correct:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet parser validate init.pp
+</code></pre>
+
+<p>Any errors that need to be addressed will be logged to standard output. If nothing is returned, your code is valid.</p></li>
+
+<li><p>Navigate to the <code>examples</code> directory and create another <code>init.pp</code> file:</p>
+
+<pre><code>cd ../examples
+</code></pre>
+
+<dl class="file">
+
+
+<dt>
+		accounts/examples/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">include</span> <span class="na">accounts</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>While still in the <code>examples</code> directory, test the module:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet apply --noop init.pp
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The <code>--noop</code> parameter prevents Puppet from actually applying the module to your system and making any changes.</div>
+</blockquote>
+
+
+<p>It should return:</p>
+
+<pre class="file terminal">
+  <code>
+Notice: Compiled catalog for puppet.example.com in environment production in 0.26 seconds
+Notice: /Stage[main]/Accounts::Groups/Group[username]/ensure: current_value absent, should be present (noop)
+Notice: Class[Accounts::Groups]: Would have triggered 'refresh' from 1 events
+Notice: /Stage[main]/Accounts/User[username]/ensure: current_value absent, should be present (noop)
+Notice: Class[Accounts]: Would have triggered 'refresh' from 1 events
+Notice: Stage[main]: Would have triggered 'refresh' from 2 events
+Notice: Finished catalog run in 0.02 seconds
+</code>
+</pre>
+</li>
+
+<li><p>Again from the <code>examples</code> directory, run <code>puppet apply</code> to make these changes to the Puppet master server:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet apply init.pp
+</code></pre>
+
+<p>Puppet will create your limited Linux user on your master.</p></li>
+
+<li><p>Log out as <code>root</code> and log in to the Puppet master as your new user.</p></li>
+</ol>
+
+<h3 id="edit-ssh-settings">Edit SSH Settings</h3>
+
+<p>Although a new limited user has successfully been added to the Puppet master, it is still possible to login to the system as root. To properly secure your system, root access should be disabled.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Because you are now logged in to the Puppet master as a limited user, you will need to execute commands and edit files with the user&rsquo;s sudo privileges.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Navigate to the <code>files</code> directory within the <code>accounts</code> module:</p>
+
+<pre><code>cd /etc/puppetlabs/code/environments/production/modules/accounts/files
+</code></pre></li>
+
+<li><p>Copy your system&rsquo;s existing <code>sshd_config</code> file to this directory:</p>
+
+<pre><code>sudo cp /etc/ssh/sshd_config .
+</code></pre></li>
+
+<li><p>Open the file in your editor (making sure that you open it with <code>sudo</code> privileges) and set the <code>PermitRootLogin</code> value to <code>no</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/files/sshd_config 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-aconf" data-lang="aconf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-aconf" data-lang="aconf"><span class="nb">PermitRootLogin</span> no</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Navigate back to the <code>manifests</code> directory:</p>
+
+<pre><code>cd ../manifests
+</code></pre></li>
+
+<li><p>Create a new manifest called <code>ssh.pp</code>. Use the <code>file</code> resource to replace the default SSH configuration file with one managed by Puppet:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/ssh.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span><span class="p">::</span><span class="na">ssh</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">file</span> <span class="p">{</span> <span class="s">&#39;/etc/ssh/sshd_config&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">ensure</span>  <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">source</span>  <span class="o">=&gt;</span> <span class="s">&#39;puppet:///modules/accounts/sshd_config&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The <code>files</code> directory is omitted from the <code>source</code> line because the <code>files</code> folder is the default location of files within a module. For more information on the format used to access resources in a module, refer to the <a href="https://docs.puppet.com/puppet/6.1/modules_fundamentals.html#module-layout">official Puppet module documentation</a>.</div>
+</blockquote>
+</li>
+
+<li><p>Create a second resource to restart the SSH service and set it to run whenever <code>sshd_config</code> is changed. This will also require a selector statement because the SSH service is named <code>ssh</code> on Debian systems and <code>sshd</code> on Red Hat systems:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/ssh.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span><span class="p">::</span><span class="na">ssh</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="nv">$sshname</span> <span class="o">=</span> <span class="nv">$osfamily</span> <span class="o">?</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="s">&#39;Debian&#39;</span>  <span class="o">=&gt;</span> <span class="s">&#39;ssh&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="s">&#39;RedHat&#39;</span>  <span class="o">=&gt;</span> <span class="s">&#39;sshd&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="k">default</span>   <span class="o">=&gt;</span> <span class="k">warning</span><span class="p">(</span><span class="s">&#39;This distribution is not supported by the Accounts module&#39;</span><span class="p">),</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">file</span> <span class="p">{</span> <span class="s">&#39;/etc/ssh/sshd_config&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">ensure</span>  <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">source</span>  <span class="o">=&gt;</span> <span class="s">&#39;puppet:///modules/accounts/sshd_config&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="k">notify</span>  <span class="o">=&gt;</span> <span class="k">Service</span><span class="p">[</span><span class="s">&#34;$sshname&#34;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">service</span> <span class="p">{</span> <span class="s">&#34;$sshname&#34;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">hasrestart</span>  <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><code>notify</code> is one of Puppet&rsquo;s <a href="https://puppet.com/docs/puppet/6.1/lang_relationships.html">relationship metaparameters</a>.</div>
+</blockquote>
+</li>
+
+<li><p>Include the <code>accounts::ssh</code> class within the <code>accounts</code> class in <code>init.pp</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		accounts/manifests/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span> <span class="p">{</span><span class="c">
+</span><span class="c">
+</span><span class="c">  # ...</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">include</span> <span class="na">accounts</span><span class="p">::</span><span class="na">groups</span><span class="err">
+</span><span class="err"></span>  <span class="k">include</span> <span class="na">accounts</span><span class="p">::</span><span class="na">ssh</span><span class="c">
+</span><span class="c">
+</span><span class="c">  # ...</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            The complete init.pp
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>The contents of your <code>init.pp</code> should now look like the following snippet:</p>
+
+<dl class="file">
+
+
+<dt>
+        accounts/manifests/init.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">accounts</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="nv">$rootgroup</span> <span class="o">=</span> <span class="nv">$osfamily</span> <span class="o">?</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>        <span class="s">&#39;Debian&#39;</span> <span class="o">=&gt;</span> <span class="s">&#39;sudo&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="s">&#39;RedHat&#39;</span> <span class="o">=&gt;</span> <span class="s">&#39;wheel&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="k">default</span> <span class="o">=&gt;</span> <span class="k">warning</span><span class="p">(</span><span class="s">&#39;This distro not supported by Accounts module&#39;</span><span class="p">),</span><span class="err">
+</span><span class="err"></span>    <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">accounts</span><span class="p">::</span><span class="na">groups</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">accounts</span><span class="p">::</span><span class="na">ssh</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>    <span class="k">user</span> <span class="p">{</span> <span class="s">&#39;example&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>        <span class="na">ensure</span>  <span class="o">=&gt;</span> <span class="k">present</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="na">home</span>    <span class="o">=&gt;</span> <span class="s">&#39;/home/username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="na">shell</span>   <span class="o">=&gt;</span> <span class="s">&#39;/bin/bash&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="na">managehome</span>  <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="na">gid</span>     <span class="o">=&gt;</span> <span class="s">&#39;username&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="na">groups</span>  <span class="o">=&gt;</span> <span class="s">&#34;$rootgroup&#34;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>        <span class="na">password</span> <span class="o">=&gt;</span> <span class="s">&#39;your_password_hash&#39;</span><span class="err">
+</span><span class="err"></span>    <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</div></div>
+</blockquote></li>
+
+<li><p>Run the Puppet parser to test the syntax of the new class, then navigate to the <code>examples</code> directory to test and run the update to your <code>accounts</code> class:</p>
+
+<pre><code>sudo /opt/puppetlabs/bin/puppet parser validate ssh.pp
+cd ../examples
+sudo /opt/puppetlabs/bin/puppet apply --noop init.pp
+sudo /opt/puppetlabs/bin/puppet apply init.pp
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>You may see the following line in your output when validating:</p>
+
+<pre class="file terminal">
+  <code>
+Error: Removing mount "files": /etc/puppet/files does not exist or is not a directory
+</code>
+</pre>
+
+<p>This refers to a Puppet configuration file, not the module resource you&rsquo;re trying to copy. If this is the only error in your output, the operation should still succeed.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>To ensure that the <code>ssh</code> class is working properly, log out of the Puppet master and then try to log in as <code>root</code>. You should not be able to do so.</p></li>
+</ol>
+
+<h3 id="add-and-configure-iptables">Add and Configure IPtables</h3>
+
+<p>To complete this guide&rsquo;s security settings, the firewall needs to be configure on your Puppet master and nodes. The <code>iptables</code> firewall software will be used.</p>
+
+<ol>
+<li><p>By default, changes to your <code>iptables</code> rules will not persist across reboots. To avoid this, install the appropriate package on your Puppet master and nodes:</p>
+
+<p><strong>Ubuntu/Debian</strong>:</p>
+
+<pre><code>sudo apt install iptables-persistent
+</code></pre>
+
+<p><strong>CentOS 7</strong>:</p>
+
+<p>CentOS 7 uses firewalld by default as a controller for iptables. Be sure firewalld is stopped and disabled before starting to work directly with iptables:</p>
+
+<pre><code>sudo systemctl stop firewalld &amp;&amp; sudo systemctl disable firewalld
+sudo yum install iptables-services
+</code></pre></li>
+
+<li><p>On your Puppet master, install <a href="https://forge.puppet.com/puppetlabs/firewall">Puppet Lab&rsquo;s firewall module</a> from the Puppet Forge:</p>
+
+<pre><code>sudo /opt/puppetlabs/bin/puppet module install puppetlabs-firewall
+</code></pre>
+
+<p>The module will be installed in your <code>/etc/puppetlabs/code/environments/production/modules</code> directory.</p></li>
+
+<li><p>Navigate to the <code>manifests</code> directory inside the new <code>firewall</code> module:</p>
+
+<pre><code>cd /etc/puppetlabs/code/environments/production/modules/firewall/manifests/
+</code></pre></li>
+
+<li><p>Create a file titled <code>pre.pp</code>, which will contain all basic networking rules that should be run first:</p>
+
+<dl class="file">
+
+
+<dt>
+		firewall/manifests/pre.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">firewall</span><span class="p">::</span><span class="na">pre</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="na">Firewall</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="na">require</span> <span class="o">=&gt;</span> <span class="k">undef</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="c">
+</span><span class="c">
+</span><span class="c">   # Accept all loopback traffic</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;000 lo traffic&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>       <span class="o">=&gt;</span> <span class="s">&#39;all&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">iniface</span>     <span class="o">=&gt;</span> <span class="s">&#39;lo&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>      <span class="o">=&gt;</span> <span class="s">&#39;accept&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="o">-&gt;</span><span class="c">
+</span><span class="c">
+</span><span class="c">   #Drop non-loopback traffic</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;001 reject non-lo&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>       <span class="o">=&gt;</span> <span class="s">&#39;all&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">iniface</span>     <span class="o">=&gt;</span> <span class="s">&#39;! lo&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">destination</span> <span class="o">=&gt;</span> <span class="s">&#39;127.0.0.0/8&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>      <span class="o">=&gt;</span> <span class="s">&#39;reject&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="o">-&gt;</span><span class="c">
+</span><span class="c">
+</span><span class="c">   #Accept established inbound connections</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;002 accept established&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>       <span class="o">=&gt;</span> <span class="s">&#39;all&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">state</span>       <span class="o">=&gt;</span> <span class="p">[</span><span class="s">&#39;RELATED&#39;</span><span class="p">,</span> <span class="s">&#39;ESTABLISHED&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>      <span class="o">=&gt;</span> <span class="s">&#39;accept&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="o">-&gt;</span><span class="c">
+</span><span class="c">
+</span><span class="c">   #Allow all outbound traffic</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;003 allow outbound&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">chain</span>       <span class="o">=&gt;</span> <span class="s">&#39;OUTPUT&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>      <span class="o">=&gt;</span> <span class="s">&#39;accept&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="o">-&gt;</span><span class="c">
+</span><span class="c">
+</span><span class="c">   #Allow ICMP/ping</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;004 allow icmp&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>       <span class="o">=&gt;</span> <span class="s">&#39;icmp&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>      <span class="o">=&gt;</span> <span class="s">&#39;accept&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="c">
+</span><span class="c">
+</span><span class="c">   #Allow SSH connections</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;005 Allow SSH&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">dport</span>    <span class="o">=&gt;</span> <span class="s">&#39;22&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>   <span class="o">=&gt;</span> <span class="s">&#39;tcp&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>  <span class="o">=&gt;</span> <span class="s">&#39;accept&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="o">-&gt;</span><span class="c">
+</span><span class="c">
+</span><span class="c">   #Allow HTTP/HTTPS connections</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;006 HTTP/HTTPS connections&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">dport</span>    <span class="o">=&gt;</span> <span class="p">[</span><span class="s">&#39;80&#39;</span><span class="p">,</span> <span class="s">&#39;443&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>   <span class="o">=&gt;</span> <span class="s">&#39;tcp&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>  <span class="o">=&gt;</span> <span class="s">&#39;accept&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>In the same directory, create <code>post.pp</code>, which will run any firewall rules that need to be input last:</p>
+
+<dl class="file">
+
+
+<dt>
+		firewall/manifests/post.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">class</span> <span class="na">firewall</span><span class="p">::</span><span class="na">post</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;999 drop all&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>  <span class="o">=&gt;</span> <span class="s">&#39;all&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span> <span class="o">=&gt;</span> <span class="s">&#39;drop&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="k">before</span> <span class="o">=&gt;</span> <span class="k">undef</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>These rules will direct the system to drop all inbound traffic that is not already permitted in the firewall.</p></li>
+
+<li><p>Run the Puppet parser on both files to check their syntax for errors:</p>
+
+<pre><code>sudo /opt/puppetlabs/bin/puppet parser validate pre.pp
+sudo /opt/puppetlabs/bin/puppet parser validate post.pp
+</code></pre></li>
+
+<li><p>Navigate to the main <code>manifests</code> directory:</p>
+
+<pre><code>cd /etc/puppetlabs/code/environments/production/manifests
+</code></pre></li>
+
+<li><p>Create a file named <code>site.pp</code> inside <code>/etc/puppetlabs/code/environments/production/manifests</code>. This file is the <a href="https://puppet.com/docs/puppet/6.1/dirs_manifest.html">main manifest</a> for the Puppet server service. It is used to map modules, classes, and resources to the nodes that they should be applied to.</p>
+
+<dl class="file">
+
+
+<dt>
+		site.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">node</span> <span class="k">default</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;puppet.example.com&#39;</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">include</span> <span class="na">accounts</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">resources</span> <span class="p">{</span> <span class="s">&#39;firewall&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">purge</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="na">Firewall</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">before</span>        <span class="o">=&gt;</span> <span class="k">Class</span><span class="p">[</span><span class="s">&#39;firewall::post&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>    <span class="na">require</span>       <span class="o">=&gt;</span> <span class="k">Class</span><span class="p">[</span><span class="s">&#39;firewall::pre&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">class</span> <span class="p">{</span> <span class="p">[</span><span class="s">&#39;firewall::pre&#39;</span><span class="p">,</span> <span class="s">&#39;firewall::post&#39;</span><span class="p">]:</span> <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="na">firewall</span> <span class="p">{</span> <span class="s">&#39;200 Allow Puppet Master&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">dport</span>         <span class="o">=&gt;</span> <span class="s">&#39;8140&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">proto</span>         <span class="o">=&gt;</span> <span class="s">&#39;tcp&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">action</span>        <span class="o">=&gt;</span> <span class="s">&#39;accept&#39;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Run the <code>site.pp</code> file through the Puppet parser to check its syntax for errors. Then, test the file with the <code>--noop</code> option to see if it will run:</p>
+
+<pre><code>sudo /opt/puppetlabs/bin/puppet parser validate site.pp
+sudo /opt/puppetlabs/bin/puppet apply --noop site.pp
+</code></pre>
+
+<p>If successful, run <code>puppet apply</code> without the <code>--noop</code> option:</p>
+
+<pre><code>sudo /opt/puppetlabs/bin/puppet apply site.pp
+</code></pre></li>
+
+<li><p>Once Puppet has finished applying the changes, check the Puppet master&rsquo;s iptables rules:</p>
+
+<pre><code>sudo iptables -L
+</code></pre>
+
+<p>It should return:</p>
+
+<pre><code>Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+ACCEPT     all  --  anywhere             anywhere             /* 000 lo traffic */
+REJECT     all  --  anywhere             127.0.0.0/8          /* 001 reject non-lo */ reject-with icmp-port-unreachable
+ACCEPT     all  --  anywhere             anywhere             /* 002 accept established */ state RELATED,ESTABLISHED
+ACCEPT     icmp --  anywhere             anywhere             /* 004 allow icmp */
+ACCEPT     tcp  --  anywhere             anywhere             multiport ports ssh /* 005 Allow SSH */
+ACCEPT     tcp  --  anywhere             anywhere             multiport ports http,https /* 006 HTTP/HTTPS connections */
+ACCEPT     tcp  --  anywhere             anywhere             multiport ports 8140 /* 200 Allow Puppet Master */
+DROP       all  --  anywhere             anywhere             /* 999 drop all */
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+ACCEPT     tcp  --  anywhere             anywhere             /* 003 allow outbound */
+</code></pre></li>
+</ol>
+
+<h3 id="apply-modules-to-the-agent-nodes">Apply Modules to the Agent Nodes</h3>
+
+<p>Now that the <code>accounts</code> and <code>firewall</code> modules have been created, tested, and run on the Puppet master, it is time to apply them to your managed nodes.</p>
+
+<ol>
+<li><p>On the <strong>Puppet master</strong>, navigate to <code>/etc/puppetlabs/code/environments/production/manifests</code>:</p>
+
+<pre><code>cd /etc/puppetlabs/code/environments/production/manifests
+</code></pre></li>
+
+<li><p>Update <code>site.pp</code> to declare the modules, classes, and resources that should be applied to each managed node:</p>
+
+<dl class="file">
+
+
+<dt>
+		site.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">node</span> <span class="k">default</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;puppet.example.com&#39;</span> <span class="p">{</span><span class="c">
+</span><span class="c">  # ...</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;puppet-agent-ubuntu.example.com&#39;</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">include</span> <span class="na">accounts</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">resources</span> <span class="p">{</span> <span class="s">&#39;firewall&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">purge</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="na">Firewall</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">before</span>        <span class="o">=&gt;</span> <span class="k">Class</span><span class="p">[</span><span class="s">&#39;firewall::post&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>    <span class="na">require</span>       <span class="o">=&gt;</span> <span class="k">Class</span><span class="p">[</span><span class="s">&#39;firewall::pre&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">class</span> <span class="p">{</span> <span class="p">[</span><span class="s">&#39;firewall::pre&#39;</span><span class="p">,</span> <span class="s">&#39;firewall::post&#39;</span><span class="p">]:</span> <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;puppet-agent-centos.example.com&#39;</span> <span class="p">{</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">include</span> <span class="na">accounts</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">resources</span> <span class="p">{</span> <span class="s">&#39;firewall&#39;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">purge</span> <span class="o">=&gt;</span> <span class="k">true</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="na">Firewall</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">before</span>        <span class="o">=&gt;</span> <span class="k">Class</span><span class="p">[</span><span class="s">&#39;firewall::post&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>    <span class="na">require</span>       <span class="o">=&gt;</span> <span class="k">Class</span><span class="p">[</span><span class="s">&#39;firewall::pre&#39;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>  <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>  <span class="k">class</span> <span class="p">{</span> <span class="p">[</span><span class="s">&#39;firewall::pre&#39;</span><span class="p">,</span> <span class="s">&#39;firewall::post&#39;</span><span class="p">]:</span> <span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>By default, the Puppet agent service on your managed nodes will automatically check with the master once every 30 minutes and apply any new configurations from the master. You can also manually invoke the Puppet agent process in-between automatic agent runs.</p>
+
+<p>Log in to each managed node (as root) and run the Puppet agent:</p>
+
+<pre><code>/opt/puppetlabs/bin/puppet agent -t
+</code></pre></li>
+
+<li><p>To ensure the Puppet agent worked:</p>
+
+<ul>
+<li><p>Log out from your root SSH session and log back in as the limited user that was created.</p></li>
+
+<li><p>Check the node&rsquo;s firewall rules:</p>
+
+<pre><code>sudo iptables -L
+</code></pre></li>
+</ul></li>
+</ol>
+
+<p>Congratulations! You&rsquo;ve successfully installed Puppet on a master and two managed nodes. Now that you&rsquo;ve confirmed everything is working, you can create additional modules to automate configuration management on your nodes. For more information, review Puppet&rsquo;s <a href="https://docs.puppet.com/puppet/latest/reference/modules_fundamentals.html">open source documentation</a>. You can also install and use modules others have created on the <a href="https://docs.puppet.com/puppet/latest/reference/modules_installing.html">Puppet Forge</a>.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://puppetlabs.com/">Puppet Labs</a></li>
+
+<li><a href="https://docs.puppetlabs.com/puppet/">Puppet Open Source Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#create-your-linodes">Create your Linodes</a></li>
+</ul></li>
+<li><a href="#puppet-master">Puppet Master</a>
+<ul>
+<li><a href="#install-the-puppet-server-software">Install the Puppet Server Software</a></li>
+<li><a href="#configure-the-server-software">Configure the Server Software</a></li>
+</ul></li>
+<li><a href="#puppet-agents">Puppet Agents</a>
+<ul>
+<li><a href="#install-puppet-agent">Install Puppet Agent</a></li>
+<li><a href="#configure-puppet-agent">Configure Puppet Agent</a></li>
+<li><a href="#generate-and-sign-certificates">Generate and Sign Certificates</a></li>
+</ul></li>
+<li><a href="#add-modules-to-configure-agent-nodes">Add Modules to Configure Agent Nodes</a>
+<ul>
+<li><a href="#add-a-limited-user">Add a Limited User</a></li>
+<li><a href="#edit-ssh-settings">Edit SSH Settings</a></li>
+<li><a href="#add-and-configure-iptables">Add and Configure IPtables</a></li>
+<li><a href="#apply-modules-to-the-agent-nodes">Apply Modules to the Agent Nodes</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

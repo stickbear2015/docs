@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Deploy a Flask Application with Dokku</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Host your own PaaS with Dokku, a highly extensible way to deploy applications built on top of Docker and Git. This guide shows how to use Dokku to quickly deploy a Flask application with SSL and NGINX.">
+        <meta name="keywords" content="docker, containers, nginx, heroku, PaaS, git, Platform-as-a-service, Platform As a Service">
+        
+        <meta property="og:title" content="Deploy a Flask Application with Dokku">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/deploy-a-flask-application-with-dokku/">
+        <meta property="og:description" content="Host your own PaaS with Dokku, a highly extensible way to deploy applications built on top of Docker and Git. This guide shows how to use Dokku to quickly deploy a Flask application with SSL and NGINX.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/deploy-a-flask-application-with-dokku/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  Deploy a Flask Application with Dokku
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Deploy a Flask Application with Dokku</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-14T14:31:38-05:00">Friday, December 14, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Sam Foo
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-a-flask-application-with-dokku%2f&via=linode&text=Deploy%20a%20Flask%20Application%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-a-flask-application-with-dokku%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-a-flask-application-with-dokku%2f&t=Deploy%20a%20Flask%20Application%20with%20Dokku" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Deploy%20a%20Flask%20Application%20with%20Dokku%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fdeploy-a-flask-application-with-dokku%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cdeploy-a-flask-application-with-dokku%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cdeploy-a-flask-application-with-dokku%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Dokku is a self-hosted Platform-as-a-Service (PaaS) that makes deploying applications simple using Git. Although Dokku&rsquo;s implementation is similar to Heroku, it lacks certain key features such as auto-scaling. Dokku is an extremely powerful tool that automatically runs your application inside Docker and requires minimal configuration of web servers.</p>
+
+<p>This guide demonstrates how to:</p>
+
+<ul>
+<li>Create a Flask application that returns &lsquo;Hello World!&rsquo; on the index page</li>
+<li>Install Dokku on a Linode</li>
+<li>Deploy a Flask application with a WSGI server inside a Docker container</li>
+<li>Add an SSL certificate through Dokku with the Let&rsquo;s Encrypt plugin</li>
+</ul>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<h3 id="on-your-local-computer">On Your Local Computer</h3>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Dokku v0.12.5 is compatible with Ubuntu 16.04 x64, Ubuntu 14.04 x64, and Debian 8.2 x64. CentOS 7 x64 is only supported experimentally, and as such some steps like configuring SSH keys and virtual hosts must be done manually using the dokku command line interface. See <a href="http://dokku.viewdocs.io/dokku~v0.12.5/getting-started/installation/">the official documentation</a> for more information.</div>
+</blockquote>
+
+
+<p>A <a href="/docs/security/authentication/use-public-key-authentication-with-ssh/">public key</a> is assumed to be available. Typically this is located in <code>~/home/username/.ssh/id_rsa.pub</code>.</p>
+
+<p>Install Git if needed:</p>
+
+<pre><code>sudo apt install git
+</code></pre>
+
+<h3 id="on-your-linode">On Your Linode</h3>
+
+<p>The Dokku install script creates a <code>dokku</code> user on the system, installs Docker, and pulls the relevant image.</p>
+
+<ol>
+<li><p>Download the install script from Dokku then run the script:</p>
+
+<pre><code>wget https://raw.githubusercontent.com/dokku/dokku/v0.12.5/bootstrap.sh
+sudo DOKKU_TAG=v0.12.5 bash bootstrap.sh
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Preparing to install v0.11.6 from https://github.com/dokku/dokku.git...
+For dokku to build containers, it is strongly suggested that you have 1024 megabytes or more of free memory
+If necessary, please consult this document to setup swap: http://dokku.viewdocs.io/dokku/advanced-installation/#vms-with-less-than-1gb-of-memory
+--> Ensuring we have the proper dependencies
+--> Initial apt-get update
+--> Installing docker
+--> NOTE: Using Linode? Docker may complain about missing AUFS support.
+    You can safely ignore this warning.
+        Installation will continue in 10 seconds.
+...
+</code>
+</pre>
+</li>
+
+<li><p>Navigate to the public IP address of your Linode in a browser and enter the public key:</p>
+
+<p><img src="dokku-public-key.png" alt="Initial Dokku Installation" /></p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>Add the public key immediately after running the installation script to avoid someone else adding a public key to Dokku. For an unattended installation, refer to the <a href="https://github.com/dokku/dokku/blob/master/docs/getting-started/advanced-installation.md">advanced installation instructions</a>.</div>
+</blockquote>
+</li>
+
+<li><p>To add additional SSH keys, pipe the output over SSH to the <code>dokku</code> user. Replace <code>example.com</code> with the IP address of your Linode.</p>
+
+<pre><code>cat ~/.ssh/id_rsa.pub | ssh dokku@example.com ssh-keys:add new-key
+</code></pre></li>
+</ol>
+
+<h2 id="create-a-flask-application">Create a Flask Application</h2>
+
+<ol>
+<li><p>On your local computer, create a new project directory:</p>
+
+<pre><code>mkdir flask-example &amp;&amp; cd flask-example
+</code></pre></li>
+
+<li><p>Create a new file called <code>hello_world.py</code> that serves &lsquo;Hello World!&rsquo; on the index page.</p>
+
+<dl class="file">
+
+
+<dt>
+		hello_world.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello World!&#39;</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1"># Bind to PORT if defined, otherwise default to 5000.</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;PORT&#39;</span><span class="p">,</span> <span class="mi">5000</span><span class="p">))</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Add a <code>requirements.txt</code> file to track versions of any dependencies of the Flask application. Gunicorn is the WSGI server used to allow Flask to interface properly with NGINX.</p>
+
+<dl class="file">
+
+
+<dt>
+		requirements.txt 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">Flask</span><span class="o">==</span><span class="m">0</span>.12.1
+<span class="nv">gunicorn</span><span class="o">==</span><span class="m">19</span>.7.1</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>For more complex projects with many dependencies using a virtual environment, redirect output of <code>pip freeze</code> into <code>requirements.txt</code>.</p>
+
+<pre><code>pip freeze &gt; requirements.txt
+</code></pre></li>
+</ol>
+
+<h3 id="add-a-gitignore">Add a gitignore</h3>
+
+<p>Optionally, add a <code>.gitignore</code> file to have Git omit caching and virtual environment files from version control.</p>
+
+<dl class="file">
+
+
+<dt>
+		.gitignore 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">__pycache__/
+*.pyc
+
+venv/</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h3 id="procfile">Procfile</h3>
+
+<p>The Procfile tells the Gunicorn server what command to use when launching the app:</p>
+
+<dl class="file">
+
+
+<dt>
+		Procfile 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">web: gunicorn hello_world:app --workers<span class="o">=</span><span class="m">4</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>4 workers is a good default for an web app running on a Linode. See the <a href="http://docs.gunicorn.org/en/stable/design.html#how-many-workers">Gunicorn docs</a> for more information about determining the correct number of workers for your particular app.</div>
+</blockquote>
+
+
+<h3 id="git-remote">Git Remote</h3>
+
+<ol>
+<li><p>Initialize a Git repository:</p>
+
+<pre><code>git init
+git add .
+git commit -m &quot;Deploy Flask with Dokku&quot;
+</code></pre></li>
+
+<li><p>Add a remote named <code>dokku</code> with the username <code>dokku</code> and substitute <code>example.com</code> with the public IP address of your Linode:</p>
+
+<pre><code>git remote add dokku dokku@example.com:flask-example
+</code></pre></li>
+
+<li><p>Verify the remote is added:</p>
+
+<pre><code>git remote -v
+</code></pre>
+
+<p>This will list the remotes.</p>
+
+<pre class="file terminal">
+  <code>
+dokku   dokku@example-ip:flask-example (fetch)
+dokku   dokku@example-ip:flask-example (push)
+</code>
+</pre>
+
+
+<p>In summary, the project layout looks like:</p>
+
+<pre><code>flask-example
+├── .gitignore
+├── Procfile
+├── hello_world.py
+└── requirements.txt
+</code></pre></li>
+</ol>
+
+<h2 id="create-project-on-a-dokku-host">Create Project on a Dokku Host</h2>
+
+<ol>
+<li><p>SSH into your Linode and create the application:</p>
+
+<pre><code>dokku apps:create flask-example
+</code></pre></li>
+
+<li><p>Make sure VHOST is enabled.</p>
+
+<pre><code>dokku domains:enable flask-example
+</code></pre></li>
+</ol>
+
+<h2 id="deploy-a-flask-application">Deploy a Flask Application</h2>
+
+<ol>
+<li><p>On your local computer, deploy the Flask application by pushing the branch to the <code>dokku</code> remote. This will take care of NGINX behind the scenes and expose port <code>80</code>:</p>
+
+<pre><code>git push dokku master
+</code></pre>
+
+<p>Other local branches can also be deployed but, all branches must be pushed to the master branch of the <code>dokku</code> remote:</p>
+
+<pre><code>git push dokku branch-name:master
+</code></pre></li>
+
+<li><p><code>curl</code> the IP address of your Linode to test that the app was deployed successfully:</p>
+
+<pre><code>curl example.com
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Hello World!
+</code>
+</pre>
+</li>
+</ol>
+
+<h3 id="ssl-certificate-with-dokku-and-let-s-encrypt">SSL Certificate with Dokku and Let&rsquo;s Encrypt</h3>
+
+<p>The remaining steps in this guide should be performed from your Linode.</p>
+
+<ol>
+<li><p>Install the Let&rsquo;s Encrypt plugin for Dokku:</p>
+
+<pre><code>sudo dokku plugin:install https://github.com/dokku/dokku-letsencrypt.git
+</code></pre></li>
+
+<li><p>Set the <code>DOKKU_LETSENCRYPT_EMAIL</code> environment variable to the email for Let&rsquo;s Encrypt:</p>
+
+<pre><code>dokku config:set flask-example DOKKU_LETSENCRYPT_EMAIL=docs@linode.com
+</code></pre></li>
+
+<li><p>Add the application and domain:</p>
+
+<pre><code>dokku domains:add flask-example example.com
+</code></pre></li>
+
+<li><p>Create the SSL certificate. NGINX will automatically start serving the application over HTTPS on port 443:</p>
+
+<pre><code> dokku letsencrypt flask-example
+</code></pre></li>
+
+<li><p>Run this as a cron job so the certificate will renew automatically:.</p>
+
+<pre><code>dokku letsencrypt:cron-job --add
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This requires Dokku version 0.5 or higher. Check by running <code>dokku version</code>.</div>
+</blockquote>
+</li>
+</ol>
+
+<h2 id="start-stop-and-restart-applications">Start, Stop, and Restart Applications</h2>
+
+<ul>
+<li><p>List all running Dokku applications:</p>
+
+<pre><code>dokku apps
+</code></pre></li>
+
+<li><p>Restart an application:</p>
+
+<pre><code>dokku ps:restart flask-example
+</code></pre></li>
+
+<li><p>Stop an application:</p>
+
+<pre><code>dokku ps:stop flask-example
+</code></pre></li>
+
+<li><p>Restore all applications after a reboot:</p>
+
+<pre><code>dokku ps:restore
+</code></pre></li>
+</ul>
+
+<h3 id="view-application-logs">View Application Logs</h3>
+
+<p>View the application logs through Dokku or the Docker container.</p>
+
+<ol>
+<li><p>To see logs through Dokku:</p>
+
+<pre><code>dokku logs flask-example
+</code></pre></li>
+
+<li><p>List all running Docker containers:</p>
+
+<pre><code>sudo docker ps -a
+</code></pre></li>
+
+<li><p>Find the container ID then run:</p>
+
+<pre><code>sudo docker logs container_id
+</code></pre></li>
+</ol>
+
+<h2 id="scale-applications">Scale Applications</h2>
+
+<p>Dokku does not scale applications automatically, and by default will only run a single <code>web</code> process. To increase the number of containers running your application, you can use the <code>ps:scale</code> command.</p>
+
+<ol>
+<li><p>Check how many workers your application currently has:</p>
+
+<pre><code>dokku ps:scale flask-example
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+-----> Scaling for flask-example
+-----> proctype           qty
+-----> --------           ---
+-----> web                1
+</code>
+</pre>
+</li>
+
+<li><p>Scale up to 4 <code>web</code> processes:</p>
+
+<pre><code>dokku ps:scale flask-example web=4
+</code></pre></li>
+
+<li><p>Confirm that the new processes are running:</p>
+
+<pre class="file terminal">
+  <code>
+-----> Scaling for flask-example
+-----> proctype           qty
+-----> --------           ---
+-----> web                4
+</code>
+</pre>
+</li>
+</ol>
+
+<p>Dokku is an open source alternative to Heroku for small applications. Deploying applications is as simple as pushing to a remote with Git. Elements such as Docker and NGINX are abstracted away to minimize time to deployment. There are additional features such as <a href="http://dokku.viewdocs.io/dokku/advanced-usage/deployment-tasks/">pre-deploy hooks</a> and linking databases which are not shown in this guide.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="http://dokku.viewdocs.io/dokku/">Dokku PaaS</a></li>
+
+<li><a href="http://flask.pocoo.org/">Flask</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#on-your-local-computer">On Your Local Computer</a></li>
+<li><a href="#on-your-linode">On Your Linode</a></li>
+</ul></li>
+<li><a href="#create-a-flask-application">Create a Flask Application</a>
+<ul>
+<li><a href="#add-a-gitignore">Add a gitignore</a></li>
+<li><a href="#procfile">Procfile</a></li>
+<li><a href="#git-remote">Git Remote</a></li>
+</ul></li>
+<li><a href="#create-project-on-a-dokku-host">Create Project on a Dokku Host</a></li>
+<li><a href="#deploy-a-flask-application">Deploy a Flask Application</a>
+<ul>
+<li><a href="#ssl-certificate-with-dokku-and-let-s-encrypt">SSL Certificate with Dokku and Let&rsquo;s Encrypt</a></li>
+</ul></li>
+<li><a href="#start-stop-and-restart-applications">Start, Stop, and Restart Applications</a>
+<ul>
+<li><a href="#view-application-logs">View Application Logs</a></li>
+</ul></li>
+<li><a href="#scale-applications">Scale Applications</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

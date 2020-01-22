@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Keep Your Linode Account Safe</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="How to use two-factor authentication and other security controls in the Linode Manager.">
+        <meta name="keywords" content="two-factor authentication, password, security, Linode Manager, token">
+        
+        <meta property="og:title" content="How to Keep Your Linode Account Safe">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/platform/manager/keep-your-linode-account-safe-classic-manager/">
+        <meta property="og:description" content="This guide describes the security features of the Linode Manager, including two-factor authentication, API access controls, forced password expiration, and more.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/platform/manager/keep-your-linode-account-safe-classic-manager/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/">Linode Platform</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/manager/">Linode Manager</a>
+  
+</li>
+
+
+<li>
+  
+  How to Keep Your Linode Account Safe
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Keep Your Linode Account Safe</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-03-08T16:42:06-05:00">Friday, March 8, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fmanager%2fkeep-your-linode-account-safe-classic-manager%2f&via=linode&text=How%20to%20Keep%20Your%20Linode%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fmanager%2fkeep-your-linode-account-safe-classic-manager%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fmanager%2fkeep-your-linode-account-safe-classic-manager%2f&t=How%20to%20Keep%20Your%20Linode%20Account%20Safe" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Keep%20Your%20Linode%20Account%20Safe%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fplatform%2fmanager%2fkeep-your-linode-account-safe-classic-manager%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/platform%5cmanager%5ckeep-your-linode-account-safe-classic-manager%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/platform%5cmanager%5ckeep-your-linode-account-safe-classic-manager%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+<blockquote class="cloud_manager_link">
+  <strong class="callout-title">The <a href="https://cloud.linode.com">Linode Cloud Manager</a> has arrived!</strong>
+  <div>View the Linode Cloud Manger version of the <a href=http://localhost:1313/docs/security/linode-manager-security-controls/>How to Keep Your Linode Account Safe</a> guide.</div>
+</blockquote>
+
+
+
+
+
+            
+            
+
+<p><img src="How_to_Keep_Your_Linode_Account_Safe_smg.jpg" alt="Banner_image" /></p>
+
+<!-- ![Classic Manager Security Controls](Linode_Manager_Security_Controls_smg.jpg) -->
+
+<p>The <a href="https://manager.linode.com">Classic Manager</a> is the gateway to your Linode products and services, and you should take steps to protect it from unauthorized access. Linode supports and recommends implementing the following security measures:</p>
+
+<ol>
+<li><p>Enable <a href="#two-factor-authentication">two-factor authentication</a>.</p></li>
+
+<li><p>Configure and monitor <a href="#linode-event-notifications">event notifications</a>.</p></li>
+</ol>
+
+<p>These measures make it much more difficult for someone else to log in to your account without your knowledge. However, you should also take steps to make sure you don&rsquo;t accidentally lock yourself out of your account, too. Here are a few things you can do to minimize the chance of that happening:</p>
+
+<ol>
+<li><p>Record a <a href="#record-your-scratch-code">scratch code</a> for your two-factor authentication.</p></li>
+
+<li><p><a href="#create-a-backup-user">Create a backup user</a> that you can log in to your Linode account with in addition to your primary user.</p></li>
+
+<li><p>Be aware of <a href="#recovery-procedure">the documentation</a> that Linode requires in case you are otherwise unable to access to your account.</p></li>
+</ol>
+
+<p>The following sections describe these measures in more detail.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>These measures describe security controls for the Classic Manager and API, which are distinct from the authorization protocols for your individual servers. If you are collaborating with other people to work on your services, or if you are concerned about unauthorized access to your Linodes, review the <a href="/docs/platform/create-limited-developer-account/">Create an Account for a Developer to Work on Your Linode</a> guide for more on how to control access to your servers.</div>
+</blockquote>
+
+
+<h2 id="two-factor-authentication">Two-Factor Authentication</h2>
+
+<p>Two-factor authentication (2FA) increases the security of your account by requiring two forms of authentication: something you have, and something you know. You&rsquo;re already familiar with this concept if you&rsquo;ve ever used a debit card at an ATM. The debit card is something you have, and the PIN access code is something you know. You need both the debit card and the PIN to access your bank account.</p>
+
+<p>In this analogy, your card&rsquo;s PIN is akin to your Linode account&rsquo;s password, and your debit card is like your 2FA code. Your 2FA code is provided by a two-factor authorization application that supports the <em>Time-based One-Time Password (TOTP) algorithm</em>. You generally install a 2FA app on your phone so that it&rsquo;s always handy. Under TOTP, your 2FA app will provide a code that is valid for only a short amount of time, after which a new code is generated.</p>
+
+<p><img src="two-factor-authentication-diagram.png" alt="Two Factor Authentication Diagram" title="Two-factor authentication" /></p>
+
+<h3 id="enable-two-factor-authentication">Enable Two-Factor Authentication</h3>
+
+<ol>
+<li><p>Install an OTP generation app on your smartphone or tablet. For example, you can use any of the following applications:</p>
+
+<ul>
+<li><a href="https://authy.com/features/setup/">Authy</a> (Android/iOS/Chrome)</li>
+<li><a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2">Google Authenticator</a> (Android/iOS)</li>
+<li><a href="http://guide.duosecurity.com/third-party-accounts">Duo Mobile</a> (Android/iOS)</li>
+<li><a href="https://freeotp.github.io/">FreeOTP</a> (Android/iOS)</li>
+</ul></li>
+
+<li><p>Click the <strong>my profile</strong> link at the top right corner of the Classic Manager.</p></li>
+
+<li><p>Re-authenticate using your Linode user&rsquo;s password.</p></li>
+
+<li><p>From the <strong>Password &amp; Authentication</strong> page of the Classic Manager, click <strong>Enable Two-Factor Authentication</strong>.</p></li>
+
+<li><p>You&rsquo;ll then be shown a secret key and a QR code. <strong>The key will be shown only once. Do not refresh this page until you have configured a 2FA app on your phone.</strong> Write down the secret key and store it in a safe place. If you get locked out of your account, <a href="/docs/support">contact support</a> to regain access.</p></li>
+
+<li><p>Open your phone&rsquo;s 2FA app and add a new account.</p></li>
+
+<li><p>Scan the QR code shown in the Classic Manager. Your 2FA app will create a new login token labeled <em>LinodeManager:user</em>.</p></li>
+
+<li><p>Enter the token from your 2FA app in the <strong>Generated Token</strong> field of the page above. Click <strong>Confirm my token, and enable two-factor auth!</strong></p></li>
+
+<li><p>Note the scratch code and store it in a secure place. <strong>This is important.</strong> You will use this code if your 2FA device is not available.</p></li>
+</ol>
+
+<h3 id="log-in-with-two-factor-authentication">Log in with Two-Factor Authentication</h3>
+
+<ol>
+<li><p>Open the <a href="https://manager.linode.com">Classic Manager</a> in your web browser and log in as normal using your username and password. The authentication code text field will then appear.</p></li>
+
+<li><p>Open the 2FA app on your smartphone, then select your <em>LinodeManager:user</em> account.</p></li>
+
+<li><p>Enter the 2FA token from your phone and click <strong>Authenticate</strong>. Checking the box below the authentication option will add your computer to the trusted computer list for 30 days and generate a confirmation email to the address on file for your account.</p></li>
+</ol>
+
+<h3 id="record-your-scratch-code">Record Your Scratch Code</h3>
+
+<p>In the event that your smartphone is unavailable or your secret key is lost, you can use a one-time scratch code to log back in to the Classic Manager and regenerate the key. Scratch codes are disabled by default. <strong>We highly recommend you generate a scratch code</strong> and store it somewhere accessible and secure.</p>
+
+<ol>
+<li><p>Return to the <strong>Password &amp; Authentication</strong> tab in the Classic Manager and click the <strong>generate</strong> link to create a scratch code.</p></li>
+
+<li><p>A pop-up will appear asking you to confirm the action. Click <strong>OK</strong>.</p></li>
+
+<li><p>The scratch code will then be shown. <strong>This code will be displayed only once</strong>&ndash;copy or write it down and store it somewhere safe.</p></li>
+</ol>
+
+<h3 id="generate-a-new-key">Generate a New Key</h3>
+
+<p>The Classic Manager allows you to generate a new secret key for your two-factor authentication device. This is useful if you buy a new phone or otherwise need to set up a new 2FA app. To generate a new secret key:</p>
+
+<ol>
+<li><p>Return to the <strong>Password &amp; Authentication</strong> tab.</p></li>
+
+<li><p>In the <em>Two-Factor Authentication</em> section, click <strong>Regenerate Secret Key</strong>.</p></li>
+
+<li><p>A new secret key and barcode will be generated for your account and displayed on the screen. Follow the instructions in the <a href="#enable-two-factor-authentication">Enabling Two-Factor Authentication</a> section to add the new key to your smartphone.</p></li>
+</ol>
+
+<h3 id="disable-two-factor-authentication">Disable Two-Factor Authentication</h3>
+
+<p>You can disable two-factor authentication for your Classic Manager account at any time.</p>
+
+<ol>
+<li><p>Return to the <strong>Password &amp; Authentication</strong> tab.</p></li>
+
+<li><p>In the <strong>Two-Factor Authentication</strong> section, select <strong>Disable</strong>.</p></li>
+
+<li><p>A confirmation window appears asking if you want to disable two-factor authentication. Click <strong>OK</strong>.</p></li>
+</ol>
+
+<h3 id="recovery-procedure">Recovery Procedure</h3>
+
+<p>If you lose your token and get locked out of the Classic Manager, email <a href="mailto:support@linode.com">support@linode.com</a> to regain access to your account. Should you need us to disable your Two-Factor Authentication, the following information is required:</p>
+
+<ol>
+<li>An image of the front and back of the payment card currently associated with your account, which clearly shows the last 6 digits, expiration date, and cardholder name.</li>
+<li>An image of the front and back of a matching government-issued photo ID.</li>
+</ol>
+
+<h2 id="linode-event-notifications">Linode Event Notifications</h2>
+
+<p>By default, the Classic Manager automatically sends event notifications via email when any jobs are added to the <em>Host Job Queue</em> of one of your Linodes. Monitoring these emails will help you detect potential unusual activity on your servers, which could be a sign of an unauthorized login. You can also subscribe to an RSS feed of these notifications.</p>
+
+<p>To review your event notification settings:</p>
+
+<ol>
+<li><p>Click the <strong>my profile</strong> link at the top right corner of the Classic Manager.</p></li>
+
+<li><p>Re-authenticate using your Linode user&rsquo;s password.</p></li>
+
+<li><p>Go to the <strong>Notifications</strong> tab.</p></li>
+
+<li><p>The <strong>Events Email Notifications</strong> label will show whether email notifications are enabled or disabled. Click the <strong>Toggle Event Email Notifications</strong> button to adjust this setting.</p></li>
+</ol>
+
+<h3 id="rss">RSS</h3>
+
+<p>The URL for your event notifications RSS feed is displayed in the <strong>Notifications</strong> tab. To regenerate the URL for the RSS feed, click the <strong>Generate a new RSS key</strong> button. If you regenerated the URL for the RSS feed, you will need to update it in your RSS reader.</p>
+
+<h2 id="create-a-backup-user">Create a Backup User</h2>
+
+<p>Creating a second user on your account will allow you to log in to your account if you are locked out of your first user. For example, if the email address that your first user is associated with becomes inaccessible for any reason, then you will not be able to receive password reset and other notification emails from Linode for that user. In this situation, having a second user associated with a different email address is useful. In particular, it&rsquo;s recommended that you use an email under a different domain, in case your first email&rsquo;s domain is facing service or DNS issues.</p>
+
+<p>This backup user should be created with unrestricted permissions so that you can fully administer your account from it. The <a href="/docs/platform/manager/accounts-and-passwords/">Accounts and Passwords</a> guide provides more information on creating a second user. It is recommended that you also enable this guide&rsquo;s security measures for this backup user.</p>
+
+<h2 id="other-security-measures">Other Security Measures</h2>
+
+<h3 id="configure-users-for-other-team-members">Configure Users for Other Team Members</h3>
+
+<p>If you have multiple individuals accessing the same Linode account, you should create separate user accounts for each individual. Once you&rsquo;ve created the accounts, you can assign permissions to restrict access to certain areas of the control panel.</p>
+
+<p>This is useful for groups that need to grant all team members access to the Classic Manager, or perhaps if you just want the billing department to have a separate account to receive invoices and billing information. The <a href="/docs/platform/manager/accounts-and-passwords/">Accounts and Passwords</a> guide provides more information on user creation and permissions. The <a href="/docs/platform/create-limited-developer-account/">Create an Account for a Developer to Work on Your Linode</a> guide is also available and describes best practices when hiring a developer.</p>
+
+<h3 id="api-access">API Access</h3>
+
+<p>The <a href="https://www.linode.com/api/">Linode API</a> is a programmatic interface for many of the features available in the Classic Manager. For this reason, the Classic Manager provides two security controls for your account&rsquo;s API key. First, you can generate a new API key if you suspect that your existing key has been compromised. And if you&rsquo;re not using the API key, you can remove access to it altogether.</p>
+
+<p>See the <a href="/docs/platform/api/api-key/">API Key</a> article for details.</p>
+
+<h3 id="force-password-expirations">Force Password Expirations</h3>
+
+<p>Your company&rsquo;s policy may require users to change their passwords after a fixed interval of time. The Classic Manager can be configured to require password resets every 1, 3, 6, or 12 months. For more information, see the documentation on <a href="/docs/platform/accounts-and-passwords/#passwords">Passwords in the Classic Manager</a>.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#two-factor-authentication">Two-Factor Authentication</a>
+<ul>
+<li><a href="#enable-two-factor-authentication">Enable Two-Factor Authentication</a></li>
+<li><a href="#log-in-with-two-factor-authentication">Log in with Two-Factor Authentication</a></li>
+<li><a href="#record-your-scratch-code">Record Your Scratch Code</a></li>
+<li><a href="#generate-a-new-key">Generate a New Key</a></li>
+<li><a href="#disable-two-factor-authentication">Disable Two-Factor Authentication</a></li>
+<li><a href="#recovery-procedure">Recovery Procedure</a></li>
+</ul></li>
+<li><a href="#linode-event-notifications">Linode Event Notifications</a>
+<ul>
+<li><a href="#rss">RSS</a></li>
+</ul></li>
+<li><a href="#create-a-backup-user">Create a Backup User</a></li>
+<li><a href="#other-security-measures">Other Security Measures</a>
+<ul>
+<li><a href="#configure-users-for-other-team-members">Configure Users for Other Team Members</a></li>
+<li><a href="#api-access">API Access</a></li>
+<li><a href="#force-password-expirations">Force Password Expirations</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

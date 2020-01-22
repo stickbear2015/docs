@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Monitor Remote Hosts with Icinga</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide shows how to configure Icinga 2 to monitor remote systems on your Linode">
+        <meta name="keywords" content="debian, icinga, monitoring, icinga2">
+        
+        <meta property="og:title" content="Monitor Remote Hosts with Icinga">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/uptime/monitoring/monitor-remote-hosts-with-icinga/">
+        <meta property="og:description" content="This guide will show you how to configure Icinga 2 to monitor your remote systems. Icinga 2 can monitor local and remote systems, and this guide shows you how to do both.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/uptime/monitoring/monitor-remote-hosts-with-icinga/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/uptime/">Uptime &amp; Analytics</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/uptime/monitoring/">Server Monitoring</a>
+  
+</li>
+
+
+<li>
+  
+  Monitor Remote Hosts with Icinga
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Monitor Remote Hosts with Icinga</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-07-03T11:38:47-04:00">Tuesday, July 3, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    <a href="mailto:linuxboxgo@gmail.com">Matt Vass
+      
+    </a>
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fuptime%2fmonitoring%2fmonitor-remote-hosts-with-icinga%2f&via=linode&text=Monitor%20Remote%20Hosts%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fuptime%2fmonitoring%2fmonitor-remote-hosts-with-icinga%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fuptime%2fmonitoring%2fmonitor-remote-hosts-with-icinga%2f&t=Monitor%20Remote%20Hosts%20with%20Icinga" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Monitor%20Remote%20Hosts%20with%20Icinga%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fuptime%2fmonitoring%2fmonitor-remote-hosts-with-icinga%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/uptime%5cmonitoring%5cmonitor-remote-hosts-with-icinga%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/uptime%5cmonitoring%5cmonitor-remote-hosts-with-icinga%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="monitor-remote-hosts-icinga-title.jpg" alt="Monitor Remote Hosts with Icinga" title="Monitor Remote Hosts with Icinga" /></p>
+
+<h2 id="what-is-icinga-2">What is Icinga 2?</h2>
+
+<p>This guide is a continuation of our guide on <a href="/docs/uptime/monitoring/install-icinga2-monitoring-on-debian-9">Icinga 2</a>.
+Icinga, is an open source network monitoring application that can be used to monitor critical services and systems on your Linode. Icinga 2 can monitor hosts on a network or it can verify network external protocols, such as the state of an HTTP server, mail server, file-sharing service, or others.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>The steps and examples in this guide assume the defaults and configurations from the previous guide. Adjust all variables accordingly.</p>
+
+<h2 id="monitor-remote-hosts-via-simple-host-monitoring">Monitor Remote Hosts via Simple Host Monitoring</h2>
+
+<p>In order to monitor a host and its external services via regular command checks, Icinga 2 uses a mechanism that issues a ping command against the server&rsquo;s IP address at regular intervals and using its built-in commands, regularly verifies the state of remote network services protocols, such as HTTP, SSH, SMTP, IMAP, POP or others.<br />
+Icinga 2 stores Host definitions in objects. These objects and their attributes are used for applying rules for <code>Service</code>, <code>Notification</code>, <code>Dependency</code>, and <code>Scheduled Downtime</code> can be found in <code>hosts.conf</code> file, in <code>/etc/icinga2/conf.d/</code>.</p>
+
+<ol>
+<li><p>To add a new host definition to be periodically monitored by Icinga 2 engine via ICMP checks, open <code>hosts.conf</code> and add the following lines to the bottom of the file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/icinga2/conf.d/hosts.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">object Host &#34;Linode&#34; {
+  import &#34;generic-host&#34;
+  address = &#34;10.25.1.31&#34;
+  check_command = &#34;hostalive&#34;
+}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>To check the status of a web server that runs on this node, add the following lines after host definition. This check will verify if the web server is alive and responds with the proper HTTP codes:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/icinga2/conf.d/hosts.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">object Service &#34;http&#34; {
+  host_name = &#34;Linode&#34;
+  check_command = &#34;http&#34;
+}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Restart the service to apply the host definitions and start monitoring the new host resource:</p>
+
+<pre><code>systemctl restart icinga2.service
+</code></pre></li>
+
+<li><p>Verify the state of the new host by navigating to <strong>Overview</strong> then <strong>Hosts</strong> in Icinga’s Web 2 interface.</p></li>
+
+<li><p>To display the status of the host’s HTTP service, navigate to <strong>Overview</strong> then <strong>Servicegroups</strong> and click <strong>HTTP Checks</strong>.</p></li>
+</ol>
+
+<h2 id="monitor-remote-hosts-via-icinga-2-agent-monitoring">Monitor Remote Hosts via Icinga 2 Agent Monitoring</h2>
+
+<p>Icina2 can monitor a node&rsquo;s internal health parameters, such as CPU load, disk space, memory, and number of running process via a secured channel set up between a master node and client node on port <code>5665/TCP</code>. In this instance we’ll configure our Icinga 2 to act as the master node and monitor the remote CentOS 7 client node. In this specific type of configuration, also called a <em>Top Down Command Endpoint</em> model, the check commands will be scheduled on the master node and then will be sent to the client via a TLS connection.</p>
+
+<ol>
+<li><p>Set up the Icinga 2 master node on our Debian 9 server. Configure this instance of Icinga 2 as a master node:</p>
+
+<pre><code>icinga2 node wizard
+</code></pre></li>
+
+<li><p>Follow the prompts, and enter <code>n</code> to install a master setup:</p>
+
+<pre><code>Please specify if this is a satellite setup ('n' installs a master setup) [Y/n]: n
+</code></pre></li>
+
+<li><p>Press <strong>Enter</strong> to accept the default for each of the following:</p>
+
+<pre><code>Please specify the common name (CN) [icinga]:
+Please specify the API bind host/port (optional):
+Bind Host []:
+Bind Port []:
+</code></pre></li>
+
+<li><p>Restart the Icinga 2 service to apply the master node configuration and check the daemon status:</p>
+
+<pre><code>systemctl restart icinga2.service
+systemctl status icinga2.service
+</code></pre></li>
+
+<li><p>Output the port number of this master node and open the port in your Debian firewall:</p>
+
+<pre><code>netstat -tulpn| grep icinga
+</code></pre></li>
+
+<li><p>Generate a client ticket for your client node. Use the hostname of your client to generate the ticket. In this example the client node hostname is <code>centos</code>. Replace the hostname of the client and make sure you run the command with <code>root</code> privileges:</p>
+
+<pre><code>icinga2 pki ticket --cn 'centos'
+</code></pre>
+
+<p>The command will generate and display a key. Copy or note this key because you will need it to set up the CentOS client later.</p></li>
+</ol>
+
+<h2 id="configure-centos-7-client-node">Configure CentOS 7 Client Node</h2>
+
+<ol>
+<li><p>Log in to your CentOS 7 system with an account with <code>root</code> privileges or directly as root and issue the following command to enable EPEL and Icinga 2 repositories in CentOS. Also, make sure your CentOS 7 system is configured with a static IP address.</p>
+
+<pre><code>yum install epel-release
+yum install https://packages.icinga.com/epel/icinga-rpm-release-7-latest.noarch.rpm
+</code></pre></li>
+
+<li><p>Install the Igina2 engine and Nagios plugins required by Icinga 2 to execute the check commands in CentOS by issuing the following command:</p>
+
+<pre><code>yum install icinga2 nagios-plugins-all
+</code></pre></li>
+
+<li><p>After the Icinga 2 daemon has been installed in your CentOS system, start the node wizard and configure this system as a satellite node instead of master node:</p>
+
+<pre><code>icinga2 node wizard
+</code></pre></li>
+
+<li><p>Use the client node wizard to configure the CentOS client node with the following answers when prompted. Press <strong>Enter</strong> to accept the default as shown below:</p>
+
+<pre><code>Please specify if this is a satellite setup ('n' installs a master setup) [Y/n]: y
+Please specify the common name (CN) [centos]: **Enter**
+Master Common Name (CN from your master setup): icinga
+Do you want to establish a connection to the master from this node? [Y/n]: y
+Master endpoint host (Your master's IP address or FQDN): 10.25.32.120
+Master endpoint port [5665]: **Enter**
+Add more master endpoints? [y/N]: n
+Please specify the master connection for CSR auto-signing (defaults to master endpoint host): **Enter**
+Host [10.25.32.120]: **Enter**
+Port [5665]: **Enter**
+</code></pre></li>
+
+<li><p>Verify the information when prompted:</p>
+
+<pre><code>Is this information correct? [y/N]: y
+</code></pre></li>
+
+<li><p>Enter the ticket key generated in Step 6 of the previous section:</p>
+
+<pre><code>Please specify the request ticket generated on your Icinga 2 master.
+ (Hint: # icinga2 pki ticket --cn 'centos'): &lt;b&gt;a34c7fcbc4f5311257d2a5d4e7f1961dc3c64cb5 &lt;/b&gt; (Enter the ticket key generated on the master node)
+</code></pre></li>
+
+<li><p>Complete the installation:</p>
+
+<pre><code>Please specify the API bind host/port (optional): **Enter**
+Bind Host []: **Enter**
+Bind Port []: **Enter**
+Accept config from master? [y/N]: y
+Accept commands from master? [y/N]: y
+</code></pre></li>
+
+<li><p>After the client node wizard completes, restart the Icinga 2 service, check Icinga 2 service status, list Icinga’s listening port, and add the Icinga 2 listening port number to the CentOS firewall:</p>
+
+<pre><code>systemctl restart icinga2
+systemctl status icinga2
+ss –tlpn|grep icinga2
+firewall-cmd --add-port=5665/tcp --permanent
+firewall-cmd --reload
+</code></pre></li>
+</ol>
+
+<h2 id="set-up-icinga-2-master-agent-based-monitoring">Set up Icinga 2 Master Agent-based Monitoring</h2>
+
+<ol>
+<li><p>Log in to the Icinga 2 master node and create a CentOS client zone directory, a client configuration, and a services file:</p>
+
+<pre><code>mkdir /etc/icinga2/zones.d/centos/
+touch /etc/icinga2/zones.d/centos/centos.conf
+touch /etc/icinga2/zones.d/centos/services.conf
+</code></pre></li>
+
+<li><p>Add the following lines to the <code>centos.conf</code> zone configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		centos.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">object Zone &#34;centos&#34; {
+  endpoints = [ &#34;centos&#34; ]
+  parent = &#34;icinga&#34;
+}
+
+object Endpoint &#34;centos&#34; {
+  host = &#34;192.168.1.100&#34;
+}
+
+object Host &#34;centos&#34; {
+  import &#34;generic-host&#34;
+  address = &#34;192.168.1.100&#34;
+  vars.os = &#34;Linux&#34;
+  vars.notification[&#34;mail&#34;] = {
+    groups = [ &#34;icingaadmins&#34; ]
+  }
+  vars.client_endpoint = name
+}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The CentOS endpoint object zone will report back to its master node defined by the <code>parent = “icinga”</code> statement. Replace the CentOS hostname and IP address accordingly.</p></li>
+
+<li><p>Update the CentOS zone services configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/icinga2/zones.d/centos/services.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">apply Service &#34;users&#34; {
+  import &#34;generic-service&#34;
+  check_command = &#34;users&#34;
+  command_endpoint = host.vars.client_endpoint
+  assign where host.vars.client_endpoint
+}
+
+apply Service &#34;procs&#34; {
+  import &#34;generic-service&#34;
+  check_command = &#34;procs&#34;
+  command_endpoint = host.vars.client_endpoint
+  assign where host.vars.client_endpoint
+}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In this configuration file we’ve defined the following services checks for the remote client:</p>
+
+<ul>
+<li>Verify number of users logged in to the system and the number of processes running.</li>
+<li>The <code>command_endpoint</code> lines force the service checks to be transmitted to the remote CentOS system and executed by the Icinga 2 engine command endpoint.</li>
+<li>You can add as many commands as you’d like here to be executed internally on the remote host. However, if Icinga sent instructions are not present on the remote node as Nagios plugin scripts, the commands won’t execute and an error will be displayed in the icinga2 web interface.</li>
+</ul></li>
+
+<li><p>Restart the icinga2 service to apply the configurations.</p></li>
+
+<li><p>Navigate to the Icinga Web 2 interface to verify that the command checks are running on the remote node host.</p></li>
+</ol>
+
+<h2 id="that-s-all">That’s all!</h2>
+
+<p>You have successfully configured Icinga 2 as a master node and added a CentOS 7 client node to be remotely checked via Icinga 2 agent-based monitoring system and another remote host to be actively monitored via external services command checks.</p>
+
+<p>For other Icinga 2 configurations, installation, and monitoring mechanisms, visit the <a href="https://www.icinga.com/docs/icinga2/latest/doc/01-about/">official Icinga 2 documentation</a>.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.icinga.com/docs/icinga2/latest/doc/01-about/">Official Icinga Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-icinga-2">What is Icinga 2?</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#monitor-remote-hosts-via-simple-host-monitoring">Monitor Remote Hosts via Simple Host Monitoring</a></li>
+<li><a href="#monitor-remote-hosts-via-icinga-2-agent-monitoring">Monitor Remote Hosts via Icinga 2 Agent Monitoring</a></li>
+<li><a href="#configure-centos-7-client-node">Configure CentOS 7 Client Node</a></li>
+<li><a href="#set-up-icinga-2-master-agent-based-monitoring">Set up Icinga 2 Master Agent-based Monitoring</a></li>
+<li><a href="#that-s-all">That’s all!</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

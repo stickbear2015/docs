@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>What is systemd?</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="An introduction to systemd and systemd unit files.">
+        <meta name="keywords" content="systemd, linux, init, unit files">
+        
+        <meta property="og:title" content="What is systemd?">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/quick-answers/linux-essentials/what-is-systemd/">
+        <meta property="og:description" content="An introduction to systemd and systemd unit files.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/quick-answers/linux-essentials/what-is-systemd/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/quick-answers/">Quick Answers</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/quick-answers/linux-essentials/">Linux Essentials</a>
+  
+</li>
+
+
+<li>
+  
+  What is systemd?
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">What is systemd?</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-09-12T17:00:33-04:00">Wednesday, September 12, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-systemd%2f&via=linode&text=What%20is%20systemd%3f" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-systemd%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-systemd%2f&t=What%20is%20systemd%3f" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=What%20is%20systemd%3f%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-systemd%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/quick-answers%5clinux-essentials%5cwhat-is-systemd%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/quick-answers%5clinux-essentials%5cwhat-is-systemd%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>systemd is a Linux initialization system and service manager that includes features like on-demand starting of daemons, mount and automount point maintenance, snapshot support, and processes tracking using Linux control groups. systemd provides a logging daemon and other tools and utilities to help with common system administration tasks.</p>
+
+<p><a href="http://0pointer.de/blog/projects/systemd.html">Lennart Poettering</a> and <a href="https://en.wikipedia.org/wiki/Kay_Sievers">Kay Sievers</a> wrote systemd, inspired by macOS&rsquo;s <a href="https://en.wikipedia.org/wiki/Launchd">launchd</a> and <a href="http://upstart.ubuntu.com/">Upstart</a>, with the goal of creating a modern and dynamic system. Notably, systemd provides aggressive parallelization capabilities and dependency-based service control logic, allowing for services to start in parallel and leading to a quicker boot time. These two aspects were present in Upstart, but improved upon by systemd.</p>
+
+<p>systemd is the default init system for the major Linux distributions but is backwards compatible with SysV init scripts. SysVinit is an initialization system which predates systemd and uses a simplified approach to service startup. systemd not only manages system initialization, but also provides alternatives for other well known utilities, like cron and syslog. Because systemd does several things within the Linux user space, many have criticized it for violating <a href="https://en.wikipedia.org/wiki/Unix_philosophy">the Unix philosophy</a>, which emphasizes simplicity and modularity.</p>
+
+<p>This guide provides an introduction to systemd by taking a closer look at systemd units. The <a href="/docs/quick-answers/linux-essentials/what-is-systemd/#mount-units">Mount Units</a> section will analyze a unit file that is shipped by default with systemd on an Ubuntu 18.04 system, while the <a href="/docs/quick-answers/linux-essentials/what-is-systemd/#timer-units">Timer Units</a> section will create a custom unit file on the same system.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>All examples in this guide were created with a Linode running Ubuntu 18.04.</div>
+</blockquote>
+
+
+<h2 id="the-linux-boot-process-and-systemd">The Linux Boot Process and systemd</h2>
+
+<p>To better understand what is meant by an initialization system, this section provides a high-level overview of the Linux boot process.</p>
+
+<p>Linux requires an initialization system during its boot and startup process. At the end of the <a href="https://en.wikipedia.org/wiki/Linux_startup_process">boot process</a>, the Linux kernel loads systemd and passes control over to it and the startup process begins. During this step, the kernel initializes the first <a href="https://en.wikipedia.org/wiki/User_space">user space</a> process, the systemd init process with process ID 1, and then goes idle unless called again. systemd prepares the <a href="https://en.wikipedia.org/wiki/User_space">user space</a> and brings the Linux host into an operational state by starting all other processes on the system.</p>
+
+<p>Below is a simplified overview of the entire Linux boot and startup process:</p>
+
+<ol>
+<li>The system powers up.
+1  The BIOS does minimal hardware initialization and hands over control to the boot loader.</li>
+<li>The boot loader calls the kernel.</li>
+<li>The kernel loads an initial RAM disk that loads the system drives and then looks for the root file system.</li>
+<li>Once the kernel is set up, it begins the systemd initialization system.</li>
+<li>systemd takes over and continues to mount the host&rsquo;s file systems and start services.</li>
+</ol>
+
+<h2 id="systemd-units">systemd Units</h2>
+
+<p>systemd introduces the concept of <em>systemd units</em> and there are several types, such as a <em>service unit</em>, <em>mount unit</em>, <em>socket unit</em> and <em>slice unit</em>. Units are defined in unit configuration files, which include information about the unit type and its behavior.</p>
+
+<p>Expand the note below for a comprehensive list of all available systemd unit types.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            systemd Unit Types
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><table>
+<thead>
+<tr>
+<th>Unit Type</th>
+<th>File Extension</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Service unit</td>
+<td><code>.service</code></td>
+<td>A system service.</td>
+</tr>
+
+<tr>
+<td>Target unit</td>
+<td><code>.target</code></td>
+<td>A group of systemd units.</td>
+</tr>
+
+<tr>
+<td>Automount unit</td>
+<td><code>.automount</code></td>
+<td>A file system automount point.</td>
+</tr>
+
+<tr>
+<td>Device unit</td>
+<td><code>.device</code></td>
+<td>A device file recognized by the kernel.</td>
+</tr>
+
+<tr>
+<td>Mount unit</td>
+<td><code>.mount</code></td>
+<td>A file system mount point.</td>
+</tr>
+
+<tr>
+<td>Path unit</td>
+<td><code>.path</code></td>
+<td>A file or directory in a file system.</td>
+</tr>
+
+<tr>
+<td>Scope unit</td>
+<td><code>.scope</code></td>
+<td>An externally created process.</td>
+</tr>
+
+<tr>
+<td>Slice unit</td>
+<td><code>.slice</code></td>
+<td>A group of hierarchically organized units that manage system processes.</td>
+</tr>
+
+<tr>
+<td>Snapshot unit</td>
+<td><code>.snapshot</code></td>
+<td>A saved state of the systemd manager.</td>
+</tr>
+
+<tr>
+<td>Socket unit</td>
+<td><code>.socket</code></td>
+<td>An inter-process communication socket.</td>
+</tr>
+
+<tr>
+<td>Swap unit</td>
+<td><code>.swap</code></td>
+<td>A swap device or a swap file.</td>
+</tr>
+
+<tr>
+<td>Timer unit</td>
+<td><code>.timer</code></td>
+<td>A systemd timer.</td>
+</tr>
+</tbody>
+</table></div></div>
+</blockquote>
+
+<p>For most distributions using systemd, unit files are stored in the following directories:</p>
+
+<ul>
+<li>The <code>/usr/lib/systemd/user/</code> directory is the default location where unit files are installed by packages. Unit files in the default directory should not be altered.</li>
+<li>The <code>/run/systemd/system/</code> directory is the runtime location for unit files.</li>
+<li>The <code>/etc/systemd/system/</code> directory stores unit files that extend a service. This directory will take precedence over unit files located anywhere else in the system.</li>
+</ul>
+
+<h3 id="mount-units">Mount Units</h3>
+
+<p>This section will take a closer look at a mount unit configuration file to provide a better understanding of the structure of systemd unit files. You will also use systemd utilities to discover information about the running Linode mount units.</p>
+
+<p>A mount unit configuration file contains information about a file system mount point that is controlled and supervised by systemd. To find the existing mount units on your Linode, use the <code>systemctl</code> tool to view a complete list:</p>
+
+<pre><code>systemctl list-units --type=mount
+</code></pre>
+
+<p>Your output will display each mount unit that is currently active:</p>
+
+<pre><code>UNIT                          LOAD   ACTIVE SUB     DESCRIPTION
+-.mount                       loaded active mounted Root Mount
+dev-hugepages.mount           loaded active mounted Huge Pages File System
+dev-mqueue.mount              loaded active mounted POSIX Message Queue File System
+proc-sys-fs-binfmt_misc.mount loaded active mounted Arbitrary Executable File Formats File S
+run-user-1000.mount           loaded active mounted /run/user/1000
+sys-fs-fuse-connections.mount loaded active mounted FUSE Control File System
+sys-kernel-config.mount       loaded active mounted Kernel Configuration File System
+sys-kernel-debug.mount        loaded active mounted Kernel Debug File System
+var-lib-lxcfs.mount           loaded active mounted /var/lib/lxcfs
+
+LOAD   = Reflects whether the unit definition was properly loaded.
+ACTIVE = The high-level unit activation state, i.e. generalization of SUB.
+SUB    = The low-level unit activation state, values depend on unit type.
+
+9 loaded units listed. Pass --all to see loaded but inactive units, too.
+To show all installed unit files use 'systemctl list-unit-files'.
+</code></pre>
+
+<p>To view information about a specific mount unit, use the <code>systemctl status</code> command with the unit&rsquo;s name:</p>
+
+<pre><code>systemctl status sys-fs-fuse-connections.mount
+</code></pre>
+
+<p><code>Systemctl</code> will provide information that resembles the example output. This example displays a single entry for the FUSE Control File System mount point:</p>
+
+<pre><code>● sys-fs-fuse-connections.mount - FUSE Control File System
+Loaded: loaded (/lib/systemd/system/sys-fs-fuse-connections.mount; static; vendor preset: enabled)
+Active: active (mounted) since Wed 2018-08-29 18:34:43 UTC; 21h ago
+    Where: /sys/fs/fuse/connections
+    What: fusectl
+    Docs: https://www.kernel.org/doc/Documentation/filesystems/fuse.txt
+        https://www.freedesktop.org/wiki/Software/systemd/APIFileSystems
+    Tasks: 0 (limit: 2320)
+CGroup: /system.slice/sys-fs-fuse-connections.mount
+</code></pre>
+
+<p>The <code>systemctl</code> output provides the location of the mount unit configuration file, along with information on the state of the mount, location of the mount, links to documentation, running tasks, and its corresponding CGroup. Many of these details are defined in the mount unit&rsquo;s configuration file.</p>
+
+<p><a href="http://libfuse.github.io/doxygen/">FUSE</a> is a file system framework that provides an interface for user space programs to export a virtual file system to the Linux kernel. It can also be used to provide data access with a file system directory structure and file operations to any object.</p>
+
+<p>Inspect the contents of the FUSE control file system&rsquo;s mount unit configuration file with systemctl:</p>
+
+<pre><code>systemctl cat sys-fs-fuse-connections.mount
+</code></pre>
+
+<p>You will see a similar output:</p>
+
+<pre><code>[Unit]
+Description=FUSE Control File System
+Documentation=https://www.kernel.org/doc/Documentation/filesystems/fuse.txt
+Documentation=https://www.freedesktop.org/wiki/Software/systemd/APIFileSystems
+DefaultDependencies=no
+ConditionPathExists=/sys/fs/fuse/connections
+ConditionCapability=CAP_SYS_ADMIN
+ConditionVirtualization=!private-users
+After=systemd-modules-load.service
+Before=sysinit.target
+
+[Mount]
+What=fusectl
+Where=/sys/fs/fuse/connections
+Type=fusectl
+</code></pre>
+
+<p>All unit files must contain a <code>[Unit]</code> section that outlines generalized options, dependencies and conditions for the unit. The example mount unit file contains some of the following options:</p>
+
+<ul>
+<li>There are no service dependencies for this mount unit, indicated by <code>DefaultDependencies=no</code>. However, <code>ConditionPathExists</code> denotes that the directory <code>/sys/fs/fuse/connections</code> must exist before the mount unit is started. This condition is necessary, since under the FUSE control file system each connection will have it&rsquo;s own directory in this location.</li>
+<li>The name of a mount unit file must correspond to the mount point directories it controls, which is why this particular mount unit configuration file is named <code>sys-fs-fuse-connections.mount</code>.</li>
+</ul>
+
+<p>A mount unit file must contain a <code>[Mount]</code> section. The example mount unit file has the following options:</p>
+
+<ul>
+<li>The <code>What</code> option, which can be a partition name, path or UUID to mount.</li>
+<li>The <code>Where</code> option declares an absolute path to a mount point. If the mount point does not exist, it will be created.</li>
+<li>The <code>Type</code> option denotes the file system type.</li>
+</ul>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The official systemd manual notes that configuring mount points through <code>/etc/fstab</code> is the recommended approach. systemd has a <code>system-fstab-generator</code> that translates the information in the fstab file into systemd mount and swap units at runtime.</div>
+</blockquote>
+
+
+<p>There are many other unit file types available in systemd. Read the <a href="/docs/quick-answers/linux/start-service-at-boot/">Use systemd to Start a Linux Service at Boot</a> guide to become more familiar with the service unit type.</p>
+
+<h3 id="timer-units">Timer Units</h3>
+
+<p>You can use systemd timer unit files to automate tasks, similarly to how <a href="/docs/tools-reference/tools/schedule-tasks-with-cron/">cron jobs</a> are used. However, with timer units you will also have access to systemd&rsquo;s powerful logging capabilities.</p>
+
+<p>To better understand systemd timer units, this section will outline how a timer unit can be used to create periodic backups for a mysql database.</p>
+
+<p>You will need three separate files:</p>
+
+<ul>
+<li>A script that will execute and create a backup for a MySQL database located in the <code>/usr/local/bin/</code> directory.</li>
+<li>A service unit file, that will handle running the script.</li>
+<li>A timer unit file, which will define when and how often the service will initialize.</li>
+</ul>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Your script, service unit file, and timer unit file should all have <code>644</code> read and write permissions.</div>
+</blockquote>
+
+
+<p>Below is the script that creates a backup <code>.sql</code> file named for a database named <code>testdb</code>. The script will append a date and timestamp to the file name:</p>
+
+<dl class="file">
+
+
+<dt>
+		/usr/local/bin/my-db-backup.sh 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="cp">#!/bin/sh
+</span><span class="cp"></span>
+<span class="nv">stamp</span><span class="o">=</span><span class="k">$(</span>date <span class="s2">&#34;+%y-%m-%d-%H-%M&#34;</span><span class="k">)</span>
+/usr/bin/mysqldump testdb &gt; ~/backups/my-db-backup-<span class="si">${</span><span class="nv">stamp</span><span class="si">}</span>.sql</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>To bypass being prompted for a MySQL username and password, create a <code>.my.cnf</code> file in your home directory with your MySQL credentials.</p>
+
+<dl class="file">
+
+
+<dt>
+		~/.my.cnf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>mysqldump<span class="o">]</span>
+<span class="nv">user</span><span class="o">=</span>mysqluser
+<span class="nv">password</span><span class="o">=</span>mypassword</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The service unit file is located in the <code>/etc/systemd/system/</code> directory and contains the following information:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/systemd/system/my-db-backup.service 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>A script to backup mysql database named testdb
+
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="c1"># The location of the mysql backup script</span>
+<span class="nv">ExecStart</span><span class="o">=</span>/usr/local/bin/my-db-backup.sh</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The timer unit file is located in the same directory as the service unit file with the same name, but with the <code>.timer</code> extension instead. The unit file contains the following options:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/systemd/system/my-db-backup.timer 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>Runs my-db-backup.sh every hour
+
+<span class="o">[</span>Timer<span class="o">]</span>
+<span class="c1"># Amount of time to wait after booting before the service runs for the first time</span>
+<span class="nv">OnBootSec</span><span class="o">=</span>10min
+<span class="c1"># The time between running each consecutive timer</span>
+<span class="nv">OnUnitActiveSec</span><span class="o">=</span>1h
+<span class="c1"># Name of the service file that will be called</span>
+<span class="nv">Unit</span><span class="o">=</span>my-db-backup.service
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="c1"># Defines which service triggers the custom service on boot</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When creating unit files, you can verify the correctness of the file with the following systemd command:</p>
+
+<pre><code>systemd-analyze verify /etc/systemd/system/my-db-backup.timer
+</code></pre>
+
+<p>systemd&rsquo;s <code>system-analyze</code> command provide several other useful analyze and debug options. View the <a href="https://www.freedesktop.org/software/systemd/man/systemd-analyze.html">official documentation</a> for more options.</p>
+
+<p>When you enable the timer, systemd will hook the timer unit into the specified places and ensure it starts on boot. Enable the timer unit with following command:</p>
+
+<pre><code>systemctl start my-db-backup.timer
+</code></pre>
+
+<p>When you start the timer unit, systemd will start it right away. To do this, issue the following command:</p>
+
+<pre><code>systemctl enable my-db-backup.timer
+</code></pre>
+
+<h2 id="systemd-tools">systemd Tools</h2>
+
+<p>systemd makes common system administration tasks easier to manage with its <code>systemctl</code> and <code>journalctl</code> commands. <code>systemctl</code> can be used to gather detailed information about the overall state of your server and any individual unit type. It can stop and start the server and modify the system state. In the Timer Unit Files section <code>systemctl</code> is used to enable and start an individual timer unit. systemd can be used in a similar way for any unit.</p>
+
+<p>Read our <em><a href="/docs/quick-answers/linux-essentials/introduction-to-systemctl/">Introduction to systemctl</a></em> guide for a deeper dive into this systemd tool.</p>
+
+<p>systemd&rsquo;s <code>journalctl</code> tool provides a centralized process and system logging tool. This command allows you to query the systemd journal, which creates and maintains indexed journals from logging information that is pooled from different areas within the system; areas like standard output and standard error of service units, log messages via syslog, and kernel log messages. In this way, system administrators can use a single tool to monitor and debug a server.</p>
+
+<p>To learn some commonly used <code>journalctl</code> commands, see our guide <em><a href="https://www.linode.com/docs/quick-answers/linux/how-to-use-journalctl/">Use journalctl to View Your System&rsquo;s Logs</a></em>.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.freedesktop.org/wiki/Software/systemd/">systemd Wiki</a></li>
+
+<li><a href="https://github.com/systemd/systemd">systemd GitHub</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#the-linux-boot-process-and-systemd">The Linux Boot Process and systemd</a></li>
+<li><a href="#systemd-units">systemd Units</a>
+<ul>
+<li><a href="#mount-units">Mount Units</a></li>
+<li><a href="#timer-units">Timer Units</a></li>
+</ul></li>
+<li><a href="#systemd-tools">systemd Tools</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

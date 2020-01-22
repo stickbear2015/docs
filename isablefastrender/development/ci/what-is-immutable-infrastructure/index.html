@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Immutable Infrastructure</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Introduction to Immutable Infrastructure">
+        <meta name="keywords" content="ci, automation, immutable, infrastructure">
+        
+        <meta property="og:title" content="Immutable Infrastructure">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/development/ci/what-is-immutable-infrastructure/">
+        <meta property="og:description" content="Introduction to Immutable Infrastructure">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/development/ci/what-is-immutable-infrastructure/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/">Development</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/ci/">Continuous Integration</a>
+  
+</li>
+
+
+<li>
+  
+  Immutable Infrastructure
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Immutable Infrastructure</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-17T16:54:02-05:00">Monday, December 17, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fci%2fwhat-is-immutable-infrastructure%2f&via=linode&text=Immutable%20Infrastructure" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fci%2fwhat-is-immutable-infrastructure%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fci%2fwhat-is-immutable-infrastructure%2f&t=Immutable%20Infrastructure" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Immutable%20Infrastructure%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdevelopment%2fci%2fwhat-is-immutable-infrastructure%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/development%5cci%5cwhat-is-immutable-infrastructure%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/development%5cci%5cwhat-is-immutable-infrastructure%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="what-is-immutable-infrastructure">What is Immutable Infrastructure?</h2>
+
+<p>Within a <a href="https://linode.com/docs/development/ci/introduction-ci-cd/#what-is-continuous-delivery">Continuous Delivery</a> model it is crucial to automate a repeatable and reliable process for software deployment. The more you scale, the more complicated this task can become. You need granular control over all components of your stack across many servers and the ability to test how components will interact within their deployed environment.</p>
+
+<p>An immutable server infrastructure provides a level of control and testability to maintain a healthy and stable environment for all components that never deviate from a source definition. The key guideline behind an immutable infrastructure is that you never modify a running server. If a change is required, you instead completely replace the server with a new instance that contains the update or change. The new server instance is created with an origin image that is built upon, or a restored image from a previously defined server state. You can version control and tag your images for easy rollback and distribution. The image contains all the application code, runtime dependencies and configuration&ndash;in essence, the state needed for the software to run as expected.</p>
+
+<p>The immutable infrastructure approach to server management is a response to more traditional methods that rely on configuration management tools or one-off changes to maintain, update, and patch running server instances. With time, this method alone can lead to the slow drift of a server&rsquo;s state from its original definition which can become difficult and time consuming to manage and debug (creating what is known as a <em>snowflake server</em>). Configuration synchronization can keep servers up to date, but any element that is not controlled by the configuration management tool can potentially introduce a point of drift. An immutable server, as a concept, naturally developed as result of the <em><a href="https://martinfowler.com/bliki/PhoenixServer.html">Phoenix Server</a></em> pattern. This pattern asserts that servers should be destroyed frequently and then rebuilt with a base image. The concept of immutability goes one step further and restricts a production server from ever being adjusted.</p>
+
+<h3 id="create-an-immutable-server-image">Create an Immutable Server Image</h3>
+
+<p>The foundation of a successful immutable infrastructure is the server image. Below is a high-level outline of the steps involved in creating a <em>source of truth</em> production image that can be reliably deployed across many servers:</p>
+
+<ol>
+<li><p>Create an origin image to boot a server instance on a Linode. This will include baseline components like the running Linux distribution and installed packages.</p></li>
+
+<li><p>Use a configuration management tool, like <a href="/docs/applications/configuration-management/beginners-guide-chef/">Chef</a> or <a href="/docs/development/ci/automate-builds-with-jenkins-on-ubuntu/">Jenkins</a>, to bring the server to the state needed to host your application code.</p></li>
+
+<li><p>Create a new server image from the configured server instance.</p></li>
+
+<li><p>Create a new test server instance with the new server image that includes all application code, configuration and dependencies.</p></li>
+
+<li><p>Run predefined automated tests to test the new server image.</p></li>
+
+<li><p>If the tests pass, deploy the new image to production.</p></li>
+
+<li><p>Destroy the previous production server and archive the destroyed server image.</p></li>
+</ol>
+
+<h2 id="docker-containers-and-immutable-infrastructure">Docker Containers and Immutable Infrastructure</h2>
+
+<p>Docker Containers were designed to be immutable. Docker comes with many utilities built in to help manage container images. If you change a container&rsquo;s image definition, then you have created a new image. A <code>docker commit</code> will create a new image while still leaving the original image unchanged. A <code>docker tag</code> command lets you easily tag your Docker image commit. Other useful metadata can be added to Docker images to help identify image inheritance.</p>
+
+<p>Another benefit to using Docker containers to implement your immutable infrastructure, is that it helps manage data persistence or <em>stateful</em> components, like an application&rsquo;s database. Stateful components cannot simply be destroyed and redeployed using a server image. With a Docker container, you can take advantage of their <a href="https://docs.docker.com/storage/volumes/">volumes</a> feature. The Docker volume will exist outside the lifecycle of a given container, allowing you to destroy a container at will and spin up a new one with the persisted data.</p>
+
+<p>For more information on Docker, see our <a href="/docs/applications/containers/introduction-to-docker/">An Introduction to Docker</a> guide. You can also read <a href="/docs/applications/containers/deploying-microservices-with-docker/">How to Deploy Microservices with Docker</a> to learn about building large-scale applications with containers.</p>
+
+<h2 id="pros-and-cons-to-an-immutable-infrastructure">Pros and Cons to an Immutable Infrastructure</h2>
+
+<p>There are many benefits to implementing an immutable infrastructure into your <a href="/docs/development/ci/introduction-ci-cd/">CI/CD pipeline</a>, however there are also some initial drawbacks that are important to understand. Your adoption of this pattern can depend on your current infrastructure, if one already exists, your team&rsquo;s expertise and your own desire to learn and implement new tooling. This information will help you determine if this is a model that makes sense for your project or organization.</p>
+
+<p><strong>Pros</strong></p>
+
+<ul>
+<li>Rollbacks are simpler since old server images are version controlled.</li>
+<li>Changes to the server must be defined and automated providing more granular control over all server instances.</li>
+<li>You can ensure consistent development and test environments across your organization.</li>
+<li>It&rsquo;s easier to implement and test microservices for a large-scale application.</li>
+<li>Prevents snowflake servers.</li>
+<li>Portability, especially when using Docker containers.</li>
+</ul>
+
+<p><strong>Cons</strong></p>
+
+<ul>
+<li>Higher initial overhead to learn new tooling and implement the infrastructure.</li>
+<li>Small quick fixes require a full redeploy.</li>
+<li>Possible increase in resource usage and cost depending on how often servers are destroyed and redeployed in a given time period.</li>
+</ul>
+
+<h2 id="common-tools">Common Tools</h2>
+
+<p>Immutable infrastructure is an idea that was popularized by <a href="http://chadfowler.com/2013/06/23/immutable-deployments.html">Chad Fowler in 2013</a> when he pronounced, &ldquo;Trash your servers and burn your code&rdquo;. Since then, many tools have been developed to make the Phoenix Pattern with an Immutable Infrastructure easier to implement.</p>
+
+<p>Here are some popular tools:</p>
+
+<ul>
+<li><a href="/docs/platform/disk-images/linode-images/">Linode Images</a> allow you to take snapshots of your disks, and then deploy them to any Linode under your account</li>
+<li><a href="https://www.packer.io/guides/packer-on-cicd/">Packer</a> helps you create multiple machine images from a single source configuration.</li>
+<li><a href="/docs/applications/configuration-management/how-to-build-your-infrastructure-using-terraform-and-linode/">Terraform</a> is used to manage change within your deployment stack and maintain <em>Infrastructure as Code</em>.</li>
+<li><a href="https://docs.docker.com/">Docker</a> can be used to create and manage images and isolate application services.</li>
+<li><a href="/docs/applications/containers/how-to-create-a-docker-swarm-manager-and-nodes-on-linode/">Docker Swarm</a> helps you scale up the power of Docker by creating a cluster of Docker hosts.</li>
+<li><a href="https://saltstack.com/">SaltStack</a> is a configuration management platform designed to control a number of <em>minion</em> servers from a single master server.</li>
+<li><a href="/docs/platform/block-storage/how-to-use-block-storage-with-your-linode/">Linode Block Storage</a> can easily store and persist date across Linodes.</li>
+<li><a href="/docs/development/ci/automate-builds-with-jenkins-on-ubuntu/">Jenkins</a> is an open-source automation server that allows you to build pipelines for build, testing, and deployment automation.</li>
+</ul>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-immutable-infrastructure">What is Immutable Infrastructure?</a>
+<ul>
+<li><a href="#create-an-immutable-server-image">Create an Immutable Server Image</a></li>
+</ul></li>
+<li><a href="#docker-containers-and-immutable-infrastructure">Docker Containers and Immutable Infrastructure</a></li>
+<li><a href="#pros-and-cons-to-an-immutable-infrastructure">Pros and Cons to an Immutable Infrastructure</a></li>
+<li><a href="#common-tools">Common Tools</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

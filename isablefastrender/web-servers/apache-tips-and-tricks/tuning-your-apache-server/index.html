@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Tuning Your Apache Server</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Tuning your Apache server to optimize your website.">
+        <meta name="keywords" content="configuration, apache, web server, resource tuning">
+        
+        <meta property="og:title" content="Tuning Your Apache Server">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/web-servers/apache-tips-and-tricks/tuning-your-apache-server/">
+        <meta property="og:description" content="Tuning your Apache server to optimize your website.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/web-servers/apache-tips-and-tricks/tuning-your-apache-server/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/">Web Server Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/apache-tips-and-tricks/">Apache Tips &amp; Tricks</a>
+  
+</li>
+
+
+<li>
+  
+  Tuning Your Apache Server
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Tuning Your Apache Server</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-04T17:06:42-05:00">Monday, February 4, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Elle Krout
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fapache-tips-and-tricks%2ftuning-your-apache-server%2f&via=linode&text=Tuning%20Your%20Apache%20Server" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fapache-tips-and-tricks%2ftuning-your-apache-server%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fapache-tips-and-tricks%2ftuning-your-apache-server%2f&t=Tuning%20Your%20Apache%20Server" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Tuning%20Your%20Apache%20Server%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fweb-servers%2fapache-tips-and-tricks%2ftuning-your-apache-server%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/web-servers%5capache-tips-and-tricks%5ctuning-your-apache-server%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/web-servers%5capache-tips-and-tricks%5ctuning-your-apache-server%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+<blockquote class="dedicated_cpu_link">
+  <strong class="callout-title">Dedicated CPU instances are available!</strong>
+  <div>Linode's Dedicated CPU instances are ideal for CPU-intensive workloads like those discussed in this guide. To learn more about Dedicated CPU, read our <a href="https://blog.linode.com/2019/02/05/introducing-linode-dedicated-cpu-instances?utm_source=library&utm_medium=banner&utm_campaign=dedicated_cpu">blog post</a>. To upgrade an existing Linode to a Dedicated CPU instance, review the <a href="/docs/platform/disk-images/resizing-a-linode/">Resizing a Linode</a> guide.</div>
+</blockquote>
+
+            
+
+<p><img src="tuning-your-apache-server.png" alt="Tuning Your Apache Server" title="Tuning Your Apache Server" /></p>
+
+<p>Your Apache configuration settings have a major effect on your Linode&rsquo;s performance. There are several tools that can be used to further inspect your Apache server&rsquo;s performance and make informed decisions on how to begin tuning your Apache configurations. This guide will provide an overview of some process monitoring and system resource usage tools that can be used to inspect how Apache is affecting your Linode&rsquo;s performance. You will also learn about important Apache modules, like the Multi-Processing modules, that will allow you to make use of Apache&rsquo;s power and flexibility.</p>
+
+<h2 id="tools">Tools</h2>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The steps in this guide require root privileges. Be sure to run the steps below as <strong>root</strong> or with the <code>sudo</code> prefix. For more information on privileges see our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</div>
+</blockquote>
+
+
+<p>There are a variety of tools that can assist in determining if you need to alter resource settings, including the <a href="/docs/uptime/monitoring/top-htop-iotop/"><em>top</em> command</a> and the load-testing program <a href="/docs/tools-reference/tools/load-testing-with-siege/">Siege</a>. Linode&rsquo;s own <a href="/docs/platform/longview/longview/">Longview</a> service can also help with server monitoring. A good place to start is to familiarize yourself with the RAM and CPU usage of your server.</p>
+
+<p>Discover usage statistics with the following variations of the <code>ps</code> command. The <code>ps</code> command is used to generate a report of the running processes on your Linode:</p>
+
+<pre><code>echo [PID]  [MEM]  [PATH] &amp;&amp;  ps aux | awk '{print $2, $4, $11}' | sort -k2rn | head -n 20
+ps -eo pcpu,pid,user,args | sort -k 1 -r | head -20
+</code></pre>
+
+<h3 id="apache-mod-status">Apache mod_status</h3>
+
+<p>The Apache Status module, <code>mod_status</code>, provides performance information about your server in a detailed status page.</p>
+
+<ol>
+<li><p>Open your website&rsquo;s configuration file. This file is located at <code>/etc/apache2/sites-available/hostname.example.com.conf</code> on Debian/Ubuntu systems or <code>/etc/httpd/conf.d/vhost.conf</code> on CentOS/Fedora systems.</p></li>
+
+<li><p>Add the following to the <code>&lt;virtual_hosts&gt;</code> block:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/apache2/sites-available/hostname.example.com.conf (Debian/Ubuntu) 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-apache" data-lang="apache"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-apache" data-lang="apache"><span class="nt">&lt;Location</span> <span class="s">/server-status</span><span class="nt">&gt;</span>
+     <span class="nb">SetHandler</span> server-status
+     <span class="nb">Order</span> Deny,Allow
+     <span class="nb">Deny</span> from <span class="k">all</span>
+  <span class="nb">Allow</span> from localhost
+<span class="nt">&lt;/Location&gt;</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Apache <code>mod_status</code> also offers an option called <strong>ExtendedStatus</strong>, which provides additional information about each request made to Apache. To enable <strong>ExtendedStatus</strong> edit your Apache configuration file and add the following line:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/apache2/apache2.conf (Debian/Ubuntu) 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-apache" data-lang="apache"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-apache" data-lang="apache"><span class="nb">ExtendedStatus</span> <span class="k">On</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Enabling <code>ExtendedStatus</code> consumes additional system resources.</div>
+</blockquote>
+</li>
+
+<li><p>Restart Apache:</p>
+
+<ul>
+<li><p>Debian/Ubuntu:</p>
+
+<pre><code>systemctl restart apache2
+</code></pre></li>
+
+<li><p>CentOS/Fedora:</p>
+
+<pre><code>systemctl restart httpd
+</code></pre></li>
+</ul></li>
+
+<li><p>To view the generated file, download Lynx, a text-mode web browse:</p>
+
+<ul>
+<li><p>Debian/Ubuntu:</p>
+
+<pre><code>apt-get install lynx
+</code></pre></li>
+
+<li><p>Fedora/CentOS:</p>
+
+<pre><code>yum install lynx
+</code></pre></li>
+</ul></li>
+
+<li><p>Open the file:</p>
+
+<pre><code>lynx http://localhost/server-status
+</code></pre></li>
+</ol>
+
+<h3 id="apache2buddy">Apache2Buddy</h3>
+
+<p>The Apache2Buddy script, similar to <a href="/docs/databases/mysql/how-to-optimize-mysql-performance-using-mysqltuner/">MySQLTuner</a>, reviews your Apache setup, and makes suggestions based on your Apache process memory and overall RAM. Although it is a fairly basic program, that focuses on the <code>MaxClients</code> directive, Apache2Buddy is useful. You can run the script with the following command:</p>
+
+<pre><code>curl -sL https://raw.githubusercontent.com/richardforth/apache2buddy/master/apache2buddy.pl | sudo perl
+</code></pre>
+
+<h2 id="multi-processing-modules">Multi Processing Modules</h2>
+
+<p>Apache version 2.4 offers three Multi Processing Modules (MPM) for managing your settings. Each module creates child processes, but differs in how they handle threads.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Back up your Apache configuration file
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>Before making any changes to your Apache configuration, be sure to back up the configuration file:</p>
+
+<ul>
+<li><p>On Debian/Ubuntu:</p>
+
+<pre><code>cp /etc/apache2/apache2.config ~/apache2.conf.backup
+</code></pre></li>
+
+<li><p>On CentOS/Fedora:</p>
+
+<pre><code>cp /etc/httpd/conf/httpd.config ~/httpd.conf.backup
+</code></pre></li>
+</ul>
+</div></div>
+</blockquote>
+
+<h3 id="prefork">Prefork</h3>
+
+<p>The prefork module creates a number of child processes at launch, each child handles only one thread. Since these processes deal solely with one thread at a time, request speed can suffer should there be too many concurrent requests. When this occurs, some requests essentially have to wait in line to be acted upon. To handle this, you can increase the number of child processes that are spawned, however, this increases the amount of RAM being used. Prefork is the safest module, and should be used when using non-thread-safe libraries.</p>
+
+<h3 id="worker">Worker</h3>
+
+<p>The worker module&rsquo;s child processes spawn many threads per process with each thread ready to take on new requests. This allows for a greater number of concurrent requests to come in, and in turn, is easier on the server&rsquo;s RAM usage. Overall, the worker module offers higher performance, but is less secure than the prefork module and cannot be used with modules that are not thread safe.</p>
+
+<h3 id="event">Event</h3>
+
+<p>The event module is <em>only</em> available on Apache 2.4 and is based off of the worker MPM. Like the worker, it creates multiple threads per child process, with a thread dedicated to KeepAlive connections that are handed down to child threads once the request has been made. This is good for multiple concurrent connections, especially those that are not all active at the same time but make the occasional request. The event MPM functions the same as worker in the event of SSL connections.</p>
+
+<h2 id="module-values">Module Values</h2>
+
+<p>Once you select your MPM, you will need to change the values inside the configuration. These settings are located in the <code>/etc/apache2/apache2.conf</code> file on Debian/Ubuntu, and the <code>/etc/httpd/conf/httpd.conf</code> file on CentOS/Fedora. Below, is an example configuration for the MPM prefork module:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/apache2/apache2.conf (Debian/Ubuntu) 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-apache" data-lang="apache"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-apache" data-lang="apache"><span class="nt">&lt;IfModule</span> <span class="s">mpm_prefork_module</span><span class="nt">&gt;</span>
+       <span class="nb">StartServers</span>              <span class="m">4</span>
+       <span class="nb">MinSpareServers</span>          <span class="m">20</span>
+       <span class="nb">MaxSpareServers</span>          <span class="m">40</span>
+       <span class="nb">MaxRequestWorkers</span>       <span class="m">200</span>
+       <span class="nb">MaxConnectionsPerChild</span> <span class="m">4500</span>
+<span class="nt">&lt;/IfModule&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>To use the worker or event modules, replace <code>&lt;IfModule mpm_prefork_module&gt;</code> with <code>&lt;IfModule mpm_worker_module&gt;</code> or <code>&lt;IfModule mpm_event_module&gt;</code>, respectively.</p>
+
+<p>Next, you should alter the module settings you added in the previous step. To do this, you should take into consideration what each value does, and how best to change it. It is recommended to make incremental changes to your configuration settings and then monitor the effects.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>After making alterations to the Apache configuration file, restart the service.</p>
+
+<ul>
+<li><p>On Debian/Ubuntu:</p>
+
+<pre><code>sudo systemctl restart apache2
+</code></pre></li>
+
+<li><p>On CentOS/Fedora:</p>
+
+<pre><code>sudo systemctl restart httpd.service
+</code></pre></li>
+</ul>
+</div>
+</blockquote>
+
+
+<p>The sections below provide an overview of each MPM module setting.</p>
+
+<h3 id="startservers">StartServers</h3>
+
+<p>The <code>StartServers</code> value indicates the number of child processes created at startup, and is dynamically controlled depending on load. There is often little reason to alter this number, unless your server is restarted frequently and contains a large number of requests upon reboot.</p>
+
+<h3 id="minspareservers">MinSpareServers</h3>
+
+<p>Sets the minimum number of idle child processes. If there are fewer processes than the <code>MinSpareServer</code> number, more processes are created at the rate of one per second on Apache 2.2 or lower. With Apache 2.4, this rate increases exponentially starting with 1 and ending with 32 children spawned per second. The benefit of this value is that when a request comes in it can take an idle thread; should a thread not be available, Apache would have to spawn a new child, taking up resources and extending the time it takes for the request to go through. Note, too many idle processes would also have an adverse effect on the server. Tuning this value should only be necessary on very busy sites. It is not recommended to change this value to a high number.</p>
+
+<h3 id="maxspareservers">MaxSpareServers</h3>
+
+<p>This parameter sets the maximum number of idle child processes. If there are more idle processes than this number, then they are terminated. Unless your website is extremely busy, this number should not be set too high, since even idle processes consume resources.</p>
+
+<h3 id="maxrequestworkers">MaxRequestWorkers</h3>
+
+<p>Previously known as <code>MaxClients</code> (Apache 2.3.13 or lower), this parameter indicates the maximum amount of requests that can be served simultaneously, with any number going past the limit being queued. The size of the queue is based on the <code>ListenBacklog</code> directive. If <code>MaxRequestWorkers</code> is set too low, connections sent to the queue eventually time-out; however, if set too high, it causes the memory to start swapping. If this value is increased past 256, the <code>ServerLimit</code> value must also be increased.</p>
+
+<p>One way to calculate the best value for this is to divide the amount of RAM each Apache process uses by the amount of RAM available, leaving some room for other processes. Use <a href="#apache2buddy">Apache2Buddy</a> to help determine these values, or the commands below.</p>
+
+<p>To determine the RAM each Apache process uses issue the following command. The Resident Set Size (RSS) value displays the RAM that is currently being used by a process, in kilobytes. Replace <code>httpd</code> with <code>apache2</code> on Debian or Ubuntu systems:</p>
+
+<pre><code>ps -ylC httpd --sort:rss
+</code></pre>
+
+<p>Divide the number under the RSS column by 1024 to convert it to megabytes.</p>
+
+<p>To get information on memory usage:</p>
+
+<pre><code>free -m
+</code></pre>
+
+<p>To receive a more detailed view of the resources Apache is using, use the <a href="/docs/uptime/monitoring/top-htop-iotop/"><code>top</code> command</a>.</p>
+
+<h3 id="maxconnectionsperchild">MaxConnectionsPerChild</h3>
+
+<p><code>MaxConnectionsPerChild</code> limits the number of requests a child process handles during its life. Once the limit has been hit, the child process dies. If set to 0, the child process will never expire. The suggested value for this is a few thousand, to prevent memory leakage. Be aware that setting this too low can slow down the system, since creating new processes does take up resources. This setting was named <code>MaxRequestsPerChild</code> in versions lower than Apache 2.3.9.</p>
+
+<h3 id="serverlimit">ServerLimit</h3>
+
+<p>In the context of the <code>prefork</code> module, the <code>ServerLimit</code> setting configures the maximum value for <code>MaxRequestWorkers</code> for the entire lifetime of the Apache httpd process. If you need to increase <code>MaxRequestWorkers</code> above <code>256</code>, then increase your <code>ServerLimit</code> to match.</p>
+
+<p>When using the <code>worker</code> and <code>event</code> modules, <code>ServerLimit</code> and <code>ThreadLimit</code> determine the maximum value for <code>MaxRequestWorkers</code> for the duration of the Apache httpd process. Note that if <code>ServerLimit</code> is set to a value higher than needed, unused shared memory will be set aside.</p>
+
+<h3 id="keepalive">KeepAlive</h3>
+
+<p><a href="https://httpd.apache.org/docs/2.4/mod/core.html#keepalive">KeepAlive</a> allows connecting clients to use a single TCP connection to make multiple requests, instead of opening a new one for each request. This decreases page load times and lowers CPU use for your web server, at the expense of an increase in your server&rsquo;s RAM use. A KeepAlive connection will be counted as a single &ldquo;request&rdquo; for the <a href="/docs/web-servers/apache-tips-and-tricks/tuning-your-apache-server/#maxconnectionsperchild">MaxConnectionsPerChild</a>.</p>
+
+<p>In the past, this setting was often disabled to conserve RAM use, but server resources have become less expensive, and the option is now enabled by default in Apache 2.4. Enabling KeepAlive can significantly benefit your site&rsquo;s user experience, so be wary of disabling it without testing the effects of doing so. KeepAlive can be enabled or disabled in your web server configuration, or within a Virtual Host block.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://httpd.apache.org/docs/2.4/misc/perf-tuning.html">Apache Performance Tuning</a></li>
+
+<li><a href="http://httpd.apache.org/docs/2.4/mod/mpm_common.html">Apache MPM Common Directives</a></li>
+
+<li><a href="http://httpd.apache.org/docs/2.4/">Apache 2.4 Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#tools">Tools</a>
+<ul>
+<li><a href="#apache-mod-status">Apache mod_status</a></li>
+<li><a href="#apache2buddy">Apache2Buddy</a></li>
+</ul></li>
+<li><a href="#multi-processing-modules">Multi Processing Modules</a>
+<ul>
+<li><a href="#prefork">Prefork</a></li>
+<li><a href="#worker">Worker</a></li>
+<li><a href="#event">Event</a></li>
+</ul></li>
+<li><a href="#module-values">Module Values</a>
+<ul>
+<li><a href="#startservers">StartServers</a></li>
+<li><a href="#minspareservers">MinSpareServers</a></li>
+<li><a href="#maxspareservers">MaxSpareServers</a></li>
+<li><a href="#maxrequestworkers">MaxRequestWorkers</a></li>
+<li><a href="#maxconnectionsperchild">MaxConnectionsPerChild</a></li>
+<li><a href="#serverlimit">ServerLimit</a></li>
+<li><a href="#keepalive">KeepAlive</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

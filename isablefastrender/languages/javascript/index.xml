@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JavaScript on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/languages/javascript/</link>
+    <description>Recent content in JavaScript on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/languages/javascript/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Deploy a React Application on Linode</title>
+      <link>http://localhost:1313/docs/development/javascript/deploy-a-react-app-on-linode/</link>
+      <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/javascript/deploy-a-react-app-on-linode/</guid>
+      <description>What is React? React is a popular JavaScript library for building user interfaces. While React is often used as a frontend for more complex applications, it&amp;rsquo;s also powerful enough to be used for full client-side applications on its own.
+Since a basic React app is static (it consists of compiled HTML, CSS, and JavaScript files), it is easy to deploy from a local computer to a Linode using Rsync. This guide shows how to set up your Linode and local machine so that you can easily deploy your app whenever changes are made.</description>
+    </item>
+    
+    <item>
+      <title>Use Nightmare.js to Automate Headless Browsing</title>
+      <link>http://localhost:1313/docs/development/nodejs/use-nightmarejs-to-automate-headless-browsing/</link>
+      <pubDate>Mon, 09 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/use-nightmarejs-to-automate-headless-browsing/</guid>
+      <description>Nightmare.js is a high-level browser automation library, designed to automate browsing tasks for sites that don&amp;rsquo;t have APIs. The library itself is a wrapper around Electron, which Nightmare.js uses as a browser to interact with web sites. This guide helps you install Nightmare.js on Ubuntu 16.04 and run automation scripts without the need for a graphical user interface.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>How to Install Node.js and NGINX on Debian</title>
+      <link>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs-and-nginx-on-debian/</link>
+      <pubDate>Wed, 14 Jan 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs-and-nginx-on-debian/</guid>
+      <description>Node.js is a JavaScript platform which can serve dynamic, responsive content. JavaScript is usually a client-side, browser language like HTML or CSS. However, Node.js is a server-side, JavaScript platform, comparable to PHP. Node.js often works with other popular server applications like NGINX or Apache. In this guide, NGINX is configured to handle front-end, static file requests, and Node.js is configured to handle back-end file requests.
+Install and Configure NGINX This guide can be started immediately after terminal login on a new Linode, it&amp;rsquo;s written for the root user.</description>
+    </item>
+    
+    <item>
+      <title>How to Install Node.js</title>
+      <link>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs/</link>
+      <pubDate>Thu, 18 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs/</guid>
+      <description>Node.js is a cross-platform runtime environment for server-side JavaScript applications. Node.js uses V8, Google&amp;rsquo;s JavaScript engine, which is also found in Chromium and Chrome. Depending on the use case, Node.js can supplement or replace traditional web servers and tools such as Apache, nginx, or PHP.
+Node.js can be installed and maintained multiple ways across the various platforms offered. Multiple releases of Node.js are available, along with multiple versions within the LTS branch.</description>
+    </item>
+    
+  </channel>
+</rss>

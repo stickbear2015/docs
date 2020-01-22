@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Deploy a WordPress Site Using Terraform and Linode StackScripts</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="In this guide you will learn how to use a Community StackScript to deploy WordPress on a Linode using Terraform.">
+        <meta name="keywords" content="terraform, stackscripts, wordpress, orchestration">
+        
+        <meta property="og:title" content="Deploy a WordPress Site Using Terraform and Linode StackScripts">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/deploy-a-wordpress-site-using-terraform-and-linode-stackscripts/">
+        <meta property="og:description" content="In this guide you will learn how to use a Community StackScript to deploy WordPress on a Linode using Terraform.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/deploy-a-wordpress-site-using-terraform-and-linode-stackscripts/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Deploy a WordPress Site Using Terraform and Linode StackScripts
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Deploy a WordPress Site Using Terraform and Linode StackScripts</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-18T17:29:11-05:00">Tuesday, December 18, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fdeploy-a-wordpress-site-using-terraform-and-linode-stackscripts%2f&via=linode&text=Deploy%20a%20WordPress%20Site%20Using%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fdeploy-a-wordpress-site-using-terraform-and-linode-stackscripts%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fdeploy-a-wordpress-site-using-terraform-and-linode-stackscripts%2f&t=Deploy%20a%20WordPress%20Site%20Using%20Terraform%20and%20Linode%20StackScripts" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Deploy%20a%20WordPress%20Site%20Using%20Terraform%20and%20Linode%20StackScripts%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fdeploy-a-wordpress-site-using-terraform-and-linode-stackscripts%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5cdeploy-a-wordpress-site-using-terraform-and-linode-stackscripts%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5cdeploy-a-wordpress-site-using-terraform-and-linode-stackscripts%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Linode&rsquo;s Terraform provider supports <a href="/docs/platform/stackscripts/">StackScripts</a>. StackScripts allow you to automate the deployment of custom software on top of Linode&rsquo;s default Linux images, or on any of your <a href="/docs/platform/disk-images/linode-images/">saved custom images</a>. You can create your own StackScripts, use a StackScript created by Linode, or use a Community StackScript.</p>
+
+<p>In this guide you will learn how to use a Community StackScript to deploy WordPress on a Linode using Terraform.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>Following this guide will result in the creation of <a href="/docs/platform/billing-and-support/billing-and-payments/#how-hourly-billing-works">billable Linode resources</a> on your account. To prevent continued billing for these resources, <a href="#optional-destroy-the-linode-resources">remove them</a> from your account when you have completed the guide, if desired.</div>
+</blockquote>
+
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Install Terraform on your computer by following the <em>Install Terraform</em> section of our <a href="/docs/applications/configuration-management/how-to-build-your-infrastructure-using-terraform-and-linode/#install-terraform">Use Terraform to Provision Linode Environments</a> guide.</p></li>
+
+<li><p>Terraform requires an API access token. Follow the <a href="/docs/platform/api/getting-started-with-the-linode-api-new-manager/#get-an-access-token">Getting Started with the Linode API</a> guide to obtain one.</p></li>
+
+<li><p>If you have not already, <a href="/docs/platform/manager/dns-manager/#use-linode-s-name-servers-with-your-domain">assign Linode&rsquo;s name servers</a> to your domain at your domain name&rsquo;s registrar.</p></li>
+
+<li><p>Browse the existing <a href="https://www.linode.com/stackscripts/">StackScripts Library</a> to familiarize yourself with common tasks you can complete with existing StackScripts.</p></li>
+</ol>
+
+<h2 id="create-a-terraform-configuration">Create a Terraform Configuration</h2>
+
+<p>Terraform defines the elements of your Linode infrastructure inside of configuration files. Terraform refers to these infrastructure elements as <em>resources</em>. Once you declare your Terraform configuration, you then <em>apply</em> it, which results in the creation of those resources on the Linode platform.</p>
+
+<h3 id="create-the-terraform-configuration-file">Create the Terraform Configuration File</h3>
+
+<ol>
+<li><p>Ensure that you are in the <code>terraform</code> directory.</p>
+
+<pre><code>cd ~/terraform
+</code></pre></li>
+
+<li><p>Using your preferred text editor, create a Terraform configuration file named <code>main.tf</code> to hold your resource definitions:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/terraform/main.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">provider <span class="s2">&#34;linode&#34;</span> <span class="o">{</span>
+    <span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.token</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_sshkey&#34;</span> <span class="s2">&#34;my_wordpress_linode_ssh_key&#34;</span> <span class="o">{</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;my_ssh_key&#34;</span>
+    <span class="nv">ssh_key</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">chomp</span><span class="p">(file(</span><span class="s2">&#34;~/.ssh/id_rsa.pub&#34;</span><span class="p">))</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;random_string&#34;</span> <span class="s2">&#34;my_wordpress_linode_root_password&#34;</span> <span class="o">{</span>
+    <span class="nv">length</span>  <span class="o">=</span> <span class="m">32</span>
+    <span class="nv">special</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_instance&#34;</span> <span class="s2">&#34;my_wordpress_linode&#34;</span> <span class="o">{</span>
+    <span class="nv">image</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.image</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.type</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">authorized_keys</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_sshkey</span><span class="p">.my_wordpress_linode_ssh_key.ssh_key</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">random_string</span><span class="p">.my_wordpress_linode_root_password.result</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_data</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_data</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_domain&#34;</span> <span class="s2">&#34;my_wordpress_domain&#34;</span> <span class="o">{</span>
+    <span class="nv">domain</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.domain</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">soa_email</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.soa_email</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;master&#34;</span>
+ <span class="o">}</span>
+
+resource <span class="s2">&#34;linode_domain_record&#34;</span> <span class="s2">&#34;my_wordpress_domain_www_record&#34;</span> <span class="o">{</span>
+    <span class="nv">domain_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_domain</span><span class="p">.my_wordpress_domain.id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">name</span> <span class="o">=</span> <span class="s2">&#34;www&#34;</span>
+    <span class="nv">record_type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.a_record</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">target</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_instance</span><span class="p">.my_wordpress_linode.ipv4[0]</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_domain_record&#34;</span> <span class="s2">&#34;my_wordpress_domain_apex_record&#34;</span> <span class="o">{</span>
+    <span class="nv">domain_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_domain</span><span class="p">.my_wordpress_domain.id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">name</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
+    <span class="nv">record_type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.a_record</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">target</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_instance</span><span class="p">.my_wordpress_linode.ipv4[0]</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The Terraform configuration file uses an <a href="https://www.terraform.io/docs/configuration/interpolation.html">interpolation syntax</a> to reference Terraform <a href="https://learn.hashicorp.com/terraform/getting-started/variables.html"><em>input variables</em></a>, call Terraform&rsquo;s <a href="https://www.terraform.io/docs/configuration/interpolation.html#built-in-functions">built-in functions</a>, and reference attributes of other resources.</p>
+
+<p>Variables and their values will be created in separate files later on in this guide. Using separate files for variable declaration allows you to avoid hard-coding values into your resources. This strategy can help you reuse, share, and version control your Terraform configurations.</p></li>
+</ol>
+
+<h3 id="examining-the-terraform-configuration">Examining the Terraform Configuration</h3>
+
+<p>Let&rsquo;s take a closer look at each block in the configuration file:</p>
+
+<ol>
+<li><p>The first stanza declares Linode as the <a href="https://www.terraform.io/docs/providers/">Terraform provider</a> that will manage the life cycle of any resources declared throughout the configuration file. The Linode provider requires your Linode APIv4 token for authentication:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">provider <span class="s2">&#34;linode&#34;</span> <span class="o">{</span>
+    <span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.token</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>The next resource configures an SSH Key that will be uploaded to your Linode instance later in the configuration file:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">resource <span class="s2">&#34;linode_sshkey&#34;</span> <span class="s2">&#34;my_wordpress_linode_ssh_key&#34;</span> <span class="o">{</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;my_ssh_key&#34;</span>
+    <span class="nv">ssh_key</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">chomp</span><span class="p">(file(</span><span class="s2">&#34;~/.ssh/id_rsa.pub&#34;</span><span class="p">))</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p><code>ssh_key = &quot;${chomp(file(&quot;~/.ssh/id_rsa.pub&quot;))}&quot;</code> uses Terraform&rsquo;s built-in <code>file()</code> function to provide a local file path to the public SSH key&rsquo;s location. The <code>chomp()</code> built-in function removes trailing new lines from the SSH key.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you do not already have SSH keys, follow the steps in the <em>Create an Authentication Key-pair</em> section of the <a href="/docs/security/securing-your-server/#create-an-authentication-key-pair">Securing Your Server Guide</a>.</div>
+</blockquote>
+</li>
+
+<li><p>The <code>random_string</code> resource can be used to create a random string of 32 characters. The <code>linode_instance</code> resource will use it to create a root user password:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">resource <span class="s2">&#34;random_string&#34;</span> <span class="s2">&#34;my_wordpress_linode_root_password&#34;</span> <span class="o">{</span>
+    <span class="nv">length</span>  <span class="o">=</span> <span class="m">32</span>
+    <span class="nv">special</span> <span class="o">=</span> <span class="nb">true</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>The <code>linode_instance</code> resource creates a Linode with the declared configurations:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">resource <span class="s2">&#34;linode_instance&#34;</span> <span class="s2">&#34;my_wordpress_linode&#34;</span> <span class="o">{</span>
+    <span class="nv">image</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.image</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.label</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">region</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.region</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.type</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">authorized_keys</span> <span class="o">=</span> <span class="o">[</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_sshkey</span><span class="p">.my_wordpress_linode_ssh_key.ssh_key</span><span class="si">}</span><span class="s2">&#34;</span> <span class="o">]</span>
+    <span class="nv">root_pass</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">random_string</span><span class="p">.my_wordpress_linode_root_password.result</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">stackscript_data</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.stackscript_data</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<ul>
+<li><p>The <code>authorized_keys</code> argument uses the SSH public key provided by the <code>linode_sshkey</code> resource in the previous stanza. This argument expects a value of type <code>list</code>, so the value must be wrapped in brackets.</p></li>
+
+<li><p>The <code>root_pass</code> argument is assigned to the value of the <code>random_string</code> resource previously declared.</p></li>
+
+<li><p>To use an existing StackScript you must use the <code>stackscript_id</code> argument and provide a valid ID as a value. Every StackScript is assigned a unique ID upon creation. This guide uses the <a href="https://www.linode.com/stackscripts/view/81736">WordPress on Ubuntu 16.04</a> StackScript provided by Linode user <a href="https://www.linode.com/stackscripts/profile/hmorris">hmorris</a>. This StackScript&rsquo;s ID will be assigned to a Terraform variable later in this guide.</p>
+
+<p>StackScripts support user defined data. A StackScript can use the <a href="/docs/platform/stackscripts/#variables-and-udfs"><code>UDF</code> tag</a> to create a variable whose value must be provided by the user of the script. This allows users to customize the behavior of a StackScript on a per-deployment basis. Any required <code>UDF</code> variable can be defined using the <code>stackscript_data</code> argument.</p>
+
+<p>The StackScript will be responsible for installing WordPress on your Linode, along with all other requirements, like installing and configuring the Apache Web Server, configuring the Virtual Hosts file, and installing MySQL.</p></li>
+
+<li><p>Other arguments are given values by the Terraform variables that will be declared later in this guide.</p></li>
+</ul></li>
+
+<li><p>In order to complete your WordPress site&rsquo;s configuration, you need to create a domain and corresponding domain records for your site. The <code>linode_domain</code> and <code>linode_domain_record</code> resources handle these configurations:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">resource <span class="s2">&#34;linode_domain&#34;</span> <span class="s2">&#34;my_wordpress_domain&#34;</span> <span class="o">{</span>
+    <span class="nv">domain</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.domain</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">soa_email</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.soa_email</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;master&#34;</span>
+ <span class="o">}</span>
+
+resource <span class="s2">&#34;linode_domain_record&#34;</span> <span class="s2">&#34;my_wordpress_domain_www_record&#34;</span> <span class="o">{</span>
+    <span class="nv">domain_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_domain</span><span class="p">.my_wordpress_domain.id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">name</span> <span class="o">=</span> <span class="s2">&#34;www&#34;</span>
+    <span class="nv">record_type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.a_record</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">target</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_instance</span><span class="p">.linode_id.ipv4[0]</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span>
+
+resource <span class="s2">&#34;linode_domain_record&#34;</span> <span class="s2">&#34;my_wordpress_domain_apex_record&#34;</span> <span class="o">{</span>
+    <span class="nv">domain_id</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_domain</span><span class="p">.my_wordpress_domain.id</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">name</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
+    <span class="nv">record_type</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">var</span><span class="p">.a_record</span><span class="si">}</span><span class="s2">&#34;</span>
+    <span class="nv">target</span> <span class="o">=</span> <span class="s2">&#34;</span><span class="si">${</span><span class="nv">linode_instance</span><span class="p">.my_wordpress_linode.ipv4[0]</span><span class="si">}</span><span class="s2">&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you are not familiar with the Domain Name System (DNS), review the <a href="/docs/networking/dns/dns-records-an-introduction/">DNS Records: An Introduction</a> guide.</div>
+</blockquote>
+
+
+<p>The <code>linode_domain</code> resource creates a <a href="/docs/platform/manager/dns-manager/#domain-zones">domain zone</a> for your domain.</p>
+
+<p>Each <code>linode_domain_record</code> resource retrieves the <code>linode_domain</code> resource&rsquo;s ID and assigns it to that record&rsquo;s <code>domain_id</code> argument. Each record&rsquo;s <code>target</code> argument retrieves the IP address from the Linode instance. Every <code>linode_instance</code> resource exposes <a href="https://www.terraform.io/docs/providers/linode/r/instance.html#attributes">several attributes</a>, including a Linode&rsquo;s IPv4 address.</p></li>
+</ol>
+
+<h3 id="define-the-input-variables">Define the Input Variables</h3>
+
+<p>In the <code>terraform</code> directory, create a file named <code>variables.tf</code>. This will define all the variables that were used in the <code>main.tf</code> file in the previous section. The values for these variables (aside from their default values) will be assigned in another file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/terraform/variables.tf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">variable <span class="s2">&#34;token&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Linode API Personal Access Token&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;image&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Image to use for Linode instance&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;linode/ubuntu16.04lts&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;label&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The Linode&#39;s label is for display purposes only.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;default-linode&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;region&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The region where your Linode will be located.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;us-east&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;type&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Your Linode&#39;s plan type.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;g6-standard-1&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript_id&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Stackscript ID&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;stackscript_data&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Map of required StackScript UDF data.&#34;</span>
+  <span class="nb">type</span> <span class="o">=</span> <span class="s2">&#34;map&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;domain&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The domain this domain represents.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;soa_email&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;Start of Authority email address. This is required for master domains.&#34;</span>
+<span class="o">}</span>
+
+variable <span class="s2">&#34;a_record&#34;</span> <span class="o">{</span>
+  <span class="nv">description</span> <span class="o">=</span> <span class="s2">&#34;The type of DNS record. For example, `A` records associate a domain name with an IPv4 address.&#34;</span>
+  <span class="nv">default</span> <span class="o">=</span> <span class="s2">&#34;A&#34;</span>
+<span class="o">}</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>It is recommended to include a <code>description</code> attribute for each input variable to help document your configuration&rsquo;s usage. This will make it easier for anyone else to use this Terraform configuration.</div>
+</blockquote>
+
+
+<p>Every variable can contain a <code>default</code> value. The <code>default</code> value is only used if no other value is provided. You can also declare a <code>type</code> for each variable. If no type is provided, the variable will default to <code>type = &quot;string&quot;</code>.</p>
+
+<p>The <code>stackscript_data</code> variable is of type <code>map</code>. This will allow you to provide values for as many <code>UDF</code> variables as your StackScript requires.</p>
+
+<h3 id="assign-values-to-the-input-variables">Assign Values to the Input Variables</h3>
+
+<p>Terraform allows you to assign variables in many ways. For example, you can assign a variable value via the command line when running <code>terraform apply</code>. In order to persist variable values, you can also create files to hold all your values.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>There are several other options available for secrets management with Terraform. For more information on this, see <a href="/docs/applications/configuration-management/secrets-management-with-terraform/">Secrets Management with Terraform</a>.</div>
+</blockquote>
+
+
+<p>Terraform will automatically load any file named <code>terraform.tfvars</code> and use its contents to populate variables. However, you should separate out any sensitive values, like passwords and tokens, into their own file. Keep this sensitive file out of version control.</p>
+
+<ol>
+<li><p>Create a file named <code>terraform.tfvars</code> in your <code>terraform</code> directory to hold all non-sensitive values:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/terraform/terraform.tfvars 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">label</span> <span class="o">=</span> <span class="s2">&#34;wp-linode&#34;</span>
+<span class="nv">stackscript_id</span> <span class="o">=</span> <span class="s2">&#34;81736&#34;</span>
+<span class="nv">stackscript_data</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="nv">ssuser</span> <span class="o">=</span> <span class="s2">&#34;username&#34;</span>
+  <span class="nv">hostname</span> <span class="o">=</span> <span class="s2">&#34;wordpress&#34;</span>
+  <span class="nv">website</span> <span class="o">=</span> <span class="s2">&#34;example.com&#34;</span>
+  <span class="nv">dbuser</span> <span class="o">=</span> <span class="s2">&#34;wpuser&#34;</span>
+<span class="o">}</span>
+<span class="nv">domain</span> <span class="o">=</span> <span class="s2">&#34;example.com&#34;</span>
+<span class="nv">soa_email</span> <span class="o">=</span> <span class="s2">&#34;user@email.com&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create a file name <code>secrets.tfvars</code> in your <code>terraform</code> directory to hold any sensitive values:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/terraform/secrets.tfvars 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">token</span> <span class="o">=</span> <span class="s2">&#34;my-linode-api4-token&#34;</span>
+<span class="nv">stackscript_data</span> <span class="o">=</span> <span class="o">{</span>
+  <span class="nv">sspassword</span> <span class="o">=</span> <span class="s2">&#34;my-secure-password&#34;</span>
+  <span class="nv">db_password</span> <span class="o">=</span> <span class="s2">&#34;another-secure-password&#34;</span>
+  <span class="nv">dbuser_password</span> <span class="o">=</span> <span class="s2">&#34;a-third-secure-password&#34;</span>
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>It is helpful to reference Terraform&rsquo;s <a href="https://www.terraform.io/docs/providers/linode/">Linode provider</a> documentation and the <a href="https://developers.linode.com/api/v4">Linode APIv4 documentation</a> for assistance in determining appropriate values for Linode resources.</div>
+</blockquote>
+</li>
+
+<li><p>Replace the following values in your new <code>.tfvars</code> files:</p>
+
+<ul>
+<li><p><code>token</code> should be replaced with your own Linode account&rsquo;s APIv4 token.</p></li>
+
+<li><p>For security purposes, the StackScript will create a limited Linux user on your Linode. <code>ssuser</code> should be replaced with your desired username for this user.</p></li>
+
+<li><p><code>sspassword</code>, <code>db_password</code>, and <code>dbuser_password</code> should be replaced with secure passwords of your own.</p></li>
+
+<li><p><code>domain</code> should be replaced with your WordPress site&rsquo;s domain address.</p></li>
+
+<li><p><code>soa_email</code> should be the email address you would like to use for your <a href="/docs/networking/dns/dns-records-an-introduction/#soa">Start of Authority</a> email address.</p></li>
+</ul></li>
+</ol>
+
+<h2 id="initialize-plan-and-apply-the-terraform-configuration">Initialize, Plan, and Apply the Terraform Configuration</h2>
+
+<p>Your Terraform configuration has been recorded, but you have not told Terraform to create the resources yet. To do this, you will invoke commands from Terraform&rsquo;s CLI.</p>
+
+<h3 id="initialize">Initialize</h3>
+
+<p>Whenever a new provider is used in a Terraform configuration, it must be initialized before you can create resources with it. The initialization process downloads and installs the provider&rsquo;s plugin and performs any other steps needed to prepare for its use.</p>
+
+<p>Navigate to your <code>terraform</code> directory in your terminal and run:</p>
+
+<pre><code>terraform init
+</code></pre>
+
+<p>You will see a message that confirms that the Linode provider plugins have been successfully initialized.</p>
+
+<h3 id="plan">Plan</h3>
+
+<p>It can be useful to view your configuration&rsquo;s execution plan before actually committing those changes to your infrastructure. Terraform includes a <code>plan</code> command for this purpose. Run this command from the <code>terraform</code> directory:</p>
+
+<pre><code>terraform plan \
+-var-file=&quot;secrets.tfvars&quot; \
+-var-file=&quot;terraform.tfvars&quot;
+</code></pre>
+
+<p><code>plan</code> won’t take any actions or make any changes on your Linode account. Instead, an analysis is done to determine which actions (i.e. Linode resource creations, deletions, or modifications) are required to achieve the state described in your configuration.</p>
+
+<h3 id="apply">Apply</h3>
+
+<p>You are now ready to create the infrastructure defined in your <code>main.tf</code> configuration file:</p>
+
+<ol>
+<li><p>Run Terraform&rsquo;s <code>apply</code> command from the <code>terraform</code> directory:</p>
+
+<pre><code>terraform apply \
+-var-file=&quot;secrets.tfvars&quot; \
+-var-file=&quot;terraform.tfvars&quot;
+</code></pre>
+
+<p>Since you are using multiple variable value files, you must include each file individually using the <code>var-file</code> argument. You will be prompted to confirm the <code>apply</code> action. Type <em>yes</em> and press <strong>enter</strong>.</p></li>
+
+<li><p>Terraform will begin to create the resources you&rsquo;ve defined throughout this guide. This process will take several minutes to complete. Once the infrastructure has been successfully built you will see a similar output:</p>
+
+<pre class="file terminal">
+  <code>
+Apply complete! Resources: 6 added, 0 changed, 0 destroyed.
+</code>
+</pre>
+</li>
+
+<li><p>Navigate to your WordPress site&rsquo;s domain and verify that the site loads. You may have to wait a few minutes more after the <code>terraform apply</code> command returns, as the StackScript takes time to install WordPress. Additionally, it make take some time for your domain name changes to propagate:</p>
+
+<p><img src="wp-install.png" alt="Install WordPress" /></p></li>
+
+<li><p>Complete the remaining WordPress configuration steps provided by the prompts.</p></li>
+</ol>
+
+<h2 id="optional-destroy-the-linode-resources">(Optional) Destroy the Linode Resources</h2>
+
+<p>If you do not want to keep using the resources created by Terraform in this guide, run the <code>destroy</code> command from the <code>terraform</code> directory:</p>
+
+<pre><code>terraform destroy \
+-var-file=&quot;secrets.tfvars&quot; \
+-var-file=&quot;terraform.tfvars&quot;
+</code></pre>
+
+<p>Terraform will prompt you to confirm this action. Enter <em>yes</em> to proceed.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.terraform.io/docs/providers/linode/index.html">Terraform Linode Provider</a></li>
+
+<li><a href="https://www.terraform.io/intro/getting-started/variables.html">Terraform Input Variables</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#create-a-terraform-configuration">Create a Terraform Configuration</a>
+<ul>
+<li><a href="#create-the-terraform-configuration-file">Create the Terraform Configuration File</a></li>
+<li><a href="#examining-the-terraform-configuration">Examining the Terraform Configuration</a></li>
+<li><a href="#define-the-input-variables">Define the Input Variables</a></li>
+<li><a href="#assign-values-to-the-input-variables">Assign Values to the Input Variables</a></li>
+</ul></li>
+<li><a href="#initialize-plan-and-apply-the-terraform-configuration">Initialize, Plan, and Apply the Terraform Configuration</a>
+<ul>
+<li><a href="#initialize">Initialize</a></li>
+<li><a href="#plan">Plan</a></li>
+<li><a href="#apply">Apply</a></li>
+</ul></li>
+<li><a href="#optional-destroy-the-linode-resources">(Optional) Destroy the Linode Resources</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

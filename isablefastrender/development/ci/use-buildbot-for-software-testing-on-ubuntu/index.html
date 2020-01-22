@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Use Buildbot for Software Testing on Ubuntu 18.04</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This tutorial will explain how to install, configure, and use Buildbot as a continuous integration platform, as well as how to write configuration for custom testing builds.">
+        <meta name="keywords" content="buildbot, testing, python, continuous integration, ci, build, qa">
+        
+        <meta property="og:title" content="Use Buildbot for Software Testing on Ubuntu 18.04">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/development/ci/use-buildbot-for-software-testing-on-ubuntu/">
+        <meta property="og:description" content="Deploy self-hosted continuous integration using Buildbot.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/development/ci/use-buildbot-for-software-testing-on-ubuntu/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/">Development</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/ci/">Continuous Integration</a>
+  
+</li>
+
+
+<li>
+  
+  Use Buildbot for Software Testing on Ubuntu 18.04
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Use Buildbot for Software Testing on Ubuntu 18.04</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-04T17:06:42-05:00">Monday, February 4, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Tyler Langlois
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fci%2fuse-buildbot-for-software-testing-on-ubuntu%2f&via=linode&text=Use%20Buildbot%20for%20Software%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fci%2fuse-buildbot-for-software-testing-on-ubuntu%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fci%2fuse-buildbot-for-software-testing-on-ubuntu%2f&t=Use%20Buildbot%20for%20Software%20Testing%20on%20Ubuntu%2018.04" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Use%20Buildbot%20for%20Software%20Testing%20on%20Ubuntu%2018.04%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdevelopment%2fci%2fuse-buildbot-for-software-testing-on-ubuntu%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/development%5cci%5cuse-buildbot-for-software-testing-on-ubuntu%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/development%5cci%5cuse-buildbot-for-software-testing-on-ubuntu%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+<blockquote class="dedicated_cpu_link">
+  <strong class="callout-title">Dedicated CPU instances are available!</strong>
+  <div>Linode's Dedicated CPU instances are ideal for CPU-intensive workloads like those discussed in this guide. To learn more about Dedicated CPU, read our <a href="https://blog.linode.com/2019/02/05/introducing-linode-dedicated-cpu-instances?utm_source=library&utm_medium=banner&utm_campaign=dedicated_cpu">blog post</a>. To upgrade an existing Linode to a Dedicated CPU instance, review the <a href="/docs/platform/disk-images/resizing-a-linode/">Resizing a Linode</a> guide.</div>
+</blockquote>
+
+            
+
+<p><a href="https://buildbot.net/">Buildbot</a> is an open source system for testing software projects. In this guide, you will set up a Linode as a Buildbot server to use as a continuous integration platform to test code. Similarly to hosted solutions like Travis CI, Buildbot is an automated testing platform that can watch for code changes, test a project&rsquo;s code, and send notifications regarding build failures.</p>
+
+<h2 id="before-you-begin">Before you Begin</h2>
+
+<ol>
+<li><p>Familiarize yourself with Linode&rsquo;s <a href="/docs/getting-started/">Getting Started</a> guide and complete the steps for deploying and setting up a Linode running Ubuntu 18.04, including setting the hostname and timezone.</p></li>
+
+<li><p>This guide uses <code>sudo</code> wherever possible. Complete the sections of our <a href="/docs/security/securing-your-server/">Securing Your Server</a> guide to create a standard user account, harden SSH access and remove unnecessary network services.</p></li>
+
+<li><p>Ensure your system is up to date:</p>
+
+<pre><code>sudo apt update &amp;&amp; sudo apt upgrade
+</code></pre></li>
+
+<li><p>Complete the <a href="/docs/websites/set-up-web-server-host-website/#add-dns-records">Add DNS Records</a> steps to register a domain name that will point to your Linode instance hosting Buildbot.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Replace each instance of <code>example.com</code> in this guide with your Buildbot site&rsquo;s domain name.</div>
+</blockquote>
+</li>
+
+<li><p>Your Buildbot site will serve its content over HTTPS, so you will need to obtain an SSL/TLS certificate. Use <a href="/docs/quick-answers/websites/secure-http-traffic-certbot/#use-certbot-on-ubuntu">Certbot</a> to request and download a free certificate from <a href="https://letsencrypt.org/">Let&rsquo;s Encrypt</a>.</p>
+
+<pre><code>sudo apt install software-properties-common
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt update
+sudo apt install certbot
+sudo certbot certonly --standalone -d example.com
+</code></pre>
+
+<p>These commands will download a certificate to <code>/etc/letsencrypt/live/example.com/</code> on your Linode.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The steps to install NGINX will be covered in the <a href="/docs/development/ci/use-buildbot-for-software-testing-on-ubuntu/#configure-buildbot-master#setup-buildbot-master-web-interface">Set up the Buildbot Master Web Interface</a> section of the guide.</div>
+</blockquote>
+</li>
+</ol>
+
+<h2 id="install-buildbot">Install Buildbot</h2>
+
+<h3 id="install-the-buildbot-master">Install the Buildbot Master</h3>
+
+<p>Since Buildbot is provided as an Ubuntu package, install the software from the official Ubuntu repositories.</p>
+
+<ol>
+<li><p>Install the <code>buildbot</code> package along with <code>pip3</code>, which will be used to install additional python packages:</p>
+
+<pre><code>sudo apt-get install -y buildbot python3-pip
+</code></pre></li>
+
+<li><p>Install the required Buildbot Python packages:</p>
+
+<pre><code>sudo pip3 install buildbot-www buildbot-waterfall-view buildbot-console-view buildbot-grid-view
+</code></pre></li>
+
+<li><p>The <code>buildbot</code> package sets up several file paths and services to run persistently on your host. In order to create a new configuration for a Buildbot master, enter the directory for Buildbot master configurations and create a new master called <code>ci</code> (for &ldquo;continuous integration&rdquo;).</p>
+
+<pre><code>cd /var/lib/buildbot/masters
+sudo -u buildbot -- buildbot create-master ci
+</code></pre>
+
+<p>The generated master configuration file&rsquo;s location is <code>/var/lib/buildbot/masters/ci/master.cfg.sample</code>.</p></li>
+
+<li><p>Make a copy of the default configuration to the path that Buildbot expects for its configuration file:</p>
+
+<pre><code>sudo cp ci/master.cfg.sample ci/master.cfg
+</code></pre></li>
+
+<li><p>Change the permissions for this configuration file so that the <code>buildbot</code> user has rights for the configuration file:</p>
+
+<pre><code>sudo chown buildbot:buildbot ci/master.cfg
+</code></pre></li>
+</ol>
+
+<h3 id="configure-the-buildbot-master">Configure the Buildbot Master</h3>
+
+<p>In order to secure and customize Buildbot, you will change a few settings in the master configuration file before using the application. The master configuration file&rsquo;s location is <code>/var/lib/buildbot/masters/ci/master.cfg</code>.</p>
+
+<p>Buildbot has a number of concepts that are represented in the master build configuration file. Open this file in your preferred text editor and browse the Buildbot configuration. The Buildbot configuration is written in Python instead of a markup language like Yaml.</p>
+
+<ol>
+<li><p>Generate a random string to serve as the password that workers will use to authenticate against the Buildbot master. This is accomplished by using <code>openssl</code> to create a random sequence of characters.</p>
+
+<pre><code>openssl rand -hex 16
+&lt;a random string&gt;
+</code></pre></li>
+
+<li><p>Update the following line in the <code>master.cfg</code> file and replace <code>pass</code> with the randomly-generated password:</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/buildbot/masters/ci/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+<span class="c1"># The &#39;workers&#39; list defines the set of recognized workers. Each element is</span>
+<span class="c1"># a Worker object, specifying a unique worker name and password.  The same</span>
+<span class="c1"># worker name and password must be configured on the worker.</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;workers&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">worker</span><span class="o">.</span><span class="n">Worker</span><span class="p">(</span><span class="s2">&#34;example-worker&#34;</span><span class="p">,</span> <span class="s2">&#34;pass&#34;</span><span class="p">)]</span>
+<span class="o">...</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Uncomment the <code>c[title]</code> and the <code>c[titleURL]</code> lines. If desired, change the name of the Buildbot installation by updating the value of <code>c[title]</code>. Replace the <code>c[titleURL]</code> value with the URL of your Buildbot instance. In the example, the URL value is replaced with <code>example.com</code>.</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/buildbot/masters/ci/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;My CI&#34;</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;titleURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://example.com&#34;</span>
+<span class="o">...</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Uncomment the <code>c['buildbotURL']</code> line and replace the URL value with the your Buildbot instance&rsquo;s URL:</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/buildbot/masters/ci/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;buildbotURL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&#34;https://example.com/&#34;</span>
+<span class="o">...</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>These options assume that you will use a custom domain secured with Let&rsquo;s Encrypt certificates from <code>certbot</code> as outlined in the <a href="/docs/development/ci/use-buildbot-for-software-testing-on-ubuntu/#before-you-begin">Before You Begin</a> section of this guide.</p></li>
+
+<li><p>Uncomment the web interface configuration lines and keep the default options:</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/buildbot/masters/ci/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;www&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span>
+                <span class="n">plugins</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">waterfall_view</span><span class="o">=</span><span class="p">{},</span> <span class="n">console_view</span><span class="o">=</span><span class="p">{},</span> <span class="n">grid_view</span><span class="o">=</span><span class="p">{}))</span>
+<span class="o">...</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>By default, Buildbot does not require people to authenticate in order to access control features in the web UI. To secure Buildbot, you will need to configure an authentication plugin.</p>
+
+<p>Configure users for the Buildbot master web interface. Add the following lines below the web interface configuration lines and replace the <code>myusername</code> and <code>password</code> values with the ones you would like to use.</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/buildbot/masters/ci/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;www&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">8010</span><span class="p">,</span>
+                <span class="n">plugins</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">waterfall_view</span><span class="o">=</span><span class="p">{},</span> <span class="n">console_view</span><span class="o">=</span><span class="p">{},</span> <span class="n">grid_view</span><span class="o">=</span><span class="p">{}))</span>
+
+<span class="c1"># user configurations</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;www&#39;</span><span class="p">][</span><span class="s1">&#39;authz&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">Authz</span><span class="p">(</span>
+        <span class="n">allowRules</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">AnyEndpointMatcher</span><span class="p">(</span><span class="n">role</span><span class="o">=</span><span class="s2">&#34;admins&#34;</span><span class="p">)</span>
+        <span class="p">],</span>
+        <span class="n">roleMatchers</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">util</span><span class="o">.</span><span class="n">RolesFromUsername</span><span class="p">(</span><span class="n">roles</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;admins&#39;</span><span class="p">],</span> <span class="n">usernames</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;myusername&#39;</span><span class="p">])</span>
+        <span class="p">]</span>
+<span class="p">)</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;www&#39;</span><span class="p">][</span><span class="s1">&#39;auth&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">UserPasswordAuth</span><span class="p">([(</span><span class="s1">&#39;myusername&#39;</span><span class="p">,</span><span class="s1">&#39;password&#39;</span><span class="p">)])</span>
+<span class="o">...</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Buildbot supports building repositories based on GitHub activity. This is done with a GitHub webhook. Generate a random string to serve as a webhook secret token to validate payloads.</p>
+
+<pre><code>openssl rand -hex 16
+&lt;a random string&gt;
+</code></pre></li>
+
+<li><p>Configure Buildbot to recognize GitHub webhooks as a change source. Add the following snippet to the end of the <code>master.cfg</code> file and replace <code>webhook secret</code> with the random string generated in the previous step.</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/buildbot/masters/ci/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">c</span><span class="p">[</span><span class="s1">&#39;www&#39;</span><span class="p">][</span><span class="s1">&#39;change_hook_dialects&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;github&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;secret&#39;</span><span class="p">:</span> <span class="s1">&#39;webhook_secret&#39;</span><span class="p">,</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Finally, start the Buildbot master. This command will start the Buildbot process and persist it across reboots.</p>
+
+<pre><code>sudo systemctl enable --now buildmaster@ci.service
+</code></pre></li>
+</ol>
+
+<h3 id="set-up-the-buildbot-master-web-interface">Set up the Buildbot Master Web Interface</h3>
+
+<p>Buildbot is now running and listening on HTTP without encryption. To secure the connection, install NGINX to terminate SSL and reverse proxy traffic to the Buildbot master process.</p>
+
+
+
+
+
+<p>These steps install NGINX Mainline on Ubuntu from NGINX Inc&rsquo;s official repository. For other distributions, see the <a href="https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#installing-a-prebuilt-package">NGINX admin guide</a>. For information on configuring NGINX for production environments, see our <em><a href="/docs/web-servers/nginx/nginx-installation-and-basic-setup/">Getting Started with NGINX</a></em> series.</p>
+
+<ol>
+<li><p>Open <code>/etc/apt/sources.list</code> in a text editor and add the following line to the bottom. Replace <code>CODENAME</code> in this example with the codename of your Ubuntu release. For example, for Ubuntu 18.04, named Bionic Beaver, insert <code>bionic</code> in place of <code>CODENAME</code> below:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/apt/sources.list 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">deb http://nginx.org/packages/mainline/ubuntu/ CODENAME nginx</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Import the repository&rsquo;s package signing key and add it to <code>apt</code>:</p>
+
+<pre><code>sudo wget http://nginx.org/keys/nginx_signing.key
+sudo apt-key add nginx_signing.key
+</code></pre></li>
+
+<li><p>Install NGINX:</p>
+
+<pre><code>sudo apt update
+sudo apt install nginx
+</code></pre></li>
+
+<li><p>Ensure NGINX is running and and enabled to start automatically on reboot:</p>
+
+<pre><code>sudo systemctl start nginx
+sudo systemctl enable nginx
+</code></pre></li>
+</ol>
+
+
+
+
+
+<p>Now that NGINX is installed, configure NGINX to talk to the local Buildbot port. NGINX will listen for SSL traffic using the Let&rsquo;s Encrypt certificate for your domain.</p>
+
+<ol>
+<li><p>Create your site&rsquo;s NGINX configuration file. Ensure that you replace the configuration file&rsquo;s name <code>example.com.conf</code> with your domain name. Replace all instances of <code>example.com</code> with your Buildbot instance&rsquo;s URL.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">server {
+  # Enable SSL and http2
+  listen 443 ssl http2 default_server;
+
+  server_name example.com;
+
+  root html;
+  index index.html index.htm;
+
+  ssl_certificate /etc/letsencrypt/live/example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+
+  # put a one day session timeout for websockets to stay longer
+  ssl_session_cache      shared:SSL:10m;
+  ssl_session_timeout  1440m;
+
+  ssl_protocols TLSv1.2 TLSv1.3;
+  ssl_ciphers ECDHE-RSA-AES256-GCM-SHA512:DHE-RSA-AES256-GCM-SHA512:ECDHE-RSA-AES256-GCM-SHA384:DHE-RSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-SHA384;
+  ssl_prefer_server_ciphers   on;
+
+  # force https
+  add_header Strict-Transport-Security &#34;max-age=31536000; includeSubdomains;&#34;;
+  spdy_headers_comp 5;
+
+  proxy_set_header HOST $host;
+  proxy_set_header X-Real-IP $remote_addr;
+  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  proxy_set_header X-Forwarded-Proto  $scheme;
+  proxy_set_header X-Forwarded-Server  $host;
+  proxy_set_header X-Forwarded-Host  $host;
+
+  location / {
+      proxy_pass http://127.0.0.1:8010/;
+  }
+  location /sse/ {
+      # proxy buffering will prevent sse to work
+      proxy_buffering off;
+      proxy_pass http://127.0.0.1:8010/sse/;
+  }
+  location /ws {
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection &#34;upgrade&#34;;
+      proxy_pass http://127.0.0.1:8010/ws;
+      # raise the proxy timeout for the websocket
+      proxy_read_timeout 6000s;
+  }
+}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Disable NGINX&rsquo;s default configuration file:</p>
+
+<pre><code>mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled
+</code></pre></li>
+
+<li><p>Restart NGINX to apply the Buildbot reverse proxy configuration:</p>
+
+<pre><code>sudo systemctl restart nginx
+</code></pre></li>
+
+<li><p>Navigate to your Buildbot instance&rsquo;s URL over HTTPS. You will see the Buildbot homepage:</p>
+
+<p><img src="buildbot-landing-page.png" alt="Buildbot Landing Page" title="Buildbot Landing Page" /></p>
+
+<p>Your continuous integration test server is now up and running.</p></li>
+
+<li><p>Ensure that you can log into your Buildbot instance with the admin credentials you created in the <a href="/docs/development/ci/use-buildbot-for-software-testing-on-ubuntu/#configure-buildbot-master">Configure Buildbot Master</a> section. Click on the top right hand dropdown menu entitled <strong>Anonymous</strong> and then, click on <strong>Login</strong>. A <em>Sign In</em> modal will appear. Enter your credentials to log in to Buildbot as the admin user.</p></li>
+</ol>
+
+<h3 id="install-the-buildbot-worker">Install the Buildbot Worker</h3>
+
+<p>In order for Buildbot to execute test builds, the Buildbot master will require a worker. The following steps will setup a worker on the same host as the master.</p>
+
+<ol>
+<li><p>Install the <code>buildbot-slave</code> Ubuntu package:</p>
+
+<pre><code>sudo apt-get install -y buildbot-slave
+</code></pre></li>
+
+<li><p>Navigate to the directory which will store the Buildbot worker configurations:</p>
+
+<pre><code>cd /var/lib/buildbot/workers
+</code></pre></li>
+
+<li><p>Create the configuration directory for the Buildbot worker. Replace <code>example-worker</code> and <code>my-worker-password</code> with the values used for the <code>c[worker]</code> configuration in the <code>master.cfg</code> file.</p>
+
+<pre><code>sudo -u buildbot -- buildbot-worker create-worker default localhost example-worker my-worker-password
+</code></pre></li>
+
+<li><p>The Buildbot worker is ready to connect to the Buildbot master. Enable the worker process.</p>
+
+<pre><code>sudo systemctl enable --now buildbot-worker@default.service
+</code></pre>
+
+<p>Confirm that the worker has connected by going to your Buildbot site and navigating to <strong>Builds</strong> -&gt; <strong>Workers</strong> in the sidebar menu:</p>
+
+<p><img src="buildbot-worker-page.png" alt="Buildbot Workers Page" title="Buildbot Workers Page" /></p></li>
+</ol>
+
+<h2 id="configuring-builds">Configuring Builds</h2>
+
+<p>Now that Buildbot is installed, you can configure it to run builds. In this tutorial, we will use a forked GitHub repository for the <a href="https://github.com/linode/docs">Linode Guides and Tutorials repository</a> to illustrate how to use Buildbot as a system to run tests against a repository.</p>
+
+<h3 id="configuring-github">Configuring GitHub</h3>
+
+<p>Before creating the build configuration, fork the <code>linode/docs</code> repository into your GitHub account. This is the repository that will be used to run tests against. The repository will also require webhooks to be configured to send push or PR events to Buildbot.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The actions you take to fork, add webhook, and push changes to your fork of <code>linode/docs</code> will not affect the parent (or upstream), so you can safely experiment with it. Any changes you make to branches of your fork will remain separate until you submit a pull request to the original <code>linode/docs</code> repository.</div>
+</blockquote>
+
+
+<h4 id="forking-and-configuring-the-repository">Forking and Configuring the Repository</h4>
+
+<ol>
+<li><p>Log in to your GitHub account and navigate to <a href="https://github.com/linode/docs">https://github.com/linode/docs</a>. Click the <strong>Fork</strong> button:</p>
+
+<p><img src="github-fork-button.png" alt="GitHub Fork Button" title="GitHub Fork Button" /></p></li>
+
+<li><p>Choose the account to fork the repository into (typically just your username). GitHub will bring you to the page for your own fork of the <code>linode/docs</code> repository.</p>
+
+<p>Select <strong>Settings</strong> to browse your fork&rsquo;s settings:</p>
+
+<p><img src="github-fork-settings.png" alt="GitHub Fork Settings" title="GitHub Fork Settings" /></p>
+
+<p>Then, select <strong>Webhooks</strong> from the sidebar:</p>
+
+<p><img src="github-webhook-settings.png" alt="GitHub Webhook Settings" title="GitHub Webhook Settings" /></p></li>
+
+<li><p>Click on the <strong>Add webhook</strong> button. There are several fields to populate:</p>
+
+<ul>
+<li>Under <em>Payload URL</em> enter the domain name for your Buildbot server with the change hook URL path appended to it: <code>https://example.com/change_hook/github</code>.</li>
+<li>Leave the default value for <em>Content type</em>: <code>application/x-www-form-urlencoded</code>.</li>
+<li>Under the <em>Secret</em> field, enter the <code>secret</code> value for the <code>c['www']['change_hook_dialects']</code> option you configure in the <code>master.cfg</code> file.</li>
+<li>Leave <em>Enable SSL Verification</em> selected.</li>
+<li>For the <em>Which events would you like to trigger this webhook?</em>, select <em>Let me select individual events</em> and ensure that only the following boxes are checked:
+
+<ul>
+<li><em>Pull requests</em></li>
+<li><em>Pushes</em></li>
+</ul></li>
+<li>Leave <em>Active</em> selected to indicate that GitHub should be configured to send webhooks to Buildbot.</li>
+</ul></li>
+
+<li><p>Click on the <strong>Add webhook</strong> button to save your settings.</p>
+
+<p>GitHub will return your browser to the list of webhooks for your repository. After configuring a new webhook, GitHub will send a test webhook to the configured payload URL. To indicate whether GitHub was able to send a webhook without errors, it adds a checkmark to the webhook item:</p>
+
+<p><img src="github-webhook-success.png" alt="GitHub Webhook Success" title="GitHub Webhook Success" /></p>
+
+<p>Github will now send any new pushes made to your fork to your instance of Buildbot for testing.</p></li>
+</ol>
+
+<h3 id="build-prerequisites">Build Prerequisites</h3>
+
+<p>This guide runs builds as a simple process on the Buildbot worker, however, it is possible to execute builds within a Docker container, if desired. Consult the official <a href="http://docs.buildbot.net/current/manual/cfg-workers-docker.html">Buildbot documentation</a> for more information on configuring a Docker set up.</p>
+
+<p>Most software projects will define several prerequisites and tests for a project build. The Linode Guides and Tutorials repository defines several different tests to run for each build. This example will use one test defined in a python script named <code>blueberry.py</code>. This test checks for broken links, missing images, and more. This test&rsquo;s dependencies can be installed via <code>pip</code> in a virtualenv.</p>
+
+<p>On your Linode, install the packages necessary to permit the worker to use a Python virtualenv to create a sandbox during the build.</p>
+
+<pre><code>sudo apt-get install -y build-essential python3-dev python3-venv
+</code></pre>
+
+<h3 id="writing-builds">Writing Builds</h3>
+
+<p>The <code>/var/lib/buildbot/masters/ci/master.cfg</code> file contains options to configure builds. The specific sections in the file that include these configurations are the following:</p>
+
+<ul>
+<li><code>WORKERS</code>, define the worker executors the master will connect to in order to run builds.</li>
+<li><code>SCHEDULERS</code>, specify how to react to incoming changes.</li>
+<li><code>BUILDERS</code>, outline the steps and build tests to run.</li>
+</ul>
+
+<p>Because the worker has already been configured and connected to the Buildbot master, the only settings necessary to define a custom build are the <code>SCHEDULERS</code> and <code>BUILDERS</code>.</p>
+
+<ol>
+<li><p>Add the following lines to the end of the <code>/var/lib/buildbot/masters/ci/master.cfg</code> file to define the custom build. Ensure you replace <code>my-username</code> and <code>my-git-repo-name</code> with the values for your own GitHub fork of the <code>linode/docs</code> repository and <code>example-worker</code> with the name of your Buildbot instance&rsquo;s worker:</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/buildbot/masters/ci/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="n">docs_blueberry_test</span> <span class="o">=</span> <span class="n">util</span><span class="o">.</span><span class="n">BuildFactory</span><span class="p">()</span>
+<span class="c1"># Clone the repository</span>
+<span class="n">docs_blueberry_test</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span>
+    <span class="n">steps</span><span class="o">.</span><span class="n">Git</span><span class="p">(</span>
+        <span class="n">repourl</span><span class="o">=</span><span class="s1">&#39;git://github.com/my-username/my-git-repo-name.git&#39;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;incremental&#39;</span><span class="p">))</span>
+<span class="c1"># Create virtualenv</span>
+<span class="n">docs_blueberry_test</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span>
+    <span class="n">steps</span><span class="o">.</span><span class="n">ShellCommand</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;python3&#34;</span><span class="p">,</span> <span class="s2">&#34;-m&#34;</span><span class="p">,</span> <span class="s2">&#34;venv&#34;</span><span class="p">,</span> <span class="s2">&#34;.venv&#34;</span><span class="p">]))</span>
+<span class="c1"># Install test dependencies</span>
+<span class="n">docs_blueberry_test</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span>
+    <span class="n">steps</span><span class="o">.</span><span class="n">ShellCommand</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;./.venv/bin/pip&#34;</span><span class="p">,</span> <span class="s2">&#34;install&#34;</span><span class="p">,</span> <span class="s2">&#34;-r&#34;</span><span class="p">,</span> <span class="s2">&#34;ci/requirements.txt&#34;</span><span class="p">]))</span>
+<span class="c1"># Run tests</span>
+<span class="n">docs_blueberry_test</span><span class="o">.</span><span class="n">addStep</span><span class="p">(</span>
+    <span class="n">steps</span><span class="o">.</span><span class="n">ShellCommand</span><span class="p">(</span>
+        <span class="n">command</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;./.venv/bin/python3&#34;</span><span class="p">,</span> <span class="s2">&#34;ci/blueberry.py&#34;</span><span class="p">]))</span>
+<span class="c1"># Add the BuildFactory configuration to the master</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;builders&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+    <span class="n">util</span><span class="o">.</span><span class="n">BuilderConfig</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&#34;linode-docs&#34;</span><span class="p">,</span>
+      <span class="n">workernames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;example-worker&#34;</span><span class="p">],</span>
+      <span class="n">factory</span><span class="o">=</span><span class="n">docs_blueberry_test</span><span class="p">))</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The configuration code does the following:</p>
+
+<ul>
+<li>A new Build Factory is instantiated. Build Factories define how builds are run.</li>
+<li>Then, instructions are added to the Build Factory. The Build Factory clones the GitHub fork of the <code>linode/docs</code> repository.</li>
+<li>Next, a Python virtualenv is setup. This ensures that the dependencies and libraries used for testing are kept separate, in a dedicated sandbox, from the Python libraries on the worker machine.</li>
+<li>The necessary Python packages used in testing are then installed into the build&rsquo;s virtualenv.</li>
+<li>Finally, the <code>blueberry.py</code> testing script is run using the <code>python3</code> executable from the virtualenv sandbox.</li>
+<li>The defined Build Factory is then added to the configuration for the master.</li>
+</ul></li>
+
+<li><p>Define a simple scheduler to build any branch that is pushed to the GitHub repository. Add the following lines to the end of the <code>master.cfg</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/buildbox-master/master/master.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python">    <span class="o">...</span>
+<span class="n">c</span><span class="p">[</span><span class="s1">&#39;schedulers&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">schedulers</span><span class="o">.</span><span class="n">AnyBranchScheduler</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s2">&#34;build-docs&#34;</span><span class="p">,</span>
+    <span class="n">builderNames</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;linode-docs&#34;</span><span class="p">]))</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This code instructs the Buildbot master to create a scheduler that builds any branch for the <code>linode-docs</code> builder. This scheduler will be invoked by the change hook defined for GitHub, which is triggered by the GitHub webhook configured in the GitHub interface.</p></li>
+
+<li><p>Restart the Buildbot master now that the custom scheduler and builder have been defined:</p>
+
+<pre><code>sudo systemctl restart buildmaster@ci.service
+</code></pre></li>
+</ol>
+
+<h3 id="running-builds">Running Builds</h3>
+
+<p>Navigate to your Buildbot site to view the Builder and Scheduler created in the previous section. In the sidebar click on <strong>Build</strong> -&gt; <strong>Builders</strong>. You will see <code>linode-docs</code> listed under the <em>Builder Name</em> heading:</p>
+
+<p><img src="buildbot-custom-builder-page.png" alt="Buildbot Custom Builder" title="Buildbot Custom Builder" /></p>
+
+<p>A new build can be started for the <code>linode-docs</code> builder. Recall that the GitHub webhook configuration for your fork of <code>linode/docs</code> is set to call Buildbot upon any push or pull request event. To demonstrate how this works:</p>
+
+<ol>
+<li><p>Clone your fork of the <code>linode/docs</code> repository on your local machine (do not run the following commands on your Buildbot server) and navigate into the cloned repository. Replace <code>username</code> and <code>repository</code> with your own fork&rsquo;s values:</p>
+
+<pre><code>git clone https://github.com/username/repository.git
+cd repository
+</code></pre></li>
+
+<li><p>Like many git repositories, the <code>linode-docs</code> repository changes often. To ensure that the remaining instructions work as expected, start at a specific revision in the code that is in a known state. Check out revision <code>76cd31a5271b41ff5a80dee2137dcb5e76296b93</code>:</p>
+
+<pre><code>git checkout 76cd31a5271b41ff5a80dee2137dcb5e76296b93
+</code></pre></li>
+
+<li><p>Create a branch starting at this revision, which is where you will create dummy commits to test your Buildbot master:</p>
+
+<pre><code>git checkout -b linode-tutorial-demo
+</code></pre></li>
+
+<li><p>Create an empty commit so that you have something to push to your fork:</p>
+
+<pre><code>git commit --allow-empty -m 'Buildbot test'
+</code></pre></li>
+
+<li><p>Push your branch to your forked remote GitHub repository:</p>
+
+<pre><code>git push --set-upstream origin linode-tutorial-demo
+</code></pre></li>
+
+<li><p>Navigate to your Buildbot site and go to your running builds. The <strong>Home</strong> button on the sidebar displays currently executing builds.</p>
+
+<p><img src="buildbot-running-builds.png" alt="Buildbot running Builds" title="Buildbot running Builds" /></p></li>
+
+<li><p>Click on the running build to view more details. The build will display each step along with logging output:</p>
+
+<p><img src="buildbot-build-page.png" alt="Buildbot Build Page" title="Buildbot Build Page" /></p>
+
+<p>Each step of the build process can be followed as the build progresses. While the build is running, click on a step to view standard output logs. A successful build will complete each step with an exit code of <code>0</code>.</p>
+
+<p>Your Buildbot host will now actively build pushes to any branch or any pull requests to your repository.</p></li>
+</ol>
+
+<h2 id="features-to-explore">Features to Explore</h2>
+
+<p>Now that you have a simple build configuration for your Buildbot instance, you can continue to add features to your CI server. Some useful functions that Buildbot supports include:</p>
+
+<ul>
+<li><a href="http://docs.buildbot.net/current/manual/cfg-reporters.html">Reporters</a>, which can notify you about build failures over IRC, GitHub comments, or email.</li>
+<li><a href="http://docs.buildbot.net/current/manual/cfg-workers.html">Workers</a> that execute builds in Docker containers or in temporary cloud instances instead of static hosts.</li>
+<li><a href="http://docs.buildbot.net/current/manual/cfg-www.html">Web server features</a>, including the ability to generate badges for your repository indicating the current build status of the project.</li>
+</ul>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="http://docs.buildbot.net/current/tutorial/">Official Buildbot Tutorial</a></li>
+
+<li><a href="http://docs.buildbot.net/current/index.html">Buildbot Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before you Begin</a></li>
+<li><a href="#install-buildbot">Install Buildbot</a>
+<ul>
+<li><a href="#install-the-buildbot-master">Install the Buildbot Master</a></li>
+<li><a href="#configure-the-buildbot-master">Configure the Buildbot Master</a></li>
+<li><a href="#set-up-the-buildbot-master-web-interface">Set up the Buildbot Master Web Interface</a></li>
+<li><a href="#install-the-buildbot-worker">Install the Buildbot Worker</a></li>
+</ul></li>
+<li><a href="#configuring-builds">Configuring Builds</a>
+<ul>
+<li><a href="#configuring-github">Configuring GitHub</a>
+<ul>
+<li><a href="#forking-and-configuring-the-repository">Forking and Configuring the Repository</a></li>
+</ul></li>
+<li><a href="#build-prerequisites">Build Prerequisites</a></li>
+<li><a href="#writing-builds">Writing Builds</a></li>
+<li><a href="#running-builds">Running Builds</a></li>
+</ul></li>
+<li><a href="#features-to-explore">Features to Explore</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

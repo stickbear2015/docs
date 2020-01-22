@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Manage and Automate Systems Configuration with Puppet</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Use Puppet for configuration change management.">
+        <meta name="keywords" content="puppet, puppet configuration, puppet linux, configuration change management, server automation">
+        
+        <meta property="og:title" content="Manage and Automate Systems Configuration with Puppet">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/websites/puppet/manage-and-automate-systems-configuration-with-puppet/">
+        <meta property="og:description" content="Use Puppet for configuration change management.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/websites/puppet/manage-and-automate-systems-configuration-with-puppet/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/">Website Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/puppet/">Puppet</a>
+  
+</li>
+
+
+<li>
+  
+  Manage and Automate Systems Configuration with Puppet
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Manage and Automate Systems Configuration with Puppet</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-06-01T09:30:58-04:00">Friday, June 1, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fpuppet%2fmanage-and-automate-systems-configuration-with-puppet%2f&via=linode&text=Manage%20and%20Automate%20Systems%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fpuppet%2fmanage-and-automate-systems-configuration-with-puppet%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fpuppet%2fmanage-and-automate-systems-configuration-with-puppet%2f&t=Manage%20and%20Automate%20Systems%20Configuration%20with%20Puppet" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Manage%20and%20Automate%20Systems%20Configuration%20with%20Puppet%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fwebsites%2fpuppet%2fmanage-and-automate-systems-configuration-with-puppet%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/websites%5cpuppet%5cmanage-and-automate-systems-configuration-with-puppet%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/websites%5cpuppet%5cmanage-and-automate-systems-configuration-with-puppet%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+<blockquote class="deprecated">
+	<strong class="callout-title">Deprecated</strong>
+	<div>This guide has been deprecated and is no longer being maintained.</div>
+	<div>
+		
+		Please refer to <a href=http://localhost:1313/docs/applications/configuration-management/install-and-configure-puppet/>the updated version of this guide.</a>
+		
+	</div>
+</blockquote>
+
+
+            
+
+
+
+
+            
+            
+
+<p>Puppet is an open source &ldquo;configuration change management&rdquo; tool that allows users to automate and standardize the configuration of software infrastructure. Using a domain specific language for describing configuration, Puppet allows users to manage configurations in a service-oriented manner.</p>
+
+<p>Because of Puppet&rsquo;s versatility, this guide provides an overview of a number of different Puppet-based deployments. Since there is no single &ldquo;right way&rdquo; to integrate Puppet into your network, this document will focus on a collection of independent strategies rather than a single procedure. Before following this document, it is assumed that you have an up-to-date system, have followed our <a href="/docs/getting-started/">getting started guide</a> and have installed Puppet according to our <a href="/docs/applications/configuration-management/install-and-configure-puppet/">Puppet installation guide</a>.</p>
+
+<h2 id="using-puppet">Using Puppet</h2>
+
+<p>Puppet is a collection of tools built around a language that allows systems administrators to specify configurations, or manifests, to describe the state of a computer system. This section covers a number of different methods you may use to apply Puppet manifests to your Linodes.</p>
+
+<h3 id="running-puppet-manually">Running Puppet Manually</h3>
+
+<p>The most common way to apply Puppet manifests to a system is to use the Puppetmaster daemon (<code>puppetmasterd</code>) and Puppet client daemon (<code>puppetd</code>). However, you may also apply Puppet manifests manually using the <code>puppet</code> tool, which operates in an interactive mode but is otherwise functionally equivalent to <code>puppetd</code>. Given a Puppet manifest on the local file system located at <code>~/puppet/example-base.pp</code>, issue the following command:</p>
+
+<pre><code>puppet ~/puppet/example-base.pp
+</code></pre>
+
+<p>This will apply the configuration specified in the manifest to your system.</p>
+
+<h3 id="running-puppet-with-cron">Running Puppet with Cron</h3>
+
+<p>By default, <code>puppetd</code> runs every 30 minutes, contacts the <code>puppetmasterd</code>, retrieves changes to the manifests, and applies these changes to the system. If you want to run Puppet more or less frequently, you can configure a cron job on your client systems that resemble the following:</p>
+
+<pre><code>30 * * * * puppetd --onetime --no-daemonize --logdest syslog &gt; /dev/null 2&gt;&amp;1
+</code></pre>
+
+<p>The options to <code>puppetd</code> tell the program to run once without daemonizing, to log all events to the syslog (typically located at <code>/var/log/syslog</code>), and to generate no other output. The above cron job is scheduled to run hourly at 30 past the hour; however, you can configure this cronjob to run at the specific interval that your deployment requires. To test the functioning of this cronjob, issue the following command:</p>
+
+<pre><code>puppetd --onetime --no-daemonize --logdest syslog
+</code></pre>
+
+<p>In order for <code>puppetd</code> to work in this manner you must configure secure Puppet communications. To test the operation of Puppetd at the command line, with interactive output, you may issue the following command:</p>
+
+<pre><code>puppetd --test
+</code></pre>
+
+<h3 id="running-puppet-with-puppetmaster">Running Puppet with Puppetmaster</h3>
+
+<p>To generate a fully commented example of the <code>puppetmasterd</code> configuration issue the following command:</p>
+
+<pre><code>puppetmasterd --genconfig --no-daemonize &gt; /etc/puppet/reference-puppetmasterd.conf
+</code></pre>
+
+<p>These options can then be added and modified in the <code>[puppetmasterd]</code> section of the <code>/etc/puppet.conf</code> file. All other configuration for both <code>puppetmasterd</code> and <code>puppetd</code> are in the <code>/etc/puppet/puppet.conf</code> file.</p>
+
+<p>All Puppet files are stored in the <code>/etc/puppet/manifests/</code> directory, and Puppetmaster will look in this directory and apply the manifests as described therein. Commonly &ldquo;classes,&rdquo; or chunks of configuration that may be shared between different systems, are located in the <code>/etc/puppet/manifests/classes/</code> directory. A series of system manifests drawing on these classes are placed in your manifest directory. Puppet manifests have the extension <code>.pp</code>.</p>
+
+<h2 id="puppet-manifests">Puppet Manifests</h2>
+
+<p>Consider the following class, which is an elaboration on the canonical example Puppet <code>sudo</code> class:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/puppet/manifests/classes/sudo.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="c"># /etc/puppet/manifests/classes/sudo.pp</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">class</span> <span class="na">sudo</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">file</span> <span class="p">{</span> <span class="s">&#34;/etc/sudoers&#34;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>           <span class="na">owner</span> <span class="o">=&gt;</span> <span class="s">&#34;root&#34;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>           <span class="na">group</span> <span class="o">=&gt;</span> <span class="s">&#34;root&#34;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>           <span class="na">mode</span>  <span class="o">=&gt;</span> <span class="mi">440</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>           <span class="na">source</span> <span class="o">=&gt;</span> <span class="s">&#34;puppet://example.com/files/sudoers&#34;</span><span class="err">
+</span><span class="err"></span>    <span class="p">}</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In this example, configuration for the <code>/etc/sudoers</code> file is described, owned by the <code>root</code> user and group, with permissions of 440 that only allow read access for the owner and the members of the owner group. When applied, this manifest will ensure that the system in question has the above configuration applied to the <code>/etc/sudoers</code> file. The <code>source</code> specification allows puppet to copy a specific file from the Puppetmaster server. Distributing files with puppet will be covered <a href="#serving_files">later</a>.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/puppet/manifests/site.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="c"># /etc/puppet/manifests/site.pp</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">import</span> <span class="s">&#34;classes/*&#34;</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="k">default</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">sudo</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This file imports all of the classes described in the <code>/etc/puppet/manifests/classes</code> directory. Then, into the <code>default</code> node it includes the configuration described in the <code>sudo</code> class. The <code>default</code> node is a special node identifier that includes all Puppet client nodes that connect to the local Puppetmaster daemon.</p>
+
+<p>By default, <code>puppetd</code> runs as a client on the machine that <code>puppetmasterd</code> is installed on, and will receive all configuration specified for it and for the <code>default</code> node.</p>
+
+<h3 id="specifying-puppet-nodes">Specifying Puppet Nodes</h3>
+
+<p>As above, the <code>default</code> node provides a space to specify the configuration for all Puppet nodes. Of course, it is also possible to configure node descriptions in more specific terms. Consider the following setup:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/puppet/manifests/site.pp 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="c"># /etc/puppet/manifests/site.pp</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">import</span> <span class="s">&#34;classes/*&#34;</span><span class="c">
+</span><span class="c">
+</span><span class="c">## Base Nodes</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="k">default</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">sudo</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">sshkeys</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="na">appserverbasic</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">django</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">apacheconf</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">app</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="na">loadbalancer</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">nginxlb</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">monitoring</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="c">
+</span><span class="c">
+</span><span class="c">## Specific Nodes</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;fore.example.com&#39;</span> <span class="k">inherits</span> <span class="na">loadbalancer</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">django</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">apacheconf</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">app</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">backups</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;lb1.example.com&#39;</span> <span class="k">inherits</span> <span class="na">loadbalancer</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;hostname.example.com&#39;</span> <span class="k">inherits</span> <span class="na">appserverbasic</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">monitoring</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">backups</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;test.hostname.example.com&#39;</span> <span class="k">inherits</span> <span class="na">appserverbasic</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span><span class="p">}</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span><span class="k">node</span> <span class="s">&#39;monitoring1.example.com&#39;</span><span class="p">,</span> <span class="s">&#39;monitoring2.example.com&#39;</span> <span class="p">{</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">monitoring</span><span class="err">
+</span><span class="err"></span>    <span class="k">include</span> <span class="na">monitoringhub</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In this example, we create several &ldquo;base nodes&rdquo; which each include a number of classes from the <code>classes/</code> directory. There are four specific nodes created, which specify in single quotes the names of machines. These machines are identified by a hostname, configured when the Puppetmaster node signed the certificate of the Puppet nodes. All nodes receive the <code>default</code> node configuration, the configuration specified in their description and all of the configuration options specified in the node description of the &ldquo;inherited&rdquo; nodes.</p>
+
+<p>Therefore, <code>fore.example.com</code> will receive the configuration specified by the classes <code>nginxlb</code> and <code>monitoring</code> because it inherits the <code>loadbalancer</code> node configuration, as well as the <code>django</code>, <code>apacheconf</code> and <code>app</code> configuration of its own. The configuration for the remaining four hosts provide an example of how Puppet classes and node definitions can be combined to configure a diverse group of systems in a concise manner. You may also specify multiple nodes with the same configuration as in the final example.</p>
+
+<h3 id="facter">Facter</h3>
+
+<p>Facter is a tool that is installed as a dependency for Puppet. It provides detailed information regarding the current state of your system which can then be used in constructing Puppet manifests. To see an overview of the information provided by <code>facter</code>, issue the following command:</p>
+
+<pre><code>facter
+</code></pre>
+
+<p>This makes it possible to write Puppet manifests that are sensitive to the actual configuration of a given system, without needing to rewrite individual manifests for every unique system.</p>
+
+<h2 id="describing-resources-with-puppet">Describing Resources with Puppet</h2>
+
+<h3 id="serving-files">Serving Files</h3>
+
+<p>While Puppet contains powerful abstractions for specifying configurations, in some cases it&rsquo;s necessary to deploy files to systems that are not configured using Puppet. The above example regarding the <code>/etc/sudoers</code> file presents one such situation. Puppet&rsquo;s fileserver is configured in the <code>/etc/puppet/fileserver.conf</code> file. Consider the following example configuration:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/puppet/fileserver.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">[</span>files<span class="o">]</span>
+  path /etc/puppet/files
+  allow *.example.com
+  allow <span class="m">192</span>.168.0.0/24</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In the Puppet fileserver configuration, the order of <code>allow</code> and <code>deny</code> statements does not carry any weight. Puppet will deny access to hosts by default. In this example, the only hosts that are allowed access to the server are hosts which have certificates signed for names within the <code>.example.com</code> name space, and any host accessing the Puppet server with an IP in the non-public address space beginning with <code>192.168.</code> as would be the case with access to Puppet over the LAN.</p>
+
+<p>You may specify a <code>source</code> for a file object in Puppet manifests. Consider the following example:</p>
+
+<dl class="file">
+
+
+<dt>
+		Puppet Configuration Manifest 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">file</span> <span class="p">{</span> <span class="s">&#34;/etc/httpd/conf.d&#34;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">source</span> <span class="o">=&gt;</span> <span class="s">&#34;puppet://example.com/files/web-server/httpd/conf.d&#34;</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">recurse</span> <span class="o">=&gt;</span> <span class="s">&#34;true&#34;</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Nodes that implemented the above configuration will recursively copy files from the Puppetmaster node located at <code>/etc/puppet/files/web-server/httpd/conf.d/</code> to <code>/etc/httpd/conf.d/</code>. Recursive file system sources are very useful for deploying basic configurations to a number of different machines; however, these recursive options can be taxing on a Puppet master node using the default Puppetmaster server. When deploying services with Puppet, consider the scale of your deployment and the need for this kind of recursive operation.</p>
+
+<h3 id="describing-services">Describing Services</h3>
+
+<p>Puppet makes it possible to require that nodes have configuration and services that extend beyond ensuring that files are present on a system, and can ensure that certain services are running. Consider the following example:</p>
+
+<dl class="file">
+
+
+<dt>
+		Puppet Configuration Manifest 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">package</span> <span class="p">{</span> <span class="s">&#34;openssh-server&#34;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>        <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="k">latest</span><span class="err">
+</span><span class="err"></span>    <span class="p">}</span><span class="err">
+</span><span class="err"></span><span class="k">service</span> <span class="p">{</span> <span class="s">&#34;sshd&#34;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="k">running</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">require</span> <span class="o">=&gt;</span> <span class="k">Package</span><span class="p">[</span><span class="s">&#34;opennssh-server&#34;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>    <span class="k">subscribe</span> <span class="o">=&gt;</span> <span class="k">File</span><span class="p">[</span><span class="na">sshdconfig</span><span class="p">],</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>By defining the <code>sshd</code> service within a class with these parameters, puppet will ensure that the SSH daemon is running. Furthermore, if the <code>sshdconfig</code> file (which is defined elsewhere) changes, Puppet will restart the daemon. In the following example we define an <code>apache2</code> service for Debian and Ubuntu systems:</p>
+
+<dl class="file">
+
+
+<dt>
+		Puppet Configuration Manifest 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-puppet" data-lang="puppet"><span class="k">package</span> <span class="p">{</span> <span class="s">&#34;apache2&#34;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>        <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="k">latest</span><span class="err">
+</span><span class="err"></span>    <span class="p">}</span><span class="err">
+</span><span class="err"></span><span class="k">service</span> <span class="p">{</span> <span class="s">&#34;apache2&#34;</span><span class="p">:</span><span class="err">
+</span><span class="err"></span>    <span class="na">ensure</span> <span class="o">=&gt;</span> <span class="k">running</span><span class="p">,</span><span class="err">
+</span><span class="err"></span>    <span class="na">require</span> <span class="o">=&gt;</span> <span class="k">Package</span><span class="p">[</span><span class="s">&#34;apache2&#34;</span><span class="p">],</span><span class="err">
+</span><span class="err"></span>    <span class="k">subscribe</span> <span class="o">=&gt;</span> <span class="k">File</span><span class="p">[</span><span class="na">httpdconf</span><span class="p">],</span><span class="err">
+</span><span class="err"></span><span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This will ensure that the <code>apache2</code> service is running, that the required package is installed on the system, and restart the service if the <code>httpdconf</code> file is changed. In both of these examples, the use of <code>File[]</code> and <code>Package[]</code> syntax marks a reference to descriptions in another part of the class. References to other definitions are capitalized.</p>
+
+<h3 id="defining-commands">Defining Commands</h3>
+
+<p>Puppet attempts to normalize the way administrators interact with all resources, regardless of their type. Puppet makes it possible to define arbitrary commands that you want to execute. Consider the following example:</p>
+
+<dl class="file">
+
+
+<dt>
+		File Path 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nb">exec</span> <span class="o">{</span><span class="s2">&#34;rsync_config&#34;</span>:
+    <span class="nb">command</span> <span class="o">=</span>&gt; <span class="s2">&#34;/usr/bin/rsync -a username@hostname.example.com:/srv/puppet/www-config /opt/config&#34;</span>,
+    <span class="nv">unless</span> <span class="o">=</span>&gt; <span class="s2">&#34;/bin/test -e /opt/config/fresh&#34;</span>,
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This instructs Puppet to run the specified command, in this case an <code>rsync</code> command. The <code>unless</code> parameter runs tests for the existence of a file before running the command, to avoid running a command unnecessarily.</p>
+
+<h2 id="advanced-puppet-usage">Advanced Puppet Usage</h2>
+
+<p>This guide only covers the most basic of puppet configurations options. It is certainly possible to deploy much more complex systems, including the following possibilities:</p>
+
+<ul>
+<li>Store revisions of your manifest files in a <a href="/docs/linux-tools/version-control/">version control system</a>. Version control will make it easier to revert changes if you run into problems. It will also ease replication of manifests throughout a system with multiple Puppetmaster nodes.</li>
+<li>Deploy Puppetmaster with <a href="/docs/frameworks/">Passenger</a>: the default Puppetmaster server is based on WEBrick, which is only capable of supporting 20 or 30 puppet nodes, depending on your configuration, according the Puppet developers.</li>
+<li>You may consider using Puppet in combination with the <a href="http://www.linode.com/api/">Linode API</a> and <a href="http://www.linode.com/stackscripts/">StackScripts</a> to automate provisioning, deprovisioning, and configuration of Linodes.</li>
+<li>Use <a href="http://projects.puppetlabs.com/projects/puppet/wiki/Puppet_Modules">Puppet&rsquo;s module support</a> to more easily manage applications which require more complex configurations.</li>
+</ul>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="http://www.puppetlabs.com/">Puppet Labs Home Page</a></li>
+
+<li><a href="http://docs.puppetlabs.com/guides/configuring.html">Basic Puppet Configuration</a></li>
+
+<li><a href="http://docs.puppetlabs.com/guides/language_tutorial.html">Puppet Manifest Language</a></li>
+
+<li><a href="http://docs.puppetlabs.com/guides/installing_dashboard.html">Puppet Dashboard Documentation</a></li>
+
+<li><a href="http://projects.puppetlabs.com/projects/puppet/wiki/Puppet_Recipes">Puppet Recipe Directory</a></li>
+
+<li><a href="http://projects.puppetlabs.com/projects/puppet/wiki/Puppet_Modules">Puppet Modules</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#using-puppet">Using Puppet</a>
+<ul>
+<li><a href="#running-puppet-manually">Running Puppet Manually</a></li>
+<li><a href="#running-puppet-with-cron">Running Puppet with Cron</a></li>
+<li><a href="#running-puppet-with-puppetmaster">Running Puppet with Puppetmaster</a></li>
+</ul></li>
+<li><a href="#puppet-manifests">Puppet Manifests</a>
+<ul>
+<li><a href="#specifying-puppet-nodes">Specifying Puppet Nodes</a></li>
+<li><a href="#facter">Facter</a></li>
+</ul></li>
+<li><a href="#describing-resources-with-puppet">Describing Resources with Puppet</a>
+<ul>
+<li><a href="#serving-files">Serving Files</a></li>
+<li><a href="#describing-services">Describing Services</a></li>
+<li><a href="#defining-commands">Defining Commands</a></li>
+</ul></li>
+<li><a href="#advanced-puppet-usage">Advanced Puppet Usage</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

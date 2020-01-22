@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Configure Apache with Salt Stack</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Configure Apache on Ubuntu, Debian and CentOS with Salt Stack.">
+        <meta name="keywords" content="salt, stack, saltstack, apache, httpd, ubuntu, debian, centos">
+        
+        <meta property="og:title" content="Configure Apache with Salt Stack">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/configure-apache-with-salt-stack/">
+        <meta property="og:description" content="Configure Apache on Ubuntu, Debian and CentOS with Salt Stack.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/configure-apache-with-salt-stack/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Configure Apache with Salt Stack
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Configure Apache with Salt Stack</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-07T14:28:52-05:00">Monday, January 7, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>Salt20</strong> for $20 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fconfigure-apache-with-salt-stack%2f&via=linode&text=Configure%20Apache%20with%20Salt%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fconfigure-apache-with-salt-stack%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fconfigure-apache-with-salt-stack%2f&t=Configure%20Apache%20with%20Salt%20Stack" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Configure%20Apache%20with%20Salt%20Stack%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fconfigure-apache-with-salt-stack%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5cconfigure-apache-with-salt-stack%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5cconfigure-apache-with-salt-stack%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Salt is a powerful configuration management tool. In this guide you will create Salt state files that are capable of installing and configuring Apache on Ubuntu 18.04, Debian 9, or CentOS 7.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>You will need at least two Linodes with Salt installed. If you have not already, read our <a href="https://www.linode.com/docs/applications/configuration-management/getting-started-with-salt-basic-installation-and-setup/">Getting Started with Salt - Basic Installation and Setup Guide</a> and follow the instructions for setting up a Salt master and minion.</p>
+
+<p>The following steps will be performed on your Salt master.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The steps in this guide require root privileges. Be sure to run the steps below as <code>root</code> or with the <code>sudo</code> prefix. For more information on privileges, see our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</div>
+</blockquote>
+
+
+<h2 id="setting-up-your-salt-master-and-managed-files">Setting Up Your Salt Master and Managed Files</h2>
+
+<h3 id="salt-master-sls-files">Salt Master SLS Files</h3>
+
+<ol>
+<li><p>Create the <code>/srv/salt</code> directory if it does not already exist:</p>
+
+<pre><code>mkdir /srv/salt
+</code></pre></li>
+
+<li><p>Create a Salt top file in <code>/srv/salt</code> that will be Salt&rsquo;s entry point to the Apache configuration:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/top.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">base<span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="s1">&#39;G@os_family:Debian&#39;</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>match<span class="p">:</span><span class="w"> </span>compound<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>apache-debian<span class="w">
+</span><span class="w">
+</span><span class="w">  </span><span class="s1">&#39;G@os:CentOS&#39;</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>match<span class="p">:</span><span class="w"> </span>compound<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>apache-centos</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This top file uses <a href="https://docs.saltstack.com/en/latest/topics/targeting/compound.html">compound matching</a> to target your minions by operating system using Salt Grains. This will allow Salt to choose the appropriate Apache configuration depending on the Linux distribution. These matchers could be extended to be even more specific. For instance, if you wanted to only target minions with the ID of <code>web-server</code> that are running on Ubuntu, you can type <code>web* and G@os:Ubuntu</code>.</p></li>
+</ol>
+
+<h3 id="pillar-files">Pillar Files</h3>
+
+<ol>
+<li><p>Create the <code>/srv/pillar</code> directory if it does not already exist:</p>
+
+<pre><code>mkdir /srv/pillar
+</code></pre></li>
+
+<li><p>Create a Pillar top file. This top file references the <code>apache.sls</code> Pillar file that you will create in the next step:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/pillar/top.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">base<span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="s1">&#39;*&#39;</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>apache</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>apache.sls</code> file that was referenced in the previous step. This file defines Pillar data that will be used inside our Apache state file in the next section, in this case your domain name. Replace <code>example.com</code> with your domain:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/pillar/apache.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">domain<span class="p">:</span><span class="w"> </span>example.com</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<h3 id="website-files">Website Files</h3>
+
+<ol>
+<li><p>Create a directory for your website files in the <code>/srv/salt</code> directory. Replace <code>example.com</code> with your website domain name:</p>
+
+<pre><code>mkdir /srv/salt/example.com
+</code></pre>
+
+<p>This directory will be accessible from your Salt state files at <code>salt://example.com</code>.</p></li>
+
+<li><p>Create an <code>index.html</code> file for your website in the <code>/srv/salt/example.com</code> directory, substituting <code>example.com</code> for the folder name you chose in the previous step. You will use this file as a test to make sure your website is functioning correctly.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/example.com/index.html 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Server Up and Running!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<h3 id="configuration-files">Configuration Files</h3>
+
+<ol>
+<li><p>Create a folder for your additional configuration files at <code>/srv/salt/files</code>. These files will be accessible at <code>salt://files</code>.</p>
+
+<pre><code>mkdir /srv/salt/files
+</code></pre></li>
+
+<li><p>Create a file called <code>tune_apache.conf</code> in <code>/srv/salt/files</code> and paste in the following block:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/files/tune_apache.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-ApacheConf" data-lang="ApacheConf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ApacheConf" data-lang="ApacheConf"><span class="nt">&lt;IfModule</span> <span class="s">mpm_prefork_module</span><span class="nt">&gt;</span>
+<span class="nb">StartServers</span> <span class="m">4</span>
+<span class="nb">MinSpareServers</span> <span class="m">20</span>
+<span class="nb">MaxSpareServers</span> <span class="m">40</span>
+<span class="nb">MaxClients</span> <span class="m">200</span>
+<span class="nb">MaxRequestsPerChild</span> <span class="m">4500</span>
+<span class="nt">&lt;/IfModule&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This MPM prefork module provides additional <a href="https://www.linode.com/docs/web-servers/apache-tips-and-tricks/tuning-your-apache-server/">tuning for your Apache installation</a>. This file will be managed by Salt and installed into the appropriate configuration directory in a later step.</p></li>
+
+<li><p>If you will be installing Apache on a CentOS machine, create a file called <code>include_sites_enabled.conf</code> in <code>/srv/salt/files</code> and paste in the following:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/files/include_sites_enabled.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-ApacheConf" data-lang="ApacheConf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ApacheConf" data-lang="ApacheConf"><span class="nb">IncludeOptional</span> sites-enabled/*.conf</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This file will allow us to use file directories like those found on Debian installations to help organize the Apache configuration.</p></li>
+</ol>
+
+<h2 id="creating-the-apache-state-file-for-debian-and-ubuntu">Creating the Apache State File for Debian and Ubuntu</h2>
+
+<h3 id="individual-steps">Individual Steps</h3>
+
+<p>This guide will be going through the process of creating the Apache for Debian and Ubuntu state file step by step. If you would like to view the entirety of the state file, <a href="http://localhost:1313/docs/applications/configuration-management/configure-apache-with-salt-stack/#complete-state-file">you can view it at the end of this section</a>.</p>
+
+<ol>
+<li><p>Create a state file named <code>apache-debian.sls</code> in <code>/srv/salt</code> and open it in a text editor of your choice.</p></li>
+
+<li><p>Instruct Salt to install the <code>apache2</code> package and start the <code>apache2</code> service:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apache2<span class="p">:</span><span class="w">
+</span><span class="w">  </span>pkg.installed<span class="w">
+</span><span class="w">
+</span><span class="w"></span>apache2<span class="w"> </span>Service<span class="p">:</span><span class="w">
+</span><span class="w">  </span>service.running<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>enable<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Here Salt makes sure the <code>apache2</code> package is installed with <code>pkg.installed</code>. Likewise, it ensures the <code>apache2</code> service is running and enabled under <code>service.running</code>. Also under <code>service.running</code>, <code>apache-debian.sls</code> uses <code>require</code> to ensure that this command does not run before the <code>apache2</code> package is installed. This <code>require</code> step will be repeated throughout <code>apache-debain.sls</code>.</p>
+
+<p>Lastly, a <code>watch</code> statement is employed to restart the <code>apache2</code> service if your site&rsquo;s configuration file changes. You will define that configuration file in a later step. Note that this configuration file is named using the domain you supplied when creating your Salt Pillar file in the first section. This Pillar data will be used throughout <code>apache-debian.sls</code>.</p></li>
+
+<li><p>Turn off KeepAlive:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Turn<span class="w"> </span>Off<span class="w"> </span>KeepAlive<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.replace<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>/etc/apache2/apache2.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>pattern<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive On&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>repl<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive Off&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>show_changes<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>KeepAlive allows multiple requests to be sent over the same TCP connection. For the purpose of this guide KeepAlive will be disabled. To disable it, Salt is instructed to find the KeepAlive directive in <code>/etc/apache2/apache2.conf</code> by matching a pattern and replacing it with <code>KeepAlive Off</code>. <code>show_changes</code> instructs Salt to display any changes it has made during a highstate.</p></li>
+
+<li><p>Transfer <code>tune_apache.conf</code> to your minion and enable it:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/apache2/conf-available/tune_apache.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//files/tune_apache.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Enable<span class="w"> </span>tune_apache<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache_conf.enabled<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>tune_apache<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This step takes the <code>tune_apache.conf</code> file you created in the <a href="http://localhost:1313/docs/applications/configuration-management/configure-apache-with-salt-stack/#configuration-files">Configuration Files</a> step and transfers it to your Salt minion. Then, Salt enables that configuration file with the <a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.apache_conf.html">apache_conf module</a>.</p></li>
+
+<li><p>Create the necessary directories:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/log<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/backups<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Disable the default virtual host configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="m">000</span>-default<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache_site.disabled<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This step uses Salt&rsquo;s <a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.apache_site.html">apache_site module</a> to disable the default Apache virtual host configuration file, and is the same as running <code>a2dissite</code> on a Debian-based machine.</p></li>
+
+<li><p>Create your site&rsquo;s virtual host configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/apache2/sites-available/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache.configfile<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>config<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>VirtualHost<span class="p">:</span><span class="w">
+</span><span class="w">          </span>this<span class="p">:</span><span class="w"> </span><span class="s1">&#39;*:80&#39;</span><span class="w">
+</span><span class="w">          </span>ServerName<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>ServerAlias<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>www.{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>DocumentRoot<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="w">
+</span><span class="w">          </span>ErrorLog<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/log/error.log<span class="w">
+</span><span class="w">          </span>CustomLog<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/log/access.log<span class="w"> </span>combined<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This step uses Salt&rsquo;s <a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.apache.html">apache module</a>, (not to be confused with the <code>apache_site</code> module used in the previous step), to create your site&rsquo;s virtual host configuration file. The <code>this</code> variable signifies what would traditionally be include with <code>VirtualHost</code> within angle brackets in an Apache configuration file: <code>&lt;VirtualHost *:80&gt;</code>.</p></li>
+
+<li><p>Enable your new virtual host configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache_site.enabled<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This step uses the same <code>apache_site</code> module you used to disable the default virtual host file to enable your newly created virtual host file. <code>apache_site.enabled</code> creates a symlink from <code>/etc/apache2/sites-available/example.com.conf</code> to <code>/etc/apache2/sites-enabled/example.com.conf</code> and is the same as running <code>a2ensite</code> on a Debian-based machine.</p></li>
+
+<li><p>Transfer your <code>index.html</code> website file to your minion:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html/index.html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/index.html</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Any changes made to your <code>index.html</code> file on your Salt master will be propagated to your minion.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>Since Salt is not watching configuration files for a change to trigger a restart for Apache, you may need to use the command below from your Salt master.</p>
+
+<pre><code>salt '*' apache.signal restart
+</code></pre>
+</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="complete-state-file">Complete State File</h3>
+
+<p>The complete <code>apache-debian.sls</code> file looks like this:
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apache2<span class="p">:</span><span class="w">
+</span><span class="w">  </span>pkg.installed<span class="w">
+</span><span class="w">
+</span><span class="w"></span>apache2<span class="w"> </span>Service<span class="p">:</span><span class="w">
+</span><span class="w">  </span>service.running<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>enable<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Turn<span class="w"> </span>Off<span class="w"> </span>KeepAlive<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.replace<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>/etc/apache2/apache2.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>pattern<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive On&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>repl<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive Off&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>show_changes<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/apache2/conf-available/tune_apache.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//files/tune_apache.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Enable<span class="w"> </span>tune_apache<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache_conf.enabled<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>tune_apache<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/log<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/backups<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="m">000</span>-default<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache_site.disabled<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/apache2/sites-available/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache.configfile<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>config<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>VirtualHost<span class="p">:</span><span class="w">
+</span><span class="w">          </span>this<span class="p">:</span><span class="w"> </span><span class="s1">&#39;*:80&#39;</span><span class="w">
+</span><span class="w">          </span>ServerName<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>ServerAlias<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>www.{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>DocumentRoot<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="w">
+</span><span class="w">          </span>ErrorLog<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/log/error.log<span class="w">
+</span><span class="w">          </span>CustomLog<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/log/access.log<span class="w"> </span>combined<span class="w">
+</span><span class="w">
+</span><span class="w"></span>{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache_site.enabled<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>apache2<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html/index.html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/index.html</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</p>
+
+<h2 id="creating-an-apache-state-file-for-centos">Creating an Apache State File for CentOS</h2>
+
+<h3 id="individual-steps-1">Individual Steps</h3>
+
+<ol>
+<li><p>Create a file called <code>apache-centos.sls</code> in <code>/srv/salt</code> and open it in a text editor of your choice.</p></li>
+
+<li><p>On CentOS Apache is named <code>httpd</code>. Instruct Salt to install <code>httpd</code> and run the <code>httpd</code> service:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">httpd<span class="p">:</span><span class="w">
+</span><span class="w">  </span>pkg.installed<span class="w">
+</span><span class="w">
+</span><span class="w"></span>httpd<span class="w"> </span>Service<span class="p">:</span><span class="w">
+</span><span class="w">  </span>service.running<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>enable<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>watch<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>file<span class="p">:</span><span class="w"> </span>/etc/httpd/sites-available/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Here Salt makes sure the <code>httpd</code> package is installed with <code>pkg.installed</code>. Likewise, it ensures the <code>httpd</code> service is running and enabled under <code>service.running</code>. Also under <code>service.running</code>, <code>apache-debian.sls</code> uses <code>require</code> to ensure that this command does not run before the <code>httpd</code> package is installed. This <code>require</code> step will be repeated throughout <code>apache-centos.sls</code>.</p>
+
+<p>Lastly, a <code>watch</code> statement is employed to restart the <code>httpd</code> service if your site’s configuration file changes. You will define that configuration file in a later step. Note that this configuration file is named using the domain you supplied when creating your Salt Pillar file in the first section. This Pillar data will be used throughout <code>apache-centos.sls</code>.</p></li>
+
+<li><p>Turn off KeepAlive:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Turn<span class="w"> </span>Off<span class="w"> </span>KeepAlive<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.replace<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>/etc/httpd/conf/httpd.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>pattern<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive On&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>repl<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive Off&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>show_changes<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>KeepAlive allows multiple requests to be sent over the same TCP connection. For the purpose of this guide KeepAlive will be disabled. To disable it, Salt is instructed to find the KeepAlive directive in <code>/etc/httpd/conf/httpd.conf</code> by matching a pattern and replacing it with <code>KeepAlive Off</code>. <code>show_changes</code> instructs Salt to display any changes it has made during a highstate.</p></li>
+
+<li><p>Change the DocumentRoot:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Change<span class="w"> </span>DocumentRoot<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.replace<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>/etc/httpd/conf/httpd.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>pattern<span class="p">:</span><span class="w"> </span><span class="s1">&#39;DocumentRoot &#34;/var/www/html&#34;&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>repl<span class="p">:</span><span class="w"> </span><span class="s1">&#39;DocumentRoot &#34;/var/www/html/{{ pillar[&#39;</span>domain<span class="s1">&#39;] }}/public_html&#34;&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>show_changes<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Similar to the last step, in this step <code>salt-centos.sls</code> instructs Salt to search for the DocumentRoot directive in Apache&rsquo;s <code>httpd.conf</code> file, and replaces that line with the new document root. This allows for the use of a Debian-style site directory architecture.</p></li>
+
+<li><p>Transfer the <code>tune_apache.conf</code> and <code>include_sites_enabled.conf</code> to your minion.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/conf.d/tune_apache.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//files/tune_apache.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/conf.d/include_sites_enabled.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//files/include_sites_enabled.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the necessary directories:</p>
+
+<dl class="file">
+
+
+<dt>
+		srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/sites-available<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/sites-enabled<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/backups<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create your site&rsquo;s virtual host configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/sites-available/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache.configfile<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>config<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>VirtualHost<span class="p">:</span><span class="w">
+</span><span class="w">          </span>this<span class="p">:</span><span class="w"> </span><span class="s1">&#39;*:80&#39;</span><span class="w">
+</span><span class="w">          </span>ServerName<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>ServerAlias<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>www.{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>DocumentRoot<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="w">
+</span><span class="w">  </span>file.symlink<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>target<span class="p">:</span><span class="w"> </span>/etc/httpd/sites-enabled/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>force<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This step uses Salt&rsquo;s <a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.apache.html">apache module</a> to create your site&rsquo;s virtual host configuration file. The <code>this</code> variable signifies what would traditionally be include with <code>VirtualHost</code> within angle brackets in an Apache configuration file: <code>&lt;VirtualHost *:80&gt;</code>.</p></li>
+
+<li><p>Transfer your <code>index.html</code> website file to your minion:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-debian.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html/index.html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/index.html<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Any changes made to your <code>index.html</code> file on your Salt master will be propigated to your minion.</p></li>
+
+<li><p>Configure your firewall to allow http and https traffic:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Configure<span class="w"> </span>Firewall<span class="p">:</span><span class="w">
+</span><span class="w">  </span>firewalld.present<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>public<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">22</span>/tcp<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">80</span>/tcp<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">443</span>/tcp</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>It is imperative that you list all ports you need open to your machine in this section. Failure to list these ports will result in their closure by Salt.</div>
+</blockquote>
+</li>
+</ol>
+
+<h3 id="complete-state-file-1">Complete State File</h3>
+
+<p>The complete <code>apache-centos.sls</code> file looks like this:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/apache-centos.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">httpd<span class="p">:</span><span class="w">
+</span><span class="w">  </span>pkg.installed<span class="w">
+</span><span class="w">
+</span><span class="w"></span>httpd<span class="w"> </span>Service<span class="p">:</span><span class="w">
+</span><span class="w">  </span>service.running<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>enable<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>watch<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>file<span class="p">:</span><span class="w"> </span>/etc/httpd/sites-available/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Turn<span class="w"> </span>off<span class="w"> </span>KeepAlive<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.replace<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>/etc/httpd/conf/httpd.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>pattern<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive On&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>repl<span class="p">:</span><span class="w"> </span><span class="s1">&#39;KeepAlive Off&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>show_changes<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Change<span class="w"> </span>DocumentRoot<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.replace<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>/etc/httpd/conf/httpd.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>pattern<span class="p">:</span><span class="w"> </span><span class="s1">&#39;DocumentRoot &#34;/var/www/html&#34;&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>repl<span class="p">:</span><span class="w"> </span><span class="s1">&#39;DocumentRoot &#34;/var/www/html/{{ pillar[&#39;</span>domain<span class="s1">&#39;] }}/public_html&#34;&#39;</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>show_changes<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/conf.d/tune_apache.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//files/tune_apache.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/conf.d/include_sites_enabled.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//files/include_sites_enabled.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>require<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>httpd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/sites-available<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/sites-enabled<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/backups<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.directory<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/etc/httpd/sites-available/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="p">:</span><span class="w">
+</span><span class="w">  </span>apache.configfile<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>config<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>VirtualHost<span class="p">:</span><span class="w">
+</span><span class="w">          </span>this<span class="p">:</span><span class="w"> </span><span class="s1">&#39;*:80&#39;</span><span class="w">
+</span><span class="w">          </span>ServerName<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>ServerAlias<span class="p">:</span><span class="w">
+</span><span class="w">            </span>-<span class="w"> </span>www.{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}<span class="w">
+</span><span class="w">          </span>DocumentRoot<span class="p">:</span><span class="w"> </span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html<span class="w">
+</span><span class="w">  </span>file.symlink<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>target<span class="p">:</span><span class="w"> </span>/etc/httpd/sites-enabled/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}.conf<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>force<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">
+</span><span class="w"></span>/var/www/html/{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/public_html/index.html<span class="p">:</span><span class="w">
+</span><span class="w">  </span>file.managed<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>source<span class="p">:</span><span class="w"> </span>salt<span class="p">:</span>//{{<span class="w"> </span>pillar<span class="p">[</span><span class="s1">&#39;domain&#39;</span><span class="p">]</span><span class="w"> </span>}}/index.html<span class="w">
+</span><span class="w">
+</span><span class="w"></span>Configure<span class="w"> </span>Firewall<span class="p">:</span><span class="w">
+</span><span class="w">  </span>firewalld.present<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>public<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">22</span>/tcp<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">80</span>/tcp<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="m">443</span>/tcp</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="running-the-apache-state-file">Running the Apache State File</h2>
+
+<p>On your Salt master, issue a highstate command:</p>
+
+<pre><code>salt '*' state.apply
+</code></pre>
+
+<p>After a few moments you should see a list of Salt commands and a summary of their successes. Navigate to your website&rsquo;s domain name if you have your DNS set up already, or your website&rsquo;s public IP address. You should see your <code>index.html</code> file. You have now used Salt to configure Apache. Visit the links in the section below for more information.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.apache.html">Salt Apache State Module</a></li>
+
+<li><a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.apache_conf.html">Salt Apache_Conf State Module</a></li>
+
+<li><a href="https://docs.saltstack.com/en/latest/ref/states/all/salt.states.apache_site.html">Salt Apache_Site State Module</a></li>
+
+<li><a href="https://docs.saltstack.com/en/latest/topics/tutorials/states_pt3.html#using-grains-in-sls-modules">Using Grains in SLS Modules</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#setting-up-your-salt-master-and-managed-files">Setting Up Your Salt Master and Managed Files</a>
+<ul>
+<li><a href="#salt-master-sls-files">Salt Master SLS Files</a></li>
+<li><a href="#pillar-files">Pillar Files</a></li>
+<li><a href="#website-files">Website Files</a></li>
+<li><a href="#configuration-files">Configuration Files</a></li>
+</ul></li>
+<li><a href="#creating-the-apache-state-file-for-debian-and-ubuntu">Creating the Apache State File for Debian and Ubuntu</a>
+<ul>
+<li><a href="#individual-steps">Individual Steps</a></li>
+<li><a href="#complete-state-file">Complete State File</a></li>
+</ul></li>
+<li><a href="#creating-an-apache-state-file-for-centos">Creating an Apache State File for CentOS</a>
+<ul>
+<li><a href="#individual-steps-1">Individual Steps</a></li>
+<li><a href="#complete-state-file-1">Complete State File</a></li>
+</ul></li>
+<li><a href="#running-the-apache-state-file">Running the Apache State File</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

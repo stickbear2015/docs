@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Use Docker Compose</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="How to Use Docker Compose">
+        <meta name="keywords" content="docker, compose">
+        
+        <meta property="og:title" content="How to Use Docker Compose">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/how-to-use-docker-compose/">
+        <meta property="og:description" content="How to Use Docker Compose">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/how-to-use-docker-compose/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  How to Use Docker Compose
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Use Docker Compose</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-24T10:08:37-04:00">Friday, August 24, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fhow-to-use-docker-compose%2f&via=linode&text=How%20to%20Use%20Docker%20Compose" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fhow-to-use-docker-compose%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fhow-to-use-docker-compose%2f&t=How%20to%20Use%20Docker%20Compose" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Use%20Docker%20Compose%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fhow-to-use-docker-compose%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5chow-to-use-docker-compose%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5chow-to-use-docker-compose%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="how-to-use-docker-compose-title.jpg" alt="How to Use Docker Compose" title="How to Use Docker Compose title graphic" /></p>
+
+<h2 id="what-is-docker-compose">What is Docker Compose?</h2>
+
+<p>If your Docker application includes more than one container (for example, a webserver and database running in separate containers), building, running, and connecting the containers from separate Dockerfiles is cumbersome and time-consuming. Docker Compose solves this problem by allowing you to use a YAML file to <a href="https://docs.docker.com/compose/overview/">define multi-container apps</a>. You can configure as many containers as you want, how they should be built and connected, and where data should be stored. When the YAML file is complete, you can run a single command to build, run, and configure all of the containers.</p>
+
+<p>This guide will explain how the <code>docker-compose.yml</code> file is organized, and show how to use it to create several basic app configurations.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Generally the containers in an application built using Docker Compose will all run on the same host. Managing containers running on different hosts usually requires an additional tool, such as <a href="https://docs.docker.com/engine/swarm/">Docker Swarm</a> or <a href="https://kubernetes.io/">Kubernetes</a>.</div>
+</blockquote>
+
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<h3 id="install-docker-ce">Install Docker CE</h3>
+
+<p>You will need a Linode with Docker CE installed to follow along with the steps in this guide.</p>
+
+
+
+
+
+<!-- Install Docker CE using the official Docker repositories. -->
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>docker run hello-world
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="install-docker-compose">Install Docker Compose</h3>
+
+
+
+
+
+<!--- Installation instructions for Docker Compose -->
+
+<ol>
+<li><p>Download the latest version of Docker Compose. Check the <a href="https://github.com/docker/compose/releases">releases</a> page and replace <code>1.21.2</code> in the command below with the version tagged as <strong>Latest release</strong>:</p>
+
+<pre><code>sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+</code></pre></li>
+
+<li><p>Set file permissions:</p>
+
+<pre><code>sudo chmod +x /usr/local/bin/docker-compose
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h2 id="basic-usage">Basic Usage</h2>
+
+<p>This section will review an example Docker Compose file taken from the <a href="https://docs.docker.com/compose/wordpress/#build-the-project">Docker official documentation</a>.</p>
+
+<ol>
+<li><p>Open <code>docker-compose.yml</code> in a text editor and add the following content:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">   </span>db<span class="p">:</span><span class="w">
+</span><span class="w">     </span>image<span class="p">:</span><span class="w"> </span>mysql<span class="p">:</span><span class="m">5.7</span><span class="w">
+</span><span class="w">     </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">       </span>-<span class="w"> </span>db_data<span class="p">:</span>/var/lib/mysql<span class="w">
+</span><span class="w">     </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">     </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">       </span>MYSQL_ROOT_PASSWORD<span class="p">:</span><span class="w"> </span>somewordpress<span class="w">
+</span><span class="w">       </span>MYSQL_DATABASE<span class="p">:</span><span class="w"> </span>wordpress<span class="w">
+</span><span class="w">       </span>MYSQL_USER<span class="p">:</span><span class="w"> </span>wordpress<span class="w">
+</span><span class="w">       </span>MYSQL_PASSWORD<span class="p">:</span><span class="w"> </span>wordpress<span class="w">
+</span><span class="w">
+</span><span class="w">   </span>wordpress<span class="p">:</span><span class="w">
+</span><span class="w">     </span>depends_on<span class="p">:</span><span class="w">
+</span><span class="w">       </span>-<span class="w"> </span>db<span class="w">
+</span><span class="w">     </span>image<span class="p">:</span><span class="w"> </span>wordpress<span class="p">:</span>latest<span class="w">
+</span><span class="w">     </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">       </span>-<span class="w"> </span><span class="s2">&#34;8000:80&#34;</span><span class="w">
+</span><span class="w">     </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">     </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">       </span>WORDPRESS_DB_HOST<span class="p">:</span><span class="w"> </span>db<span class="p">:</span><span class="m">3306</span><span class="w">
+</span><span class="w">       </span>WORDPRESS_DB_USER<span class="p">:</span><span class="w"> </span>wordpress<span class="w">
+</span><span class="w">       </span>WORDPRESS_DB_PASSWORD<span class="p">:</span><span class="w"> </span>wordpress<span class="w">
+</span><span class="w"></span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">    </span>db_data<span class="p">:</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Save the file and run Docker Compose from the same directory:</p>
+
+<pre><code>docker-compose up -d
+</code></pre>
+
+<p>This will build and run the <code>db</code> and <code>wordpress</code> containers. Just as when running a single container with <code>docker run</code>, the <code>-d</code> flag starts the containers in detached mode.</p></li>
+
+<li><p>You now have a WordPress container and MySQL container running on your host. Navigate to <code>192.0.8.1:8000/wordpress</code> in a web browser to see your newly installed WordPress application. You can also use <code>docker ps</code> to further explore the resulting configuration:</p>
+
+<pre><code>docker ps
+</code></pre></li>
+
+<li><p>Stop and remove the containers:</p>
+
+<pre><code>docker-compose down
+</code></pre></li>
+</ol>
+
+<h2 id="compose-file-syntax">Compose File Syntax</h2>
+
+<p>A <code>docker-compose.yml</code> file is organized into four sections:</p>
+
+<table>
+<thead>
+<tr>
+<th>Directive</th>
+<th>Use</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>version</td>
+<td>Specifies the Compose file syntax version. This guide will use Version 3 throughout.</td>
+</tr>
+
+<tr>
+<td>services</td>
+<td>In Docker a service is the name for a <a href="https://docs.docker.com/get-started/part3/#introduction">&ldquo;Container in production&rdquo;</a>. This section defines the containers that will be started as a part of the Docker Compose instance.</td>
+</tr>
+
+<tr>
+<td>networks</td>
+<td>This section is used to configure networking for your application. You can change the settings of the default network, connect to an external network, or define app-specific networks.</td>
+</tr>
+
+<tr>
+<td>volumes</td>
+<td>Mounts a linked path on the host machine that can be used by the container.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Most of this guide will focus on setting up containers using the <code>services</code> section. Here are some of the common directives used to set up and configure containers:</p>
+
+<table>
+<thead>
+<tr>
+<th>Directive</th>
+<th>Use</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>image</td>
+<td>Sets the image that will be used to build the container. Using this directive assumes that the specified image already exists either on the host or on <a href="https://hub.docker.com/">Docker Hub</a>.</td>
+</tr>
+
+<tr>
+<td>build</td>
+<td>This directive can be used instead of <code>image</code>. Specifies the location of the Dockerfile that will be used to build this container.</td>
+</tr>
+
+<tr>
+<td>db</td>
+<td>In the case of the example Dockercompose file, <code>db</code> is a variable for the container you are about to define.</td>
+</tr>
+
+<tr>
+<td>restart</td>
+<td>Tells the container to restart if the system restarts.</td>
+</tr>
+
+<tr>
+<td>volumes</td>
+<td>Mounts a linked path on the host machine that can be used by the container</td>
+</tr>
+
+<tr>
+<td>environment</td>
+<td>Define environment variables to be passed in to the Docker run command.</td>
+</tr>
+
+<tr>
+<td>depends_on</td>
+<td>Sets a service as a dependency for the current block-defined container</td>
+</tr>
+
+<tr>
+<td>port</td>
+<td>Maps a port from the container to the host in the following manner: <code>host:container</code></td>
+</tr>
+
+<tr>
+<td>links</td>
+<td>Link this service to any other services in the Docker Compose file by specifying their names here.</td>
+</tr>
+</tbody>
+</table>
+
+<p>Many other configuration directives are available. See the <a href="https://docs.docker.com/compose/compose-file">Compose File reference</a> for details.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>The example <code>docker-compose.yml</code> above uses the <code>environment</code> directive to store MySQL user passwords directly in the YAML file to be imported into the container as environment variables. This is not recommended for sensitive information in production environments. Instead, sensitive information can be stored in a separate <code>.env</code> file (which is not checked into version control or made public) and accessed from within <code>docker-compose.yml</code> by using the <code>env_file</code> directive.</div>
+</blockquote>
+
+
+<h2 id="build-an-application-from-scratch">Build an Application from Scratch</h2>
+
+<p>Create a <code>docker-compose.yml</code> file one section at a time to illustrate the steps of building a multi-container application.</p>
+
+<h3 id="define-a-simple-service">Define a Simple Service:</h3>
+
+<ol>
+<li><p>Create a new <code>docker-compose.yml</code> in a text editor and add the following content:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">  </span>distro<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>alpine<span class="w">
+</span><span class="w">    </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>Alpine_Distro<span class="w">
+</span><span class="w">    </span>entrypoint<span class="p">:</span><span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span>/dev/<span class="kc">null</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Each entry in the <code>services</code> section will create a separate container when <code>docker-compose</code> is run. At this point, the section contains a single container based on the official Alpine distribution:</p>
+
+<ul>
+<li>The <code>restart</code> directive is used to indicate that the container should always restart (after a crash or system reboot, for example).</li>
+<li>The <code>container_name</code> directive is used to override the randomly generated container name and replace it with a name that is easier to remember and work with.</li>
+<li>Docker containers exit by default if no process is running on them. <code>tail -f</code> is an ongoing process, so it will run indefinitely and prevent the container from stopping. The default <code>entrypoint</code> is overridden to keep the container running.</li>
+</ul></li>
+
+<li><p>Bring up your container:</p>
+
+<pre><code>docker-compose up -d
+</code></pre></li>
+
+<li><p>Check the status of your container:</p>
+
+<pre><code>docker ps
+</code></pre>
+
+<p>The output should resemble the following:</p>
+
+<pre class="file terminal">
+  <code>
+CONTAINER ID        IMAGE               COMMAND               CREATED             STATUS              PORTS               NAMES
+967013c36a27        alpine              "tail -f /dev/null"   3 seconds ago       Up 2 seconds                            Alpine_Distro
+</code>
+</pre>
+</li>
+
+<li><p>Bring down the container:</p>
+
+<pre><code>docker-compose down
+</code></pre></li>
+</ol>
+
+<h3 id="add-additional-services">Add Additional Services</h3>
+
+<p>From here you can begin to build an ecosystem of containers. You can define how they work together and communicate.</p>
+
+<ol>
+<li><p>Reopen <code>docker-compos.yml</code> and add the <code>database</code> service below:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">  </span>distro<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>alpine<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>Alpine_Distro<span class="w">
+</span><span class="w">    </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">    </span>entrypoint<span class="p">:</span><span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span>/dev/<span class="kc">null</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>database<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>postgres<span class="p">:</span>latest<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>postgres_db<span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>../dumps<span class="p">:</span>/tmp/<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="s2">&#34;5432:5432&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>There are now two services defined:</p>
+
+<ul>
+<li>Distro</li>
+<li>Database</li>
+</ul>
+
+<p>The Distro service is the same as before. The Database server contains the instructions for a postgres container, and the directives: <code>volumes: - ../dumps:/tmp</code> and <code>ports:-&quot;5432:5432&quot;</code>, the first directive maps the containerd <code>/dumps</code> folder to our local <code>/tmp</code> folder. The second directive maps the containers ports to the local host&rsquo;s ports.</p></li>
+
+<li><p>Check the running containers:</p>
+
+<pre><code>docker ps
+</code></pre>
+
+<p>This command shows the status of the containers, the port mapping, the names, and the last command running on them. It&rsquo;s important to note that the postgres container reads &ldquo;docker-entrypoint&hellip;&rdquo; under commands. The Postgres <a href="https://github.com/docker-library/postgres/blob/master/docker-entrypoint.sh">Docker Entrypoint</a> script is the last thing that launches when the container starts.</p>
+
+<pre class="file terminal">
+  <code>
+CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS                    NAMES
+ecc37246f6ef        postgres:latest     "docker-entrypoint..."   About a minute ago   Up About a minute   0.0.0.0:5432->5432/tcp   postgres_db
+35dab3e712d6        alpine              "tail -f /dev/null"      About a minute ago   Up About a minute                            Alpine_Distro
+</code>
+</pre>
+</li>
+
+<li><p>Bring down both containers:</p>
+
+<pre><code>docker-compose down
+</code></pre></li>
+</ol>
+
+<h3 id="add-an-nginx-service">Add an nginx Service</h3>
+
+<ol>
+<li><p>Add an nginx container so that your application will be able to serve websites:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">  </span>distro<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>alpine<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>Alpine_Distro<span class="w">
+</span><span class="w">    </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">    </span>entrypoint<span class="p">:</span><span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span>/dev/<span class="kc">null</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>database<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>postgres<span class="p">:</span>latest<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>postgres_db<span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>../dumps<span class="p">:</span>/tmp/<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="s2">&#34;5432:5432&#34;</span><span class="w">
+</span><span class="w">  </span>web<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>nginx<span class="p">:</span>latest<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./mysite.template<span class="p">:</span>/etc/nginx/conf.d/mysite.template<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="s2">&#34;8080:80&#34;</span><span class="w">
+</span><span class="w">    </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>NGINX_HOST=example.com<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>NGINX_port=<span class="m">80</span><span class="w">
+</span><span class="w">    </span>links<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>database<span class="p">:</span>db<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>distro</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This <code>docker-compose</code> file contains some new directives: <em>environment</em> and <em>links</em>. The first directive sets runtime level options within the container. <code>links</code> creates a dependency network between the containers. The nginx container depends on the other two to execute. In addition, the corresponding containers will be reachable at a hostname indicated by the alias. In this case, pinging <code>db</code> from the <code>web</code> container will reach the <code>database</code> service. While you do not need the <code>links</code> directive for the containers to talk with each other, <code>links</code> can serve as a failsafe when starting the docker-compose application.</p></li>
+
+<li><p>Start Docker Compose and check the container status:</p>
+
+<pre><code>docker-compose up -d
+docker ps
+</code></pre>
+
+<p>The output should be similar to:</p>
+
+<pre class="file terminal">
+  <code>
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+55d573674e49        nginx:latest        "nginx -g 'daemon ..."   3 minutes ago       Up 3 minutes        0.0.0.0:8080->80/tcp     nginx
+ad9e48b2b82a        alpine              "tail -f /dev/null"      3 minutes ago       Up 3 minutes                                 Alpine_Distro
+736cf2f2239e        postgres:latest     "docker-entrypoint..."   3 minutes ago       Up 3 minutes        0.0.0.0:5432->5432/tcp   postgres_db
+</code>
+</pre>
+</li>
+
+<li><p>Test nginx by navigating to your Linode&rsquo;s public IP address, port <code>8080</code> in a browser (for example <code>192.0.2.0:8080</code>). You should see the default nginx landing page displayed.</p></li>
+</ol>
+
+<h3 id="persistent-data-storage">Persistent Data Storage</h3>
+
+<p>Storing PostgreSQL data directly inside a container is not recommended. Docker containers are intended to be treated as ephemeral: your application&rsquo;s containers are built from scratch when running <code>docker-compose up</code> and destroyed when running <code>docker-compose down</code>. In addition, any unexpected crash or restart on your system will cause any data stored in a container to be lost.</p>
+
+<p>For these reasons it is important to set up a persistent volume on the host that the database containers will use to store their data.</p>
+
+<ol>
+<li><p>Add a <code>volumes</code> section to <code>docker-compose.yml</code> and edit the <code>database</code> service to refer to the volume:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">  </span>distro<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>alpine<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>Alpine_Distro<span class="w">
+</span><span class="w">    </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">    </span>entrypoint<span class="p">:</span><span class="w"> </span>tail<span class="w"> </span>-f<span class="w"> </span>/dev/<span class="kc">null</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>database<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>postgres<span class="p">:</span>latest<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>postgres_db<span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>data<span class="p">:</span>/var/lib/postgresql<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="s2">&#34;5432:5432&#34;</span><span class="w">
+</span><span class="w">  </span>web<span class="p">:</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>nginx<span class="p">:</span>latest<span class="w">
+</span><span class="w">    </span>container_name<span class="p">:</span><span class="w"> </span>nginx<span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./mysite.template<span class="p">:</span>/etc/nginx/conf.d/mysite.template<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="s2">&#34;8080:80&#34;</span><span class="w">
+</span><span class="w">    </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>NGINX_HOST=example.com<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>NGINX_port=<span class="m">80</span><span class="w">
+</span><span class="w">    </span>links<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>database<span class="p">:</span>db<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>distro<span class="w">
+</span><span class="w"></span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">  </span>data<span class="p">:</span><span class="w">
+</span><span class="w">    </span>external<span class="p">:</span><span class="w"> </span><span class="kc">true</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p><code>external: true</code> tells Docker Compose to use a pre-existing external data volume. If no volume named <code>data</code> is present, starting the application will cause an error. Create the volume:</p>
+
+<pre><code>docker volume create --name=data
+</code></pre></li>
+
+<li><p>Start the application as before:</p>
+
+<pre><code>docker-compose up -d
+</code></pre></li>
+</ol>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Docker Compose is a powerful tool for orchestrating sets of containers that can work together. Things like an app or a development environment can utilize Docker-compose. The result is a modular and configurable environment that can be deployed anywhere.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-docker-compose">What is Docker Compose?</a></li>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#install-docker-ce">Install Docker CE</a></li>
+<li><a href="#install-docker-compose">Install Docker Compose</a></li>
+</ul></li>
+<li><a href="#basic-usage">Basic Usage</a></li>
+<li><a href="#compose-file-syntax">Compose File Syntax</a></li>
+<li><a href="#build-an-application-from-scratch">Build an Application from Scratch</a>
+<ul>
+<li><a href="#define-a-simple-service">Define a Simple Service:</a></li>
+<li><a href="#add-additional-services">Add Additional Services</a></li>
+<li><a href="#add-an-nginx-service">Add an nginx Service</a></li>
+<li><a href="#persistent-data-storage">Persistent Data Storage</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

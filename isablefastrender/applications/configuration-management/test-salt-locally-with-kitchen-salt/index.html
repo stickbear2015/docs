@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Test Salt States Locally with KitchenSalt</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Test Salt states locally with Kitchen and kitchen-salt.">
+        <meta name="keywords" content="saltstack, salt, kitchen, kitchen-salt, kitchensalt, salt solo, saltsolo">
+        
+        <meta property="og:title" content="Test Salt States Locally with KitchenSalt">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/test-salt-locally-with-kitchen-salt/">
+        <meta property="og:description" content="Test Salt states locally with Kitchen and kitchen-salt.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/test-salt-locally-with-kitchen-salt/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Test Salt States Locally with KitchenSalt
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Test Salt States Locally with KitchenSalt</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-07T14:28:52-05:00">Monday, January 7, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>Salt20</strong> for $20 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2ftest-salt-locally-with-kitchen-salt%2f&via=linode&text=Test%20Salt%20States%20Locally%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2ftest-salt-locally-with-kitchen-salt%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2ftest-salt-locally-with-kitchen-salt%2f&t=Test%20Salt%20States%20Locally%20with%20KitchenSalt" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Test%20Salt%20States%20Locally%20with%20KitchenSalt%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2ftest-salt-locally-with-kitchen-salt%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5ctest-salt-locally-with-kitchen-salt%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5ctest-salt-locally-with-kitchen-salt%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>KitchenSalt allows you to use Test Kitchen to test your Salt configurations locally without a Salt master or minions. In this guide you will install KitchenSalt and use Docker to test a Salt state. This guide was created using a system running Ubuntu 18.04.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ul>
+<li>You will need root access to your computer, or a user account with <code>sudo</code> privilege. For more information on privileges, see our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</li>
+<li><a href="https://linode.com/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/">Install Git</a> on your local computer, if it is not already installed.</li>
+<li>Update your system packages.</li>
+</ul>
+
+<h2 id="install-rbenv-and-ruby">Install rbenv and Ruby</h2>
+
+<p>Kitchen runs on Ruby. The following commands will install the Ruby version controller rbenv, set rbenv in your PATH, and install Ruby via rbenv.</p>
+
+<ol>
+<li><p>Install the packages necessary for rbenv:</p>
+
+<pre><code>sudo apt install libssl-dev libreadline-dev zlib1g-dev bzip2 gcc make git ruby-dev
+</code></pre></li>
+
+<li><p>Clone the rbenv git repository and set up your PATH:</p>
+
+<pre><code>sudo git clone git://github.com/rbenv/rbenv.git /usr/local/rbenv
+sudo mkdir /usr/local/rbenv/plugins
+sudo git clone git://github.com/rbenv/ruby-build.git /usr/local/rbenv/plugins/ruby-build
+sudo tee /etc/profile.d/rbenv.sh &lt;&lt;&lt; 'export PATH=&quot;/usr/local/rbenv/plugins/ruby-build/bin:/usr/local/rbenv/bin:$PATH&quot;'
+sudo tee -a /etc/profile.d/rbenv.sh &lt;&lt;&lt; 'source &lt;(rbenv init -)'
+</code></pre></li>
+
+<li><p>Reload your system&rsquo;s profile so that the rbenv commands are added to your <code>PATH</code>:</p>
+
+<pre><code>source /etc/profile
+</code></pre>
+
+<p>You can also restart your shell session so the <code>PATH</code> changes take effect.</p></li>
+
+<li><p>Install Ruby:</p>
+
+<pre><code>rbenv install 2.5.1
+</code></pre></li>
+</ol>
+
+<h2 id="install-docker">Install Docker</h2>
+
+
+
+
+
+<!-- Install Docker CE using the official Docker repositories. -->
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>docker run hello-world
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h2 id="install-kitchensalt">Install KitchenSalt</h2>
+
+<ol>
+<li><p>Install the bundler gem:</p>
+
+<pre><code>sudo gem install bundler
+</code></pre></li>
+
+<li><p>Create a Gemfile in your working directory and add the <code>kitchen-salt</code>, <code>kitchen-docker</code>, and <code>kitchen-sync</code> gems:</p>
+
+<dl class="file">
+
+
+<dt>
+		Gemfile 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="c1">#Gemfile</span>
+<span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
+
+<span class="n">gem</span> <span class="s1">&#39;kitchen-salt&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;kitchen-docker&#39;</span>
+<span class="n">gem</span> <span class="s1">&#39;kitchen-sync&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p><code>kitchen-sync</code> is used to copy files to Docker containers more quickly.</p></li>
+
+<li><p>Install the gems with bundler:</p>
+
+<pre><code>sudo bundle install
+</code></pre></li>
+</ol>
+
+<h2 id="create-a-sample-sls-file">Create a Sample .sls File</h2>
+
+<p>For testing purposes, create a Salt state file that installs NGINX and ensures that it is running. In a text editor, create an <code>nginx.sls</code> file in your working directory and add the following lines:</p>
+
+<dl class="file">
+
+
+<dt>
+		nginx.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">nginx<span class="p">:</span><span class="w">
+</span><span class="w">  </span>pkg<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>installed<span class="w">
+</span><span class="w">  </span>service.running<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>enable<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>reload<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>watch<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>pkg<span class="p">:</span><span class="w"> </span>nginx</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="configure-kitchen-yml">Configure kitchen.yml</h2>
+
+<ol>
+<li><p>Now, write the Kitchen configuration file, beginning with the <strong>provisioner</strong> section. Copy the following lines into a <code>kitchen.yml</code> file in your working directory.</p>
+
+<dl class="file">
+
+
+<dt>
+		kitchen.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">provisioner<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>salt_solo<span class="w">
+</span><span class="w">  </span>salt_install<span class="p">:</span><span class="w"> </span>bootstrap<span class="w">
+</span><span class="w">  </span>is_file_root<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">  </span>require_chef<span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span>state_top<span class="p">:</span><span class="w">
+</span><span class="w">    </span>base<span class="p">:</span><span class="w">
+</span><span class="w">      </span><span class="s2">&#34;*&#34;</span><span class="p">:</span><span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>nginx<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This section defines <code>salt_solo</code> as the provisioner, which will allow Kitchen to use Salt without a Salt master. In this section Salt is installed via the bootstrap script by setting <code>salt_install: bootstrap</code>, the Salt file root is mapped to the directory where <code>.kitchen.yml</code> is located by setting <code>is_file_root: true</code>, and Chef is disabled by setting <code>require_chef: false</code>. Instead of providing a top file for Salt states, the top file is declared inline. This section is also where Salt pillar files are added. For reference, they are added under the <strong>provisioner</strong> block:</p>
+
+<dl class="file">
+
+
+<dt>
+		kitchen.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">provisioner<span class="p">:</span><span class="w">
+</span><span class="w"></span>...<span class="w">
+</span><span class="w">  </span>pillars<span class="p">:</span><span class="w">
+</span><span class="w">    </span>top.sls<span class="p">:</span><span class="w">
+</span><span class="w">      </span>base<span class="p">:</span><span class="w">
+</span><span class="w">        </span><span class="s2">&#34;*&#34;</span><span class="p">:</span><span class="w">
+</span><span class="w">          </span>-<span class="w"> </span>nginx_pillar<span class="w">
+</span><span class="w">  </span>pillars_from_files<span class="p">:</span><span class="w">
+</span><span class="w">    </span>nginx_pillar.sls<span class="p">:</span><span class="w"> </span>nginx.pillar</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Next, configure the <strong>driver</strong> section:</p>
+
+<dl class="file">
+
+
+<dt>
+		kitchen.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>driver<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>docker<span class="w">
+</span><span class="w">  </span>user_sudo<span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span><span class="w">  </span>privileged<span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="w">  </span>forward<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This section declares Docker as the driver, though you could also use Vagrant. Kitchen does not need to use <code>sudo</code> to build the Docker containers, so <code>user_sudo</code> is set to <code>false</code>. <code>privileged</code> is set to <code>true</code> to ensure that the containers run systemd as the exec command. The Docker container will <code>forward</code> traffic to the host on port <code>80</code>.</p></li>
+
+<li><p>Configure the <strong>platforms</strong> section:</p>
+
+<dl class="file">
+
+
+<dt>
+		kitchen.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>platforms<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>ubuntu<span class="w">
+</span><span class="w">    </span>driver_config<span class="p">:</span><span class="w">
+</span><span class="w">      </span>run_command<span class="p">:</span><span class="w"> </span>/lib/systemd/systemd<span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This section defines which platform Docker will run. By default Docker will run the latest version of that platform. Because different platforms place systemd in different locations, the <code>driver_config</code> section is used to point to the systemd install path of that platform. More than one platform can be defined.</p></li>
+
+<li><p>Configure the <strong>suites</strong> section:</p>
+
+<dl class="file">
+
+
+<dt>
+		kitchen.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>suites<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>oxygen<span class="w">
+</span><span class="w">    </span>provisioner<span class="p">:</span><span class="w">
+</span><span class="w">      </span>salt_bootstrap_options<span class="p">:</span><span class="w"> </span>-X<span class="w"> </span>-p<span class="w"> </span>git<span class="w"> </span>stable<span class="w"> </span><span class="m">2018.3</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p><code>suites</code> defines which software suite Kitchen will test against. In this context, Kitchen will test against the Oxygen release of Salt. More than one suite can be defined.</p></li>
+
+<li><p>Lastly, the <strong>transport</strong> section allows us to specify the use of <code>kitchen-sync</code> for transferring files:</p>
+
+<dl class="file">
+
+
+<dt>
+		kitchen.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>transport<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>sftp</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>You can now test your Salt configuration with Kitchen. Type the following command to run the test:</p>
+
+<pre><code>kitchen test
+</code></pre>
+
+<p>This command will create, converge, and then destroy the test instance. If completed successfully, the final terminal output will be:</p>
+
+<pre class="file terminal">
+  <code>
+-----> Kitchen is finished. (13m32.13s)
+</code>
+</pre>
+
+
+<p>For a more granular approach to running your test, you can use the individual commands in series:</p>
+
+<pre><code>kitchen list
+kitchen create
+kitchen converge
+kitchen destroy
+</code></pre></li>
+</ol>
+
+<h2 id="using-a-verifier-and-next-steps">Using a Verifier and Next Steps</h2>
+
+<p>Though it is beyond the scope of this article, Kitchen allows for more robust testing than just checking a Salt configuration. You can write tests in bash using Bats, in Ruby using Minitest, Rspec, Serverspec and Inspec, or if you&rsquo;re more familiar with Python you can use pytest.</p>
+
+<p>As an example, you can add the following code to your <code>kitchen.yaml</code> to verify your tests using the Inspec gem:</p>
+
+<dl class="file">
+
+
+<dt>
+		kitchen.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">...<span class="w">
+</span><span class="w">
+</span><span class="w"></span>verifier<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>inspec</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>For more information on writing tests, visit the links in the More Information section below.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://kitchen.saltstack.com/docs/file/README.rdoc">KitchenSalt Documentation</a></li>
+
+<li><a href="https://docs.chef.io/kitchen.html">Kitchen Documentation</a></li>
+
+<li><a href="https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html">Salt Formulas</a></li>
+
+<li><a href="https://kitchen.ci/docs/getting-started/writing-test/">Writing a Test</a></li>
+
+<li><a href="https://github.com/gtmanfred/wordpress-formula/tree/master/tests/integration">Sample Pytest tests</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#install-rbenv-and-ruby">Install rbenv and Ruby</a></li>
+<li><a href="#install-docker">Install Docker</a></li>
+<li><a href="#install-kitchensalt">Install KitchenSalt</a></li>
+<li><a href="#create-a-sample-sls-file">Create a Sample .sls File</a></li>
+<li><a href="#configure-kitchen-yml">Configure kitchen.yml</a></li>
+<li><a href="#using-a-verifier-and-next-steps">Using a Verifier and Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

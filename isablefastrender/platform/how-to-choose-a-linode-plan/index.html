@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Choose a Linode Plan</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Decide which Linode plan is right for you.">
+        <meta name="keywords" content="choose, help, plan, size, nanode, standard, high memory, dedicated, dedicated CPU">
+        
+        <meta property="og:title" content="How to Choose a Linode Plan">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/platform/how-to-choose-a-linode-plan/">
+        <meta property="og:description" content="Decide which Linode plan is right for you.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/platform/how-to-choose-a-linode-plan/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/">Linode Platform</a>
+  
+</li>
+
+
+<li>
+  
+  How to Choose a Linode Plan
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Choose a Linode Plan</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-08T14:15:13-05:00">Friday, February 8, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fhow-to-choose-a-linode-plan%2f&via=linode&text=How%20to%20Choose%20a%20Linode%20Plan" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fhow-to-choose-a-linode-plan%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fhow-to-choose-a-linode-plan%2f&t=How%20to%20Choose%20a%20Linode%20Plan" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Choose%20a%20Linode%20Plan%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fplatform%2fhow-to-choose-a-linode-plan%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/platform%5chow-to-choose-a-linode-plan%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/platform%5chow-to-choose-a-linode-plan%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Linode offers four instance types: <strong>Nanode</strong>, <strong>Standard</strong>, <strong>High Memory</strong>, and <strong>Dedicated CPU</strong>. For the Standard, High Memory, and Dedicated CPU types there are several hardware resource tiers, or plans, that you can choose from.</p>
+
+<p>When selecting a plan, it is important to understand the hardware resources allocated to your instance, like CPU, transfer, storage, and RAM. An understanding of your project&rsquo;s own needs and requirements is also useful. This guide provides an overview of all Linode instance types and plans, their corresponding use cases, and how to choose which one is right for you.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You can easily change between instance types and plans on an existing Linode at any time. Review the <a href="/docs/platform/disk-images/resizing-a-linode/">Resizing a Linode</a> for instructions.</div>
+</blockquote>
+
+
+<h2 id="hardware-resource-definitions">Hardware Resource Definitions</h2>
+
+<p>Start by reviewing what each resource means for your application. If you&rsquo;re confident in your understanding of these concepts, please feel free to skip ahead.</p>
+
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>RAM</td>
+<td>The working memory available for your server&rsquo;s processes. Your server stores information in memory that is needed to carry out its functions. Or, it caches data in memory for fast retrieval in the future, if it is likely that the data will be needed. Data stored in RAM is accessed faster than data stored in your Linode&rsquo;s disks, but it is not persistent storage.</td>
+</tr>
+
+<tr>
+<td>CPU</td>
+<td>The number of virtual CPUs (vCPUs) available to your server. Your software is often designed to execute its tasks across multiple CPUs in parallel. The higher your vCPU count, the more work you can perform simultaneously.</td>
+</tr>
+
+<tr>
+<td>Storage</td>
+<td>Your server&rsquo;s built-in persistent storage. Large databases, media libraries, and other stores of files will require more storage space. Your Linode&rsquo;s storage is maintained on high-performance SSDs for fast access. You can also supplement your Linode&rsquo;s disks with extra <a href="https://www.linode.com/blockstorage">Block Storage Volumes</a>.</td>
+</tr>
+
+<tr>
+<td>Transfer</td>
+<td>The total amount of traffic your server can emit over the course of a month. Inbound traffic sent to your Linode does not count against your transfer quota. If you exceed your quota, your service will not be shut off; instead, an overage will be billed. Review the <a href="/docs/platform/billing-and-support/network-transfer-quota/">Network Transfer Quota</a> guide for more information about how transfer works.</td>
+</tr>
+
+<tr>
+<td>Network In</td>
+<td>The maximum bandwidth for inbound traffic sent to your Linode. The bandwidth you observe will also depend on other factors, like the geographical distance between you and your Linode and the bandwidth of your local ISP. For help with choosing a data center that will feature the lowest latency and best bandwidth, review the <a href="/docs/platform/how-to-choose-a-data-center/">How to Choose a Data Center</a> guide.</td>
+</tr>
+
+<tr>
+<td>Network Out</td>
+<td>The maximum bandwidth for outbound traffic emitted by your Linode. The bandwidth you observe will also depend on other factors, like the geographical distance between you and your Linode and the bandwidth of your local ISP. For help with choosing a data center that will feature the lowest latency and best bandwidth, review the <a href="/docs/platform/how-to-choose-a-data-center/">How to Choose a Data Center</a> guide.</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="general-principles-when-choosing-a-plan">General Principles when Choosing a Plan</h2>
+
+<p>The different Linode instance types represent different balances of the above resources. Nanode and Standard instances offer a general-purpose array of resources, High Memory instances favor higher memory allocations, and Dedicated CPU instances reserve physical CPU cores for you.</p>
+
+<p>At the same time, different kinds of applications have different resource requirements. Some applications may need to store a lot of data but require less processing power, some may need more memory than CPU, and some may be especially CPU-intensive. As a result, certain instance types can better serve certain applications. When creating your instances, consider what resources your application needs and then compare it with the resources specified by each of the instance types. The following sections include common use cases for each type, and one of these may resemble your needs.</p>
+
+<p>Finally, a common strategy when setting up a new server is to start with a smaller instance and then resize your Linode if needed. At a minimum, you will need to choose a plan that offers enough disk space to store your data. You can then <a href="/docs/uptime/monitoring-and-maintaining-your-server-new-manager/">monitor</a> the CPU, memory, and network usage of your application to determine if you need more of those resources.</p>
+
+<h2 id="1-nanode">1. Nanode</h2>
+
+<p>The Nanode instance is a great place to begin if you are new to the world of cloud hosting and are unsure of your requirements. The Nanode offers the essentials and costs $5/month. With this instance you have a fully functioning server with your preferred Linux distribution.</p>
+
+<h3 id="use-cases">Use Cases</h3>
+
+<ul>
+<li>Personal projects</li>
+<li>Portfolio <a href="/docs/websites/">websites</a></li>
+<li>Small self-hosted services</li>
+<li>Small <a href="/docs/development/version-control/">code repositories</a></li>
+<li><a href="/docs/networking/vpn/">Virtual private networks</a> (VPNs)</li>
+<li>Prototypes and proof-of-concept demonstrations</li>
+</ul>
+
+<h3 id="resource-specifications">Resource Specifications</h3>
+
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>RAM</td>
+<td>1GB</td>
+</tr>
+
+<tr>
+<td>CPU</td>
+<td>1 vCPU</td>
+</tr>
+
+<tr>
+<td>Storage</td>
+<td>25 GB SSD Storage</td>
+</tr>
+
+<tr>
+<td>Transfer</td>
+<td>1 TB</td>
+</tr>
+
+<tr>
+<td>Network In</td>
+<td>40 Gbps</td>
+</tr>
+
+<tr>
+<td>Network Out</td>
+<td>1000 Mbps</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="2-standard">2. Standard</h2>
+
+<p>Standard instances start with 2GB of RAM and 1 vCPU and can go all the way up to 192GB of RAM with 32 vCPUs. These instances offer a balanced array of resources and can support a wide range of modern cloud applications, from personal projects to production deployments of an enterprise application.</p>
+
+<h3 id="use-cases-1">Use Cases</h3>
+
+<ul>
+<li>Web applications and <a href="/docs/websites/">websites</a></li>
+<li><a href="/docs/game-servers/">Game servers</a></li>
+<li><a href="/docs/databases/">Database servers</a></li>
+<li><a href="/docs/development/version-control/">Code repositories</a></li>
+<li>Corporate <a href="/docs/networking/vpn/">VPNs</a></li>
+<li><a href="/docs/applications/containers/">Container</a> clusters</li>
+<li>Application and database clusters</li>
+<li>Content delivery network (CDN) nodes</li>
+</ul>
+
+<h3 id="base-plan">Base Plan</h3>
+
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>RAM</td>
+<td>2GB</td>
+</tr>
+
+<tr>
+<td>CPU</td>
+<td>1 vCPU</td>
+</tr>
+
+<tr>
+<td>Storage</td>
+<td>50 GB SSD Storage</td>
+</tr>
+
+<tr>
+<td>Transfer</td>
+<td>2 TB</td>
+</tr>
+
+<tr>
+<td>Network In</td>
+<td>40 Gbps</td>
+</tr>
+
+<tr>
+<td>Network Out</td>
+<td>2000 Mbps</td>
+</tr>
+</tbody>
+</table>
+
+<p>To view a full list of the Standard instance plans, visit the <a href="https://www.linode.com/pricing#all">Linode Pricing</a> page.</p>
+
+<h2 id="3-high-memory">3. High Memory</h2>
+
+<p>High Memory instances feature higher RAM allocations and relatively fewer vCPUs and less storage. This keeps your costs down and provides power to memory-intensive applications.</p>
+
+<h3 id="use-cases-2">Use Cases</h3>
+
+<p>Two primary applications for High Memory instances are in-memory caches and in-memory databases, like <a href="https://memcached.org">Memcached</a> and <a href="https://redis.io">Redis</a>. These applications offer very fast retrieval of data, but they store data in a non-persistent manner (with some caveats). So, they are usually used in conjunction with another persistent database server running on a separate instance.</p>
+
+<p>The kinds of data you might store in one of these applications includes: information about your users&rsquo; sessions; frequently-requested pages on your website; and data that needs to be computed (for example, the average rating of a product on a retail store&rsquo;s site).</p>
+
+<h3 id="base-plan-1">Base Plan</h3>
+
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>RAM</td>
+<td>24GB</td>
+</tr>
+
+<tr>
+<td>CPU</td>
+<td>1 vCPU</td>
+</tr>
+
+<tr>
+<td>Storage</td>
+<td>20 GB SSD Storage</td>
+</tr>
+
+<tr>
+<td>Transfer</td>
+<td>5 TB</td>
+</tr>
+
+<tr>
+<td>Network In</td>
+<td>40 Gbps</td>
+</tr>
+
+<tr>
+<td>Network Out</td>
+<td>5000 Mbps</td>
+</tr>
+</tbody>
+</table>
+
+<p>To view a full list of the High Memory instance plans, visit the <a href="https://www.linode.com/pricing#all">Linode Pricing</a> page.</p>
+
+<h2 id="4-dedicated-cpu">4. Dedicated CPU</h2>
+
+<p>Dedicated CPU instances offer entire dedicated CPU cores for your own Linode&rsquo;s use. No other instances can run processes on the same cores that you&rsquo;re using, which means that your software can run at peak speed and efficiency.</p>
+
+<p>Under the Nanode, Standard, and High Memory instances, your processes are scheduled on the same CPU cores as the processes from other servers. This shared scheduling is done in a secure and performant manner, and Linode works to minimize competition for CPU resources between your server and other servers, but the Dedicated CPU instances provide an environment with zero competition. With Dedicated CPU instances, you can run your software for prolonged periods of maximum CPU usage, and you can ensure the lowest latency possible for latency-sensitive operations.</p>
+
+<h3 id="dedicated-cpus-and-the-linode-api">Dedicated CPUs and the Linode API</h3>
+
+<p>Some data analysis and processing tasks are well-suited for Dedicated CPU instances. For these workloads, you may only need your Dedicated CPU instance until the task is finished, at which point you can remove the instance.</p>
+
+<p>Furthermore, some CPU-intensive tasks may be triggered from other events in your workflow. For example, if you&rsquo;re a software developer that uses continuous integration and delivery (CI/CD) tools, those tools are generally run whenever you push code to your repository. By leveraging the <a href="https://developers.linode.com">Linode API</a>, you can programmatically create a Dedicated CPU instance, run these tools, and destroy the instance on every code push.</p>
+
+<h3 id="use-cases-3">Use Cases</h3>
+
+<ul>
+<li><a href="/docs/development/ci/introduction-ci-cd/">CI/CD</a> toolchains and build servers</li>
+<li>CPU-intensive <a href="/docs/game-servers/">game servers</a>, like Minecraft or Team Fortress</li>
+<li><a href="/docs/applications/media-servers/">Audio and video</a> transcoding and streaming</li>
+<li><a href="/docs/applications/big-data/">Big data</a> and data analysis</li>
+<li>Scientific computing</li>
+<li><a href="/docs/applications/big-data/how-to-move-machine-learning-model-to-production/">Machine learning</a></li>
+</ul>
+
+<h3 id="base-plan-2">Base Plan</h3>
+
+<table>
+<thead>
+<tr>
+<th>Resource</th>
+<th>Value</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>RAM</td>
+<td>4GB</td>
+</tr>
+
+<tr>
+<td>vCPU</td>
+<td>2 vCPUs</td>
+</tr>
+
+<tr>
+<td>Storage</td>
+<td>25 GB SSD Storage</td>
+</tr>
+
+<tr>
+<td>Transfer</td>
+<td>4 TB</td>
+</tr>
+
+<tr>
+<td>Network In</td>
+<td>40 Gbps</td>
+</tr>
+
+<tr>
+<td>Network Out</td>
+<td>4000 Mbps</td>
+</tr>
+</tbody>
+</table>
+
+<p>To view a full list of the Dedicated CPU instance plans, visit the <a href="https://www.linode.com/pricing#all">Linode Pricing</a> page.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#hardware-resource-definitions">Hardware Resource Definitions</a></li>
+<li><a href="#general-principles-when-choosing-a-plan">General Principles when Choosing a Plan</a></li>
+<li><a href="#1-nanode">1. Nanode</a>
+<ul>
+<li><a href="#use-cases">Use Cases</a></li>
+<li><a href="#resource-specifications">Resource Specifications</a></li>
+</ul></li>
+<li><a href="#2-standard">2. Standard</a>
+<ul>
+<li><a href="#use-cases-1">Use Cases</a></li>
+<li><a href="#base-plan">Base Plan</a></li>
+</ul></li>
+<li><a href="#3-high-memory">3. High Memory</a>
+<ul>
+<li><a href="#use-cases-2">Use Cases</a></li>
+<li><a href="#base-plan-1">Base Plan</a></li>
+</ul></li>
+<li><a href="#4-dedicated-cpu">4. Dedicated CPU</a>
+<ul>
+<li><a href="#dedicated-cpus-and-the-linode-api">Dedicated CPUs and the Linode API</a></li>
+<li><a href="#use-cases-3">Use Cases</a></li>
+<li><a href="#base-plan-2">Base Plan</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

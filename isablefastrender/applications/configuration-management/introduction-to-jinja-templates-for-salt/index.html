@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Introduction to Jinja Templates for Salt</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="An introduction to Jinja using Salt configuration management examples.">
+        <meta name="keywords" content="salt, jinja, configuration management">
+        
+        <meta property="og:title" content="Introduction to Jinja Templates for Salt">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/introduction-to-jinja-templates-for-salt/">
+        <meta property="og:description" content="An introduction to Jinja using Salt configuration management examples.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/introduction-to-jinja-templates-for-salt/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Introduction to Jinja Templates for Salt
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Introduction to Jinja Templates for Salt</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-07T14:28:52-05:00">Monday, January 7, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>Salt20</strong> for $20 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fintroduction-to-jinja-templates-for-salt%2f&via=linode&text=Introduction%20to%20Jinja%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fintroduction-to-jinja-templates-for-salt%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fintroduction-to-jinja-templates-for-salt%2f&t=Introduction%20to%20Jinja%20Templates%20for%20Salt" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Introduction%20to%20Jinja%20Templates%20for%20Salt%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fintroduction-to-jinja-templates-for-salt%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5cintroduction-to-jinja-templates-for-salt%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5cintroduction-to-jinja-templates-for-salt%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="introduction-to-templating-languages">Introduction to Templating Languages</h2>
+
+<p>Jinja is a flexible templating language for Python that can be used to generate any text based format such as HTML, XML, and YAML. Templating languages like Jinja allow you to insert data into a structured format. You can also embed logic or control-flow statements into templates for greater reusability and modularity. Jinja&rsquo;s template engine is responsible for processing the code within the templates and generating the output to the final text based document.</p>
+
+<p>Templating languages are well known within the context of creating web pages in a <em>Model View Controller</em> architecture. In this scenario the template engine processes source data, like the data found in a database, and a web template that includes a mixture of HTML and the templating language. These two pieces are then used to generate the final web page for users to consume. Templating languages, however, are not limited to web pages. Salt, a popular Python based configuration management software, supports Jinja to allow for abstraction and reuse within Salt state files and regular files.</p>
+
+<p>This guide will provide an overview of the Jinja templating language used primarily within Salt. If you are not yet familiar with Salt concepts, review the <a href="/docs/applications/configuration-management/beginners-guide-to-salt">Beginner&rsquo;s Guide to Salt</a> before continuing. While you will not be creating Salt states of your own in this guide, it is also helpful to review the <a href="/docs/applications/configuration-management/getting-started-with-salt-basic-installation-and-setup/">Getting Started with Salt - Basic Installation and Setup</a> guide.</p>
+
+<h2 id="jinja-basics">Jinja Basics</h2>
+
+<p>This section provides an introductory description of Jinja syntax and concepts along with examples of Jinja and Salt states. For an exhaustive dive into Jinja, consult the official Jinja <a href="http://jinja.pocoo.org/docs/2.10/templates/">Template Designer Documentation</a>.</p>
+
+<p>Applications like Salt can define default behaviors for the Jinja templating engine. All examples in this guide use Salt&rsquo;s default Jinja environment options. These settings can be changed in the Salt master configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/salt/master 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="c"># Default Jinja environment options for all templates except sls templates</span><span class="w">
+</span><span class="w"></span><span class="c">#jinja_env:</span><span class="w">
+</span><span class="w"></span><span class="c">#  block_start_string: &#39;{%&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  block_end_string: &#39;%}&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  variable_start_string: &#39;{{&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  variable_end_string: &#39;}}&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  comment_start_string: &#39;{#&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  comment_end_string: &#39;#}&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  line_statement_prefix:</span><span class="w">
+</span><span class="w"></span><span class="c">#  line_comment_prefix:</span><span class="w">
+</span><span class="w"></span><span class="c">#  trim_blocks: False</span><span class="w">
+</span><span class="w"></span><span class="c">#  lstrip_blocks: False</span><span class="w">
+</span><span class="w"></span><span class="c">#  newline_sequence: &#39;\n&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  keep_trailing_newline: False</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span><span class="c"># Jinja environment options for sls templates</span><span class="w">
+</span><span class="w"></span><span class="c">#jinja_sls_env:</span><span class="w">
+</span><span class="w"></span><span class="c">#  block_start_string: &#39;{%&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  block_end_string: &#39;%}&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  variable_start_string: &#39;{{&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  variable_end_string: &#39;}}&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  comment_start_string: &#39;{#&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  comment_end_string: &#39;#}&#39;</span><span class="w">
+</span><span class="w"></span><span class="c">#  line_statement_prefix:</span><span class="w">
+</span><span class="w"></span><span class="c">#  line_comment_prefix:</span><span class="w">
+</span><span class="w"></span><span class="c">#  trim_blocks: False</span><span class="w">
+</span><span class="w"></span><span class="c">#  lstrip_blocks: False</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Before including Jinja in your Salt states, be sure to review the <a href="#salt-and-jinja-best-practices">Salt and Jinja Best Practices</a> section of this guide to ensure that you are creating maintainable and readable Salt states. More advanced Salt tools and concepts can be used to improve the modularity and reusability of some of the Jinja and Salt state examples used throughout this guide.</div>
+</blockquote>
+
+
+<h3 id="delimiters">Delimiters</h3>
+
+<p>Templating language delimiters are used to denote the boundary between the templating language and another type of data format like HTML or YAML. Jinja uses the following delimiters:</p>
+
+<table>
+<thead>
+<tr>
+<th>Delimiter Syntax</th>
+<th>Usage</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td><code>{% ... %}</code></td>
+<td>Control structures</td>
+</tr>
+
+<tr>
+<td><code>{{ ... }}</code></td>
+<td>Evaluated expressions that will print to the template output</td>
+</tr>
+
+<tr>
+<td><code>{# ... #}</code></td>
+<td>Comments that will be ignored by the template engine</td>
+</tr>
+
+<tr>
+<td><code>#  ... ##</code></td>
+<td>Line statements</td>
+</tr>
+</tbody>
+</table>
+
+<p>In this example Salt state file, you can differentiate the Jinja syntax from the YAML because of the <code>{% ... %}</code> delimiters surrounding the if/else conditionals:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/webserver/init.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">{%<span class="w"> </span>if<span class="w"> </span>grains<span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span><span class="w"> </span>==<span class="w"> </span><span class="s1">&#39;admin&#39;</span><span class="w"> </span>%}<span class="w">
+</span><span class="w">    </span>America/Denver<span class="p">:</span><span class="w">
+</span><span class="w">        </span>timezone.system<span class="p">:</span><span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>else<span class="w"> </span>%}<span class="w">
+</span><span class="w">    </span>Europe/Minsk<span class="p">:</span><span class="w">
+</span><span class="w">        </span>timezone.system<span class="p">:</span><span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>endif<span class="w"> </span>%}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>See the <a href="#control-structures">control structures</a> section for more information on conditionals.</p>
+
+<h3 id="template-variables">Template Variables</h3>
+
+<p>Template variables are available via a template&rsquo;s context dictionary. A template&rsquo;s context dictionary is created automatically during the different stages of a template&rsquo;s evaluation. These variables can be accessed using dot notation:</p>
+
+<pre><code>{{ foo.bar }}
+</code></pre>
+
+<p>Or they can be accessed by subscript syntax:</p>
+
+<pre><code>{{ foo['bar'] }}
+</code></pre>
+
+<p>Salt provides several context variables that are available by default to any Salt state file or file template:</p>
+
+<ul>
+<li><p><strong>Salt</strong>: The <code>salt</code> variable provides a powerful set of <a href="https://docs.saltstack.com/en/latest/ref/modules/all/index.html#all-salt-modules">Salt library functions</a>.</p>
+
+<pre><code>{{ salt['pw_user.list_groups']('jdoe') }}
+</code></pre>
+
+<p>You can run <code>salt '*' sys.doc</code> from the Salt master to view a list of all available functions.</p></li>
+
+<li><p><strong>Opts</strong>: The <code>opts</code> variable is a dictionary that provides access to the content of a Salt minion&rsquo;s <a href="https://docs.saltstack.com/en/latest/ref/internals/opts.html">configuration file</a>:</p>
+
+<pre><code>{{ opts['log_file'] }}
+</code></pre>
+
+<p>The location for a minion&rsquo;s configuration file is <code>/etc/salt/minion</code>.</p></li>
+
+<li><p><strong>Pillar</strong>: The <code>pillar</code> variable is a dictionary used to access Salt&rsquo;s <a href="https://docs.saltstack.com/en/latest/topics/tutorials/pillar.html">pillar data</a>:</p>
+
+<pre><code>{{ pillar['my_key'] }}
+</code></pre>
+
+<p>Although you can access pillar keys and values directly, it is recommended that you use Salt&rsquo;s <code>pillar.get</code> variable library function, because it allows you to define a default value. This is useful when a value does not exist in the pillar:</p>
+
+<pre><code>{{ salt['pillar.get']('my_key', 'default_value') }}
+</code></pre></li>
+
+<li><p><strong>Grains</strong>: The <code>grains</code> variable is a dictionary and provides access to minions&rsquo; <a href="https://docs.saltstack.com/en/latest/topics/grains/">grains data</a>:</p>
+
+<pre><code>{{ grains['shell'] }}
+</code></pre>
+
+<p>You can also use Salt&rsquo;s <code>grains.get</code> variable library function to access grain data:</p>
+
+<pre><code>{{ salt['grains.get']('shell') }}
+</code></pre></li>
+
+<li><p><strong>Saltenv</strong>: You can define multiple salt environments for minions in a Salt master&rsquo;s top file, such as <code>base</code>, <code>prod</code>, <code>dev</code> and <code>test</code>. The <code>saltenv</code> variable provides a way to access the current Salt environment within a Salt state file. This variable is only available within Salt state files.</p>
+
+<pre><code>{{ saltenv }}
+</code></pre></li>
+
+<li><p><strong>SLS</strong>: With the <code>sls</code> variable you can obtain the reference value for the current state file (e.g. <code>apache</code>, <code>webserver</code>, etc). This is the same value used in a top file to map minions to state files or via the <code>include</code> option in state files:</p>
+
+<pre><code>{{ sls }}
+</code></pre></li>
+
+<li><p><strong>Slspath</strong>: This variable provides the path to the current state file:</p>
+
+<pre><code>{{ slspath }}
+</code></pre></li>
+</ul>
+
+<h3 id="variable-assignments">Variable Assignments</h3>
+
+<p>You can assign a value to a variable by using the <code>set</code> tag along with the following delimiter and syntax:</p>
+
+<pre><code>{% set var_name = myvalue %}
+</code></pre>
+
+<p>Follow <a href="https://www.python.org/dev/peps/pep-0008/?#naming-conventions">Python naming conventions</a> when creating variable names. If the variable is assigned at the top level of a template, the assignment is exported and available to be imported by other templates.</p>
+
+<p>Any value generated by a Salt <a href="#template-variables">template variable</a> library function can be assigned to a new variable.</p>
+
+<pre><code>{% set username = salt['user.info']('username') %}
+</code></pre>
+
+<h3 id="filters">Filters</h3>
+
+<p>Filters can be applied to any template variable via a <code>|</code> character. Filters are chainable and accept optional arguments within parentheses. When chaining filters, the output of one filter becomes the input of the following filter.</p>
+
+<pre><code>{{ '/etc/salt/' | list_files | join('\n') }}
+</code></pre>
+
+<p>These chained filters will return a recursive list of all the files in the <code>/etc/salt/</code> directory. Each list item will be joined with a new line.</p>
+
+<pre class="file terminal">
+  <code>
+  /etc/salt/master
+  /etc/salt/proxy
+  /etc/salt/minion
+  /etc/salt/pillar/top.sls
+  /etc/salt/pillar/device1.sls
+  </code>
+</pre>
+
+
+<p>For a complete list of all built in Jinja filters, refer to the <a href="http://jinja.pocoo.org/docs/2.10/templates/#builtin-filters">Jinja Template Design documentation</a>. Salt&rsquo;s official documentation includes a <a href="https://docs.saltstack.com/en/latest/topics/jinja/index.html#filters">list of custom Jinja filters</a>.</p>
+
+<h3 id="macros">Macros</h3>
+
+<p>Macros are small, reusable templates that help you to minimize repetition when creating states. Define macros within Jinja templates to represent frequently used constructs and then reuse the macros in state files.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/mysql/db_macro.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-jinja" data-lang="jinja"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-jinja" data-lang="jinja"><span class="cp">{%</span> <span class="k">macro</span> <span class="nv">mysql_privs</span><span class="o">(</span><span class="nv">user</span><span class="o">,</span> <span class="nv">grant</span><span class="o">=</span><span class="nv">select</span><span class="o">,</span> <span class="nv">database</span><span class="o">,</span> <span class="nv">host</span><span class="o">=</span><span class="nv">localhost</span><span class="o">)</span> <span class="cp">%}</span><span class="x">
+</span><span class="x"></span><span class="cp">{{</span> <span class="nv">user</span> <span class="cp">}}</span><span class="x">_exampledb:
+</span><span class="x">   mysql_grants.present:
+</span><span class="x">    - grant: </span><span class="cp">{{</span> <span class="nv">grant</span> <span class="cp">}}</span><span class="x">
+</span><span class="x">    - database: </span><span class="cp">{{</span> <span class="nv">database</span> <span class="cp">}}</span><span class="x">
+</span><span class="x">    - user: </span><span class="cp">{{</span><span class="nv">user</span><span class="cp">}}</span><span class="x">
+</span><span class="x">    - host: </span><span class="cp">{{</span> <span class="nv">host</span> <span class="cp">}}</span><span class="x">
+</span><span class="x"></span><span class="cp">{%</span> <span class="k">endmacro</span> <span class="cp">%}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<dl class="file">
+
+
+<dt>
+		db_privs.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">{%<span class="w"> </span>import<span class="w"> </span><span class="s2">&#34;/srv/salt/mysql/db_macro.sls&#34;</span><span class="w"> </span>as<span class="w"> </span>db<span class="w"> </span>-%}<span class="w">
+</span><span class="w">
+</span><span class="w"></span>db.mysql_privs(<span class="s1">&#39;jane&#39;</span><span class="p">,</span><span class="s1">&#39;exampledb.*&#39;</span><span class="p">,</span><span class="s1">&#39;select,insert,update&#39;</span>)</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>mysql_privs()</code> macro is defined in the <code>db_macro.sls</code> file. The template is then imported to the <code>db</code> variable in the <code>db_privs.sls</code> state file and is used to create a MySQL <code>grants</code> state for a specific user.</p>
+
+<p>Refer to the <a href="#imports-and-includes">Imports and Includes</a> section for more information on importing templates and variables.</p>
+
+<h3 id="imports-and-includes">Imports and Includes</h3>
+
+<p><strong>Imports</strong></p>
+
+<p>Importing in Jinja is similar to importing in Python. You can import an entire template, a specific state, or a macro defined within a file.</p>
+
+<pre><code>{% import '/srv/salt/users.sls' as users %}
+</code></pre>
+
+<p>This example will import the state file <code>users.sls</code> into the variable <code>users</code>. All states and macros defined within the template will be available using dot notation.</p>
+
+<p>You can also import a specific state or macro from a file.</p>
+
+<pre><code>{% from '/srv/salt/user.sls' import mysql_privs as grants %}
+</code></pre>
+
+<p>This import targets the macro <code>mysql_privs</code> defined within the <code>user.sls</code> state file and is made available to the current template with the <code>grants</code> variable.</p>
+
+<p><strong>Includes</strong></p>
+
+<p>The <code>{% include %}</code> tag renders the output of another template into the position where the include tag is declared. When using the <code>{% include %}</code> tag the context of the included template is passed to the invoking template.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/webserver/webserver_users.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">include:
+  - groups
+
+<span class="o">{</span>% include <span class="s1">&#39;users.sls&#39;</span> %<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>A file referenced by the Jinja <code>include</code> tag needs to be specified by its <a href="https://github.com/saltstack/salt/issues/15863#issuecomment-57823633">absolute path from Salt&rsquo;s <code>file_roots</code> setting</a>; using a relative path from the current state file will generate an error. To include a file in the same directory as the current state file:</p>
+
+<pre><code>{% include slspath + &quot;/users.sls&quot; %}
+</code></pre>
+
+<p>Also note that <a href="https://docs.saltstack.com/en/latest/ref/states/include.html">Salt has its own native <code>include</code> declaration</a> which is independent of Jinja&rsquo;s <code>include</code>.</p>
+</div>
+</blockquote>
+
+
+<p><strong>Import Context Behavior</strong></p>
+
+<p>By default, an import will not include the context of the imported template, because imports are cached. This can be overridden by adding <code>with context</code> to your import statements.</p>
+
+<pre><code>{% from '/srv/salt/user.sls' import mysql_privs with context %}
+</code></pre>
+
+<p>Similarly, if you would like to remove the context from an <code>{% include %}</code>, add <code>without context</code>:</p>
+
+<pre><code>{% include 'users.sls' without context %}
+</code></pre>
+
+<h3 id="whitespace-control">Whitespace Control</h3>
+
+<p>Jinja provides several mechanisms for whitespace control of its rendered output. By default, Jinja strips single trailing new lines and leaves anything else unchanged, e.g. tabs, spaces, and multiple new lines. You can customize how Salt&rsquo;s Jinja template engine handles whitespace in the <a href="#jinja-basics">Salt master configuration file</a>. Some of the available environment options for whitespace control are:</p>
+
+<ul>
+<li><code>trim_blocks</code>: When set to <code>True</code>, the first newline after a template tag is removed automatically. This is set to <code>False</code> by default in Salt.</li>
+<li><code>lstrip_blocks</code>: When set to <code>True</code>, Jinja strips tabs and spaces from the beginning of a line to the start of a block. If other characters are present before the start of the block, nothing will be stripped. This is set to <code>False</code> by default in Salt.</li>
+<li><code>keep_trailing_newline</code>: When set to <code>True</code>, Jinja will keep single trailing newlines. This is set to <code>False</code> by default in Salt.</li>
+</ul>
+
+<p>To avoid running into YAML syntax errors, ensure that you take Jinja&rsquo;s whitespace rendering behavior into consideration when inserting templating markup into Salt states. Remember, Jinja must produce valid YAML. When using control structures or macros, it may be necessary to strip whitespace from the template block to appropriately render valid YAML.</p>
+
+<p>To preserve the whitespace of contents within template blocks, you can set both the <code>trim_blocks</code> and <code>lstrip_block</code> options to <code>True</code> in the master configuration file. You can also manually enable and disable the white space environment options within each template block. A <code>-</code> character will set the behavior of <code>trim_blocks</code> and <code>lstrip_blocks</code> to <code>False</code> and a <code>+</code> character will set these options to <code>True</code> for the block:</p>
+
+<p>For example, to strip the whitespace after the beginning of the control structure include a <code>-</code> character before the closing <code>%}</code>:</p>
+
+<pre><code>{% for item in [1,2,3,4,5] -%}
+    {{ item }}
+{% endfor %}
+</code></pre>
+
+<p>This will output the numbers <code>12345</code> without any leading whitespace. Without the <code>-</code> character, the output would preserve the spacing defined within the block.</p>
+
+<h3 id="control-structures">Control Structures</h3>
+
+<p>Jinja provides control structures common to many programming languages such as loops, conditionals, macros, and blocks. The use of control structures within Salt states allow for fine-grained control of state execution flow.</p>
+
+<p><strong>For Loops</strong></p>
+
+<p>For loops allow you to iterate through a list of items and execute the same code or configuration for each item in the list. Loops provide a way to reduce repetition within Salt states.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/users.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">{%<span class="w"> </span>set<span class="w"> </span>groups<span class="w"> </span>=<span class="w"> </span><span class="p">[</span><span class="s1">&#39;sudo&#39;</span><span class="p">,</span><span class="s1">&#39;wheel&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;admins&#39;</span><span class="p">]</span><span class="w"> </span>%}<span class="w">
+</span><span class="w"></span>include<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>groups<span class="w">
+</span><span class="w">
+</span><span class="w"></span>jane<span class="p">:</span><span class="w">
+</span><span class="w">  </span>user.present<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>fullname<span class="p">:</span><span class="w"> </span>Jane<span class="w"> </span>Doe<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>shell<span class="p">:</span><span class="w"> </span>/bin/zsh<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>createhome<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>home<span class="p">:</span><span class="w"> </span>/home/jane<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>uid<span class="p">:</span><span class="w"> </span><span class="m">4001</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>groups<span class="p">:</span><span class="w">
+</span><span class="w">    </span>{%-<span class="w"> </span>for<span class="w"> </span>group<span class="w"> </span>in<span class="w"> </span>groups<span class="w"> </span>%}<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>{{<span class="w"> </span>group<span class="w"> </span>}}<span class="w">
+</span><span class="w">    </span>{%-<span class="w"> </span>endfor<span class="w"> </span>-%}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The previous for loop will assign the user <code>jane</code> to all the groups in the <code>groups</code> list set at the top of the <code>users.sls</code> file.</p>
+
+<p><strong>Conditionals</strong></p>
+
+<p>A conditional expression evaluates to either <code>True</code> or <code>False</code> and controls the flow of a program based on the result of the evaluated boolean expression. Jinja&rsquo;s conditional expressions are prefixed with <code>if</code>/<code>elif</code>/<code>else</code> and placed within the <code>{% ... %}</code> delimiter.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/users.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">{%<span class="w"> </span>set<span class="w"> </span>users<span class="w"> </span>=<span class="w"> </span><span class="p">[</span><span class="s1">&#39;anna&#39;</span><span class="p">,</span><span class="s1">&#39;juan&#39;</span><span class="p">,</span><span class="s1">&#39;genaro&#39;</span><span class="p">,</span><span class="s1">&#39;mirza&#39;</span><span class="p">]</span><span class="w"> </span>%}<span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>set<span class="w"> </span>admin_users<span class="w"> </span>=<span class="w"> </span><span class="p">[</span><span class="s1">&#39;genaro&#39;</span><span class="p">,</span><span class="s1">&#39;mirza&#39;</span><span class="p">]</span><span class="w"> </span>%}<span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>set<span class="w"> </span>admin_groups<span class="w"> </span>=<span class="w"> </span><span class="p">[</span><span class="s1">&#39;sudo&#39;</span><span class="p">,</span><span class="s1">&#39;wheel&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;admins&#39;</span><span class="p">]</span><span class="w"> </span>%}<span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>set<span class="w"> </span>org_groups<span class="w"> </span>=<span class="w"> </span><span class="p">[</span><span class="s1">&#39;games&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;webserver&#39;</span><span class="p">]</span><span class="w"> </span>%}<span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>include<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>groups<span class="w">
+</span><span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>for<span class="w"> </span>user<span class="w"> </span>in<span class="w"> </span>users<span class="w"> </span>%}<span class="w">
+</span><span class="w"></span>{{<span class="w"> </span>user<span class="w"> </span>}}<span class="p">:</span><span class="w">
+</span><span class="w">  </span>user.present<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>shell<span class="p">:</span><span class="w"> </span>/bin/zsh<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>createhome<span class="p">:</span><span class="w"> </span>True<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>home<span class="p">:</span><span class="w"> </span>/home/{{<span class="w"> </span>user<span class="w"> </span>}}<span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>groups<span class="p">:</span><span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>if<span class="w"> </span>user<span class="w"> </span>in<span class="w"> </span>admin_users<span class="w"> </span>%}<span class="w">
+</span><span class="w">    </span>{%-<span class="w"> </span>for<span class="w"> </span>admin_group<span class="w"> </span>in<span class="w"> </span>admin_groups<span class="w"> </span>%}<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>{{<span class="w"> </span>admin_group<span class="w"> </span>}}<span class="w">
+</span><span class="w">    </span>{%-<span class="w"> </span>endfor<span class="w"> </span>-%}<span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>else<span class="w"> </span>%}<span class="w">
+</span><span class="w">    </span>{%-<span class="w"> </span>for<span class="w"> </span>org_group<span class="w"> </span>in<span class="w"> </span>org_groups<span class="w"> </span>%}<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>{{<span class="w"> </span>org_group<span class="w"> </span>}}<span class="w">
+</span><span class="w">    </span>{%<span class="w"> </span>endfor<span class="w"> </span>%}<span class="w">
+</span><span class="w"></span>{%-<span class="w"> </span>endif<span class="w"> </span>-%}<span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>endfor<span class="w"> </span>%}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In this example the presence of a user within the <code>admin_users</code> list determines which groups are set for that user in the state. Refer to the <a href="#salt-and-jinja-best-practices">Salt Best Practices</a> section for more information on using conditionals and control flow statements within state files.</p>
+
+<h3 id="template-inheritance">Template Inheritance</h3>
+
+<p>With template inheritance you can define a base template that can be reused by child templates. The child template can override blocks designated by the base template.</p>
+
+<p>Use the <code>{% block block_name %}</code> tag with a block name to define an area of a base template that can be overridden.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/users.jinja 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">{</span>% block user %<span class="o">}</span>jane<span class="o">{</span>% endblock %<span class="o">}</span>:
+  user.present:
+    - fullname: <span class="o">{</span>% block fullname %<span class="o">}{</span>% endblock %<span class="o">}</span>
+    - shell: /bin/zsh
+    - createhome: True
+    - home: /home/<span class="o">{</span>% block home_dir %<span class="o">}</span>
+    - uid: <span class="m">4000</span>
+    - groups:
+      - sudo</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This example creates a base user state template. Any value containing a <code>{% block %}</code> tag can be overridden by a child template with its own value.</p>
+
+<p>To use a base template within a child template, use the <code>{% extends &quot;base.sls&quot;%}</code> tag with the location of the base template file.</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/webserver_users.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">{%<span class="w"> </span>extends<span class="w"> </span><span class="s2">&#34;/srv/salt/users.jinja&#34;</span><span class="w"> </span>%}<span class="w">
+</span><span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>block<span class="w"> </span>fullname<span class="w"> </span>%}{{<span class="w"> </span>salt<span class="p">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="p">]</span>(<span class="s1">&#39;jane:fullname&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span>)<span class="w"> </span>}}{%<span class="w"> </span>endblock<span class="w"> </span>%}<span class="w">
+</span><span class="w"></span>{%<span class="w"> </span>block<span class="w"> </span>home_dir<span class="w"> </span>%}{{<span class="w"> </span>salt<span class="p">[</span><span class="s1">&#39;pillar.get&#39;</span><span class="p">]</span>(<span class="s1">&#39;jane:home_dir&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;jane&#39;</span>)<span class="w"> </span>}}{%<span class="w"> </span>endblock<span class="w"> </span>%}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>webserver_users.sls</code> state file extends the <code>users.jinja</code> template and defines values for the <code>fullname</code> and <code>home_dir</code> blocks. The values are generated using the <a href="#template-variables"><code>salt</code> context variable</a> and pillar data. The rest of the state will be rendered as the parent <code>user.jinja</code> template has defined it.</p>
+
+<h2 id="salt-and-jinja-best-practices">Salt and Jinja Best Practices</h2>
+
+<p>If Jinja is overused, its power and versatility can create unmaintainable Salt state files that are difficult to read. Here are some best practices to ensure that you are using Jinja effectively:</p>
+
+<ul>
+<li>Limit how much Jinja you use within state files. It is best to separate the data from the state that will use the data. This allows you to update your data without having to alter your states.</li>
+<li>Do not overuse conditionals and looping within state files. Overuse will make it difficult to read, understand and maintain your states.</li>
+
+<li><p>Use dictionaries of variables and directly serialize them into YAML, instead of trying to create valid YAML within a template. You can include your logic within the dictionary and retrieve the necessary variable within your states.</p>
+
+<p>The <code>{% load_yaml %}</code> tag will deserialize strings and variables passed to it.</p>
+
+<pre><code> {% load_yaml as example_yaml %}
+     user: jane
+     firstname: Jane
+     lastname: Doe
+ {% endload %}
+
+ {{ example_yaml.user }}:
+    user.present:
+      - fullname: {{ example_yaml.firstname }} {{ example_yaml.lastname }}
+      - shell: /bin/zsh
+      - createhome: True
+      - home: /home/{{ example_yaml.user }}
+      - uid: 4001
+      - groups:
+        - games
+</code></pre>
+
+<p>Use <code>{% import_yaml %}</code> to import external files of data and make the data available as a Jinja variable.</p>
+
+<pre><code> {% import_yaml &quot;users.yml&quot; as users %}
+</code></pre></li>
+
+<li><p>Use Salt <a href="https://docs.saltstack.com/en/latest/topics/tutorials/pillar.html">Pillars</a> to store general or sensitive data as variables. Access these variables inside state files and template files.</p></li>
+</ul>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.saltstack.com/en/latest/topics/best_practices.html#modularity-within-states">Salt Best Practices</a></li>
+
+<li><a href="https://docs.saltstack.com/en/latest/topics/tutorials/states_pt1.html">Salt States Tutorial</a></li>
+
+<li><a href="http://jinja.pocoo.org/docs/2.10/templates/#import">Jinja Template Designer Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#introduction-to-templating-languages">Introduction to Templating Languages</a></li>
+<li><a href="#jinja-basics">Jinja Basics</a>
+<ul>
+<li><a href="#delimiters">Delimiters</a></li>
+<li><a href="#template-variables">Template Variables</a></li>
+<li><a href="#variable-assignments">Variable Assignments</a></li>
+<li><a href="#filters">Filters</a></li>
+<li><a href="#macros">Macros</a></li>
+<li><a href="#imports-and-includes">Imports and Includes</a></li>
+<li><a href="#whitespace-control">Whitespace Control</a></li>
+<li><a href="#control-structures">Control Structures</a></li>
+<li><a href="#template-inheritance">Template Inheritance</a></li>
+</ul></li>
+<li><a href="#salt-and-jinja-best-practices">Salt and Jinja Best Practices</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

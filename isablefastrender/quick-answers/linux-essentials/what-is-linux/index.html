@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>What is Linux?</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Key topics about the Linux Operating System">
+        <meta name="keywords" content="linux, unix, kernel, open source, free software">
+        
+        <meta property="og:title" content="What is Linux?">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/quick-answers/linux-essentials/what-is-linux/">
+        <meta property="og:description" content="Key topics about the Linux Operating System">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/quick-answers/linux-essentials/what-is-linux/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/quick-answers/">Quick Answers</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/quick-answers/linux-essentials/">Linux Essentials</a>
+  
+</li>
+
+
+<li>
+  
+  What is Linux?
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">What is Linux?</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-01T15:52:18-04:00">Wednesday, August 1, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-linux%2f&via=linode&text=What%20is%20Linux%3f" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-linux%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-linux%2f&t=What%20is%20Linux%3f" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=What%20is%20Linux%3f%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fquick-answers%2flinux-essentials%2fwhat-is-linux%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/quick-answers%5clinux-essentials%5cwhat-is-linux%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/quick-answers%5clinux-essentials%5cwhat-is-linux%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Linux refers to the <em>Linux Kernel</em> plus all the tools, utilities and libraries running on top of the kernel, many of which are managed under the umbrella of the GNU project. Colloquially, Linux refers to an <em>operating system</em> (OS). There are Linux community members that find it more correct and precise to use the term <a href="https://www.gnu.org/gnu/linux-and-gnu.en.html">GNU/Linux</a> over Linux alone as a name for the OS.</p>
+
+<p>Linux works similarly to other well-known OSes like Windows and macOS. As an operating system, Linux manages your computer or server’s hardware and provides background services that your other software needs to run.</p>
+
+<p>A significant difference between Linux and other OSes is that it’s open source and free of cost. Open source means anyone has access to the Linux source code and can contribute to enhancing it, adding features, and fixing bugs and security vulnerabilities. Independent programmers all around the world invest their time and expertise improving Linux. This model of software development rivals proprietary OSes that keep their code closed and solely work with the programmers they employ.</p>
+
+<p>Linux is unique in its development model, history, and the strength of its community. At its core it is a mature and secure operating system that anyone can easily begin using for today’s most common tasks like accessing the internet, editing text documents, and creating media. This Quick Answer covers some key defining features of Linux.</p>
+
+<h2 id="what-is-the-linux-kernel">What is the Linux Kernel?</h2>
+
+<p>In OS architectures, the <em>kernel</em> is the core interface between a machine’s hardware and its software. The kernel&rsquo;s operation is invisible and not directly accessible to the end-user. Instead, most desktop users are familiar with applications within the <em>user space</em> of an operating system. These user space tools include web browsers, GUI file systems, and the <a href="https://en.wikipedia.org/wiki/Bash_(Unix_shell)">Bash shell</a>.</p>
+
+<p>These applications interact with the kernel via an explicitly-defined <em>application programming interface</em> (API) or <em>system call interface</em> (SCI). No access to the kernel is available outside of this API/SCI, which is an important security concept. Two examples of system calls that an application may make are saving the contents of a file to disk or opening a network connection.</p>
+
+<p>The Linux Kernel was developed by <a href="https://en.wikipedia.org/wiki/Linus_Torvalds">Linus Torvalds</a> in 1991. Some of the key design principles he implemented include:</p>
+
+<ul>
+<li><p>An “<a href="https://en.wikipedia.org/wiki/Everything_is_a_file">everything is a file</a>&rdquo; philosophy</p></li>
+
+<li><p>Multi-user and <a href="http://www.linfo.org/multitasking.html">multi-tasking</a> capability</p></li>
+
+<li><p>Portability between different CPU architectures</p></li>
+
+<li><p><a href="http://www.tldp.org/HOWTO/Module-HOWTO/x73.html">Modularity</a></p></li>
+
+<li><p>Security</p></li>
+
+<li><p><a href="https://en.wikipedia.org/wiki/Sysctl">Configurability</a></p></li>
+</ul>
+
+<p>The kernel&rsquo;s design is flexible, and that has led to the spawning of different varieties of the Linux operating system that are supported on a large array of computer architectures, including servers and <a href="https://en.wikipedia.org/wiki/Android_(operating_system)#Linux_kernel">smartphones</a>.</p>
+
+<p>If you’re curious about current Linux Kernel development, you can access a read-only version of the latest Linux Kernel repository on <a href="https://github.com/torvalds/linux/">GitHub</a> to browse the code. You can also read about how to participate in <a href="https://www.kernel.org/doc/html/v4.13/process/howto.html">Linux Kernel development</a> for a better understanding of what it takes to contribute to the project.</p>
+
+<h2 id="development-history">Development History</h2>
+
+<p>The Linux Kernel borrows much of its design from <em>Unix</em>, a predecessor operating system developed in 1969 by computer scientists at AT&amp;T’s Bell Laboratories, Ken Thompson and Dennis Ritchie. When Unix first emerged, it was freely licensed because of antitrust limitations on AT&amp;T. This allowed for peer-reviewed development and wide adoption by academic institutions and businesses.</p>
+
+<p>Once Bell Labs was no longer obligated to maintain Unix’s free license, it became a proprietary product. This incentivized programmers like Richard Stallman to work on creating a “<a href="https://www.gnu.org/philosophy/free-sw.en.html">free as in freedom</a>” version of a Unix-like operating system, committed to a set of ethical standards around software development. Stallman’s free software operating system is <a href="https://www.gnu.org/">GNU</a>. The <a href="https://www.gnu.org/philosophy/free-software-intro.en.html">Free Software Movement</a>, spearheaded by Stallman, is a significant piece of computing history that is still relevant today.</p>
+
+<p>At the same time and throughout the 1980s, the Berkeley Software Distribution (BSD), which was originally the Unix source code with added features, was rewritten to avoid the proprietary code. Where GNU/Linux requires that the source code and all derivatives be licensed under the open <a href="https://www.gnu.org/licenses/licenses.html">GPL General Public License</a>, the <a href="https://directory.fsf.org/wiki/License:BSD_4Clause">BSD 4Clause License</a> allows for derivative work to use a different license. In particular, much of Apple&rsquo;s macOS was originally derived from BSD.</p>
+
+<h2 id="linux-distributions">Linux Distributions</h2>
+
+<p>Using Linux means selecting a <a href="https://en.wikipedia.org/wiki/Linux_distribution"><em>distribution</em></a> (distro) to suit your needs, and there are many to choose from. Some well-known distros are Ubuntu, Debian, CentOS, Gentoo, and Arch. Each Linux distribution varies in its general use case and audience.</p>
+
+<ul>
+<li><p><a href="https://www.ubuntu.com/desktop">Ubuntu’s desktop</a> version is feature rich with a user-friendly GUI&ndash;a great place to begin if you’re just getting started with Linux.</p></li>
+
+<li><p><a href="https://www.debian.org/">Debian</a> requires more configuration during installation of the OS and system software, and is strictly committed to only using free software.</p></li>
+
+<li><p><a href="https://www.centos.org/">CentOS</a> is a free and community-supported version of <a href="https://en.wikipedia.org/wiki/Red_Hat_Enterprise_Linux">Red Hat Enterprise Linux</a> (RHEL).</p></li>
+
+<li><p>With <a href="https://www.gentoo.org/get-started/">Gentoo</a>, you compile everything from source, so you choose exactly what you install when adding any new software to your system.</p></li>
+
+<li><p><a href="https://www.archlinux.org/">Arch</a> features a rolling release cycle and an incredibly dedicated community that maintains the distro as well as the Arch User Repository (AUR) of software packages.</p></li>
+</ul>
+
+<h3 id="graphical-user-interfaces-and-desktop-environments">Graphical User Interfaces and Desktop Environments</h3>
+
+<p>Windows and macOS both come with a single graphical user interface (GUI) that is generally not able to be replaced or substantially changed by the user. In contrast, there are a wide variety of GUIs available for Linux, and Linux users can switch between them and customize them according to personal preference. In essence, the desktop environment is simply a graphical shell that interacts with the Linux Kernel.</p>
+
+<p>Popular GUIs include <a href="https://www.gnome.org/">GNOME</a>, <a href="https://www.kde.org/plasma-desktop.php">KDE</a>, <a href="https://xfce.org/">Xfce</a>, and <a href="https://en.wikipedia.org/wiki/Cinnamon_(software)">Cinnamon</a>. Different desktop Linux distributions come packaged with specific GUIs, but those can also be changed by the user after installation.</p>
+
+<h3 id="minimum-install-distributions-for-older-hardware">Minimum Install Distributions for Older Hardware</h3>
+
+<p>Many Linux distributions offer good performance on older hardware, including entire desktop environments that are designed to be resource-efficient. As a result, running Linux is a popular way to revive aging computers.</p>
+
+<p>Some distributions are specifically designed to run with minimal hardware specifications, and these minimum install distros provide the kernel features needed for a fully functional operating system. Packages can be added as needed, which helps to keep the initial install size small and clutter free.</p>
+
+<p>Some examples of lightweight distributions include:</p>
+
+<ul>
+<li><a href="http://www.damnsmalllinux.org/">Damn Small Linux</a></li>
+<li><a href="https://www.linuxliteos.com/">Linux Lite</a>/<a href="https://lubuntu.me/">Lubuntu</a>/<a href="http://www.lxle.net/">LXLE</a></li>
+<li><a href="http://puppylinux.com/">Puppy</a></li>
+<li><a href="http://vectorlinux.com/">Vector</a></li>
+</ul>
+
+<h3 id="applications-and-package-managers">Applications and Package Managers</h3>
+
+<p>Linux distributions feature a built-in <em>package manager</em>, which is a tool that helps install, update, and remove applications. The package manager differs by distribution: <a href="https://en.wikipedia.org/wiki/APT_(Debian)"><strong>APT</strong></a> is the manager for Debian and Ubuntu systems, and <a href="https://en.wikipedia.org/wiki/Yum_(software)"><strong>YUM</strong></a> is the manager for CentOS and RHEL systems.</p>
+
+<p>These tools retrieve packaged applications from <em>repositories</em> (repos), which are archives of software available for your Linux environment. Distributions offer <em>stable</em> repositories composed of software that has received extensive testing. You can also configure your package manager to use alternative repositories which feature newer software versions that have received less testing. Third-party repositories exist which feature software not included in any of your distribution&rsquo;s standard repositories.</p>
+
+<p>In addition to a distribution&rsquo;s built-in package manager, you might use an <em>application-level</em> package manager. Examples of application-level package managers are <a href="https://pypi.org/project/pip/"><em>pip</em></a> for Python applications and <a href="https://www.npmjs.com/"><em>npm</em></a> for Node.js applications.</p>
+
+<p>For a comprehensive list of available package managers, visit <a href="https://en.wikipedia.org/wiki/List_of_software_package_management_systems">Wikipedia</a>.</p>
+
+<h2 id="learn-more">Learn More</h2>
+
+<p>There are many avenues to explore when first using Linux. Our Guides &amp; Tutorials provide a great starting point for learning more:</p>
+
+<ul>
+<li><p>The <a href="/docs/tools-reference/introduction-to-linux-concepts/">Introduction to Linux Concepts</a> guide will give you a more detailed and technical orientation on Linux and ways to start using it with a Linode.</p></li>
+
+<li><p>Once you’re familiar with Linux and the Command Line, you can learn basic <a href="/docs/tools-reference/linux-system-administration-basics/">Linux System Administration</a>.</p></li>
+
+<li><p>If you’re interested in getting started with development, the <a href="/docs/quick-answers/linux-essentials/why-use-linux-for-development/">Why use Linux for Development?</a> guide will give you a useful primer for making a choice about a development system.</p></li>
+</ul>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-the-linux-kernel">What is the Linux Kernel?</a></li>
+<li><a href="#development-history">Development History</a></li>
+<li><a href="#linux-distributions">Linux Distributions</a>
+<ul>
+<li><a href="#graphical-user-interfaces-and-desktop-environments">Graphical User Interfaces and Desktop Environments</a></li>
+<li><a href="#minimum-install-distributions-for-older-hardware">Minimum Install Distributions for Older Hardware</a></li>
+<li><a href="#applications-and-package-managers">Applications and Package Managers</a></li>
+</ul></li>
+<li><a href="#learn-more">Learn More</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

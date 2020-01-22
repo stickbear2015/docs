@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Install GitLab with Docker</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="How to install GitLab with Docker.">
+        <meta name="keywords" content="gitlab, git, docker">
+        
+        <meta property="og:title" content="Install GitLab with Docker">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/development/version-control/install-gitlab-with-docker/">
+        <meta property="og:description" content="How to install GitLab with Docker.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/development/version-control/install-gitlab-with-docker/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/">Development</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/version-control/">Version Control</a>
+  
+</li>
+
+
+<li>
+  
+  Install GitLab with Docker
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Install GitLab with Docker</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-16T14:31:08-05:00">Wednesday, January 16, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fversion-control%2finstall-gitlab-with-docker%2f&via=linode&text=Install%20GitLab%20with%20Docker" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fversion-control%2finstall-gitlab-with-docker%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fversion-control%2finstall-gitlab-with-docker%2f&t=Install%20GitLab%20with%20Docker" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Install%20GitLab%20with%20Docker%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdevelopment%2fversion-control%2finstall-gitlab-with-docker%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/development%5cversion-control%5cinstall-gitlab-with-docker%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/development%5cversion-control%5cinstall-gitlab-with-docker%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><a href="https://gitlab.com/">GitLab</a> is a free Git repository management application, like GitHub or Bitbucket, that you can run on your own Linode. This guide will show you how to install GitLab using the official GitLab Docker image.</p>
+
+<p>The GitLab application has a number of services it depends on, including PostgreSQL, Nginx, and Redis. A major benefit of using Docker to install GitLab is that these dependencies are isolated to a single easy-to-update and self-contained image.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<h3 id="choose-an-appropriately-sized-linode">Choose An Appropriately Sized Linode</h3>
+
+<p>GitLab is a resource-intensive application. To get the most out of GitLab, we recommend a Linode with at least 8GB of memory and at least 2 CPU cores. For more information on system requirements, visit the <a href="https://docs.gitlab.com/ce/install/requirements.html#hardware-requirements">GitLab Hardware Requirements page</a>.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This guide was written for and tested with Ubuntu 18.04. You may be able to adapt this guide to other operating systems supported by Docker. When following this guide under another OS, use the Docker <a href="https://docs.docker.com/install/">installation instructions</a> for that OS.</div>
+</blockquote>
+
+
+<h3 id="secure-your-server">Secure your Server</h3>
+
+<p>Review and implement the measures in the <a href="/docs/security/securing-your-server/">How to Secure your Server</a> guide, including creating a <a href="/docs/security/securing-your-server/#add-a-limited-user-account">limited user account</a>.</p>
+
+<h3 id="change-your-linode-s-default-ssh-port">Change your Linode&rsquo;s Default SSH Port</h3>
+
+<p>One of GitLab&rsquo;s features is the ability for you to push and fetch code changes to and from your repository over SSH. When installing GitLab, the software will need to bind to port 22, which is the standard port for SSH. Your system&rsquo;s SSH service already runs on this port by default, so you will receive an error from GitLab if you don&rsquo;t address this conflict.</p>
+
+<p>To fix this, you&rsquo;ll want to change the port that your system&rsquo;s SSH service listens on. This can be accomplished by editing your Linode&rsquo;s <code>/etc/ssh/sshd_config</code> file and changing the <code>Port</code> assignment. The example snippet below changes the port from 22 to port 26:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/ssh/sshd_config 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+Port <span class="m">26</span>
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When editing the file, you may also need to uncomment the <code>Port</code> line by removing the <code>#</code> character from the start of the line, if one is present. After updating this file and saving the change, restart the SSH service:</p>
+
+<pre><code>sudo systemctl restart sshd
+</code></pre>
+
+<p>Close your current SSH session and create a new one, making sure to specify the new port. You can do this by supplying the <code>-p</code> flag:</p>
+
+<pre><code>ssh your_limited_user@192.0.2.2 -p 26
+</code></pre>
+
+<h3 id="optional-update-your-dns-records">(Optional) Update your DNS Records</h3>
+
+<p>Assign a domain or subdomain to your GitLab server. This step is optional, as you can always access GitLab via your server&rsquo;s IP address. However, using a domain is necessary if you would like to take advantage of GitLab&rsquo;s built in SSL support, which uses <a href="https://letsencrypt.org/">Let&rsquo;s Encrypt</a> to issue certificates. This guide&rsquo;s examples will use <code>gitlab.example.com</code>.</p>
+
+<p>It takes some time for DNS changes to propagate through the internet, so it&rsquo;s suggested that you do this before you set up GitLab. There are several options for updating your DNS records:</p>
+
+<ul>
+<li><p>If you already use Linode&rsquo;s name servers, or if you would like to use them for your domain, review the <a href="/docs/platform/manager/dns-manager/">DNS Manager</a> guide. You will need to set up an <em>A record</em> which is assigned your Linode&rsquo;s IP address.</p></li>
+
+<li><p>If you use a different DNS provider, review that provider&rsquo;s documentation for setting up a new A record.</p>
+
+
+
+
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Updating DNS records at common nameserver authorities
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper">The following support documents describe how to update DNS records at common nameserver authorities:</p>
+
+<ul>
+<li><a href="https://support.cloudflare.com/hc/en-us/articles/200168686-What-do-I-do-if-I-changed-my-server-IP-address-or-hosting-provider-">CloudFlare</a></li>
+<li><a href="https://www.godaddy.com/help/manage-dns-zone-files-680">GoDaddy</a></li>
+<li><a href="https://help.dreamhost.com/hc/en-us/articles/215414867-How-do-I-add-custom-DNS-records">DreamHost</a></li>
+<li><a href="https://doc.gandi.net/en/dns/zone">Gandi</a></li>
+<li><a href="https://www.1and1.com/help/domains/configuring-your-ip-address/connecting-a-domain-to-a-static-ip-address/">1&amp;1</a></li>
+<li><a href="http://www.networksolutions.com/support/how-to-manage-advanced-dns-records/">Network Solutions</a></li>
+<li><a href="https://my.bluehost.com/hosting/help/559">Bluehost</a></li>
+<li><a href="https://support.hostgator.com/articles/manage-dns-records-with-hostgatorenom">HostGator</a></li>
+<li><a href="https://www.namecheap.com/support/knowledgebase/article.aspx/319/2237/how-can-i-set-up-an-a-address-record-for-my-domain">Namecheap</a></li>
+<li><a href="https://help.hover.com/hc/en-us/articles/217282457-How-to-Edit-DNS-records-A-AAAA-CNAME-MX-TXT-SRV-">Hover</a></li>
+</ul></div></div>
+</blockquote>
+
+
+
+</li>
+</ul>
+
+<p>You can test to see if your DNS changes have propagated with the <a href="/docs/networking/dns/use-dig-to-perform-manual-dns-queries/"><code>dig</code> command</a>:</p>
+
+<pre><code>dig +short gitlab.example.com
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+192.0.2.2
+</code>
+</pre>
+
+
+<p>Once your changes have propagated, you can move forward with the installation.</p>
+
+<h3 id="install-docker">Install Docker</h3>
+
+<p>You must have Docker installed on your Linode to continue.</p>
+
+
+
+
+
+<!-- Install Docker CE using the official Docker repositories. -->
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>docker run hello-world
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h2 id="install-the-gitlab-ee-image">Install the GitLab EE Image</h2>
+
+<p>After installing Docker, download the latest GitLab Enterprise Edition <a href="https://hub.docker.com/r/gitlab/gitlab-ee/">Docker image</a> from DockerHub. This image contains everything GitLab needs in order to run: PostgreSQL, Nginx, Redis, etc. To download the image, run the following <code>pull</code> command:</p>
+
+<pre><code>sudo docker pull gitlab/gitlab-ee:latest
+</code></pre>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Community Edition or Enterprise Edition?
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>The GitLab Enterprise Edition software does not actually require you to have a license to use it. If you do not supply a license after installation, it will automatically show you the GitLab Community Edition feature set instead.</p>
+
+<p>If you&rsquo;d like, you can instead opt to download GitLab Community Edition. This will offer the same features as an unlicensed Enterprise Edition installation. The key difference between these software packages is that the features of the EE installation can be upgraded at any time by entering a license.</p>
+
+<p>The primary reason someone might download the Community Edition is if they prefer to only download open source software. For more information on GitLab&rsquo;s licensing, review the <a href="https://about.gitlab.com/install/ce-or-ee/">GitLab article</a> on this subject. To download the GitLab CE Docker image, run this command:</p>
+
+<pre><code>sudo docker pull gitlab/gitlab-ce:latest
+</code></pre>
+</div></div>
+</blockquote>
+
+<p>It may take a few minutes to download the image. When the download is complete, you can view a list of all installed Docker images with the <code>images</code> command:</p>
+
+<pre><code>sudo docker images
+</code></pre>
+
+<h2 id="configure-and-run-gitlab">Configure and Run GitLab</h2>
+
+<p>In order to configure and run the GitLab container, you need to provide a few options at runtime.</p>
+
+<ol>
+<li><p>Consider the following command, a version of which you will use to start the GitLab container:</p>
+
+<pre><code>sudo docker run --detach \
+  --hostname gitlab.example.com \
+  --publish 443:443 --publish 80:80 --publish 22:22 \
+  --name gitlab-linode \
+  --restart always \
+  --volume /srv/gitlab/config:/etc/gitlab \
+  --volume /srv/gitlab/logs:/var/log/gitlab \
+  --volume /srv/gitlab/data:/var/opt/gitlab \
+  --env GITLAB_OMNIBUS_CONFIG=&quot;external_url 'https://gitlab.example.com/';&quot; \
+  gitlab/gitlab-ee:latest
+</code></pre>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Descriptions for each option
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p><code>--detach</code> runs the Docker container as a background process, as opposed to running it in the foreground.</p>
+
+<p><code>--hostname</code> defines the container&rsquo;s internal hostname.</p>
+
+<p><code>--publish</code> tells the container to publish ports, or ranges of ports, to the host. Because GitLab accepts connections on the HTTP (80), HTTPS (443), and SSH (22) ports, this option is declared three times. If you wanted to access GitLab from a non-standard port on your host, you would provide the host port first, and the container port second after the semi-colon. For instance if you wanted to access GitLab SSH on port 3333, you would write <code>--publish 3333:22</code>.</p>
+
+<p><code>--name</code> allows you to apply a label to your container, for use when referencing the container within a Docker network.</p>
+
+<p><code>--restart</code> specifies a restart policy for the container. Here it is set to  <code>always</code>, meaning that the container, if exited, will automatically be restarted.</p>
+
+<p><code>--volume</code> defines the host mounted volumes the container uses to store persistent data. These three volumes store application data, log files, and configuration files. The value to the left of the the semi-colon is the local location, and the value to the right is the container location.</p>
+
+<p><code>--env</code> supplies the variable <code>GITLAB_OMNIBUS_CONFIG</code>, which can hold a series of values, separated by a colon, that correspond to the <a href="https://docs.gitlab.com/omnibus/settings/configuration.html">GitLab Omnibus configuration settings</a>. In this case, an external URL is supplied. Some additional settings might include SMTP configuration values so that GitLab can send activity emails.</p>
+
+<p>As of GitLab 10.7, if you provide an external URL with a HTTPS protocol, GitLab will automatically set up SSL certificates using Let&rsquo;s Encrypt, and all traffic will be forwarded to HTTPS. For more information about this functionality, read the <a href="https://docs.gitlab.com/omnibus/settings/ssl.html#primary-gitlab-instance">GitLab SSL Documentation</a></p>
+
+<p>As an alternative to specifying the <code>GITLAB_OMNIBUS_CONFIG</code> variable via the <code>--env</code> option, you can edit the GitLab configuration file directly. For more instructions on how to do that, visit the <a href="https://docs.gitlab.com/omnibus/docker/#configure-gitlab">Configure GitLab documentation</a>.</p>
+</div></div>
+</blockquote></li>
+
+<li><p>In the above command, replace the values for the <code>--hostname</code> option and for the <code>external_url</code> configuration setting with the domain or subdomain for your GitLab site. If you did not set up DNS for your site, enter <code>http://your_linode_ip</code> (not <code>https</code>) for the <code>external_url</code> setting. Then, run the command.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you are using the GitLab Community Edition image, replace <code>gitlab/gitlab-ee:latest</code> with <code>gitlab/gitlab-ce:latest</code></div>
+</blockquote>
+
+
+<p>The container may take a few moments to start. After it starts, you&rsquo;ll be given a container ID like the following:</p>
+
+<pre class="file terminal">
+  <code>
+1093d89f9a0af8e4c79e0352e57721b09050d07c86c37d601145a856f3ed1502
+</code>
+</pre>
+</li>
+
+<li><p>It will take an additional few minutes to be able to access GitLab in your browser after the container starts. You can find out more information about the startup process by monitoring the logs:</p>
+
+<pre><code>sudo docker logs -f gitlab-linode
+</code></pre>
+
+<p>To exit from the log monitoring process, enter <code>CTRL-C</code>. This will not stop the container from running.</p></li>
+
+<li><p>Load the GitLab site in your web browser. If you try to load it too shortly after starting the container, you may see an HTTP 502 error. If this happens, try waiting for a few more minutes and then refresh your page.</p></li>
+
+<li><p>The first time you access the site it will prompt you to enter an administrative password. Enter a complex password and record it somewhere safe.</p></li>
+
+<li><p>Log in to your GitLab site by entering <code>root</code> as the user along with the password you created in the previous step.</p></li>
+</ol>
+
+<h2 id="create-your-first-project">Create your First Project</h2>
+
+<p>Each repository in GitLab belongs to a <em>project</em>. A project includes: a repository for your files, an issues tracker, a section for merge requests, a wiki, continuous integration and continuous delivery (CI/CD) pipelines, and other features to support your development.</p>
+
+<ol>
+<li><p>To create your first repository, click <strong>Create a project</strong>.</p>
+
+<p><img src="gitlab-docker-welcome-screen.png" alt="From the welcome screen, click &quot;Create a project&quot;" /></p></li>
+
+<li><p>You will be taken to the <strong>New Project</strong> page. Enter the project name. You can optionally alter the project&rsquo;s slug, enter a description, or change the visibility of the project. Once you&rsquo;re done, click <strong>Create project</strong>.</p>
+
+<p><img src="gitlab-docker-create-project.png" alt="Fill out the required information to make a new project" /></p></li>
+
+<li><p>Once your project has been created, you&rsquo;ll be provided with an empty project repository:</p>
+
+<p><img src="gitlab-docker-empty-project.png" alt="An empty project on GitLab" /></p></li>
+
+<li><p>If you didn&rsquo;t have GitLab create a <code>README.md</code> file during project setup, instructions on how to start using your repository from the command line will be shown.</p>
+
+<p>Enter those commands on your computer to add a new <code>README.md</code> to your repository and push it back up to your GitLab repository. Change the domain in the <code>git clone</code> command to your site&rsquo;s domain:</p>
+
+<pre><code>git clone https://gitlab.example.com/testuser/example-project.git
+cd example-project
+touch README.md  # Or create the file in your editor and enter a project description
+git add README.md
+git commit -m &quot;add README&quot;
+git push -u origin master
+</code></pre></li>
+</ol>
+
+<h2 id="manage-the-gitlab-container">Manage the GitLab Container</h2>
+
+<p>To view all of your running containers, you can issue the <code>ps</code> command:</p>
+
+<pre><code>sudo docker ps
+</code></pre>
+
+<p>To stop the GitLab container, issue the <code>stop</code> command by supplying the container ID you procured with the <code>ps</code> command, or supply the container name:</p>
+
+<pre><code>sudo docker stop gitlab-linode
+</code></pre>
+
+<p>To start a stopped container, issue the <code>start</code> command by supplying the container ID or container name:</p>
+
+<pre><code>sudo docker start gitlab-linode
+</code></pre>
+
+<p>Once the container has stopped, you can remove the container using the <code>rm</code> command, again supplying the container ID or container name:</p>
+
+<pre><code>sudo docker container rm gitlab-linode
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Removing the container will not delete your projects and repositories.</div>
+</blockquote>
+
+
+<h2 id="upgrading-gitlab">Upgrading GitLab</h2>
+
+<p>To upgrade GitLab to the newest version, you must stop and remove the container, pull the newest image, and then recreate the container:</p>
+
+<pre><code>sudo docker stop gitlab-linode
+sudo docker rm gitlab-linode
+sudo docker pull gitlab/gitlab-ee:latest
+
+sudo docker run --detach \
+  --hostname gitlab.example.com \
+  --publish 443:443 --publish 80:80 --publish 22:22 \
+  --name gitlab-linode \
+  --restart always \
+  --volume /srv/gitlab/config:/etc/gitlab \
+  --volume /srv/gitlab/logs:/var/log/gitlab \
+  --volume /srv/gitlab/data:/var/opt/gitlab \
+  --env GITLAB_OMNIBUS_CONFIG=&quot;external_url 'https://gitlab.example.com/';&quot; \
+  gitlab/gitlab-ee:latest
+</code></pre>
+
+<p>Remember to provide your own hostname, name, and external URL. If you are using GitLab Community Edition, specify the <code>gitlab/gitlab-ce:latest</code> image instead.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>GitLab offers many features that are worth taking the time to understand and utilize. Here are a few next steps to take after you&rsquo;ve completed this guide:</p>
+
+<ul>
+<li><p><a href="https://docs.gitlab.com/ee/gitlab-basics/create-your-ssh-keys.html">Upload an SSH key</a> to your GitLab account so that you can transfer files over SSH.</p></li>
+
+<li><p>Explore <a href="https://docs.gitlab.com/ee/ci/">CI/CD pipelines</a> to streamline your development practices.</p></li>
+
+<li><p>Using your <code>root</code> GitLab account, explore the <a href="https://docs.gitlab.com/ee/administration/">Admin settings</a> to customize the functionality of GitLab.</p></li>
+
+<li><p>Review Linode&rsquo;s Git documentation:</p>
+
+<ul>
+<li><p><a href="/docs/development/version-control/how-to-configure-git/">Getting Start with Git</a></p></li>
+
+<li><p><a href="/docs/development/version-control/how-to-install-git-on-linux-mac-and-windows/">How to Install Git on Linux, Mac or Windows</a></p></li>
+</ul></li>
+</ul>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://hub.docker.com/r/gitlab/gitlab-ee">GitLab EE Docker Image</a></li>
+
+<li><a href="https://docs.gitlab.com/omnibus/docker/">GitLab Docker Documentation</a></li>
+
+<li><a href="https://docs.gitlab.com/omnibus/settings/ssl.html#lets-encrypt-integration">GitLab SSL Configuration</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#choose-an-appropriately-sized-linode">Choose An Appropriately Sized Linode</a></li>
+<li><a href="#secure-your-server">Secure your Server</a></li>
+<li><a href="#change-your-linode-s-default-ssh-port">Change your Linode&rsquo;s Default SSH Port</a></li>
+<li><a href="#optional-update-your-dns-records">(Optional) Update your DNS Records</a></li>
+<li><a href="#install-docker">Install Docker</a></li>
+</ul></li>
+<li><a href="#install-the-gitlab-ee-image">Install the GitLab EE Image</a></li>
+<li><a href="#configure-and-run-gitlab">Configure and Run GitLab</a></li>
+<li><a href="#create-your-first-project">Create your First Project</a></li>
+<li><a href="#manage-the-gitlab-container">Manage the GitLab Container</a></li>
+<li><a href="#upgrading-gitlab">Upgrading GitLab</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

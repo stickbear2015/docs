@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Navigate Emacs using Evil Mode</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="How to navigate Emacs using Evil Mode.">
+        <meta name="keywords" content="emacs, evil, text editor">
+        
+        <meta property="og:title" content="How to Navigate Emacs using Evil Mode">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/tools-reference/tools/emacs-evil-mode/">
+        <meta property="og:description" content="How to navigate Emacs using Evil Mode.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/tools-reference/tools/emacs-evil-mode/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/tools-reference/">Tools &amp; Reference</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/tools-reference/tools/">Tools</a>
+  
+</li>
+
+
+<li>
+  
+  How to Navigate Emacs using Evil Mode
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Navigate Emacs using Evil Mode</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-06-26T11:11:22-04:00">Tuesday, June 26, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Edward Angert
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftools-reference%2ftools%2femacs-evil-mode%2f&via=linode&text=How%20to%20Navigate%20Emacs%20using%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftools-reference%2ftools%2femacs-evil-mode%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftools-reference%2ftools%2femacs-evil-mode%2f&t=How%20to%20Navigate%20Emacs%20using%20Evil%20Mode" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Navigate%20Emacs%20using%20Evil%20Mode%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2ftools-reference%2ftools%2femacs-evil-mode%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/tools-reference%5ctools%5cemacs-evil-mode%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/tools-reference%5ctools%5cemacs-evil-mode%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="a-vi-m-layer-makes-emacs-evil">A Vi/m Layer Makes Emacs Evil</h2>
+
+<p>Emacs is an endlessly versatile text editor. Every aspect can be customized, and new features can be added both globally and within specific modes.</p>
+
+<p>Emacs Evil mode is an extensible Vi layer for Emacs. It adds a set of Vi(m) key bindings and features to Emacs to give it a more modal feel, and lets you rely less on the pinky-accessed CTRL key when manipulating text. Where Emacs uses more key combinations and commands, Evil mode brings Vi&rsquo;s operators and motions to execute text operations.</p>
+
+<p>This guide shows how to get started with Emacs Evil mode and is not a comprehensive guide on how to use Emacs or Vi.</p>
+
+<h2 id="why-use-emacs-evil">Why Use Emacs Evil?</h2>
+
+<p>On its own, Emacs is an excellent text editor with an extraordinary list of available tools and plugins like a <a href="https://www.emacswiki.org/emacs/CalendarMode">calendar</a>, <a href="https://orgmode.org/">Org Mode</a>, <a href="https://www.emacswiki.org/emacs/ChessMode">chess</a>, and <a href="https://www.emacswiki.org/emacs/TetrisMode">Tetris</a>.</p>
+
+<p>Emacs users value the editor&rsquo;s ability to be everything they need for a full day of work, without ever needing to leave Emacs or touch a mouse. Any repetitive function can be simplified by <a href="https://www.gnu.org/software/emacs/manual/html_node/elisp/Defining-Functions.html">writing a function in elisp</a>.</p>
+
+<p>Evil mode expands on Emacs by adding the modes, motion, and text manipulation features of Vi. Once Evil is installed and enabled, the default <em>Normal</em> state allows you to navigate Emacs like in Vi, moving back and forth between words with <code>b</code> and <code>w</code> or to the first word of the next sentence with <code>)</code>. Evil adds Vi&rsquo;s <em>Visual</em> and <em>Insert</em> modes as well as additional, <a href="#evil-states">uniquely Evil modes</a>.</p>
+
+<h2 id="install-emacs-evil">Install Emacs Evil</h2>
+
+<ol>
+<li><p>Install Emacs and Git if they aren&rsquo;t already:</p>
+
+<pre><code>sudo apt update &amp;&amp; sudo apt install emacs git
+</code></pre></li>
+
+<li><p>Clone the <code>emacs-evil</code> repository into its own directory:</p>
+
+<pre><code>git clone https://github.com/emacs-evil/evil ~/.emacs.d/evil
+</code></pre></li>
+
+<li><p>Edit the <a href="https://www.gnu.org/software/emacs/manual/html_node/emacs/Init-File.html">Emacs initialization file</a> to add the Evil plugin and load it when Emacs starts:</p>
+
+<pre><code>emacs ~/.emacs.d/init.el
+</code></pre>
+
+<dl class="file">
+
+
+<dt>
+		~/.emacs.d/init.el 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-lisp" data-lang="lisp"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-lisp" data-lang="lisp"><span class="p">(</span><span class="nv">add-to-list</span> <span class="ss">&#39;load-path</span> <span class="s">&#34;~/.emacs.d/evil&#34;</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">require</span> <span class="ss">&#39;evil</span><span class="p">)</span>
+<span class="p">(</span><span class="nv">evil-mode</span> <span class="mi">1</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Save the file and reload the buffer to load the plugin:</p>
+
+<pre><code>C-x S, M-x eval-buffer
+</code></pre>
+
+<p>The <code>&lt;N&gt;</code> tag in the status bar shows that Emacs is now in Evil&rsquo;s Normal state:</p>
+
+<p><img src="evil-mode-enabled.png" alt="Emacs Evil Started in Normal Mode" title="Emacs Evil Started in Normal Mode" /></p></li>
+
+<li><p>Kill the buffer with:</p>
+
+<pre><code>C-x k.
+</code></pre></li>
+</ol>
+
+<h2 id="get-started-with-evil-mode">Get Started with Evil Mode</h2>
+
+<h3 id="evil-states">Evil States</h3>
+
+<p>Now that Evil is active, Emacs starts in Normal state. Navigate the way you would in Vi.</p>
+
+<p>Since <em>modes</em> refer to a different function in Emacs, Evil calls its different modes <em>states</em>. The available states and how to reach them from the default Normal state are:</p>
+
+<ul>
+<li>Emacs: <code>&lt;E&gt;</code>
+
+<ul>
+<li>Enter state with <strong>CTRL-z</strong></li>
+<li>Navigate as you normally would in Emacs.</li>
+<li><strong>CTRL-z</strong> or <code>M-x evil-normal-state</code> to return to Normal.</li>
+</ul></li>
+<li>Insert: <code>I</code>
+
+<ul>
+<li>Enter state with <code>i</code>.</li>
+<li>Edit and modify text.</li>
+<li><strong>ESC</strong> to return to Normal.</li>
+</ul></li>
+<li>Motion: <code>&lt;M&gt;</code>
+
+<ul>
+<li>Enter state with <code>:evil-motion-state</code>.</li>
+<li>Navigate the file with Vi keys, without risk of modifying the contents.</li>
+</ul></li>
+<li>Normal Vi: <code>&lt;N&gt;</code>
+
+<ul>
+<li>Emacs Evil starts in Normal state by default.</li>
+<li>Vi bindings and operators.</li>
+</ul></li>
+<li>Operator-Pending: <code>&lt;O&gt;</code>
+
+<ul>
+<li>Enter state with <code>:evil-operator-state</code>.</li>
+<li>Rewrite operator-pending mappings to fit your needs.</li>
+<li><strong>ESC</strong> to return to Normal.</li>
+</ul></li>
+<li>Replace: <code>&lt;R&gt;</code>
+
+<ul>
+<li>Enter state with <code>R</code>.</li>
+<li>Overwrite text.</li>
+<li><strong>ESC</strong> to return to Normal.</li>
+</ul></li>
+<li>Visual: <code>&lt;V&gt;</code>
+
+<ul>
+<li>Enter state with:
+    * <code>v</code> for characterwise.
+    * <code>V</code> for linewise.
+    * <strong>CTRL-V</strong> for blockwise.</li>
+<li>Visually select text.</li>
+<li><strong>ESC</strong> to return to Normal</li>
+</ul></li>
+</ul>
+
+<h3 id="change-the-default-emacs-evil-start-state">Change the Default Emacs Evil Start State</h3>
+
+<p>To force Emacs to start in another state, add <code>evil-default-state</code> to <code>.emacs</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/.emacs.d/init.el 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-lisp" data-lang="lisp"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-lisp" data-lang="lisp"><span class="p">(</span><span class="nv">setq</span> <span class="nv">evil-default-state</span> <span class="ss">&#39;emacs</span><span class="p">)</span> <span class="c1">;; changes default state to emacs</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="use-emacs-and-vim-together">Use Emacs and Vim Together</h2>
+
+<p>Vi has a number of keyboard shortcuts that help speed frequent operations:</p>
+
+<ul>
+<li><code>ZZ</code> to save and quit;</li>
+<li><code>QZ</code> don&rsquo;t save, just quit,</li>
+</ul>
+
+<p>Operations in Vi are often commands strung together to take the form of a sentence.</p>
+
+<p>These operations take the syntax: <em>operator</em> + <em>motion</em> + <em>object</em></p>
+
+<p>For example, <code>CI&quot;</code> will delete everything inside the next set of quotation marks and enter insert mode.</p>
+
+<p>Practice combining some Emacs and Vi by splitting a paragraph into one sentence per line. Use a paragraph from the beginning of this guide as an example:</p>
+
+<pre class="file terminal">
+  <code>
+Emacs Evil mode is an extensible Vi layer for Emacs. It adds a set of Vi(m) key bindings and features to Emacs which gives it a more modal feel, and lets you rely less on the pinky-accessed CTRL key when manipulating text. Where Emacs uses more key combinations and commands, Evil mode brings Vim's operators and motions to execute text operations.
+</code>
+</pre>
+
+
+<ol>
+<li><p>Type <code>M-h</code> to highlight the paragraph under the pointer</p></li>
+
+<li><p>Use <code>:</code> to bring up the <em>command-line</em>.</p>
+
+<p>The command-line functions similarly to Emacs&rsquo;s <code>M-x</code>, and allows you to enter a combination of operations to execute. In this example, substitute each instance of a <code>.</code> (period, space) with a <code>.⏎</code> (period, return symbol):</p>
+
+<pre><code>:s/\. /.\n/g
+</code></pre></li>
+</ol>
+
+<h2 id="fix-iterm-and-macos-meta-keybinding-issues">Fix iTerm and macOS Meta Keybinding Issues</h2>
+
+<p>If the Meta key acts inconsistently in iTerm, enable <strong>Allow application keypad mode</strong> in the Profiles tab of iTerm preferences. This screenshot shows both left and right Alt keys set to <strong>Esc+</strong>:</p>
+
+<p><img src="iterm-option-key-behavior.png" alt="Both left and right Alt keys are set to Esc+" title="Both left and right Alt keys are set to Esc+" /></p>
+
+<h2 id="fix-emacs-evil-and-special-mode-key-binding-conflicts">Fix Emacs Evil and Special Mode Key Binding Conflicts</h2>
+
+<p>Because Emacs has a variety of special modes with their own key bindings (like Org Mode and Calendar), some may conflict with Emacs Evil. For example, <code>q</code> exits most Emacs special modes, but records macros in Vi. Install the <a href="https://github.com/emacs-evil/evil-collection">Evil Collection</a> to apply a consistent set of bindings across modes.</p>
+
+<h2 id="integrate-emacs-evil-with-org-mode">Integrate Emacs Evil with Org Mode</h2>
+
+<p>Install <a href="https://github.com/GuiltyDolphin/org-evil">org-evil</a> for more useful key binding integrations with Evil and Org Mode.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://github.com/emacs-evil/evil">Emacs Evil GitHub</a></li>
+
+<li><a href="https://github.com/noctuid/evil-guide">Emacs Evil Guide</a></li>
+
+<li><a href="https://github.com/emacs-evil/evil-surround">Evil Surround</a></li>
+
+<li><a href="https://www.emacswiki.org/emacs/">EmacsWiki</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#a-vi-m-layer-makes-emacs-evil">A Vi/m Layer Makes Emacs Evil</a></li>
+<li><a href="#why-use-emacs-evil">Why Use Emacs Evil?</a></li>
+<li><a href="#install-emacs-evil">Install Emacs Evil</a></li>
+<li><a href="#get-started-with-evil-mode">Get Started with Evil Mode</a>
+<ul>
+<li><a href="#evil-states">Evil States</a></li>
+<li><a href="#change-the-default-emacs-evil-start-state">Change the Default Emacs Evil Start State</a></li>
+</ul></li>
+<li><a href="#use-emacs-and-vim-together">Use Emacs and Vim Together</a></li>
+<li><a href="#fix-iterm-and-macos-meta-keybinding-issues">Fix iTerm and macOS Meta Keybinding Issues</a></li>
+<li><a href="#fix-emacs-evil-and-special-mode-key-binding-conflicts">Fix Emacs Evil and Special Mode Key Binding Conflicts</a></li>
+<li><a href="#integrate-emacs-evil-with-org-mode">Integrate Emacs Evil with Org Mode</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

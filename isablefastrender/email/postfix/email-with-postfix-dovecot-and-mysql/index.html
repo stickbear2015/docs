@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Email with Postfix, Dovecot, and MySQL</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Setting up a mail server with Postfix, Dovecot, and MySQL.">
+        <meta name="keywords" content="email, mail, server, postfix, dovecot, mysql, debian, ubuntu, dovecot 2">
+        
+        <meta property="og:title" content="Email with Postfix, Dovecot, and MySQL">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/email/postfix/email-with-postfix-dovecot-and-mysql/">
+        <meta property="og:description" content="Setting up a mail server with Postfix, Dovecot, and MySQL.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/email/postfix/email-with-postfix-dovecot-and-mysql/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/email/">Email Server Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/email/postfix/">Postfix</a>
+  
+</li>
+
+
+<li>
+  
+  Email with Postfix, Dovecot, and MySQL
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Email with Postfix, Dovecot, and MySQL</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-05T12:59:57-08:00">Tuesday, February 5, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2femail%2fpostfix%2femail-with-postfix-dovecot-and-mysql%2f&via=linode&text=Email%20with%20Postfix%2c%20Dovecot%2c%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2femail%2fpostfix%2femail-with-postfix-dovecot-and-mysql%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2femail%2fpostfix%2femail-with-postfix-dovecot-and-mysql%2f&t=Email%20with%20Postfix%2c%20Dovecot%2c%20and%20MySQL" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Email%20with%20Postfix%2c%20Dovecot%2c%20and%20MySQL%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2femail%2fpostfix%2femail-with-postfix-dovecot-and-mysql%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/email%5cpostfix%5cemail-with-postfix-dovecot-and-mysql%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/email%5cpostfix%5cemail-with-postfix-dovecot-and-mysql%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>In this guide, you&rsquo;ll learn how to set up a secure virtual user mail server with Postfix, Dovecot, and MySQL on Debian or Ubuntu. We&rsquo;ll explain how to create new user mailboxes and send or receive email to and from configured domains.</p>
+
+<p><img src="email_with_postfix_dovecot_and_mysql.png" alt="Email with Postfix, Dovecot, and MySQL" title="Setting up a mail server with Postfix, Dovecot, and MySQL" /></p>
+
+<p>For a different Linux distribution or different mail server, review our <a href="/docs/email/">email tutorials</a>.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Set up the Linode as specified in the <a href="/docs/getting-started/">Getting Started</a> and <a href="/docs/security/securing-your-server/">Securing Your Server</a> guides.</p></li>
+
+<li><p>Verify that the iptables <a href="/docs/security/securing-your-server/#configure-a-firewall">firewall</a> is not blocking any of the standard mail ports (<code>25</code>, <code>465</code>, <code>587</code>, <code>110</code>, <code>995</code>, <code>143</code>, and <code>993</code>). If using a different form of firewall, confirm that it is not blocking any of the needed ports.</p></li>
+
+<li><p>Review the concepts in the <a href="/docs/email/running-a-mail-server/">Running a Mail Server</a> guide.</p></li>
+</ol>
+
+<h2 id="configure-dns">Configure DNS</h2>
+
+<p>When you&rsquo;re ready to update the DNS and start sending mail to the server, edit the domain&rsquo;s MX record so that it points to the Linode&rsquo;s domain or IP address, similar to the example below:</p>
+
+<pre class="file terminal">
+  <code>
+example.com A 10 12.34.56.78
+example.com MX 10 example.com
+mail.example.com MX 10 example.com
+</code>
+</pre>
+
+
+<p>Make sure that the MX record is changed for all domains and subdomains that might receive email. If setting up a brand new domain, these steps can be performed prior to configuring the mail server. When using Linode&rsquo;s <a href="/docs/platform/manager/dns-manager/">DNS Manager</a>, create an MX record that points to the desired domain or subdomain, and then create an A record for that domain or subdomain, which points to the correct IP address.</p>
+
+<h2 id="update-hosts-file">Update Hosts File</h2>
+
+<p>Verify that the <code>hosts</code> file contains a line for the Linode&rsquo;s public IP address and is associated with the <strong>Fully Qualified Domain Name</strong> (FQDN). In the example below, <code>192.0.2.0</code> is the public IP address, <code>hostname</code> is the local hostname, and <code>hostname.example.com</code> is the FQDN.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-h" data-lang="h"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-h" data-lang="h"><span class="mf">127.0.0.1</span> <span class="n">localhost</span><span class="p">.</span><span class="n">localdomain</span> <span class="n">localhost</span>
+<span class="mf">192.0.2.0</span> <span class="n">hostname</span><span class="p">.</span><span class="n">example</span><span class="p">.</span><span class="n">com</span> <span class="n">hostname</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="install-ssl-certificate">Install SSL Certificate</h2>
+
+<p>You will need to install a SSL certificate on your mail server prior to completing the <a href="#dovecot">Dovecot</a> configuration steps. The SSL certificate will authenticate the identity of the mail server to users and encrypt the transmitted data between the user&rsquo;s mail client and the mail server. Follow our guide to <a href="/docs/quick-answers/websites/secure-http-traffic-certbot/">Install an SSL certificate with Certbot</a>.</p>
+
+<p>Make a note of the certificate and key locations on the Linode. You will need the path to each during the <a href="#dovecot">Dovecot</a> configuration steps.</p>
+
+<h2 id="install-packages">Install Packages</h2>
+
+<ol>
+<li><p>Log in to your Linode via SSH. Replace <code>192.0.2.0</code> with your IP address:</p>
+
+<pre><code>ssh username@192.0.2.0
+</code></pre></li>
+
+<li><p>Install the required packages:</p>
+
+<pre><code>sudo apt-get install postfix postfix-mysql dovecot-core dovecot-imapd dovecot-pop3d dovecot-lmtpd dovecot-mysql mysql-server
+</code></pre>
+
+<p>You will not be prompted to enter a password for the root MySQL user for recent versions of MySQL. This is because on Debian and Ubuntu, MySQL now uses either the <code>unix_socket</code> or <code>auth_socket</code> authorization plugin by default. This authorization scheme allows you to log in to the database’s root user as long as you are connecting from the Linux root user on localhost.</p>
+
+<p>When prompted, select <strong>Internet Site</strong> as the type of mail server the Postfix installer should configure. The <em>System Mail Name</em> should be the FQDN.</p>
+
+<p><a href="1236-postfix_internetsite.png"><img src="1236-postfix_internetsite.png" alt="Choose &quot;Internet Site&quot; for Postfix." /></a></p>
+
+<p><a href="1237-postfix_systemmailname.png"><img src="1237-postfix_systemmailname.png" alt="Set the system mail name for Postfix." /></a></p></li>
+</ol>
+
+<h3 id="versions">Versions</h3>
+
+<p>This guide uses the following package versions:</p>
+
+<ul>
+<li>Postfix 3.3.0</li>
+<li>Dovecot 2.2.33.2</li>
+<li>MySQL 14.14</li>
+</ul>
+
+<h2 id="mysql">MySQL</h2>
+
+<p>The mail server&rsquo;s virtual users and passwords are stored in a MySQL database. Dovecot and Postfix require this data. Follow the steps below to create the database tables for virtual users, domains and aliases:</p>
+
+<ol>
+<li><p>Use the <a href="https://mariadb.com/kb/en/library/mysql_secure_installation/"><em>mysql_secure_installation</em></a> tool to configure additional security options. This tool will ask if you want to set a new password for the MySQL root user, but you can skip that step:</p>
+
+<pre><code>sudo mysql_secure_installation
+</code></pre>
+
+<p>Answer <strong>Y</strong> at the following prompts:</p>
+
+<ul>
+<li>Remove anonymous users?</li>
+<li>Disallow root login remotely?</li>
+<li>Remove test database and access to it?</li>
+<li>Reload privilege tables now?</li>
+</ul></li>
+
+<li><p>Create a new database:</p>
+
+<pre><code>sudo mysqladmin -u root -p create mailserver
+</code></pre></li>
+
+<li><p>Log in to MySQL:</p>
+
+<pre><code>sudo mysql -u root -p
+</code></pre></li>
+
+<li><p>Create the MySQL user and grant the new user permissions over the database. Replace <code>mailuserpass</code> with a secure password:</p>
+
+<pre><code>GRANT SELECT ON mailserver.* TO 'mailuser'@'127.0.0.1' IDENTIFIED BY 'mailuserpass';
+</code></pre></li>
+
+<li><p>Flush the MySQL privileges to apply the change:</p>
+
+<pre><code>FLUSH PRIVILEGES;
+</code></pre></li>
+
+<li><p>Switch to the new <code>mailsever</code> database:</p>
+
+<pre><code>USE mailserver;
+</code></pre></li>
+
+<li><p>Create a table for the domains that will receive mail on the Linode:</p>
+
+<pre><code>CREATE TABLE `virtual_domains` (
+  `id` int(11) NOT NULL auto_increment,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+</code></pre></li>
+
+<li><p>Create a table for all of the email addresses and passwords:</p>
+
+<pre><code>CREATE TABLE `virtual_users` (
+  `id` int(11) NOT NULL auto_increment,
+  `domain_id` int(11) NOT NULL,
+  `password` varchar(106) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+</code></pre></li>
+
+<li><p>Create a table for the email aliases:</p>
+
+<pre><code>CREATE TABLE `virtual_aliases` (
+  `id` int(11) NOT NULL auto_increment,
+  `domain_id` int(11) NOT NULL,
+  `source` varchar(100) NOT NULL,
+  `destination` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (domain_id) REFERENCES virtual_domains(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+</code></pre></li>
+</ol>
+
+<h3 id="adding-data">Adding Data</h3>
+
+<p>Now that the database and tables have been created, add some data to MySQL.</p>
+
+<ol>
+<li><p>Add the domains to the <code>virtual_domains</code> table. Replace the values for <code>example.com</code> and <code>hostname</code> with your own settings:</p>
+
+<pre><code>INSERT INTO `mailserver`.`virtual_domains`
+  (`id` ,`name`)
+VALUES
+  ('1', 'example.com'),
+  ('2', 'hostname.example.com'),
+  ('3', 'hostname'),
+  ('4', 'localhost.example.com');
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Note which <code>id</code> corresponds to which domain, the <code>id</code> value is necessary for the next two steps.</div>
+</blockquote>
+</li>
+
+<li><p>Add email addresses to the <code>virtual_users</code> table. The <code>domain_id</code> value references the <code>virtual_domain</code> table&rsquo;s <code>id</code> value. Replace the email address values with the addresses that you wish to configure on the mailserver. Replace the <code>password</code> values with strong passwords.</p>
+
+<pre><code>INSERT INTO `mailserver`.`virtual_users`
+  (`id`, `domain_id`, `password` , `email`)
+VALUES
+  ('1', '1', ENCRYPT('password', CONCAT('$6$', SUBSTRING(SHA(RAND()), -16))), 'email1@example.com'),
+  ('2', '1', ENCRYPT('password', CONCAT('$6$', SUBSTRING(SHA(RAND()), -16))), 'email2@example.com');
+</code></pre></li>
+
+<li><p>An email alias will forward all email from one email address to another. To set up an email alias, add it to the <code>virtual_aliases</code> table:</p>
+
+<pre><code>INSERT INTO `mailserver`.`virtual_aliases`
+  (`id`, `domain_id`, `source`, `destination`)
+VALUES
+  ('1', '1', 'alias@example.com', 'email1@example.com');
+</code></pre></li>
+</ol>
+
+<h3 id="testing">Testing</h3>
+
+<p>In the previous section, data was added to the MySQL <code>mailserver</code> database. The steps below will test that the data has been stored and can be retrieved.</p>
+
+<ol>
+<li><p>Log in to MySQL:</p>
+
+<pre><code>sudo mysql -u root
+</code></pre></li>
+
+<li><p>Check the contents of the <code>virtual_domains</code> table:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_domains;
+</code></pre></li>
+
+<li><p>Verify that you see the following output:</p>
+
+<pre class="file terminal">
+  <code>
++----+-----------------------+
+| id | name                  |
++----+-----------------------+
+|  1 | example.com           |
+|  2 | hostname.example.com  |
+|  3 | hostname              |
+|  4 | localhost.example.com |
++----+-----------------------+
+4 rows in set (0.00 sec)
+</code>
+</pre>
+</li>
+
+<li><p>Check the <code>virtual_users</code> table:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_users;
+</code></pre></li>
+
+<li><p>Verify the following output, the hashed passwords are longer than they appear below:</p>
+
+<pre class="file terminal">
+  <code>
++----+-----------+-------------------------------------+--------------------+
+| id | domain_id | password                            | email              |
++----+-----------+-------------------------------------+--------------------+
+|  1 |         1 | $6$574ef443973a5529c20616ab7c6828f7 | email1@example.com |
+|  2 |         1 | $6$030fa94bcfc6554023a9aad90a8c9ca1 | email2@example.com |
++----+-----------+-------------------------------------+--------------------+
+2 rows in set (0.01 sec)
+</code>
+</pre>
+</li>
+
+<li><p>Check the <code>virtual_aliases</code> table:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_aliases;
+</code></pre></li>
+
+<li><p>Verify the following output:</p>
+
+<pre class="file terminal">
+  <code>
++----+-----------+-------------------+--------------------+
+| id | domain_id | source            | destination        |
++----+-----------+-------------------+--------------------+
+|  1 |         1 | alias@example.com | email1@example.com |
++----+-----------+-------------------+--------------------+
+1 row in set (0.00 sec)
+</code>
+</pre>
+</li>
+
+<li><p>If everything outputs as expected, exit MySQL:</p>
+
+<pre><code>exit
+</code></pre></li>
+</ol>
+
+<h2 id="postfix">Postfix</h2>
+
+<p>Postfix is a <em>Mail Transfer Agent</em> (MTA) that relays mail between the Linode and the internet. It is highly configurable, allowing for great flexibility. This guide maintains many of Posfix&rsquo;s default configuration values.</p>
+
+<h3 id="configuration-file-settings">Configuration File Settings</h3>
+
+<p>The <code>main.cf</code> file is the primary configuration file used by Postfix.</p>
+
+<ol>
+<li><p>Make a copy of the default Postfix configuration file in case you need to revert to the default configuration:</p>
+
+<pre><code>sudo cp /etc/postfix/main.cf /etc/postfix/main.cf.orig
+</code></pre></li>
+
+<li><p>Edit the <code>/etc/postfix/main.cf</code> file to match the example configurations. Replace occurrences of <code>example.com</code> with your domain name:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postfix/main.cf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1"># See /usr/share/postfix/main.cf.dist for a commented, more complete version</span>
+
+<span class="c1"># Debian specific:  Specifying a file name will cause the first</span>
+<span class="c1"># line of that file to be used as the name.  The Debian default</span>
+<span class="c1"># is /etc/mailname.</span>
+<span class="c1">#myorigin = /etc/mailname</span>
+
+<span class="nv">smtpd_banner</span> <span class="o">=</span> <span class="nv">$myhostname</span> ESMTP <span class="nv">$mail_name</span> <span class="o">(</span>Ubuntu<span class="o">)</span>
+<span class="nv">biff</span> <span class="o">=</span> no
+
+<span class="c1"># appending .domain is the MUA&#39;s job.</span>
+<span class="nv">append_dot_mydomain</span> <span class="o">=</span> no
+
+<span class="c1"># Uncomment the next line to generate &#34;delayed mail&#34; warnings</span>
+<span class="c1">#delay_warning_time = 4h</span>
+
+<span class="nv">readme_directory</span> <span class="o">=</span> no
+
+<span class="c1"># TLS parameters</span>
+<span class="nv">smtpd_tls_cert_file</span><span class="o">=</span>/etc/letsencrypt/live/example.com/fullchain.pem
+<span class="nv">smtpd_tls_key_file</span><span class="o">=</span>/etc/letsencrypt/live/example.com/privkey.pem
+<span class="nv">smtpd_use_tls</span><span class="o">=</span>yes
+<span class="nv">smtpd_tls_auth_only</span> <span class="o">=</span> yes
+<span class="nv">smtp_tls_security_level</span> <span class="o">=</span> may
+<span class="nv">smtpd_tls_security_level</span> <span class="o">=</span> may
+<span class="nv">smtpd_sasl_security_options</span> <span class="o">=</span> noanonymous, noplaintext
+<span class="nv">smtpd_sasl_tls_security_options</span> <span class="o">=</span> noanonymous
+
+<span class="c1"># Authentication</span>
+<span class="nv">smtpd_sasl_type</span> <span class="o">=</span> dovecot
+<span class="nv">smtpd_sasl_path</span> <span class="o">=</span> private/auth
+<span class="nv">smtpd_sasl_auth_enable</span> <span class="o">=</span> yes
+
+<span class="c1"># See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for</span>
+<span class="c1"># information on enabling SSL in the smtp client.</span>
+
+<span class="c1"># Restrictions</span>
+<span class="nv">smtpd_helo_restrictions</span> <span class="o">=</span>
+        permit_mynetworks,
+        permit_sasl_authenticated,
+        reject_invalid_helo_hostname,
+        reject_non_fqdn_helo_hostname
+<span class="nv">smtpd_recipient_restrictions</span> <span class="o">=</span>
+        permit_mynetworks,
+        permit_sasl_authenticated,
+        reject_non_fqdn_recipient,
+        reject_unknown_recipient_domain,
+        reject_unlisted_recipient,
+        reject_unauth_destination
+<span class="nv">smtpd_sender_restrictions</span> <span class="o">=</span>
+        permit_mynetworks,
+        permit_sasl_authenticated,
+        reject_non_fqdn_sender,
+        reject_unknown_sender_domain
+<span class="nv">smtpd_relay_restrictions</span> <span class="o">=</span>
+        permit_mynetworks,
+        permit_sasl_authenticated,
+        defer_unauth_destination
+
+<span class="c1"># See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for</span>
+<span class="c1"># information on enabling SSL in the smtp client.</span>
+
+<span class="nv">myhostname</span> <span class="o">=</span> example.com
+<span class="nv">alias_maps</span> <span class="o">=</span> hash:/etc/aliases
+<span class="nv">alias_database</span> <span class="o">=</span> hash:/etc/aliases
+<span class="nv">mydomain</span> <span class="o">=</span> example.com
+<span class="nv">myorigin</span> <span class="o">=</span> <span class="nv">$mydomain</span>
+<span class="nv">mydestination</span> <span class="o">=</span> localhost
+<span class="nv">relayhost</span> <span class="o">=</span>
+<span class="nv">mynetworks</span> <span class="o">=</span> <span class="m">127</span>.0.0.0/8 <span class="o">[</span>::ffff:127.0.0.0<span class="o">]</span>/104 <span class="o">[</span>::1<span class="o">]</span>/128
+<span class="nv">mailbox_size_limit</span> <span class="o">=</span> <span class="m">0</span>
+<span class="nv">recipient_delimiter</span> <span class="o">=</span> +
+<span class="nv">inet_interfaces</span> <span class="o">=</span> all
+<span class="nv">inet_protocols</span> <span class="o">=</span> all
+
+<span class="c1"># Handing off local delivery to Dovecot&#39;s LMTP, and telling it where to store mail</span>
+<span class="nv">virtual_transport</span> <span class="o">=</span> lmtp:unix:private/dovecot-lmtp
+
+<span class="c1"># Virtual domains, users, and aliases</span>
+<span class="nv">virtual_mailbox_domains</span> <span class="o">=</span> mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf
+<span class="nv">virtual_mailbox_maps</span> <span class="o">=</span> mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf
+<span class="nv">virtual_alias_maps</span> <span class="o">=</span> mysql:/etc/postfix/mysql-virtual-alias-maps.cf,
+        mysql:/etc/postfix/mysql-virtual-email2email.cf
+
+<span class="c1"># Even more Restrictions and MTA params</span>
+<span class="nv">disable_vrfy_command</span> <span class="o">=</span> yes
+<span class="nv">strict_rfc821_envelopes</span> <span class="o">=</span> yes
+<span class="c1">#smtpd_etrn_restrictions = reject</span>
+<span class="c1">#smtpd_reject_unlisted_sender = yes</span>
+<span class="c1">#smtpd_reject_unlisted_recipient = yes</span>
+<span class="nv">smtpd_delay_reject</span> <span class="o">=</span> yes
+<span class="nv">smtpd_helo_required</span> <span class="o">=</span> yes
+<span class="nv">smtp_always_send_ehlo</span> <span class="o">=</span> yes
+<span class="c1">#smtpd_hard_error_limit = 1</span>
+<span class="nv">smtpd_timeout</span> <span class="o">=</span> 30s
+<span class="nv">smtp_helo_timeout</span> <span class="o">=</span> 15s
+<span class="nv">smtp_rcpt_timeout</span> <span class="o">=</span> 15s
+<span class="nv">smtpd_recipient_limit</span> <span class="o">=</span> <span class="m">40</span>
+<span class="nv">minimal_backoff_time</span> <span class="o">=</span> 180s
+<span class="nv">maximal_backoff_time</span> <span class="o">=</span> 3h
+
+<span class="c1"># Reply Rejection Codes</span>
+<span class="nv">invalid_hostname_reject_code</span> <span class="o">=</span> <span class="m">550</span>
+<span class="nv">non_fqdn_reject_code</span> <span class="o">=</span> <span class="m">550</span>
+<span class="nv">unknown_address_reject_code</span> <span class="o">=</span> <span class="m">550</span>
+<span class="nv">unknown_client_reject_code</span> <span class="o">=</span> <span class="m">550</span>
+<span class="nv">unknown_hostname_reject_code</span> <span class="o">=</span> <span class="m">550</span>
+<span class="nv">unverified_recipient_reject_code</span> <span class="o">=</span> <span class="m">550</span>
+<span class="nv">unverified_sender_reject_code</span> <span class="o">=</span> <span class="m">550</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>The <code>main.cf</code> file declares the location of <code>virtual_mailbox_domains</code>, <code>virtual_mailbox_maps</code>, and <code>virtual_alias_maps</code> files. These files contain the connection information for the MySQL lookup tables created in the <a href="#mysql">MySQL</a> section of this guide. Postfix will use this data to identify all domains, corresponding mailboxes, and valid users.</p>
+
+<p>Create the file for <code>virtual_mailbox_domains</code>. Replace the value for <code>password</code> with your database user&rsquo;s password.  If you used a different name for your database <code>user</code> and <code>dbname</code> replace those with your own values:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postfix/mysql-virtual-mailbox-domains.cf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">user</span> <span class="o">=</span> mailuser
+<span class="nv">password</span> <span class="o">=</span> mailuserpass
+<span class="nv">hosts</span> <span class="o">=</span> <span class="m">127</span>.0.0.1
+<span class="nv">dbname</span> <span class="o">=</span> mailserver
+<span class="nv">query</span> <span class="o">=</span> SELECT <span class="m">1</span> FROM virtual_domains WHERE <span class="nv">name</span><span class="o">=</span><span class="s1">&#39;%s&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>/etc/postfix/mysql-virtual-mailbox-maps.cf</code> file, and enter the following values. Use the database user&rsquo;s password and make any other changes as needed:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postfix/mysql-virtual-mailbox-maps.cf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">user</span> <span class="o">=</span> mailuser
+<span class="nv">password</span> <span class="o">=</span> mailuserpass
+<span class="nv">hosts</span> <span class="o">=</span> <span class="m">127</span>.0.0.1
+<span class="nv">dbname</span> <span class="o">=</span> mailserver
+<span class="nv">query</span> <span class="o">=</span> SELECT <span class="m">1</span> FROM virtual_users WHERE <span class="nv">email</span><span class="o">=</span><span class="s1">&#39;%s&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>/etc/postfix/mysql-virtual-alias-maps.cf</code> file and enter the following values. Use the database user&rsquo;s password and make any other changes as needed:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postfix/mysql-virtual-alias-maps.cf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">user</span> <span class="o">=</span> mailuser
+<span class="nv">password</span> <span class="o">=</span> mailuserpass
+<span class="nv">hosts</span> <span class="o">=</span> <span class="m">127</span>.0.0.1
+<span class="nv">dbname</span> <span class="o">=</span> mailserver
+<span class="nv">query</span> <span class="o">=</span> SELECT destination FROM virtual_aliases WHERE <span class="nv">source</span><span class="o">=</span><span class="s1">&#39;%s&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>/etc/postfix/mysql-virtual-email2email.cf</code> file and enter the following values. Use the database user&rsquo;s password and make any other changes as needed:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postfix/mysql-virtual-email2email.cf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">user</span> <span class="o">=</span> mailuser
+<span class="nv">password</span> <span class="o">=</span> mailuserpass
+<span class="nv">hosts</span> <span class="o">=</span> <span class="m">127</span>.0.0.1
+<span class="nv">dbname</span> <span class="o">=</span> mailserver
+<span class="nv">query</span> <span class="o">=</span> SELECT email FROM virtual_users WHERE <span class="nv">email</span><span class="o">=</span><span class="s1">&#39;%s&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Restart Postfix:</p>
+
+<pre><code>sudo systemctl restart postfix
+</code></pre></li>
+
+<li><p>The  <code>postmap</code>  command  creates or queries Postfix&rsquo;s lookup tables, or updates an existing one. Enter the following command to ensure that Postfix can query the <code>virtual_domains</code> table. Replace <code>example.com</code> with the first <code>name</code> value. The command should return <code>1</code> if it is successful:</p>
+
+<pre><code>sudo postmap -q example.com mysql:/etc/postfix/mysql-virtual-mailbox-domains.cf
+</code></pre></li>
+
+<li><p>Test Postfix to verify that it can retrieve the first email address from the MySQL table <code>virtual_users</code>. Replace <code>email1@example.com</code> with the first email address added to the table. You should receive <code>1</code> as the output:</p>
+
+<pre><code>sudo postmap -q email1@example.com mysql:/etc/postfix/mysql-virtual-mailbox-maps.cf
+</code></pre></li>
+
+<li><p>Test Postfix to verify that it can query the <code>virtual_aliases</code> table. Replace <code>alias@example.com</code> with the first <code>source</code> value created in the table. The command should return the <code>destination</code> value for the row:</p>
+
+<pre><code>sudo postmap -q alias@example.com mysql:/etc/postfix/mysql-virtual-alias-maps.cf
+</code></pre></li>
+</ol>
+
+<h3 id="master-program-settings">Master Program Settings</h3>
+
+<p>Postfix&rsquo;s master program starts and monitors all of Postfix&rsquo;s processes. The configuration file <code>master.cf</code> lists all programs and information on how they should be started.</p>
+
+<ol>
+<li><p>Make a copy of the <code>/etc/postfix/master.cf</code> file:</p>
+
+<pre><code>sudo cp /etc/postfix/master.cf /etc/postfix/master.cf.orig
+</code></pre></li>
+
+<li><p>Edit <code>/etc/postfix/master.cf</code> to contain the values in the excerpt example. The rest of the file can remain unchanged:</p>
+
+<dl class="file">
+
+
+<dt>
+		master.cf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">#
+<span class="c1"># Postfix master process configuration file.  For details on the format</span>
+<span class="c1"># of the file, see the master(5) manual page (command: &#34;man 5 master&#34; or</span>
+<span class="c1"># on-line: http://www.postfix.org/master.5.html).</span>
+#
+<span class="c1"># Do not forget to execute &#34;postfix reload&#34; after editing this file.</span>
+#
+<span class="c1"># ==========================================================================</span>
+<span class="c1"># service type  private unpriv  chroot  wakeup  maxproc command + args</span>
+<span class="c1">#               (yes)   (yes)   (yes)    (never) (100)</span>
+<span class="c1"># ==========================================================================</span>
+smtp      inet  n       -       n       -       -       smtpd
+<span class="c1">#smtp      inet  n       -       -       -       1       postscreen</span>
+<span class="c1">#smtpd     pass  -       -       -       -       -       smtpd</span>
+<span class="c1">#dnsblog   unix  -       -       -       -       0       dnsblog</span>
+<span class="c1">#tlsproxy  unix  -       -       -       -       0       tlsproxy</span>
+submission inet n       -       y      -       -       smtpd
+  -o <span class="nv">syslog_name</span><span class="o">=</span>postfix/submission
+  -o <span class="nv">smtpd_tls_security_level</span><span class="o">=</span>encrypt
+  -o <span class="nv">smtpd_sasl_auth_enable</span><span class="o">=</span>yes
+  -o <span class="nv">smtpd_sasl_type</span><span class="o">=</span>dovecot
+  -o <span class="nv">smtpd_sasl_path</span><span class="o">=</span>private/auth
+  -o <span class="nv">smtpd_reject_unlisted_recipient</span><span class="o">=</span>no
+  -o <span class="nv">smtpd_client_restrictions</span><span class="o">=</span>permit_sasl_authenticated,reject
+  -o <span class="nv">milter_macro_daemon_name</span><span class="o">=</span>ORIGINATING
+smtps     inet  n       -       -       -       -       smtpd
+  -o <span class="nv">syslog_name</span><span class="o">=</span>postfix/smtps
+  -o <span class="nv">smtpd_tls_wrappermode</span><span class="o">=</span>yes
+  -o <span class="nv">smtpd_sasl_auth_enable</span><span class="o">=</span>yes
+  -o <span class="nv">smtpd_sasl_type</span><span class="o">=</span>dovecot
+  -o <span class="nv">smtpd_sasl_path</span><span class="o">=</span>private/auth
+  -o <span class="nv">smtpd_client_restrictions</span><span class="o">=</span>permit_sasl_authenticated,reject
+  -o <span class="nv">milter_macro_daemon_name</span><span class="o">=</span>ORIGINATING
+  ...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Change the permissions of the <code>/etc/postfix</code> directory to restrict permissions to allow only its owner and the corresponding group:</p>
+
+<pre><code>sudo chmod -R o-rwx /etc/postfix
+</code></pre></li>
+
+<li><p>Restart Postfix:</p>
+
+<pre><code>sudo systemctl restart postfix
+</code></pre></li>
+</ol>
+
+<h2 id="dovecot">Dovecot</h2>
+
+<p>Dovecot is the <em>Mail Delivery Agent</em> (MDA) which is passed messages from Postfix and delivers them to a virtual mailbox. In this section, configure Dovecot to force users to use SSL when they connect so that their passwords are never sent to the server in plain text.</p>
+
+<ol>
+<li><p>Copy all of the configuration files so you can easily revert back to them if needed:</p>
+
+<pre><code>sudo cp /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.conf.orig
+sudo cp /etc/dovecot/conf.d/10-mail.conf /etc/dovecot/conf.d/10-mail.conf.orig
+sudo cp /etc/dovecot/conf.d/10-auth.conf /etc/dovecot/conf.d/10-auth.conf.orig
+sudo cp /etc/dovecot/dovecot-sql.conf.ext /etc/dovecot/dovecot-sql.conf.ext.orig
+sudo cp /etc/dovecot/conf.d/10-master.conf /etc/dovecot/conf.d/10-master.conf.orig
+sudo cp /etc/dovecot/conf.d/10-ssl.conf /etc/dovecot/conf.d/10-ssl.conf.orig
+</code></pre></li>
+
+<li><p>Edit the <code>/etc/dovecot/dovecot.conf</code> file. Add <code>protocols = imap pop3 lmtp</code> to the <code># Enable installed protocols</code> section of the file:</p>
+
+<dl class="file">
+
+
+<dt>
+		dovecot.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="c1">## Dovecot configuration file</span>
+...
+<span class="c1"># Enable installed protocols</span>
+!include_try /usr/share/dovecot/protocols.d/*.protocol
+<span class="nv">protocols</span> <span class="o">=</span> imap pop3 lmtp
+...
+<span class="nv">postmaster_address</span><span class="o">=</span>postmaster at example.com</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Edit the <code>/etc/dovecot/conf.d/10-mail.conf</code> file. This file controls how Dovecot interacts with the server&rsquo;s file system to store and retrieve messages:</p>
+
+<p>Modify the following variables within the configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		10-mail.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+<span class="nv">mail_location</span> <span class="o">=</span> maildir:/var/mail/vhosts/%d/%n/
+...
+<span class="nv">mail_privileged_group</span> <span class="o">=</span> mail
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>/var/mail/vhosts/</code> directory and a subdirectory for your domain. Replace <code>example.com</code> with your domain name:</p>
+
+<pre><code>sudo mkdir -p /var/mail/vhosts/example.com
+</code></pre>
+
+<p>This directory will serve as storage for mail sent to your domain.</p></li>
+
+<li><p>Create the <code>vmail</code> group with ID <code>5000</code>. Add a new user <code>vmail</code> to the <code>vmail</code> group.  This system user will read mail from the server.</p>
+
+<pre><code>sudo groupadd -g 5000 vmail
+sudo useradd -g vmail -u 5000 vmail -d /var/mail
+</code></pre></li>
+
+<li><p>Change the owner of the <code>/var/mail/</code> folder and its contents to belong to <code>vmail</code>:</p>
+
+<pre><code>sudo chown -R vmail:vmail /var/mail
+</code></pre></li>
+
+<li><p>Edit the user authentication file, located in <code>/etc/dovecot/conf.d/10-auth.conf</code>. Uncomment the following variables and replace with the file excerpt&rsquo;s example values:</p>
+
+<dl class="file">
+
+
+<dt>
+		10-auth.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+<span class="nv">disable_plaintext_auth</span> <span class="o">=</span> yes
+...
+<span class="nv">auth_mechanisms</span> <span class="o">=</span> plain login
+...
+!include auth-system.conf.ext
+...
+!include auth-sql.conf.ext
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>For reference, <a href="/docs/assets/1238-dovecot_10-auth.conf.txt">view a complete <code>10-auth.conf</code> file</a>.</div>
+</blockquote>
+</li>
+
+<li><p>Edit the <code>/etc/dovecot/conf.d/auth-sql.conf.ext</code> file with authentication and storage information. Ensure your file contains the following lines. Make sure the <code>passdb</code> section is uncommented, that the <code>userdb</code> section that uses the <code>static</code> driver is uncommented and update with the right argument, and comment out the <code>userdb</code> section that uses the <code>sql</code> driver:</p>
+
+<dl class="file">
+
+
+<dt>
+		auth-sql.conf.ext 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+passdb <span class="o">{</span>
+  <span class="nv">driver</span> <span class="o">=</span> sql
+  <span class="nv">args</span> <span class="o">=</span> /etc/dovecot/dovecot-sql.conf.ext
+<span class="o">}</span>
+...
+<span class="c1">#userdb {</span>
+<span class="c1">#  driver = sql</span>
+<span class="c1">#  args = /etc/dovecot/dovecot-sql.conf.ext</span>
+<span class="c1">#}</span>
+...
+userdb <span class="o">{</span>
+  <span class="nv">driver</span> <span class="o">=</span> static
+  <span class="nv">args</span> <span class="o">=</span> <span class="nv">uid</span><span class="o">=</span>vmail <span class="nv">gid</span><span class="o">=</span>vmail <span class="nv">home</span><span class="o">=</span>/var/mail/vhosts/%d/%n
+<span class="o">}</span>
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Update the <code>/etc/dovecot/dovecot-sql.conf.ext</code> file with your MySQL connection information. Uncomment the following variables and replace the values with the excerpt example.  Replace <code>dbname</code>, <code>user</code> and <code>password</code> with your own MySQL database values:</p>
+
+<dl class="file">
+
+
+<dt>
+		dovecot-sql.conf.ext 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+<span class="nv">driver</span> <span class="o">=</span> mysql
+...
+<span class="nv">connect</span> <span class="o">=</span> <span class="nv">host</span><span class="o">=</span><span class="m">127</span>.0.0.1 <span class="nv">dbname</span><span class="o">=</span>mailserver <span class="nv">user</span><span class="o">=</span>mailuser <span class="nv">password</span><span class="o">=</span>mailuserpass
+...
+<span class="nv">default_pass_scheme</span> <span class="o">=</span> SHA512-CRYPT
+...
+<span class="nv">password_query</span> <span class="o">=</span> SELECT email as user, password FROM virtual_users WHERE <span class="nv">email</span><span class="o">=</span><span class="s1">&#39;%u&#39;</span><span class="p">;</span>
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>password_query</code> variable uses email addresses listed in the <code>virtual_users</code> table as the username credential for an email account.</p>
+
+<p>To use an alias as the username:</p>
+
+<ol>
+<li>Add the alias as the <code>source</code> and <code>destination</code> email address to the <code>virtual_aliases</code> table.</li>
+<li>Change the <code>/etc/dovecot/dovecot-sql.conf.ext</code> file&rsquo;s <code>password_query</code> value to <code>password_query = SELECT email as user, password FROM virtual_users WHERE email=(SELECT destination FROM virtual_aliases WHERE source = '%u');</code></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>For reference, <a href="/docs/assets/1284-dovecot__dovecot-sql.conf.ext.txt">view</a> a complete <code>dovecot-sql.conf.ext</code>file.</div>
+</blockquote>
+</li>
+
+<li><p>Change the owner and group of the <code>/etc/dovecot/</code> directory to <code>vmail</code> and <code>dovecot</code>:</p>
+
+<pre><code>sudo chown -R vmail:dovecot /etc/dovecot
+</code></pre></li>
+
+<li><p>Change the permissions on the <code>/etc/dovecot/</code> directory to be recursively read, write, and execute for the owner of the directory:</p>
+
+<pre><code>sudo chmod -R o-rwx /etc/dovecot
+</code></pre></li>
+
+<li><p>Edit the service settings file <code>/etc/dovecot/conf.d/10-master.conf</code>:</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>When editing the file, be careful not to remove any opening or closing curly braces. If there&rsquo;s a syntax error, Dovecot will crash silently. You can check <code>/var/log/upstart/dovecot.log</code> to debug the error.</p>
+
+<p>Here is <a href="/docs/assets/1240-dovecot_10-master.conf.txt">an example of a complete <code>10-master.conf</code></a> file.</p>
+</div>
+</blockquote>
+
+
+<p>Disable unencrypted IMAP and POP3 by setting the protocols&rsquo; ports to <code>0</code>. Uncomment the <code>port</code> and <code>ssl</code> variables:</p>
+
+<dl class="file">
+
+
+<dt>
+		10-master.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+service imap-login <span class="o">{</span>
+  inet_listener imap <span class="o">{</span>
+    <span class="nv">port</span> <span class="o">=</span> <span class="m">0</span>
+  <span class="o">}</span>
+  inet_listener imaps <span class="o">{</span>
+    <span class="nv">port</span> <span class="o">=</span> <span class="m">993</span>
+    <span class="nv">ssl</span> <span class="o">=</span> yes
+  <span class="o">}</span>
+  ...
+<span class="o">}</span>
+...
+service pop3-login <span class="o">{</span>
+  inet_listener pop3 <span class="o">{</span>
+    <span class="nv">port</span> <span class="o">=</span> <span class="m">0</span>
+  <span class="o">}</span>
+  inet_listener pop3s <span class="o">{</span>
+    <span class="nv">port</span> <span class="o">=</span> <span class="m">995</span>
+    <span class="nv">ssl</span> <span class="o">=</span> yes
+  <span class="o">}</span>
+<span class="o">}</span>
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Find the <code>service lmtp</code> section of the file and use the configuration shown below:</p>
+
+<dl class="file">
+
+
+<dt>
+		10-master.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+service lmtp <span class="o">{</span>
+  unix_listener /var/spool/postfix/private/dovecot-lmtp <span class="o">{</span>
+    <span class="c1">#mode = 0666i</span>
+    <span class="nv">mode</span> <span class="o">=</span> <span class="m">0600</span>
+    <span class="nv">user</span> <span class="o">=</span> postfix
+    <span class="nv">group</span> <span class="o">=</span> postfix
+  <span class="o">}</span>
+...
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Locate <code>service auth</code> and configure it as shown below:</p>
+
+<dl class="file">
+
+
+<dt>
+		10-master.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+service auth <span class="o">{</span>
+  ...
+  unix_listener /var/spool/postfix/private/auth <span class="o">{</span>
+    <span class="nv">mode</span> <span class="o">=</span> <span class="m">0660</span>
+    <span class="nv">user</span> <span class="o">=</span> postfix
+    <span class="nv">group</span> <span class="o">=</span> postfix
+  <span class="o">}</span>
+
+  unix_listener auth-userdb <span class="o">{</span>
+    <span class="nv">mode</span> <span class="o">=</span> <span class="m">0600</span>
+    <span class="nv">user</span> <span class="o">=</span> vmail
+  <span class="o">}</span>
+...
+  <span class="nv">user</span> <span class="o">=</span> dovecot
+<span class="o">}</span>
+...</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In the <code>service auth-worker</code> section, uncomment the <code>user</code> line and set it to <code>vmail</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		10-master.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+service auth-worker <span class="o">{</span>
+  ...
+  <span class="nv">user</span> <span class="o">=</span> vmail
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Save the changes to the <code>/etc/dovecot/conf.d/10-master.conf</code> file.</p></li>
+
+<li><p>Edit <code>/etc/dovecot/conf.d/10-ssl.conf</code> file to require SSL and to add the location of your domain&rsquo;s SSL certificate and key.  Replace <code>example.com</code> with your domain:</p>
+
+<dl class="file">
+
+
+<dt>
+		10-ssl.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">...
+<span class="c1"># SSL/TLS support: yes, no, required. &lt;doc/wiki/SSL.txt&gt;</span>
+<span class="nv">ssl</span> <span class="o">=</span> required
+...
+<span class="nv">ssl_cert</span> <span class="o">=</span> &lt;/etc/letsencrypt/live/example.com/fullchain.pem
+<span class="nv">ssl_key</span> <span class="o">=</span> &lt;/etc/letsencrypt/live/example.com/privkey.pem</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Restart Dovecot to enable all configurations:</p>
+
+<pre><code>sudo systemctl restart dovecot
+</code></pre></li>
+</ol>
+
+<h2 id="test-email-with-mailutils">Test Email with Mailutils</h2>
+
+<ol>
+<li><p>To send and receive test emails to your Linode mail server, install the Mailutils package:</p>
+
+<pre><code>sudo apt-get install mailutils
+</code></pre></li>
+
+<li><p>Send a test email to an email address outside of your mail server, like a Gmail account. Replace <code>email1@example.com</code> with an email address from your mail server:</p>
+
+<pre><code>echo &quot;Email body text&quot; | sudo mail -s &quot;Email subject line&quot; recipient@gmail.com -aFrom:email1@example.com
+</code></pre></li>
+
+<li><p>Log in to the test email account and verify that you have received the email from the specified mail server email address.</p></li>
+
+<li><p>Send a test email to your Linode mail server from an outside email address. Log back in to your Linode and check that the email was received; substitute in the username and domain you sent the mail to:</p>
+
+<pre><code>sudo mail -f /var/mail/vhosts/example.com/email1
+</code></pre>
+
+<p>When prompted, enter the number corresponding to the email you would like to view:</p>
+
+<pre class="file terminal">
+  <code>
+"/var/mail/vhosts/example.com/": 9 messages 5 new 4 unread
+U   1 John Doe     Wed Jun 27 16:00  57/2788  Test email 1
+U   2 John Doe     Wed Jun 27 16:02  56/2761  Test email 2
+U   3 John Doe     Wed Jun 27 16:35  15/594   Test email 3
+U   4 John Doe     Wed Jun 27 16:42  71/3535  Test email 4
+>N   5 John Doe     Mon Jul  2 10:55  13/599   Subject of the Email
+?
+</code>
+</pre>
+
+
+<p>The email message header and body should display. Consider adding spam and virus filtering and a webmail client.</p>
+
+<p>See <a href="/docs/email/postfix/troubleshooting-problems-with-postfix-dovecot-and-mysql/">Troubleshooting problems with Postfix, Dovecot, and MySQL</a> for debugging steps.</p></li>
+</ol>
+
+<h3 id="email-client">Email Client</h3>
+
+<p>You can set up an email client to connect to your mail server. Many clients detect server settings automatically. Manual configuration requires the following parameters:</p>
+
+<ul>
+<li><strong>Username:</strong> The full email address, including the <code>@example.com</code> part.</li>
+<li><strong>Password:</strong> The password that was entered for the email address in the <code>virtual_users</code> table of the <code>mailuser</code> database.</li>
+<li><strong>Server name:</strong> The incoming and outgoing server names must be a domain that resolves to the Linode.</li>
+<li><strong>SSL:</strong> Incoming and outgoing servers require authentication and SSL encryption.</li>
+<li><strong>Ports:</strong> Use Port <code>993</code> for secure IMAP, Port <code>995</code> for secure POP3, and Port <code>587</code> with SSL for SMTP.</li>
+</ul>
+
+<p>See <a href="/docs/email/clients/install-squirrelmail-on-ubuntu-16-04-or-debian-8/">Install SquirrelMail on Ubuntu 16.04</a> for details on installing an email client.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The Thunderbird email client will sometimes have trouble automatically detecting account settings when using Dovecot. After it fails to detect the appropriate account settings, you can set up your email account manually. Add in the appropriate information for each setting, using the above values, leaving no setting on <strong>Auto</strong> or <strong>Autodetect</strong>. Once you have entered all the information about your mail server and account, press <strong>Done</strong> rather <strong>Re-Test</strong> and Thunderbird should accept the settings and retrieve your mail.</div>
+</blockquote>
+
+
+<h2 id="adding-new-domains-email-addresses-and-aliases">Adding New Domains, Email Addresses, and Aliases</h2>
+
+<p>To add new domains, email addresses, and aliases to the mailserver you will need to update the corresponding MySQL tables created in the <a href="#mysql">MySQL</a> section of this guide.</p>
+
+<h3 id="domains">Domains</h3>
+
+<ol>
+<li><p>To add a new domain, <a href="/docs/getting-started/#connect-to-your-linode-via-ssh">connect to your Linode via SSH</a>.</p></li>
+
+<li><p>Log in to the MySQL server:</p>
+
+<pre><code>sudo mysql -u root
+</code></pre></li>
+
+<li><p>Enter the root MySQL password when prompted.</p></li>
+
+<li><p>View the contents of the table before adding new entries. If you did not use <code>virtual_domains</code> as the name of your domain table, replace the value:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_domains;
+</code></pre></li>
+
+<li><p>The output should resemble the following:</p>
+
+<pre class="file terminal">
+  <code>
+        +----+-----------------------+
+        | id | name                  |
+        +----+-----------------------+
+        |  1 | example.com           |
+        |  2 | hostname.example.com  |
+        |  3 | hostname              |
+        |  4 | localhost.example.com |
+        +----+-----------------------+
+</code>
+</pre>
+</li>
+
+<li><p>Add a new domain to the table. Replace <code>newdomain.com</code> with the desired domain name:</p>
+
+<pre><code>INSERT INTO `mailserver`.`virtual_domains`
+  (`name`)
+VALUES
+  ('newdomain.com');
+</code></pre></li>
+
+<li><p>Verify that the new domain has been added. The output should display the new domain name.</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_domains;
+</code></pre></li>
+
+<li><p>Exit MySQL:</p>
+
+<pre><code>quit
+</code></pre></li>
+</ol>
+
+<h3 id="email-addresses">Email Addresses</h3>
+
+<ol>
+<li><p>Log in to the MySQL server:</p>
+
+<pre><code>sudo mysql -u root
+</code></pre>
+
+<p>When prompted enter the MySQL password.</p></li>
+
+<li><p>Verify the contents of the user table.  Replace <code>virtual_users</code> with your table name:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_users;
+</code></pre>
+
+<p>The output should resemble the following:</p>
+
+<pre class="file terminal">
+  <code>
++----+-----------+-------------------------------------+--------------------+
+| id | domain_id | password                            | email              |
++----+-----------+-------------------------------------+--------------------+
+|  1 |         1 | $6$574ef443973a5529c20616ab7c6828f7 | email1@example.com |
+|  2 |         1 | $6$030fa94bcfc6554023a9aad90a8c9ca1 | email2@example.com |
++----+-----------+-------------------------------------+--------------------+
+2 rows in set (0.01 sec)
+</code>
+</pre>
+</li>
+
+<li><p>Add a new email address to the existing table. Replace <code>newpassword</code> with the user&rsquo;s password, and <code>email3@newdomain.com</code> with the user&rsquo;s email address:</p>
+
+<pre><code>INSERT INTO `mailserver`.`virtual_users`
+  (`domain_id`, `password` , `email`)
+VALUES
+  ('5', ENCRYPT('newpassword', CONCAT('$6$', SUBSTRING(SHA(RAND()), -16))) , 'email3@newdomain.com');
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The <code>domain_id</code> should correspond to the <code>id</code> value of the domain in the <code>virtual_domains</code> table. In the example, we are creating an email address for <code>newdomain.com</code> added in the previous section.</div>
+</blockquote>
+</li>
+
+<li><p>Verify that the new email address has been added. The new email address should be displayed in the output:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_users;
+</code></pre></li>
+
+<li><p>Exit MySQL:</p>
+
+<pre><code>quit
+</code></pre></li>
+</ol>
+
+<h3 id="aliases">Aliases</h3>
+
+<ol>
+<li><p>Log in to the MySQL server:</p>
+
+<pre><code>sudo mysql -u root
+</code></pre>
+
+<p>When prompted enter the MySQL password.</p></li>
+
+<li><p>Verify the contents of the user table. Replace <code>virtual_users</code> with your table name:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_aliases;
+</code></pre>
+
+<p>The output should resemble the following:</p>
+
+<pre class="file terminal">
+  <code>
++----+-----------+-------------------+--------------------+
+| id | domain_id | source            | destination        |
++----+-----------+-------------------+--------------------+
+|  1 |         1 | alias@example.com | email1@example.com |
++----+-----------+-------------------+--------------------+
+1 row in set (0.00 sec)
+</code>
+</pre>
+</li>
+
+<li><p>Add a new alias. Replace <code>alias@newdomain.com</code> with the address to forward email from, and <code>email1@gmail.com</code> with the address that you want to forward the mail to. The <code>alias@newdomain.com</code> needs to be an email address that already exists on the mail server:</p>
+
+<pre><code>INSERT INTO `mailserver`.`virtual_aliases`
+  (`domain_id`, `source`, `destination`)
+VALUES
+  ('5', 'alias@newdomain.com', 'myemail@gmail.com');
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The <code>domain_id</code> should correspond to the <code>id</code> value of the domain in the <code>virtual_domains</code> table. In the example, we are creating an email address for <code>newdomain.com</code> added in the previous section.</div>
+</blockquote>
+
+
+<p>You can create a &ldquo;catch-all&rdquo; alias which will forward all emails sent to the matching domain that does not have matching aliases or users. Replace <code>@newdomain.com</code> with your domain. This value is the source of the alias.</p>
+
+<pre><code>INSERT INTO `mailserver`.`virtual_aliases`
+  (`domain_id`, `source`, `destination`)
+VALUES
+  ('5', '@newdomain.com', 'myemail@gmail.com');
+</code></pre></li>
+
+<li><p>Verify that the new alias has been added. The new alias will be displayed in the output:</p>
+
+<pre><code>SELECT * FROM mailserver.virtual_aliases;
+</code></pre></li>
+
+<li><p>Exit MySQL:</p>
+
+<pre><code>quit
+</code></pre></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="/docs/email/postfix/troubleshooting-problems-with-postfix-dovecot-and-mysql/">Troubleshooting Problems with Postfix, Dovecot, and MySQL</a></li>
+
+<li><a href="http://www.postfix.org/BASIC_CONFIGURATION_README.html">Postfix Basic Configuration</a></li>
+
+<li><a href="http://www.postfix.org/SASL_README.html">Postfix SASL Howto</a></li>
+
+<li><a href="https://wiki2.dovecot.org/">Dovecot Wiki</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#configure-dns">Configure DNS</a></li>
+<li><a href="#update-hosts-file">Update Hosts File</a></li>
+<li><a href="#install-ssl-certificate">Install SSL Certificate</a></li>
+<li><a href="#install-packages">Install Packages</a>
+<ul>
+<li><a href="#versions">Versions</a></li>
+</ul></li>
+<li><a href="#mysql">MySQL</a>
+<ul>
+<li><a href="#adding-data">Adding Data</a></li>
+<li><a href="#testing">Testing</a></li>
+</ul></li>
+<li><a href="#postfix">Postfix</a>
+<ul>
+<li><a href="#configuration-file-settings">Configuration File Settings</a></li>
+<li><a href="#master-program-settings">Master Program Settings</a></li>
+</ul></li>
+<li><a href="#dovecot">Dovecot</a></li>
+<li><a href="#test-email-with-mailutils">Test Email with Mailutils</a>
+<ul>
+<li><a href="#email-client">Email Client</a></li>
+</ul></li>
+<li><a href="#adding-new-domains-email-addresses-and-aliases">Adding New Domains, Email Addresses, and Aliases</a>
+<ul>
+<li><a href="#domains">Domains</a></li>
+<li><a href="#email-addresses">Email Addresses</a></li>
+<li><a href="#aliases">Aliases</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

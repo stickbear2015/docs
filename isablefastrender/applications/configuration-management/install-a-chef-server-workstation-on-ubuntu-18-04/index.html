@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Install a Chef Server Workstation on Ubuntu 18.04</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Instructions on how to configure a Chef server and a virtual workstation, and how to bootstrap a client node on Ubuntu 18.04.">
+        <meta name="keywords" content="chef, configuration management, server automation, chef server, chef workstation, chef-client">
+        
+        <meta property="og:title" content="Install a Chef Server Workstation on Ubuntu 18.04">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/install-a-chef-server-workstation-on-ubuntu-18-04/">
+        <meta property="og:description" content="Instructions on how to configure a Chef server and a virtual workstation, and how to bootstrap a client node on Ubuntu 18.04.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/install-a-chef-server-workstation-on-ubuntu-18-04/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  Install a Chef Server Workstation on Ubuntu 18.04
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Install a Chef Server Workstation on Ubuntu 18.04</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-21T10:20:27-06:00">Monday, January 21, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2finstall-a-chef-server-workstation-on-ubuntu-18-04%2f&via=linode&text=Install%20a%20Chef%20Server%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2finstall-a-chef-server-workstation-on-ubuntu-18-04%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2finstall-a-chef-server-workstation-on-ubuntu-18-04%2f&t=Install%20a%20Chef%20Server%20Workstation%20on%20Ubuntu%2018.04" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Install%20a%20Chef%20Server%20Workstation%20on%20Ubuntu%2018.04%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2finstall-a-chef-server-workstation-on-ubuntu-18-04%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5cinstall-a-chef-server-workstation-on-ubuntu-18-04%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5cinstall-a-chef-server-workstation-on-ubuntu-18-04%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><a href="http://www.chef.io">Chef</a> is a Ruby based configuration management tool used to define infrastructure as code. This enables users to automate the management of many <em>nodes</em> and maintain consistency across those nodes. <em>Recipes</em> declare the desired state for managed nodes and are created on a user&rsquo;s <em>workstation</em> using the <em>Chef Workstation</em> package. Your recipes are distributed across nodes via a <em>Chef server</em>. A <em>Chef client</em>, installed on each node, is in charge of applying the recipe to its corresponding node.</p>
+
+<p><a href="chef-graph.png" title="Illustration showing that workstations talk to Nodes via the Chef Server"><img src="chef-graph-small.png" alt="chef_graph-small.png" /></a></p>
+
+<p>This guide will show you how to create and configure a Chef server and workstation. You will also bootstrap a node to manage with Chef. This work will require three individual Linodes.</p>
+
+<p>See <a href="/docs/applications/configuration-management/beginners-guide-chef/">A Beginner&rsquo;s Guide to Chef</a> for an introduction to Chef concepts.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This guide is written for a non-root user. Commands that require elevated privileges are prefixed with <code>sudo</code>. If you&rsquo;re not familiar with the <code>sudo</code> command, you can check our <a href="/docs/tools-reference/linux-users-and-groups/#understanding-sudo">Users and Groups</a> guide.</div>
+</blockquote>
+
+
+<h2 id="prerequisites">Prerequisites</h2>
+
+<ul>
+<li>One 8GB Linode running Ubuntu 18.04. This Linode will host the Chef server.
+
+<ul>
+<li>Assign a Domain to the Chef server. Ensure your domain has a corresponding domain zone, NS record, and A/AAA record. See the <a href="/docs/platform/manager/dns-manager-new-manager/#add-a-domain-zone">DNS Manager guide</a> for details.</li>
+<li>Ensure your Chef server&rsquo;s hostname is the same as its Domain name. Your Chef server will automatically create SSL certificates based on the Linode&rsquo;s hostname.</li>
+</ul></li>
+<li>Two 2 GB Linodes, each running Ubuntu 18.04. One Linode will host a workstation and the other a node to be managed by Chef.</li>
+<li>The workstation and Chef server should be configured per the <a href="/docs/getting-started/">Getting Started</a> and <a href="/docs/security/securing-your-server/">Securing Your Sever</a> guides. Once your node is <a href="/docs/applications/configuration-management/install-a-chef-server-workstation-on-ubuntu-18-04/#bootstrap-a-node">bootstrapped</a>, you can use a Chef cookbook to secure your node. Consider using the <a href="https://supermarket.chef.io/cookbooks/users">Users</a> cookbook and the <a href="https://supermarket.chef.io/cookbooks/firewall">Firewall</a> cookbook for this work.</li>
+
+<li><p>Ensure that all servers are up-to-date:</p>
+
+<pre><code>sudo apt update &amp;&amp; sudo apt upgrade
+</code></pre></li>
+</ul>
+
+<h2 id="the-chef-server">The Chef Server</h2>
+
+<p>The Chef server is the hub of interaction between all workstations and nodes under Chef management. Changes made to configuration code on workstations are pushed to the Chef server, and then pulled by a node&rsquo;s <code>chef-client</code> to apply the configurations.</p>
+
+<h3 id="install-the-chef-server">Install the Chef Server</h3>
+
+<ol>
+<li><p>Download the <a href="https://downloads.chef.io/chef-server/#ubuntu">latest Chef server core</a>:</p>
+
+<pre><code>wget https://packages.chef.io/files/stable/chef-server/12.18.14/ubuntu/18.04/chef-server-core_12.18.14-1_amd64.deb
+</code></pre></li>
+
+<li><p>Install the server:</p>
+
+<pre><code>sudo dpkg -i chef-server-core_*.deb
+</code></pre></li>
+
+<li><p>Remove the downloaded file:</p>
+
+<pre><code>rm chef-server-core_*.deb
+</code></pre></li>
+
+<li><p>The Chef server includes a command line utility called <code>chef-server-ctl</code>. Run <code>chef-server-ctl</code> to start the Chef server services:</p>
+
+<pre><code>sudo chef-server-ctl reconfigure
+</code></pre></li>
+</ol>
+
+<h3 id="create-a-chef-user-and-organization">Create a Chef User and Organization</h3>
+
+<p>In order to link workstations and nodes to the Chef server, create an administrator and organization with associated RSA private keys.</p>
+
+<ol>
+<li><p>From the home directory, create a <code>.chef</code> directory to store the keys:</p>
+
+<pre><code>mkdir .chef
+</code></pre></li>
+
+<li><p>Use <code>chef-server-ctl</code> to create a user. In this example, change the following to match your needs: <code>USER_NAME</code>, <code>FIRST_NAME</code>, <code>LAST_NAME</code>, <code>EMAIL</code>, and <code>PASSWORD</code>. Adjust <code>USER_NAME.pem</code>, and leave the <code>.pem</code> extension:</p>
+
+<pre><code>sudo chef-server-ctl user-create USER_NAME FIRST_NAME LAST_NAME EMAIL 'PASSWORD' --filename ~/.chef/USER_NAME.pem
+</code></pre>
+
+<p>To view a list of all users on your Chef server issue the following command:</p>
+
+<pre><code>sudo chef-server-ctl user-list
+</code></pre></li>
+
+<li><p>Create an organization and add the user created in the previous step to the admins and billing admins security groups. Replace <code>ORG_NAME</code> with a short identifier for the organization, <code>ORG_FULL_NAME</code> with the organizations&rsquo; complete name, <code>USER_NAME</code> with the username created in the step above and <code>ORG_NAME.pem</code> with organization&rsquo;s short identifier followed by <code>.pem</code>:</p>
+
+<pre><code>sudo chef-server-ctl org-create ORG_NAME &quot;ORG_FULL_NAME&quot; --association_user USER_NAME --filename ~/.chef/ORG_NAME.pem
+</code></pre>
+
+<p>To view a list of all organizations on your Chef server, use the following command:</p>
+
+<pre><code>sudo chef-server-ctl org-list
+</code></pre></li>
+</ol>
+
+<p>With the Chef server installed and the RSA keys generated, you can begin configuring your workstation. The workstation is where all major configurations will be created for your nodes.</p>
+
+<h2 id="chef-workstations">Chef Workstations</h2>
+
+<p>The Chef workstation is where you create and configure any recipes, cookbooks, attributes, and other changes necessary to manage your nodes. Although this can be a local machine running any OS, there is some benefit to keeping a remote server as your workstation so you can access it from anywhere.</p>
+
+<p>In this section, you will download and install the Chef Workstation package, which provides all tools also included with the <a href="https://docs.chef.io/about_chefdk.html">ChefDK</a>, Chef&rsquo;s development kit.</p>
+
+<h3 id="setting-up-a-workstation">Setting Up a Workstation</h3>
+
+<ol>
+<li><p><a href="https://downloads.chef.io/chef-workstation/0.2.43#ubuntu">Download the latest Chef Workstation</a>:</p>
+
+<pre><code>wget  https://packages.chef.io/files/stable/chef-workstation/0.2.43/ubuntu/18.04/chef-workstation_0.2.43-1_amd64.deb
+</code></pre></li>
+
+<li><p>Install Chef Workstation:</p>
+
+<pre><code>dpkg -i chef-workstation_*.deb
+</code></pre></li>
+
+<li><p>Remove the installation file:</p>
+
+<pre><code>rm chef-workstation_*.deb
+</code></pre></li>
+
+<li><p>Create your Chef repository. The <code>chef-repo</code> directory will store your Chef cookbooks and other related files.</p>
+
+<pre><code>chef generate repo chef-repo
+</code></pre></li>
+
+<li><p>Ensure that your workstation&rsquo;s <code>/etc/hosts</code> file maps its IP address to your workstation&rsquo;s hostname. For example:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1 localhost
+<span class="m">192</span>.0.2.0 workstation
+...
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create a <code>.chef</code> subdirectory. The <code>.chef</code> subdirectory will store your <a href="/docs/applications/configuration-management/beginners-guide-chef/#knife">Knife</a> configuration file and your <code>.pem</code> files that are used for RSA key pair authentication with the Chef server. Move into the <code>chef-repo</code> directory:</p>
+
+<pre><code>mkdir ~/chef-repo/.chef
+cd chef-repo
+</code></pre></li>
+</ol>
+
+<h3 id="add-the-rsa-private-keys">Add the RSA Private Keys</h3>
+
+<p>Authentication between the Chef server and workstation and/or nodes is completed with public key encryption. This ensures that the Chef server only communicates with trusted machines. In this section, the RSA private keys, generated when setting up the Chef server, will be copied to the workstation to allow communicate between the Chef server and workstation.</p>
+
+<ol>
+<li><p>If you do not already have an RSA key-pair on your workstation, generate one. This key-pair will be used to gain  access to the Chef server and then transfer their <code>.pem</code> files:</p>
+
+<pre><code>ssh-keygen -b 4096
+</code></pre>
+
+<p>Press <strong>Enter</strong> to use the default names <code>id_rsa</code> and <code>id_rsa.pub</code> in <code>/home/your_username/.ssh</code> before entering your passphrase.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you have disabled SSH password authentication on your Chef server&rsquo;s Linode, as recommended by the <a href="/docs/security/securing-your-server/#ssh-daemon-options">How to Secure Your Server</a> guide, re-enable SSH password authentication prior to performing these steps. Be sure to disable it again once you have added your workstation&rsquo;s public ssh key to the Chef server&rsquo;s Linode.</div>
+</blockquote>
+
+
+<p>Upload your workstation&rsquo;s public key to the Linode hosting the Chef server. Ensure you replace <code>example_user</code> with the Chef server&rsquo;s user account and <code>192.0.2.0</code> with its IP address:</p>
+
+<pre><code>ssh-copy-id example_user@192.0.2.0
+</code></pre></li>
+
+<li><p>Copy the <code>.pem</code> files from your Chef server to your workstation using the <code>scp</code> command. Replace <code>user</code> with the appropriate username, and <code>192.0.2.0</code> with your Chef server&rsquo;s IP:</p>
+
+<pre><code>scp example_user@192.0.2.0:~/.chef/*.pem ~/chef-repo/.chef/
+</code></pre></li>
+
+<li><p>Confirm that the files have been copied successfully by listing the contents of the <code>.chef</code> directory:</p>
+
+<pre><code>ls ~/chef-repo/.chef
+</code></pre>
+
+<p>Your <code>.pem</code> files should be listed.</p></li>
+</ol>
+
+<h3 id="add-version-control">Add Version Control</h3>
+
+<p>The workstation is used to create, download, and edit cookbooks and other related files. You should track any changes made to these files with version control software, like Git. The Chef Workstation adds the Git component to your workstation and initializes a Git repository in the directory where the <code>chef-repo</code> was generated. Configure Git by adding your username and email, and add and commit any new files created in the steps above.</p>
+
+<ol>
+<li><p>Configure Git by adding your username and email, replacing the needed values:</p>
+
+<pre><code>git config --global user.name yourname
+git config --global user.email user@email.com
+</code></pre></li>
+
+<li><p>Add the <code>.chef</code> directory to the <code>.gitignore</code> file:</p>
+
+<pre><code>echo &quot;.chef&quot; &gt; ~/chef-repo/.gitignore
+</code></pre></li>
+
+<li><p>Move into the <code>~/chef-repo</code> directory, if you are not already there and add and commit all existing files:</p>
+
+<pre><code>cd ~/chef-repo
+git add .
+git commit -m &quot;initial commit&quot;
+</code></pre></li>
+
+<li><p>Make sure the directory is clean:</p>
+
+<pre><code>git status
+</code></pre>
+
+<p>It should output:</p>
+
+<pre class="file terminal">
+  <code>
+        On branch master
+        nothing to commit, working directory clean
+    </code>
+</pre>
+</li>
+</ol>
+
+<h2 id="generate-your-first-cookbook">Generate your First Cookbook</h2>
+
+<ol>
+<li><p>Generate a new Chef cookbook:</p>
+
+<pre><code>chef generate cookbook my_cookbook
+</code></pre></li>
+
+<li><p>Generate the <code>chef-repo</code> and move into the newly-created directory:</p>
+
+<pre><code>chef generate app chef-repo
+cd chef-repo
+</code></pre></li>
+</ol>
+
+<h3 id="configure-knife">Configure Knife</h3>
+
+<ol>
+<li><p>Create a knife configuration file by navigating to your <code>~/chef-repo/.chef</code> directory and creating a file named <code>config.rb</code> using your preferred text editor.</p></li>
+
+<li><p>Copy the following configuration into the <code>config.rb</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/chef-repo/.chef/config.rb 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="n">current_dir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span>
+<span class="n">log_level</span>                <span class="ss">:info</span>
+<span class="n">log_location</span>             <span class="no">STDOUT</span>
+<span class="n">node_name</span>                <span class="s1">&#39;node_name&#39;</span>
+<span class="n">client_key</span>               <span class="s2">&#34;USER.pem&#34;</span>
+<span class="n">validation_client_name</span>   <span class="s1">&#39;ORG_NAME-validator&#39;</span>
+<span class="n">validation_key</span>           <span class="s2">&#34;ORGANIZATION-validator.pem&#34;</span>
+<span class="n">chef_server_url</span>          <span class="s1">&#39;https://example.com/organizations/ORG_NAME&#39;</span>
+<span class="n">cache_type</span>               <span class="s1">&#39;BasicFile&#39;</span>
+<span class="n">cache_options</span><span class="p">(</span> <span class="ss">:path</span> <span class="o">=&gt;</span> <span class="s2">&#34;</span><span class="si">#{</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;HOME&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/.chef/checksums&#34;</span> <span class="p">)</span>
+<span class="n">cookbook_path</span>            <span class="o">[</span><span class="s2">&#34;</span><span class="si">#{</span><span class="n">current_dir</span><span class="si">}</span><span class="s2">/../cookbooks&#34;</span><span class="o">]</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Change the following:</p>
+
+<ul>
+<li>The value for <code>node_name</code> should be the username that was created on the Chef server.</li>
+<li>Change <code>USER.pem</code> under <code>client_key</code> to reflect your <code>.pem</code> file for your user.</li>
+<li>The <code>validation_client_name</code> should be your organization&rsquo;s <code>ORG_NAME</code> followed by <code>-validator</code>.</li>
+<li><code>ORGANIZATION-validator.pem</code> in the <code>validation_key</code> path should be set to the <code>ORG_NAME</code> followed by <code>-validator.pem</code>.</li>
+<li>Finally the <code>chef_server_url</code> should be the Chef server&rsquo;s domain with <code>/organizations/ORG_NAME</code> appended. Be sure to replace <code>ORG_NAME</code> with your own organization&rsquo;s name.</li>
+</ul></li>
+
+<li><p>Move to the <code>chef-repo</code> directory and copy the needed SSL certificates from the server:</p>
+
+<pre><code>cd ..
+knife ssl fetch
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The SSL certificates are generated during the installation of the Chef server. These certificates are self-signed, which means there isn’t a signing certificate authority (CA) to verify. The Chef server&rsquo;s hostname and FQDN should be the same so that the workstation can fetch and verify the SSL certificates. You can verify the Chef server&rsquo;s hostname and FQDN by running <code>hostname</code> and <code>hostname -f</code>, respectively. Consult the <a href="https://docs.chef.io/server_security.html#regenerate-certificates">Chef documentation</a> for details on regenerating SSL certificates.</div>
+</blockquote>
+</li>
+
+<li><p>Confirm that <code>config.rb</code> is set up correctly by running the client list:</p>
+
+<pre><code>knife client list
+</code></pre>
+
+<p>This command should output the validator name.</p></li>
+</ol>
+
+<p>Now that your Chef server and workstation are configured, you can bootstrap your first node.</p>
+
+<h2 id="bootstrap-a-node">Bootstrap a Node</h2>
+
+<p>Bootstrapping a node installs the Chef client on the node and validates the node. This allows the node to read from the Chef server and pull down and apply any needed configuration updates detected by the chef-client.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you encounter any <code>401 Unauthorized</code> errors ensure that your <code>ORGANIZATION.pem</code> file has <code>700</code> permissions. See <a href="https://docs.chef.io/errors.html">Chef&rsquo;s troubleshooting</a> guide for further information on diagnosing authentication errors.</div>
+</blockquote>
+
+
+<ol>
+<li><p>From your <em>workstation</em>, navigate to your <code>~/chef-repo/.chef</code> directory:</p>
+
+<pre><code>cd ~/chef-repo/.chef
+</code></pre></li>
+
+<li><p>Bootstrap the client node either using the client node&rsquo;s root user, or a user with elevated privileges:</p>
+
+<ul>
+<li><p><strong>As the node&rsquo;s root user</strong>, change <code>password</code> to your root password and <code>nodename</code> to the desired name for your client node. You can leave this off if you would like the name to default to your node&rsquo;s hostname:</p>
+
+<pre><code>knife bootstrap 192.0.2.0 -x root -P password --node-name nodename
+</code></pre></li>
+
+<li><p><strong>As a user with sudo privileges</strong>, change <code>username</code> to a node user, <code>password</code> to the user&rsquo;s password and <code>nodename</code> to the desired name for the client node. You can leave this off if you would like the name to default to your node&rsquo;s hostname:</p>
+
+<pre><code>knife bootstrap 192.0.2.0 -x username -P password --sudo --node-name nodename
+</code></pre></li>
+
+<li><p><strong>As a user with key-pair authentication</strong>, change <code>username</code> to a node user, and <code>nodename</code> to the desired name for the client node. You can leave this off if you would like the name to default to your client node&rsquo;s hostname:</p>
+
+<pre><code>knife bootstrap 192.0.2.0 --ssh-user username --sudo --identity-file ~/.ssh/id_rsa.pub --node-name hostname
+</code></pre></li>
+</ul></li>
+
+<li><p>Confirm that the node has been bootstrapped by listing the client nodes:</p>
+
+<pre><code>knife client list
+</code></pre>
+
+<p>Your new client node should be included in the list.</p></li>
+
+<li><p>Add the bootstrapped node to your workstation&rsquo;s <code>/etc/hosts</code> file. Replace <code>node-hostname</code> with the hostname you just assigned to the node when it was bootstrapped:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="m">127</span>.0.0.1 localhost
+<span class="m">192</span>.0.2.0 workstation
+<span class="m">198</span>.51.100.0 node-hostname
+...
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<h2 id="download-a-cookbook-optional">Download a Cookbook (Optional)</h2>
+
+<p>When using Chef, the Chef client should periodically run on your nodes and pull down any changes pushed to the Chef server from your workstation. You will also want the <code>validation.pem</code> file that is uploaded to your node upon bootstrap to be deleted for security purposes. While these steps can be performed manually, it is often easier and more efficient to set them up as a cookbook.</p>
+
+<p>This section is optional, but provides instructions on downloading a cookbook to your workstation and pushing it to a server, and includes the skeleton of a basic cookbook to expand on and experiment with.</p>
+
+<ol>
+<li><p>From your <em>workstation</em>, navigate to your <code>~/chef-repo/.chef</code> directory:</p>
+
+<pre><code>cd ~/chef-repo/.chef
+</code></pre></li>
+
+<li><p>Download the cookbook and dependencies:</p>
+
+<pre><code>knife cookbook site install cron-delvalidate
+</code></pre></li>
+
+<li><p>Open the <code>default.rb</code> file to examine the default cookbook recipe:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/chef-repo/cookbooks/cron-delvalidate/recipes/default.rb 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ruby" data-lang="ruby"><span class="c1">#</span>
+<span class="c1"># Cookbook Name:: cron-delvalidate</span>
+<span class="c1"># Recipe:: Chef-Client Cron &amp; Delete Validation.pem</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+
+<span class="n">cron</span> <span class="s2">&#34;clientrun&#34;</span> <span class="k">do</span>
+  <span class="n">minute</span> <span class="s1">&#39;0&#39;</span>
+  <span class="n">hour</span> <span class="s1">&#39;*/1&#39;</span>
+  <span class="n">command</span> <span class="s2">&#34;/usr/bin/chef-client&#34;</span>
+  <span class="n">action</span> <span class="ss">:create</span>
+<span class="k">end</span>
+
+<span class="n">file</span> <span class="s2">&#34;/etc/chef/validation.pem&#34;</span> <span class="k">do</span>
+  <span class="n">action</span> <span class="ss">:delete</span>
+<span class="k">end</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The resource <code>cron &quot;clientrun&quot; do</code> defines the cron action. It is set to run the <code>chef-client</code> action (<code>/usr/bin/chef-client</code>) every hour (<code>*/1</code> with the <code>*/</code> defining that it&rsquo;s every hour and not 1AM daily). The <code>action</code> code denotes that Chef is <em>creating</em> a new cronjob.</p>
+
+<p><code>file &quot;/etc/chef/validation.pem&quot; do</code> calls to the <code>validation.pem</code> file. The <code>action</code> defines that the file should be removed (<code>:delete</code>).</p>
+
+<p>These are two very basic sets of code written in Ruby that provide an example of the code structure that will be used when creating Chef cookbooks. These examples can be edited and expanded as needed.</p></li>
+
+<li><p>Add the recipe to your node&rsquo;s run list, replacing <code>nodename</code> with your node&rsquo;s name:</p>
+
+<pre><code>knife node run_list add nodename 'recipe[cron-delvalidate::default]'
+</code></pre></li>
+
+<li><p>Push the cookbook to the Chef server:</p>
+
+<pre><code>knife cookbook upload cron-delvalidate
+</code></pre>
+
+<p>This command is also used when updating cookbooks.</p></li>
+
+<li><p>Use <code>knife-ssh</code> to run the <code>chef-client</code> command on your node. Replace <code>nodename</code> with your node&rsquo;s name. If you have set up your node with a limited user account, replace <code>-x root</code> with the correct username, i.e. <code>-x username</code>.</p>
+
+<pre><code>knife ssh 'name:nodename' 'sudo chef-client' -x root
+</code></pre>
+
+<p>The recipes in the run list will be pulled from the server and run on the node. In this instance, it will be the <code>cron-delvalidate</code> recipe. This recipe ensures that any cookbooks pushed to the Chef Server, and added to the node&rsquo;s run list will be pulled down to bootstrapped nodes once an hour. This automated step eliminates connecting to the node in the future to pull down changes.</p></li>
+</ol>
+
+<p>Now that you know how to download Chef cookbooks, add the cookbook to a node&rsquo;s run list, and apply the configurations on a node, consider securing your Chef managed node with the following cookbooks: <a href="https://supermarket.chef.io/cookbooks/users">Users</a> and <a href="https://supermarket.chef.io/cookbooks/firewall">Firewall</a>.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#prerequisites">Prerequisites</a></li>
+<li><a href="#the-chef-server">The Chef Server</a>
+<ul>
+<li><a href="#install-the-chef-server">Install the Chef Server</a></li>
+<li><a href="#create-a-chef-user-and-organization">Create a Chef User and Organization</a></li>
+</ul></li>
+<li><a href="#chef-workstations">Chef Workstations</a>
+<ul>
+<li><a href="#setting-up-a-workstation">Setting Up a Workstation</a></li>
+<li><a href="#add-the-rsa-private-keys">Add the RSA Private Keys</a></li>
+<li><a href="#add-version-control">Add Version Control</a></li>
+</ul></li>
+<li><a href="#generate-your-first-cookbook">Generate your First Cookbook</a>
+<ul>
+<li><a href="#configure-knife">Configure Knife</a></li>
+</ul></li>
+<li><a href="#bootstrap-a-node">Bootstrap a Node</a></li>
+<li><a href="#download-a-cookbook-optional">Download a Cookbook (Optional)</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

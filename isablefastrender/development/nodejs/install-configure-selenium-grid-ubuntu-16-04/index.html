@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Install and Configure Selenium Grid on Ubuntu 16.04 for Automated Testing</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide shows how to set up a Selenium grid that can be used to test webpages and applications in different browsers, browser versions, and operating systems. It can also be used to spread a large test suite across several servers for increased performance.">
+        <meta name="keywords" content="selenium, node.js,  headless browser, automation, webdriver">
+        
+        <meta property="og:title" content="Install and Configure Selenium Grid on Ubuntu 16.04 for Automated Testing">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/development/nodejs/install-configure-selenium-grid-ubuntu-16-04/">
+        <meta property="og:description" content="This guide shows how to set up a Selenium grid that can be used to test webpages and applications in different browsers, browser versions, and operating systems. It can also be used to spread a large test suite across several servers for increased performance.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/development/nodejs/install-configure-selenium-grid-ubuntu-16-04/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/">Development</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/nodejs/">Node.js</a>
+  
+</li>
+
+
+<li>
+  
+  Install and Configure Selenium Grid on Ubuntu 16.04 for Automated Testing
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Use Selenium Grid for Cross-Browser Compatibility Testing</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-17T16:54:02-05:00">Monday, December 17, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Jared Kobos
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fnodejs%2finstall-configure-selenium-grid-ubuntu-16-04%2f&via=linode&text=Install%20and%20Configure%20Selenium%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fnodejs%2finstall-configure-selenium-grid-ubuntu-16-04%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fnodejs%2finstall-configure-selenium-grid-ubuntu-16-04%2f&t=Install%20and%20Configure%20Selenium%20Grid%20on%20Ubuntu%2016.04%20for%20Automated%20Testing" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Install%20and%20Configure%20Selenium%20Grid%20on%20Ubuntu%2016.04%20for%20Automated%20Testing%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdevelopment%2fnodejs%2finstall-configure-selenium-grid-ubuntu-16-04%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/development%5cnodejs%5cinstall-configure-selenium-grid-ubuntu-16-04%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/development%5cnodejs%5cinstall-configure-selenium-grid-ubuntu-16-04%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="what-is-selenium-grid">What is Selenium Grid?</h2>
+
+<p><a href="https://seleniumhq.github.io/selenium/docs/api/javascript/index.html">Selenium</a> is a browser automation library with bindings for most common programming languages. It is most often used for testing web applications, but can also be used to automate any task that a web browser can perform. In contrast to similar tools such as Nightmare.js, Selenium can run tasks or tests on any version of any major browser. This can make it more complicated to get running, but allows you to test your application&rsquo;s behavior on exactly the platforms that users are likely to need.</p>
+
+<p>For many applications, the Selenium standalone server is sufficient. However, Selenium can also be configured as a grid, with multiple nodes communicating with a central hub. The nodes and hub can be run on the same computer or server, or can be located on separate Linodes. Selenium Grid offers two main benefits:</p>
+
+<ul>
+<li><p>Selenium runs on Java and is compatible with all major operating systems. This makes it possible to set up a grid consisting of servers (or virtual machines) running Linux, OSX, and Windows. A test suite can then be run against the grid, with each test run on multiple browsers and operating systems. The hub will delegate each test to a node that has the requested capability (e.g. sending a Safari test to a node with OSX and the Safari webdriver).</p></li>
+
+<li><p>For larger projects, running a lengthy test suite in series can be time consuming. By running the test suite across a grid consisting of multiple servers, it is possible to distribute the tests across multiple nodes and significantly increase the performance of the testing process.</p></li>
+</ul>
+
+<p>This guide shows how to set up a simple Selenium grid consisting of a hub and two nodes, all on  separate Linodes. A simple test script will then be used to demonstrate running tests against different versions of Firefox.</p>
+
+<h2 id="prepare-grid-linodes">Prepare Grid Linodes</h2>
+
+<p>Install Java and other dependencies on each Linode that will be part of the Selenium grid. This guide uses three Linodes for this purpose, but you can also run all of the nodes from the same Linode if you prefer. Throughout this guide, these Linodes will be referred to as <code>hub</code>, <code>node-1</code>, and <code>node-2</code>.</p>
+
+<h3 id="install-java">Install Java</h3>
+
+
+
+
+
+<p>The steps in this section will install the Java 8 JDK on Ubuntu 16.04. For other distributions, see the <a href="https://docs.oracle.com/javase/8/docs/technotes/guides/install/linux_jdk.html#BJFGGEFG">official docs</a>.</p>
+
+<ol>
+<li><p>Install <code>software-properties-common</code> to easily add new repositories:</p>
+
+<pre><code>sudo apt-get install software-properties-common
+</code></pre></li>
+
+<li><p>Add the Java PPA:</p>
+
+<pre><code>sudo add-apt-repository ppa:webupd8team/java
+</code></pre></li>
+
+<li><p>Update the source list:</p>
+
+<pre><code>sudo apt-get update
+</code></pre></li>
+
+<li><p>Install the Java JDK 8:</p>
+
+<pre><code>sudo apt-get install oracle-java8-installer
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="install-dependencies">Install Dependencies</h3>
+
+<p>When running tests with Selenium, each grid node can only run tests on browsers that have been installed on that node. Each browser also requires a separate executable webdriver. For this example, install Geckodriver and different versions of Firefox on <code>node-1</code> and <code>node-2</code>.</p>
+
+<ol>
+<li><p>Check the latest release of Geckodriver on the <a href="https://github.com/mozilla/geckodriver/releases">releases</a> page and download it to <code>node-1</code> and <code>node-2</code>:</p>
+
+<pre><code>wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
+</code></pre></li>
+
+<li><p>Extract the archive and move the executable to a location in your PATH:</p>
+
+<pre><code>tar -xvf geckodriver-v0.19.1-linux64.tar.gz
+sudo mv geckodriver /usr/local/bin/
+</code></pre></li>
+
+<li><p>On <code>node-1</code>, install the latest stable version of Firefox:</p>
+
+<pre><code>sudo apt install firefox
+</code></pre></li>
+
+<li><p>On <code>node-2</code>, install the Firefox developer edition:</p>
+
+<pre><code>sudo add-apt-repository ppa:ubuntu-mozilla-daily/firefox-aurora
+sudo apt update &amp;&amp; sudo apt install firefox
+</code></pre></li>
+
+<li><p>Check and record the version numbers to use when running tests:</p>
+
+<p><strong>node-1:</strong></p>
+
+<pre><code>firefox --version
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Mozilla Firefox 58.0.2
+</code>
+</pre>
+
+
+<p><strong>node-2:</strong></p>
+
+<pre><code>firefox --version
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Mozilla Firefox 59.0
+</code>
+</pre>
+</li>
+</ol>
+
+<h3 id="download-selenium">Download Selenium</h3>
+
+<p>Selenium provides a single <code>.jar</code> file that can be used to run a standalone server, hub, or node. Check the latest release at the <a href="https://www.seleniumhq.org/download/">Selenium downloads page</a> and download the file to each Linode using <code>wget</code>:</p>
+
+<pre><code>wget http://selenium-release.storage.googleapis.com/3.10/selenium-server-standalone-3.10.0.jar
+</code></pre>
+
+<h3 id="start-grid-hub">Start Grid Hub</h3>
+
+<ol>
+<li><p>On the <code>hub</code> Linode, start the hub by running the Selenium server with <code>-role</code> set to <code>hub</code>:</p>
+
+<pre><code>java -jar selenium-server-standalone-3.10.0.jar -role hub
+</code></pre></li>
+
+<li><p>The resulting output will give you URLs to use for registering nodes and connecting to the hub. Copy these URLs for later use:</p>
+
+<pre class="file terminal">
+  <code>
+21:27:51.470 INFO [GridLauncherV3.launch] - Selenium build info: version: '3.10.0', revision: '176b4a9'
+21:27:51.475 INFO [GridLauncherV3$2.launch] - Launching Selenium Grid hub on port 4444
+2018-03-06 21:27:52.248:INFO::main: Logging initialized @1166ms to org.seleniumhq.jetty9.util.log.StdErrLog
+21:27:52.446 INFO [Hub.start] - Selenium Grid hub is up and running
+21:27:52.447 INFO [Hub.start] - Nodes should register to http://69.164.211.42:4444/grid/register/
+21:27:52.448 INFO [Hub.start] - Clients should connect to http://69.164.211.42:4444/wd/hub
+</code>
+</pre>
+</li>
+</ol>
+
+<h3 id="configure-grid-nodes">Configure Grid Nodes</h3>
+
+<ol>
+<li><p>On <code>node-1</code> and <code>node-2</code>, create a node configuration file <code>config.json</code> and add the following content. Replace the <code>hub</code> address with the public IP of the <code>hub</code> Linode, and replace the <code>version</code> with the version of Firefox installed on the respective nodes. If you are putting the grid and nodes on the same Linode, replace the IP address with <code>http://localhost:4444</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		config.json 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-json" data-lang="json"><span class="p">{</span>
+  <span class="nt">&#34;capabilities&#34;</span><span class="p">:</span>
+  <span class="p">[</span>
+    <span class="p">{</span>
+      <span class="nt">&#34;browserName&#34;</span><span class="p">:</span> <span class="s2">&#34;firefox&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;marionette&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nt">&#34;maxInstances&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+      <span class="nt">&#34;seleniumProtocol&#34;</span><span class="p">:</span> <span class="s2">&#34;WebDriver&#34;</span><span class="p">,</span>
+      <span class="nt">&#34;version&#34;</span><span class="p">:</span> <span class="s2">&#34;58.0.2&#34;</span>
+    <span class="p">}</span>
+  <span class="p">],</span>
+  <span class="nt">&#34;proxy&#34;</span><span class="p">:</span> <span class="s2">&#34;org.openqa.grid.selenium.proxy.DefaultRemoteProxy&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;maxSession&#34;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+  <span class="nt">&#34;port&#34;</span><span class="p">:</span> <span class="mi">5555</span><span class="p">,</span>
+  <span class="nt">&#34;register&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="nt">&#34;registerCycle&#34;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+  <span class="nt">&#34;hub&#34;</span><span class="p">:</span> <span class="s2">&#34;http://192.0.2.0:4444&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;nodeStatusCheckTimeout&#34;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+  <span class="nt">&#34;nodePolling&#34;</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+  <span class="nt">&#34;role&#34;</span><span class="p">:</span> <span class="s2">&#34;node&#34;</span><span class="p">,</span>
+  <span class="nt">&#34;unregisterIfStillDownAfter&#34;</span><span class="p">:</span> <span class="mi">60000</span><span class="p">,</span>
+  <span class="nt">&#34;downPollingLimit&#34;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+  <span class="nt">&#34;debug&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+  <span class="nt">&#34;servlets&#34;</span> <span class="p">:</span> <span class="p">[],</span>
+  <span class="nt">&#34;withoutServlets&#34;</span><span class="p">:</span> <span class="p">[],</span>
+  <span class="nt">&#34;custom&#34;</span><span class="p">:</span> <span class="p">{}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Connect each node to the hub:</p>
+
+<pre><code>java -jar selenium-server-standalone-3.10.0.jar -role node -nodeConfig config.json
+</code></pre></li>
+
+<li><p>You should see output similar to the following, indicating that your nodes have been successfully registered to the hub:</p>
+
+<pre class="file terminal">
+  <code>
+21:33:22.856 INFO - Selenium Server is up and running on port 5555
+21:33:22.857 INFO - Selenium Grid node is up and ready to register to the hub
+21:33:22.895 INFO - Starting auto registration thread. Will try to register every 5000 ms.
+21:33:22.896 INFO - Registering the node to the hub: http://69.164.211.42:4444/grid/register
+21:33:23.064 INFO - Updating the node configuration from the hub
+21:33:23.178 INFO - The node is registered to the hub and ready to use
+</code>
+</pre>
+</li>
+</ol>
+
+<p>You can also check the output from the hub itself:</p>
+
+<pre><code><pre class="file terminal">
+  <code>
+21:27:53.849 INFO [DefaultGridRegistry.add] - Registered a node http://198.58.122.154:5555
+21:27:56.445 WARN [BaseRemoteProxy.<init>] - Max instance not specified. Using default = 1 instance
+21:27:56.450 INFO [DefaultGridRegistry.add] - Registered a node http://50.116.22.93:5555
+21:27:56.743 WARN [BaseRemoteProxy.<init>] - Max instance not specified. Using default = 1 instance
+</code>
+</pre>
+
+</code></pre>
+
+<ol>
+<li><p>Navigate to <code>http://192.0.2.0:4444/grid/console</code> in a web browser (replace <code>192.0.2.0</code> with the public IP address of your <code>hub</code> Linode) to see a console listing your available nodes.</p>
+
+<p><img src="grid-console.png" alt="Selenium Grid Console" title="Selenium Grid Console" /></p>
+
+<p>The console should show that each node is configured to use a different version of Firefox.</p></li>
+</ol>
+
+<h2 id="prepare-local-test-environment">Prepare Local Test Environment</h2>
+
+<p>In this example, the test script will be run from your local development machine. It will connect to the remote grid and execute the tests from there. If you do not have an available development machine, use a separate Linode.</p>
+
+<h3 id="install-node-js-and-npm">Install Node.js and NPM</h3>
+
+<p>This guide uses the NPM <code>selenium-webdriver</code> package, which contains Node.js bindings for Selenium.</p>
+
+
+
+
+
+<ol>
+<li><p>Use <code>curl</code> to download the setup script provided by NodeSource. Replace the Node version in the <code>curl</code> command with the <a href="https://github.com/nodesource/distributions/tree/master/deb">version you would like to install</a>:</p>
+
+<pre><code>curl -sL https://deb.nodesource.com/setup_9.x -o nodesource_setup.sh
+</code></pre></li>
+
+<li><p>Run the script:</p>
+
+<pre><code>sudo bash nodesource_setup.sh
+</code></pre></li>
+
+<li><p>The setup script will run an <code>apt-get update</code> automatically, so you can install Node.js right away:</p>
+
+<pre><code>sudo apt install nodejs npm
+</code></pre></li>
+</ol>
+
+<p>The Node Package Manager (NPM) will be installed alongside Node.js.</p>
+
+
+
+
+
+<h3 id="create-an-example-test-script">Create an Example Test Script</h3>
+
+<p>This script tests the Linode Docs home page.</p>
+
+<ol>
+<li><p>Create a directory for the test suite:</p>
+
+<pre><code>mkdir test-selenium &amp;&amp; cd test-selenium
+</code></pre></li>
+
+<li><p>Initialize a Node.js app within the directory:</p>
+
+<pre><code>npm init
+</code></pre>
+
+<p>Accept the default values when prompted.</p></li>
+
+<li><p>Install NPM packages:</p>
+
+<pre><code>npm install --save selenium-webdriver
+</code></pre></li>
+
+<li><p>Create <code>test.js</code> and add the following script. Replace <code>192.0.2.0</code> on Line 11 with the IP address of <code>hub</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/test-selenium/test.js 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-js" data-lang="js"><span class="k">const</span> <span class="p">{</span><span class="nx">Builder</span><span class="p">,</span> <span class="nx">By</span><span class="p">,</span> <span class="nx">Capabilities</span><span class="p">,</span> <span class="nx">Key</span><span class="p">,</span> <span class="nx">until</span><span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;selenium-webdriver&#39;</span><span class="p">);</span>
+<span class="kd">let</span> <span class="nx">firefox</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;selenium-webdriver/firefox&#39;</span><span class="p">);</span>
+
+<span class="k">const</span> <span class="nx">VERSIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;58.0.2&#39;</span><span class="p">,</span><span class="s1">&#39;59.0&#39;</span><span class="p">];</span>
+
+<span class="kd">function</span> <span class="nx">buildDrivers</span><span class="p">(</span><span class="nx">versions</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">drivers</span> <span class="o">=</span> <span class="p">[];</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">version</span> <span class="k">of</span> <span class="nx">versions</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">driver</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Builder</span><span class="p">().</span><span class="nx">forBrowser</span><span class="p">(</span><span class="s1">&#39;firefox&#39;</span><span class="p">)</span>
+                                      <span class="p">.</span><span class="nx">withCapabilities</span><span class="p">(</span><span class="nx">Capabilities</span><span class="p">.</span><span class="nx">firefox</span><span class="p">().</span><span class="nx">setBrowserVersion</span><span class="p">(</span><span class="nx">version</span><span class="p">))</span>
+                                      <span class="p">.</span><span class="nx">usingServer</span><span class="p">(</span><span class="s1">&#39;http://192.0.2.0:4444/wd/hub&#39;</span><span class="p">)</span>
+                                      <span class="p">.</span><span class="nx">setFirefoxOptions</span><span class="p">(</span>
+                                            <span class="k">new</span> <span class="nx">firefox</span><span class="p">.</span><span class="nx">Options</span><span class="p">().</span><span class="nx">headless</span><span class="p">())</span>
+                                      <span class="p">.</span><span class="nx">build</span><span class="p">();</span>
+        <span class="nx">drivers</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">driver</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;built drivers for &#39;</span> <span class="o">+</span> <span class="nx">versions</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nx">drivers</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kr">async</span> <span class="kd">function</span> <span class="nx">example</span><span class="p">(</span><span class="nx">driver</span><span class="p">)</span> <span class="p">{</span>
+       <span class="k">try</span> <span class="p">{</span>
+        <span class="kr">await</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;http://www.linode.com/docs&#39;</span><span class="p">);</span>
+        <span class="kr">await</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">findElement</span><span class="p">(</span><span class="nx">By</span><span class="p">.</span><span class="nx">name</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">)).</span><span class="nx">sendKeys</span><span class="p">(</span><span class="s1">&#39;nginx&#39;</span><span class="p">,</span> <span class="nx">Key</span><span class="p">.</span><span class="nx">RETURN</span><span class="p">);</span>
+        <span class="kd">let</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">findElement</span><span class="p">(</span><span class="nx">By</span><span class="p">.</span><span class="nx">linkText</span><span class="p">(</span><span class="s1">&#39;How to Configure nginx&#39;</span><span class="p">));</span>
+        <span class="kr">await</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">wait</span><span class="p">(</span><span class="nx">until</span><span class="p">.</span><span class="nx">elementIsVisible</span><span class="p">(</span><span class="nx">el</span><span class="p">),</span> <span class="mi">1000</span><span class="p">);</span>
+        <span class="kr">await</span> <span class="nx">el</span><span class="p">.</span><span class="nx">click</span><span class="p">();</span>
+        <span class="nx">title</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">getTitle</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span>
+        <span class="kr">await</span> <span class="nx">driver</span><span class="p">.</span><span class="nx">quit</span><span class="p">();</span>
+      <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kr">async</span> <span class="kd">function</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">const</span> <span class="nx">drivers</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">buildDrivers</span><span class="p">(</span><span class="nx">VERSIONS</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">driver</span> <span class="k">of</span> <span class="nx">drivers</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">example</span><span class="p">(</span><span class="nx">driver</span><span class="p">);</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="nx">main</span><span class="p">();</span>
+</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Save the test script, then run it:</p>
+
+<pre><code>node test.js
+</code></pre>
+
+<p>If successful, the script will search for NGINX in the Linode docs library, visit one of the results pages, and check that the page title matches the link text. It will print out the page title as well:</p>
+
+<pre class="file terminal">
+  <code>
+built drivers for 58.0.2,59.0
+How to Configure nginx
+How to Configure nginx
+</code>
+</pre>
+</li>
+
+<li><p>The driver requested two versions of Firefox to run on the two nodes. <code>test.js</code> runs the driver asynchronously across two nodes in order to run the <code>getTitle</code> method across two browser versions.</p></li>
+</ol>
+
+<p>By creating different drivers for each combination of platform, browser, and version you want to test, you can specify which node or nodes should be used to run each test. If more than one node has the requested capabilities, Selenium will choose one of the nodes at random. In this way it is possible to run a large, cross-browser test suite in much less time than it would take to run the tests one at a time.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.seleniumhq.org/projects/webdriver/">Selenium Project Home</a></li>
+
+<li><a href="http://seleniumhq.github.io/selenium/docs/api/javascript/module/selenium-webdriver/index.html">Selenium Node.js Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-selenium-grid">What is Selenium Grid?</a></li>
+<li><a href="#prepare-grid-linodes">Prepare Grid Linodes</a>
+<ul>
+<li><a href="#install-java">Install Java</a></li>
+<li><a href="#install-dependencies">Install Dependencies</a></li>
+<li><a href="#download-selenium">Download Selenium</a></li>
+<li><a href="#start-grid-hub">Start Grid Hub</a></li>
+<li><a href="#configure-grid-nodes">Configure Grid Nodes</a></li>
+</ul></li>
+<li><a href="#prepare-local-test-environment">Prepare Local Test Environment</a>
+<ul>
+<li><a href="#install-node-js-and-npm">Install Node.js and NPM</a></li>
+<li><a href="#create-an-example-test-script">Create an Example Test Script</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

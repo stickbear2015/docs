@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Troubleshooting Basic Connection Issues</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Troubleshooting steps to help restore basic connectivity to your Linode when it is unresponsive.">
+        <meta name="keywords" content="linux, reboot, lish">
+        
+        <meta property="og:title" content="Troubleshooting Basic Connection Issues">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/troubleshooting/troubleshooting-basic-connection-issues/">
+        <meta property="og:description" content="Troubleshooting steps to help restore basic connectivity to your Linode when it is unresponsive.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/troubleshooting/troubleshooting-basic-connection-issues/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/troubleshooting/">Troubleshooting</a>
+  
+</li>
+
+
+<li>
+  
+  Troubleshooting Basic Connection Issues
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Troubleshooting Basic Connection Issues</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-14T15:02:23-05:00">Thursday, February 14, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2ftroubleshooting-basic-connection-issues%2f&via=linode&text=Troubleshooting%20Basic%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2ftroubleshooting-basic-connection-issues%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2ftroubleshooting%2ftroubleshooting-basic-connection-issues%2f&t=Troubleshooting%20Basic%20Connection%20Issues" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Troubleshooting%20Basic%20Connection%20Issues%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2ftroubleshooting%2ftroubleshooting-basic-connection-issues%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/troubleshooting%5ctroubleshooting-basic-connection-issues%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/troubleshooting%5ctroubleshooting-basic-connection-issues%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>This guide presents troubleshooting strategies for Linodes that are unresponsive to any network access. One reason that a Linode may be unresponsive is if you recently performed a distribution upgrade or other broad software updates to your Linode, as those changes can lead to unexpected problems for your core system components.</p>
+
+<p>Similarly, your server may be unresponsive after maintenance was applied by Linode to your server&rsquo;s host (frequently, this is correlated with software/distribution upgrades performed on your deployment prior to the host&rsquo;s maintenance). This guide is designed as a useful resource for either of these scenarios.</p>
+
+<p>If you can <a href="/docs/tools-reference/linux-system-administration-basics/#the-ping-command">ping</a> your Linode, but you cannot access SSH or other services, this guide will not assist with troubleshooting those services. Instead, refer to the <a href="/docs/troubleshooting/troubleshooting-ssh/">Troubleshooting SSH</a> or <a href="/docs/troubleshooting/troubleshooting-web-servers-databases-other-services/">Troubleshooting Web Servers, Databases, and Other Services</a> guides.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Where to go for help outside this guide
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><p>This guide explains how to use different troubleshooting commands on your Linode. These commands can produce diagnostic information and logs that may expose the root of your connection issues. For some specific examples of diagnostic information, this guide also explains the corresponding cause of the issue and presents solutions for it.</p>
+
+<p>If the information and logs you gather do not match a solution outlined here, consider searching the <a href="https://www.linode.com/community/questions/">Linode Community Site</a> for posts that match your system&rsquo;s symptoms. Or, post a new question in the Community Site and include your commands&rsquo; output.</p>
+
+<p>Linode is not responsible for the configuration or installation of software on your Linode. Refer to Linode&rsquo;s <a href="/docs/platform/billing-and-support/support/#scope-of-support">Scope of Support</a> for a description of which issues Linode Support can help with.</p>
+</div></div>
+</blockquote>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>There are a few core troubleshooting tools you should familiarize yourself with that are used when diagnosing connection problems.</p>
+
+<h3 id="the-linode-shell-lish">The Linode Shell (Lish)</h3>
+
+<p><a href="/docs/platform/manager/using-the-linode-shell-lish/"><em>Lish</em></a> is a shell that provides access to your Linode&rsquo;s serial console. Lish does not establish a network connection to your Linode, so you can use it when your networking is down or SSH is inaccessible. Much of your troubleshooting for basic connection issues will be performed from the Lish console.</p>
+
+<p>To learn about Lish in more detail, and for instructions on how to connect to your Linode via Lish, review the <a href="/docs/platform/manager/using-the-linode-shell-lish/">Using the Linode Shell (Lish)</a> guide. In particular, <a href="/docs/platform/manager/using-the-linode-shell-lish/#use-a-web-browser">using your web browser</a> is a fast and simple way to access Lish.</p>
+
+<h3 id="mtr">MTR</h3>
+
+<p>When your network traffic leaves your computer to your Linode, it travels through a series of routers that are administered by your internet service provider, by Linode&rsquo;s transit providers, and by the various organizations that form the <a href="https://en.wikipedia.org/wiki/Internet_backbone">Internet&rsquo;s backbone</a>. It is possible to analyze the route that your traffic takes for possible service interruptions using a tool called <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/">MTR</a>.</p>
+
+<p>MTR is similar to the <a href="/docs/tools-reference/linux-system-administration-basics/#the-traceroute-command">traceroute</a> tool, in that it will trace and display your traffic&rsquo;s route. MTR also runs several iterations of its tracing algorithm, which means that it can report statistics like average packet loss and latency over the period that the MTR test runs.</p>
+
+<p>Review the installation instructions in Linode&rsquo;s <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/#install-mtr">Diagnosing Network Issues with MTR</a> guide and install MTR on your computer.</p>
+
+<h2 id="is-your-linode-running">Is your Linode Running?</h2>
+
+<p>Log in to the <a href="https://manager.linode.com/">Linode Manager</a> and inspect the Linode&rsquo;s dashboard. If the Linode is powered off, turn it on.</p>
+
+<h3 id="inspect-the-lish-console">Inspect the Lish Console</h3>
+
+<p>If the Linode is listed as running in the Manager, or after you boot it from the Manager, open the Lish console and look for a login prompt. If a login prompt exists, try logging in with your root user credentials (or any other Linux user credentials that you previously created on the server).</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The root user is available in Lish even if root user login is disabled in your SSH configuration.</div>
+</blockquote>
+
+
+<ol>
+<li><p>If you can log in at the Lish console, move on to the <a href="#diagnose-network-connection-issues">diagnose network connection issues</a> section of this guide.</p>
+
+<p>If you see a log in prompt, but you have forgotten the credentials for your Linode, follow the instructions for <a href="/docs/quick-answers/linode-platform/reset-the-root-password-on-your-linode-new-manager/">resetting your root password</a> and then attempt to log in at the Lish console again.</p></li>
+
+<li><p>If you do not see a login prompt, your Linode may have <a href="#troubleshoot-booting-issues">issues with booting</a>.</p></li>
+</ol>
+
+<h2 id="troubleshoot-booting-issues">Troubleshoot Booting Issues</h2>
+
+<p>If your Linode isn&rsquo;t booting normally, you will not be able to rely on the Lish console to troubleshoot your deployment directly. To continue, you will first need to reboot your Linode into <a href="/docs/troubleshooting/rescue-and-rebuild/#rescuing">Rescue Mode</a>, which is a special recovery environment that Linode provides.</p>
+
+<p>When you boot into Rescue Mode, you are booting your Linode into the <a href="https://www.finnix.org">Finnix recovery Linux distribution</a>. This Finnix image includes a working network configuration, and you will be able to mount your Linode&rsquo;s disks from this environment, which means that you will be able to access your files.</p>
+
+<ol>
+<li><p>Review the Rescue and Rebuild guide for instructions and <a href="/docs/troubleshooting/rescue-and-rebuild/#booting-into-rescue-mode">boot into Rescue Mode</a>. If your Linode does not reboot into Rescue Mode successfully, please <a href="/docs/platform/billing-and-support/support/#contacting-linode-support">contact Linode Support</a>.</p></li>
+
+<li><p>Connect to Rescue Mode via the Lish console as you would normally. You will not be required to enter a username or password to start using the Lish console while in Rescue Mode.</p></li>
+</ol>
+
+<h3 id="perform-a-file-system-check">Perform a File System Check</h3>
+
+<p>If your Linode can&rsquo;t boot, then it may have experienced filesystem corruption.</p>
+
+<ol>
+<li><p>Review the Rescue and Rebuild guide for instructions on <a href="/docs/troubleshooting/rescue-and-rebuild/#performing-a-file-system-check">running a filesystem check</a>.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>Never run a filesystem check on a disk that is mounted.</div>
+</blockquote>
+</li>
+
+<li><p>If your filesystem check reports errors that cannot be fixed, you may need to <a href="/docs/troubleshooting/rescue-and-rebuild/#rebuilding">rebuild your Linode</a>.</p></li>
+
+<li><p>If the filesystem check reports errors that it has fixed, try rebooting your Linode under your normal <a href="/docs/platform/disk-images/disk-images-and-configuration-profiles/#configuration-profiles">configuration profile</a>. After you reboot, you may find that your connection issues are resolved. If you still cannot connect as normal, restart the troubleshooting process from the <a href="#is-your-linode-running">beginning of this guide</a>.</p></li>
+
+<li><p>If the filesystem check does not report any errors, there may be another reason for your booting issues. Continue to <a href="#inspect-system-and-kernel-logs">inspecting your system and kernel logs</a>.</p></li>
+</ol>
+
+<h3 id="inspect-system-and-kernel-logs">Inspect System and Kernel Logs</h3>
+
+<p>In addition to being able to mount your Linode&rsquo;s disks, you can also <em>change root</em> (sometimes abbreviated as <em>chroot</em>) within Rescue Mode. <em>Chrooting</em> will make Rescue Mode&rsquo;s working environment emulate your normal Linux distribution. This means your files and logs will appear where you normally expect them, and you will be able to work with tools like your standard package manager and other system utilities.</p>
+
+<p>To proceed, review the Rescue and Rebuild guide&rsquo;s instructions on <a href="/docs/troubleshooting/rescue-and-rebuild/#change-root">changing root</a>. Once you have chrooted, you can then investigate your Linode&rsquo;s logs for messages that may describe the cause of your booting issues.</p>
+
+<p>In systemd Linux distributions (like Debian 8+, Ubuntu 16.04+, CentOS 7+, and recent releases of Arch), you can run the <a href="/docs/quick-answers/linux/how-to-use-journalctl/"><code>journalctl</code> command</a> to view system and kernel logs. In these and other distributions, you may also find system log messages in the following files:</p>
+
+<ul>
+<li><p><code>/var/log/messages</code></p></li>
+
+<li><p><code>/var/log/syslog</code></p></li>
+
+<li><p><code>/var/log/kern.log</code></p></li>
+
+<li><p><code>/var/log/dmesg</code></p></li>
+</ul>
+
+<p>You can use the <a href="/docs/quick-answers/linux/how-to-use-less/"><code>less</code> command</a> to review the contents of these files (e.g. <code>less /var/log/syslog</code>). Try pasting your log messages into a search engine or searching in the <a href="https://www.linode.com/community/questions/">Linode Community Site</a> to see if anyone else has run into similar issues. If you don&rsquo;t find any results, you can try asking about your issues in a new post on the Linode Community Site. If it becomes difficult to find a solution, you may need to <a href="/docs/troubleshooting/rescue-and-rebuild/#rebuilding">rebuild your Linode</a>.</p>
+
+<h3 id="quick-tip-for-ubuntu-and-debian-systems">Quick Tip for Ubuntu and Debian Systems</h3>
+
+<p>After you have chrooted inside Rescue Mode, the following command may help with issues related to your package manager&rsquo;s configuration:</p>
+
+<pre><code>dpkg --configure -a
+</code></pre>
+
+<p>After running this command, try rebooting your Linode into your normal configuration profile. If your issues persist, you may need to investigate and research your system logs further, or consider <a href="/docs/troubleshooting/rescue-and-rebuild/#rebuilding">rebuilding your Linode</a>.</p>
+
+<h2 id="diagnose-network-connection-issues">Diagnose Network Connection Issues</h2>
+
+<p>If you can boot your Linode normally and access the Lish console, you can continue investigating network issues. Networking issues may have two causes:</p>
+
+<ul>
+<li><p>There may be a network routing problem between you and your Linode, or:</p></li>
+
+<li><p>If the traffic is properly routed, your Linode&rsquo;s network configuration may be malfunctioning.</p></li>
+</ul>
+
+<h3 id="check-for-network-route-problems">Check for Network Route Problems</h3>
+
+<p>To diagnose routing problems, run and analyze an MTR report from your computer to your Linode. For instructions on how to use MTR, review Linode&rsquo;s <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/#analyze-mtr-reports">MTR guide</a>. It is useful to run your MTR report for 100 cycles in order to get a good sample size (note that running a report with this many cycles will take more time to complete). This recommended command includes other helpful options:</p>
+
+<pre><code>mtr -rwbzc 100 -i 0.2 -rw 198.51.100.0 &lt;Linode's IP address&gt;
+</code></pre>
+
+<p>Once you have generated this report, compare it with the following example scenarios.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you are located in China, and the output of your MTR report shows <em>high packet loss</em> or an <em>improperly configured router</em>, then your IP address may have been blacklisted by the GFW (Great Firewall of China). Linode is not able to change your IP address if it has been blacklisted by the GFW. If you have this issue, review this <a href="https://www.linode.com/community/questions/17192/ssh-refused">community post</a> for troubleshooting help.</div>
+</blockquote>
+
+
+<ul>
+<li><p><strong>High Packet Loss</strong></p>
+
+<pre><code>root@localhost:~# mtr --report www.google.com
+HOST: localhost                   Loss%   Snt   Last   Avg  Best  Wrst StDev
+1. 63.247.74.43                   0.0%    10    0.3   0.6   0.3   1.2   0.3
+2. 63.247.64.157                  0.0%    10    0.4   1.0   0.4   6.1   1.8
+3. 209.51.130.213                60.0%    10    0.8   2.7   0.8  19.0   5.7
+4. aix.pr1.atl.google.com        60.0%    10    6.7   6.8   6.7   6.9   0.1
+5. 72.14.233.56                  50.0%   10    7.2   8.3   7.1  16.4   2.9
+6. 209.85.254.247                40.0%   10   39.1  39.4  39.1  39.7   0.2
+7. 64.233.174.46                 40.0%   10   39.6  40.4  39.4  46.9   2.3
+8. gw-in-f147.1e100.net          40.0%   10   39.6  40.5  39.5  46.7   2.2
+</code></pre>
+
+<p>This example report shows high persistent packet loss starting mid-way through the route at hop 3, which indicates an issue with the router at hop 3. If your report looks like this, <a href="#open-a-support-ticket-with-your-mtr-results">open a support ticket with your MTR results</a> for further troubleshooting assistance.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If your route only shows packet loss at certain routers, and not through to the end of the route, then it is likely that those routers are purposefully limiting <a href="https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol">ICMP</a> responses. This is generally not a problem for your connection. Linode&rsquo;s MTR guide provides more context for <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/#verify-packet-loss">packet loss issues</a>.</div>
+</blockquote>
+
+
+<p>If your report resembles the example, <a href="#open-a-support-ticket-with-your-mtr-results">open a support ticket with your MTR results</a> for further troubleshooting assistance. Also, consult Linode&rsquo;s MTR guide for more context on <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/#verify-packet-loss">packet loss issues</a>.</p></li>
+
+<li><p><strong>Improperly Configured Router</strong></p>
+
+<pre><code>root@localhost:~# mtr --report www.google.com
+HOST: localhost                   Loss%   Snt   Last   Avg  Best  Wrst StDev
+1. 63.247.74.43                  0.0%    10    0.3   0.6   0.3   1.2   0.3
+2. 63.247.64.157                 0.0%    10    0.4   1.0   0.4   6.1   1.8
+3. 209.51.130.213                0.0%    10    0.8   2.7   0.8  19.0   5.7
+4. aix.pr1.atl.google.com        0.0%    10    6.7   6.8   6.7   6.9   0.1
+5. ???                           0.0%    10    0.0   0.0   0.0   0.0   0.0
+6. ???                           0.0%    10    0.0   0.0   0.0   0.0   0.0
+7. ???                           0.0%    10    0.0   0.0   0.0   0.0   0.0
+8. ???                           0.0%    10    0.0   0.0   0.0   0.0   0.0
+9. ???                           0.0%    10    0.0   0.0   0.0   0.0   0.0
+10. ???                           0.0%    10    0.0   0.0   0.0   0.0   0.0
+</code></pre>
+
+<p>If your report shows question marks instead of the hostnames (or IP addresses) of the routers, and if these question marks persist to the end of the route, then the report indicates an improperly configured router. If your report looks like this, <a href="#open-a-support-ticket-with-your-mtr-results">open a support ticket with your MTR results</a> for further troubleshooting assistance.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If your route only shows question marks for certain routers, and not through to the end of the route, then it is likely that those routers are purposefully blocking <a href="https://en.wikipedia.org/wiki/Internet_Control_Message_Protocol">ICMP</a> responses. This is generally not a problem for your connection. Linode&rsquo;s MTR guide provides more information about <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/#an-isp-router-is-not-configured-properly">router configuration issues</a>.</div>
+</blockquote>
+</li>
+
+<li><p><strong>Destination Host Networking Improperly Configured</strong></p>
+
+<pre><code>root@localhost:~# mtr --report www.google.com
+HOST: localhost                   Loss%   Snt   Last   Avg  Best  Wrst StDev
+1. 63.247.74.43                  0.0%    10    0.3   0.6   0.3   1.2   0.3
+2. 63.247.64.157                 0.0%    10    0.4   1.0   0.4   6.1   1.8
+3. 209.51.130.213                0.0%    10    0.8   2.7   0.8  19.0   5.7
+4. aix.pr1.atl.google.com        0.0%    10    6.7   6.8   6.7   6.9   0.1
+5. 72.14.233.56                  0.0%    10    7.2   8.3   7.1  16.4   2.9
+6. 209.85.254.247                0.0%    10   39.1  39.4  39.1  39.7   0.2
+7. 64.233.174.46                 0.0%    10   39.6  40.4  39.4  46.9   2.3
+8. gw-in-f147.1e100.net         100.0    10    0.0   0.0   0.0   0.0   0.0
+</code></pre>
+
+<p>If your report shows no packet loss or low packet loss (or non-persistent packet loss isolated to certain routers) until the end of the route, and 100% loss at your Linode, then the report indicates that your Linode&rsquo;s network interface is not configured correctly. If your report looks like this, move down to <a href="#confirm-network-configuration-issues-from-rescue-mode">confirming network configuration issues from Rescue Mode</a>.</p></li>
+</ul>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If your report does not look like any of the previous examples, read through the <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/">MTR guide</a> for other potential scenarios.</div>
+</blockquote>
+
+
+<h3 id="confirm-network-configuration-issues-from-rescue-mode">Confirm Network Configuration Issues from Rescue Mode</h3>
+
+<p>If your MTR indicates a configuration issue within your Linode, you can confirm the problem by using Rescue Mode:</p>
+
+<ol>
+<li><p>Reboot your Linode into <a href="/docs/troubleshooting/rescue-and-rebuild/#booting-into-rescue-mode">Rescue Mode</a>.</p></li>
+
+<li><p>Run another MTR report from your computer to your Linode&rsquo;s IP address.</p></li>
+
+<li><p>As noted earlier, Rescue Mode boots with a working network configuration. If your new MTR report does not show the same packet loss that it did before, this result confirms that your deployment&rsquo;s network configuration needs to be fixed. Continue to <a href="#troubleshoot-network-configuration-issues">troubleshooting network configuration issues</a>.</p></li>
+
+<li><p>If your new MTR report still shows the same packet loss at your Linode, this result indicates issues outside of your configuration. <a href="#open-a-support-ticket-with-your-mtr-results">Open a support ticket with your MTR results</a> for further troubleshooting assistance.</p></li>
+</ol>
+
+<h3 id="open-a-support-ticket-with-your-mtr-results">Open a Support Ticket with your MTR Results</h3>
+
+<p>Before opening a support ticket, you should also generate a <em>reverse MTR</em> report. The MTR tool is run from your Linode and targets your machine&rsquo;s IP address on your local network, whether you&rsquo;re on your home LAN, for example, or public WiFi. To run an MTR from your Linode, log in to your Lish console. To find your local IP, visit a website like <a href="https://www.whatismyip.com/">https://www.whatismyip.com/</a>.</p>
+
+<p>Once you have generated your original MTR and your reverse MTR, <a href="/docs/platform/billing-and-support/support/#contacting-linode-support">open a Linode support ticket</a>, and include your reports and a description of the troubleshooting you&rsquo;ve performed so far. Linode Support will try to help further diagnose the routing issue.</p>
+
+<h2 id="troubleshoot-network-configuration-issues">Troubleshoot Network Configuration Issues</h2>
+
+<p>If you have determined that your network configuration is the cause of the problem, review the following troubleshooting suggestions. If you make any changes in an attempt to fix the issue, you can test those changes with these steps:</p>
+
+<ol>
+<li><p>Run another MTR report (or <a href="/docs/troubleshooting/troubleshooting/#can-you-ping-the-linode">ping</a> the Linode) from your computer to your Linode&rsquo;s IP.</p></li>
+
+<li><p>If the report shows no packet loss but you still can&rsquo;t access SSH or other services, this result indicates that your network connection is up again, but the other services are still down. Move onto <a href="#troubleshoot-ssh">troubleshooting SSH</a> or <a href="#troubleshoot-other-services">troubleshooting other services</a>.</p></li>
+
+<li><p>If the report still shows the same packet loss, review the remaining troubleshooting suggestions in this section.</p></li>
+</ol>
+
+<p>If the recommendations in this section do not resolve your issue, try pasting your <a href="#run-diagnostic-commands">diagnostic commands&rsquo; output</a> into a search engine or searching for your output in the <a href="https://www.linode.com/community/questions/">Linode Community Site</a> to see if anyone else has run into similar issues. If you don&rsquo;t find any results, you can try asking about your issues in a new post on the Linode Community Site. If it becomes difficult to find a solution, you may need to <a href="/docs/troubleshooting/rescue-and-rebuild/#rebuilding">rebuild your Linode</a>.</p>
+
+<h3 id="try-enabling-network-helper">Try Enabling Network Helper</h3>
+
+<p>A quick fix may be to enable Linode&rsquo;s <a href="/docs/platform/network-helper/">Network Helper</a> tool. Network Helper will attempt to generate the appropriate static networking configuration for your Linux distribution. After you enable Network Helper, reboot your Linode for the changes to take effect. If Network Helper was already enabled, continue to the remaining troubleshooting suggestions in this section.</p>
+
+<h3 id="did-you-upgrade-to-ubuntu-18-04-from-an-earlier-version">Did You Upgrade to Ubuntu 18.04+ From an Earlier Version?</h3>
+
+<p>If you performed an inline upgrade from an earlier version of Ubuntu to Ubuntu 18.04+, you may need to enable the <code>systemd-networkd</code> service:</p>
+
+<pre><code>sudo systemctl enable systemd-networkd
+</code></pre>
+
+<p>Afterwards, reboot your Linode.</p>
+
+<h3 id="run-diagnostic-commands">Run Diagnostic Commands</h3>
+
+<p>To collect more information about your network configuration, collect output from the diagnostic commands appropriate for your distribution:</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Network diagnostic commands
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper"><ul>
+<li><p><strong>Debian 7, Ubuntu 14.04</strong></p>
+
+<pre><code>sudo service network status
+cat /etc/network/interfaces
+ip a
+ip r
+sudo ifdown eth0 &amp;&amp; sudo ifup eth0
+</code></pre></li>
+
+<li><p><strong>Debian 8 and 9, Ubuntu 16.04</strong></p>
+
+<pre><code>sudo systemctl status networking.service -l
+sudo journalctl -u networking --no-pager | tail -20
+cat /etc/network/interfaces
+ip a
+ip r
+sudo ifdown eth0 &amp;&amp; sudo ifup eth0
+</code></pre></li>
+
+<li><p><strong>Ubuntu 18.04</strong></p>
+
+<pre><code>sudo networkctl status
+sudo systemctl status systemd-networkd -l
+sudo journalctl -u systemd-networkd --no-pager | tail -20
+cat /etc/systemd/network/05-eth0.network
+ip a
+ip r
+sudo netplan apply
+</code></pre></li>
+
+<li><p><strong>Arch, CoreOS</strong></p>
+
+<pre><code>sudo systemctl status systemd-networkd -l
+sudo journalctl -u systemd-networkd --no-pager | tail -20
+cat /etc/systemd/network/05-eth0.network
+ip a
+ip r
+</code></pre></li>
+
+<li><p><strong>CentOS 6</strong></p>
+
+<pre><code>sudo service network status
+cat /etc/sysconfig/network-scripts/ifcfg-eth0
+ip a
+ip r
+sudo ifdown eth0 &amp;&amp; sudo ifup eth0
+</code></pre></li>
+
+<li><p><strong>CentOS 7, Fedora</strong></p>
+
+<pre><code>sudo systemctl status NetworkManager -l
+sudo journalctl -u NetworkManager --no-pager | tail -20
+sudo nmcli
+cat /etc/sysconfig/network-scripts/ifcfg-eth0
+ip a
+ip r
+sudo ifdown eth0 &amp;&amp; sudo ifup eth0
+</code></pre></li>
+</ul>
+</div></div>
+</blockquote>
+
+<h3 id="inspect-error-messages">Inspect Error Messages</h3>
+
+<p>Your commands&rsquo; output may show error messages, including generic errors like <code>Failed to start Raise network interfaces</code>. There may also be more specific errors that appear. Two common errors that can appear are related to Sendmail and iptables:</p>
+
+<h4 id="sendmail">Sendmail</h4>
+
+<p>If you find a message similar to the following, it is likely that a broken Sendmail update is at fault:</p>
+
+<pre class="file terminal">
+  <code>
+/etc/network/if-up.d/sendmail: 44: .: Can't open /usr/share/sendmail/dynamic run-parts: /etc/network/if-up.d/sendmail exited with return code 2
+</code>
+</pre>
+
+
+<p>The Sendmail issue can usually be resolved by running the following command and restarting your Linode:</p>
+
+<pre><code>sudo mv /etc/network/if-up.d/sendmail ~
+ifdown -a &amp;&amp; ifup -a
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Read more about the Sendmail bug <a href="https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=873978">here</a>.</div>
+</blockquote>
+
+
+<h4 id="iptables">iptables</h4>
+
+<p>Malformed rules in your iptables ruleset can sometimes cause issues for your network scripts. An error similar to the following can appear in your logs if this is the case:</p>
+
+<pre class="file terminal">
+  <code>
+Apr 06 01:03:17 xlauncher ifup[6359]: run-parts: failed to exec /etc/network/if- Apr 06 01:03:17 xlauncher ifup[6359]: run-parts: /etc/network/if-up.d/iptables e
+</code>
+</pre>
+
+
+<p>Run the following command and restart your Linode to resolve this issue:</p>
+
+<pre><code>sudo mv /etc/network/if-up.d/iptables ~
+</code></pre>
+
+<p>Please note that your firewall will be down at this point, so you will need to re-enable it manually. Review the <a href="/docs/security/firewalls/control-network-traffic-with-iptables/">Control Network Traffic with iptables</a> guide for help with managing iptables.</p>
+
+<h3 id="was-your-interface-renamed">Was your Interface Renamed?</h3>
+
+<p>In your commands&rsquo; output, you might notice that your <code>eth0</code> interface is missing and replaced with another name (for example, <code>ensp</code> or <code>ensp0</code>). This behavior can be caused by systemd&rsquo;s <a href="https://www.freedesktop.org/wiki/Software/systemd/PredictableNetworkInterfaceNames/">Predictable Network Interface Names</a> feature.</p>
+
+<ol>
+<li><p>Disable the use of Predictable Network Interface Names with these commands:</p>
+
+<pre><code>ln -s /dev/null /etc/systemd/network/99-default.link
+ln -s /dev/null /etc/udev/rules.d/80-net-setup-link.rules
+</code></pre></li>
+
+<li><p>Reboot your Linode for the changes to take effect.</p></li>
+</ol>
+
+<h3 id="review-firewall-rules">Review Firewall Rules</h3>
+
+<p>If your interface is up but your networking is still down, your firewall (which is likely implemented by the <code>iptables</code> software) may be blocking all connections, including basic ping requests. To review your current firewall ruleset, run:</p>
+
+<pre><code>sudo iptables -L # displays IPv4 rules
+sudo ip6tables -L # displays IPv6 rules
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>Your deployment may be running FirewallD or UFW, which are frontend software packages used to more easily manage your iptables rules. Run these commands to find out if you are running either package:</p>
+
+<pre><code>sudo ufw status
+sudo firewall-cmd --state
+</code></pre>
+
+<p>Review <a href="/docs/security/firewalls/configure-firewall-with-ufw/#ufw-status">How to Configure a Firewall with UFW</a> and <a href="/docs/security/firewalls/introduction-to-firewalld-on-centos/#firewall-zones">Introduction to FirewallD on CentOS</a> to learn how to manage and inspect your firewall rules with those packages.</p>
+</div>
+</blockquote>
+
+
+<p>Firewall rulesets can vary widely. Review our <a href="/docs/security/firewalls/control-network-traffic-with-iptables/">Control Network Traffic with iptables</a> guide to analyze your rules and determine if they are blocking connections.</p>
+
+<h3 id="disable-firewall-rules">Disable Firewall Rules</h3>
+
+<p>In addition to analyzing your firewall ruleset, you can also temporarily disable your firewall to test if it is interfering with your connections. Leaving your firewall disabled increases your security risk, so we recommend re-enabling it afterwards with a modified ruleset that will accept your connections. Review <a href="/docs/security/firewalls/control-network-traffic-with-iptables/">Control Network Traffic with iptables</a> for help with this subject.</p>
+
+<ol>
+<li><p>Create a temporary backup of your current iptables:</p>
+
+<pre><code>sudo iptables-save &gt; ~/iptables.txt
+</code></pre></li>
+
+<li><p>Set the <code>INPUT</code>, <code>FORWARD</code> and <code>OUTPUT</code> packet policies as <code>ACCEPT</code>:</p>
+
+<pre><code>sudo iptables -P INPUT ACCEPT
+sudo iptables -P FORWARD ACCEPT
+sudo iptables -P OUTPUT ACCEPT
+</code></pre></li>
+
+<li><p>Flush the <code>nat</code> table that is consulted when a packet that creates a new connection is encountered:</p>
+
+<pre><code>sudo iptables -t nat -F
+</code></pre></li>
+
+<li><p>Flush the <code>mangle</code> table that is used for specialized packet alteration:</p>
+
+<pre><code>sudo iptables -t mangle -F
+</code></pre></li>
+
+<li><p>Flush all the chains in the table:</p>
+
+<pre><code>sudo iptables -F
+</code></pre></li>
+
+<li><p>Delete every non-built-in chain in the table:</p>
+
+<pre><code>sudo iptables -X
+</code></pre></li>
+
+<li><p>Repeat these steps with the <code>ip6tables</code> command to flush your IPv6 rules. Be sure to assign a different name to the IPv6 rules file. (e.g. <code>~/ip6tables.txt</code>).</p></li>
+</ol>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>If you are able to restore basic networking, but you still can&rsquo;t access SSH or other services, refer to the <a href="/docs/troubleshooting/troubleshooting-ssh/">Troubleshooting SSH</a> or <a href="/docs/troubleshooting/troubleshooting-web-servers-databases-other-services/">Troubleshooting Web Servers, Databases, and Other Services</a> guides.</p>
+
+<p>If your connection issues were the result of maintenance performed by Linode, review the <a href="/docs/uptime/reboot-survival-guide/">Reboot Survival Guide</a> for methods to prepare a Linode for any future maintenance.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library toc-long nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#the-linode-shell-lish">The Linode Shell (Lish)</a></li>
+<li><a href="#mtr">MTR</a></li>
+</ul></li>
+<li><a href="#is-your-linode-running">Is your Linode Running?</a>
+<ul>
+<li><a href="#inspect-the-lish-console">Inspect the Lish Console</a></li>
+</ul></li>
+<li><a href="#troubleshoot-booting-issues">Troubleshoot Booting Issues</a>
+<ul>
+<li><a href="#perform-a-file-system-check">Perform a File System Check</a></li>
+<li><a href="#inspect-system-and-kernel-logs">Inspect System and Kernel Logs</a></li>
+<li><a href="#quick-tip-for-ubuntu-and-debian-systems">Quick Tip for Ubuntu and Debian Systems</a></li>
+</ul></li>
+<li><a href="#diagnose-network-connection-issues">Diagnose Network Connection Issues</a>
+<ul>
+<li><a href="#check-for-network-route-problems">Check for Network Route Problems</a></li>
+<li><a href="#confirm-network-configuration-issues-from-rescue-mode">Confirm Network Configuration Issues from Rescue Mode</a></li>
+<li><a href="#open-a-support-ticket-with-your-mtr-results">Open a Support Ticket with your MTR Results</a></li>
+</ul></li>
+<li><a href="#troubleshoot-network-configuration-issues">Troubleshoot Network Configuration Issues</a>
+<ul>
+<li><a href="#try-enabling-network-helper">Try Enabling Network Helper</a></li>
+<li><a href="#did-you-upgrade-to-ubuntu-18-04-from-an-earlier-version">Did You Upgrade to Ubuntu 18.04+ From an Earlier Version?</a></li>
+<li><a href="#run-diagnostic-commands">Run Diagnostic Commands</a></li>
+<li><a href="#inspect-error-messages">Inspect Error Messages</a>
+<ul>
+<li><a href="#sendmail">Sendmail</a></li>
+<li><a href="#iptables">iptables</a></li>
+</ul></li>
+<li><a href="#was-your-interface-renamed">Was your Interface Renamed?</a></li>
+<li><a href="#review-firewall-rules">Review Firewall Rules</a></li>
+<li><a href="#disable-firewall-rules">Disable Firewall Rules</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Getting Started with Linode</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide will help you set up your first Linode.">
+        <meta name="keywords" content="getting started, intro, basics, first steps">
+        
+        <meta property="og:title" content="Getting Started with Linode">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/getting-started/">
+        <meta property="og:description" content="Learn how to create an account, boot your first Linode, and connect via SSH with our Getting Started guide.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/getting-started/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  Getting Started with Linode
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Getting Started with Linode</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-04-29T13:00:45-04:00">Monday, April 29, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fgetting-started%2f&via=linode&text=Getting%20Started%20with%20Linode" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fgetting-started%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fgetting-started%2f&t=Getting%20Started%20with%20Linode" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Getting%20Started%20with%20Linode%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fgetting-started%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/getting-started%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/getting-started%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="getting-started.jpg" alt="Getting Started with Linode" title="Getting Started with Linode" /></p>
+
+<h2 id="welcome-to-linode">Welcome to Linode!</h2>
+
+<p>Thank you for choosing Linode as your cloud hosting provider! This guide will help you sign up for an account and access Linode&rsquo;s <a href="https://cloud.linode.com">Cloud Manager</a>, a browser-based control panel which allows you to manage your Linode virtual servers and services.</p>
+
+<p>From there you&rsquo;ll set up a Linux distribution, boot your Linode, and perform some basic system administration tasks. If you&rsquo;ve already created an account and booted your Linode, skip ahead to <a href="#connect-to-your-linode-via-ssh">connecting to your Linode</a> using SSH.</p>
+
+<!-- removing the video for now to test if gifs are more helpful
+<div class="wistia_responsive_padding" style="padding:56.25% 0 0 0;position:relative;"><div class="wistia_responsive_wrapper" style="height:100%;left:0;position:absolute;top:0;width:100%;"><iframe src="//fast.wistia.net/embed/iframe/35724r19mr?videoFoam=true" allowtransparency="true" frameborder="0" scrolling="no" class="wistia_embed" name="wistia_embed" allowfullscreen mozallowfullscreen webkitallowfullscreen oallowfullscreen msallowfullscreen width="100%" height="100%"></iframe></div></div><script src="//fast.wistia.net/assets/external/E-v1.js" async></script>
+-->
+
+<h2 id="sign-up">Sign Up</h2>
+
+<p>If you haven&rsquo;t already signed up for a Linode account, start here.</p>
+
+<ol>
+<li><p>Create a new account at the <a href="https://login.linode.com/signup">Sign Up page</a>.</p></li>
+
+<li><p>Sign in and enter your billing and account information. Most accounts are activated instantly, but some require manual review prior to activation. If your account is not immediately activated, you will receive an email with additional instructions.</p></li>
+</ol>
+
+<h2 id="create-a-linode">Create a Linode</h2>
+
+<p><img src="getting-started.gif" alt="Create a Linode by selecting the image, the region, the plan, and creating a label and a password." /></p>
+
+<ol>
+<li><p>Log in to the <a href="https://cloud.linode.com">Cloud Manager</a> with the username and password you created when signing up.</p></li>
+
+<li><p>At the top of the page, click <strong>Create</strong> and select <strong>Linode</strong>.</p></li>
+
+<li><p>Select the image you would like to use. You can choose a standard Linux image from the list or you can select a previously created image from the <em>Images</em> menu item.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Use a <a href="http://www.linode.com/stackscripts">StackScript</a> to quickly deploy software platforms and system configuration options to your Linux distribution. Some of the most popular StackScripts do things like install a LAMP stack, VPN, or WordPress.</div>
+</blockquote>
+</li>
+
+<li><p>Choose the region where you would like your Linode to reside. If you&rsquo;re not sure which to select, see our <a href="/docs/platform/how-to-choose-a-data-center">How to Choose a Data Center</a> guide. You can also generate <a href="/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/">MTR reports</a> for a deeper look at the route path between you and a data center in each specific region.</p></li>
+
+<li><p>Select a Linode plan.</p></li>
+
+<li><p>Give your Linode a label. This is a name to help you easily identify it within the Cloud Manager&rsquo;s Dashboard. If desired, assign a tag to the Linode in the <strong>Add Tags</strong> field.</p></li>
+
+<li><p>Create a root password for your Linode in the <strong>Root Password</strong> field. This password must be provided when you log in to your Linode via SSH. It must be at least 6 characters long and contain characters from two of the following categories:</p>
+
+<ul>
+<li>lowercase and uppercase case letters</li>
+<li>numbers</li>
+<li>punctuation characters</li>
+</ul></li>
+
+<li><p>Click <strong>Create</strong>. You will be directed back to the <em>Linodes</em> page which will report the status of your Linode as it boots up. You can now use the Cloud Manager to:</p>
+
+<ul>
+<li>Boot and shut down your Linode</li>
+<li>Access monitoring statistics</li>
+<li>Update your <a href="/docs/platform/billing-and-support/billing-and-payments-new-manager/">billing</a> and <a href="/docs/platform/manager/accounts-and-passwords-new-manager/">account</a> information</li>
+<li>Add additional Linode services, like <a href="/docs/platform/block-storage/how-to-use-block-storage-with-your-linode-new-manager/">Block Storage</a></li>
+<li>Open a <a href="/docs/platform/billing-and-support/support-new-manager/">support</a> ticket and perform other administrative tasks</li>
+</ul></li>
+
+<li><p>Be sure to bookmark the <a href="https://status.linode.com/">Linode Status page</a> or <a href="/docs/platform/linode-status-page/">subscribe</a> to our system status updates by email.</p></li>
+</ol>
+
+<h2 id="connect-to-your-linode-via-ssh">Connect to Your Linode via SSH</h2>
+
+<p>Communicating with your Linode is usually done using the secure shell (SSH) protocol. SSH encrypts all of the data transferred between the client application on your computer and the Linode, including passwords and other sensitive information. There are SSH clients available for every operating system.</p>
+
+<ul>
+<li><strong>Linux:</strong> You can use a terminal window, regardless of desktop environment or window manager.</li>
+<li><strong>macOS:</strong> <em>Terminal.app</em> comes pre-installed and can be launched from Spotlight or Launchpad.<!--- You could also use the free [iTerm 2 application](http://www.iterm2.com/). For a walk-through of connecting to your Linode for the first time **with OS X** (which also directly applies to Linux), see the following video: ---></li>
+</ul>
+
+<p><!---  <iframe width="560" height="315" src="https://www.youtube.com/embed/VVs9Ed-HkjE" frameborder="0" allowfullscreen></iframe> --></p>
+
+<ul>
+<li><strong>Windows:</strong> There is no native SSH client but you can use a free and open source application called <a href="/docs/networking/ssh/ssh-connections-using-putty-on-windows/">PuTTY</a>. <!--- For a walkthrough of connecting to your Linode in Windows using PuTTY, see the following video: ---></li>
+</ul>
+
+<!---    <iframe width="560" height="315" src="https://www.youtube.com/embed/eEsCD7n17mk" frameborder="0" allowfullscreen></iframe> --->
+
+<h3 id="find-your-linode-s-ip-address">Find your Linode&rsquo;s IP Address</h3>
+
+<p>Your Linode has a unique IP address that identifies it to other devices and users on the internet.</p>
+
+<ol>
+<li><p>Click the <strong>Linodes</strong> menu item in the <a href="https://cloud.linode.com/">Cloud Manager&rsquo;s</a> left hand navigation.</p></li>
+
+<li><p>Find your Linode, click on it&rsquo;s name and navigate to <em>Networking</em>.</p></li>
+
+<li><p>Your IPv4 and IPv6 addresses appear under the <em>IPv4</em> and <em>IPv6</em> sections.</p>
+
+<p><a href="getting-started-networking.png"><img src="getting-started-networking-small.png" alt="The Networking settings tab for your Linode" /></a></p>
+
+<p>You can also quickly reference your Linode&rsquo;s IP addresses from the <strong>Linodes</strong> page:</p>
+
+<p><img src="getting-started-quick-ip-address.png" alt="IP address from the Linodes page" /></p></li>
+</ol>
+
+<h3 id="log-in-using-ssh">Log in Using SSH</h3>
+
+<p>Once you have the IP address and an SSH client, you can log in via SSH. The following instructions are written for Linux and macOS. If you&rsquo;re using PuTTY on Windows, follow <a href="/docs/networking/ssh/ssh-connections-using-putty-on-windows/">these instructions</a>.</p>
+
+<p><img src="getting-started-ssh.gif" alt="Copy SSH Command with IP and Log in" title="Go to the Networking tab and copy the SSH command, then paste it into a terminal." /></p>
+
+<ol>
+<li><p>Enter the following into your terminal window or application. Replace the example IP address with your Linode&rsquo;s IP address:</p>
+
+<pre><code>ssh root@198.51.100.4
+</code></pre></li>
+
+<li><p>If this is the first time connecting to your Linode, you&rsquo;ll see the authenticity warning below. This is because your SSH client has never encountered the server&rsquo;s key fingerprint before. Type <code>yes</code> and press <strong>Enter</strong> to continue connecting.</p>
+
+<pre class="file terminal">
+  <code>
+The authenticity of host '198.51.100.4 (198.51.100.4)' can't be established.
+RSA key fingerprint is 11:eb:57:f3:a5:c3:e0:77:47:c4:15:3a:3c:df:6c:d2.
+Are you sure you want to continue connecting (yes/no)?
+</code>
+</pre>
+
+
+<p>After you enter <code>yes</code>, the client confirms the addition:</p>
+
+<pre class="file terminal">
+  <code>
+Warning: Permanently added '198.51.100.4' (RSA) to the list of known hosts.
+</code>
+</pre>
+</li>
+
+<li><p>The login prompt appears for you to enter the password you created for the <code>root</code> user above.</p>
+
+<pre class="file terminal">
+  <code>
+root@198.51.100.4's password:
+</code>
+</pre>
+</li>
+
+<li><p>The SSH client initiates the connection and then the following prompt appears:</p>
+
+<pre class="file terminal">
+  <code>
+root@li123-456:~#
+</code>
+</pre>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>If you recently rebuilt an existing Linode, you might receive an error message when you try to
+reconnect via SSH. SSH clients try to match the remote host with the known keys on your desktop computer, so when you rebuild your Linode, the remote host key changes.</p>
+
+<p>To reconnect via SSH, revoke the key for that IP address.</p>
+
+<p>For Linux and macOS:</p>
+
+<pre><code>ssh-keygen -R 198.51.100.4
+</code></pre>
+
+<p>For Windows, PuTTY users must remove the old host IP addresses manually. PuTTY&rsquo;s known hosts are in the registry entry:</p>
+
+<pre><code>HKEY_CURRENT_USER\Software\SimonTatham\PuTTY\SshHostKeys
+</code></pre>
+</div>
+</blockquote>
+</li>
+</ol>
+
+<h2 id="install-software-updates">Install Software Updates</h2>
+
+<p>The first thing you should do after connecting to your Linode is update the Linux distribution&rsquo;s packages. This applies the latest security patches and bug fixes to help protect your Linode against unauthorized access. Installing software updates should be performed regularly.</p>
+
+<h3 id="arch-linux">Arch Linux</h3>
+
+<pre><code>pacman -Syu
+</code></pre>
+
+<h3 id="centos">CentOS</h3>
+
+<pre><code>yum update
+</code></pre>
+
+<h3 id="debian-ubuntu">Debian / Ubuntu</h3>
+
+<pre><code>apt-get update &amp;&amp; apt-get upgrade
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You may be prompted to make a menu selection when the Grub package is updated on Ubuntu. If prompted, select <code>keep the local version currently installed</code>.</div>
+</blockquote>
+
+
+<h3 id="fedora">Fedora</h3>
+
+<pre><code>dnf upgrade
+</code></pre>
+
+<h3 id="gentoo">Gentoo</h3>
+
+<pre><code>emaint sync -a
+</code></pre>
+
+<p>After running a sync, it may end with a message that you should upgrade Portage using a <code>--oneshot</code> emerge command. If so, run the Portage update. Then update the rest of the system:</p>
+
+<pre><code>emerge --uDN @world
+</code></pre>
+
+<h3 id="opensuse">OpenSUSE</h3>
+
+<pre><code>zypper update
+</code></pre>
+
+<h3 id="slackware">Slackware</h3>
+
+<pre><code>slackpkg update
+slackpkg upgrade-all
+</code></pre>
+
+<h2 id="set-the-hostname">Set the Hostname</h2>
+
+<p>A hostname is used to identify your Linode using an easy-to-remember name. Your Linode&rsquo;s hostname doesn&rsquo;t necessarily associate with websites or email services hosted on the system, but see our guide on using the <a href="/docs/networking/dns/using-your-systems-hosts-file/">hosts file</a> if you want to assign your Linode a fully qualified domain name.</p>
+
+<p>Your hostname should be something unique, and should not be <em>www</em> or anything too generic. Some people name their servers after planets, philosophers, or animals. After you&rsquo;ve made the change below, you&rsquo;ll need to log out and back in again to see the terminal prompt change from <code>localhost</code> to your new hostname. The command <code>hostname</code> should also show it correctly.</p>
+
+<h3 id="arch-centos-7-debian-8-fedora-ubuntu-16-04-and-above">Arch / CentOS 7 / Debian 8 / Fedora / Ubuntu 16.04 and above</h3>
+
+<p>Replace <code>example_hostname</code> with one of your choice.</p>
+
+<pre><code>hostnamectl set-hostname example_hostname
+</code></pre>
+
+<h3 id="centos-6">CentOS 6</h3>
+
+<p>Replace <code>hostname</code> with one of your choice.</p>
+
+<pre><code>echo &quot;HOSTNAME=example_hostname&quot; &gt;&gt; /etc/sysconfig/network
+hostname &quot;hostname&quot;
+</code></pre>
+
+<h3 id="debian-7-slackware-ubuntu-14-04">Debian 7 / Slackware / Ubuntu 14.04</h3>
+
+<p>Replace <code>example_hostname</code> with one of your choice.</p>
+
+<pre><code>echo &quot;example_hostname&quot; &gt; /etc/hostname
+hostname -F /etc/hostname
+</code></pre>
+
+<h3 id="gentoo-1">Gentoo</h3>
+
+<p>Enter the following commands to set the hostname, replacing <code>example_hostname</code> with the hostname of your choice:</p>
+
+<pre><code>echo &quot;HOSTNAME=\&quot;example_hostname\&quot;&quot; &gt; /etc/conf.d/hostname
+/etc/init.d/hostname restart
+</code></pre>
+
+<h3 id="opensuse-1">OpenSUSE</h3>
+
+<p>Replace <code>example-hostname</code> with one of your choice.</p>
+
+<pre><code>hostname example-hostname
+</code></pre>
+
+<h3 id="update-your-system-s-hosts-file">Update Your System&rsquo;s hosts File</h3>
+
+<p>The <code>hosts</code> file creates static associations between IP addresses and hostnames or domains which the system prioritizes before DNS for name resolution. Open this file in a text editor and add a line for your Linode&rsquo;s public IP address. You can associate this address with your Linode&rsquo;s <strong>Fully Qualified Domain Name</strong> (FQDN) if you have one, and with the local hostname you set in the steps above. In the example below, <code>203.0.113.10</code> is the public IP address, <code>hostname</code> is the local hostname, and <code>hostname.example.com</code> is the FQDN.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">127.0.0.1 localhost.localdomain localhost
+203.0.113.10 hostname.example.com hostname</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>You may also want to add an entry for your Linode&rsquo;s IPv6 address:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">127.0.0.1 localhost.localdomain localhost
+203.0.113.10 hostname.example.com hostname
+2600:3c01::a123:b456:c789:d012 hostname.example.com hostname</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The value you assign as your system&rsquo;s FQDN should have an &ldquo;A&rdquo; record in DNS pointing to your Linode&rsquo;s IPv4 address. For IPv6, you should also set up a DNS &ldquo;AAAA&rdquo; record pointing to your Linode&rsquo;s IPv6 address.</p>
+
+<p>See our guide to <a href="/docs/websites/hosting-a-website/#add-dns-records">Adding DNS Records</a> for more information on configuring DNS. For more information about the <code>hosts</code> file, see <a href="/docs/networking/dns/using-your-systems-hosts-file/">Using your System&rsquo;s hosts File</a></p>
+
+<h2 id="set-the-timezone">Set the Timezone</h2>
+
+<p>All new Linodes will be set to UTC time by default. However, you may prefer your Linode use the time zone which you live in so log file timestamps are relative to your local time.</p>
+
+<h3 id="arch-linux-centos-7-fedora">Arch Linux / CentOS 7 / Fedora</h3>
+
+<ol>
+<li><p>View all available time zones:</p>
+
+<pre><code>timedatectl list-timezones
+</code></pre></li>
+
+<li><p>Use the <code>Up</code>, <code>Down</code>, <code>Page Up</code> and <code>Page Down</code> keys to navigate. Copy the time zone you want as a mouse selection. Then press <strong>q</strong> to exit the list.</p></li>
+
+<li><p>Set the time zone (for example, <code>America/New_York</code>):</p>
+
+<pre><code>timedatectl set-timezone 'America/New_York'
+</code></pre></li>
+</ol>
+
+<h3 id="debian-ubuntu-1">Debian / Ubuntu</h3>
+
+<ol>
+<li><p>Though newer versions of Debian and Ubuntu use systemd with <code>timedatectl</code>, the recommended method to change timezones for these distributions is to use <code>tzdata</code>. It can be called using <code>dpkg</code>:</p>
+
+<pre><code>dpkg-reconfigure tzdata
+</code></pre></li>
+
+<li><p>Arrow up or down to the continent of your choice and press <strong>Enter</strong>. Then do the same for the region.</p></li>
+</ol>
+
+<h3 id="gentoo-2">Gentoo</h3>
+
+<ol>
+<li><p>View a list of available time zones:</p>
+
+<pre><code>ls /usr/share/zoneinfo
+</code></pre></li>
+
+<li><p>Write the selected time zone to <code>/etc/timezone</code> (for example, EST for Eastern Standard Time):</p>
+
+<pre><code>echo &quot;EST&quot; &gt; /etc/timezone
+</code></pre></li>
+
+<li><p>Configure the <code>sys-libs/timezone-data</code> package, which will set <code>/etc/localtime</code> appropriately:</p>
+
+<pre><code>emerge --config sys-libs/timezone-data
+</code></pre></li>
+</ol>
+
+<h3 id="opensuse-2">OpenSUSE</h3>
+
+<ol>
+<li><p>View a list of available time zones:</p>
+
+<pre><code>yast2 timezone
+</code></pre></li>
+
+<li><p>Arrow up or down to the <em>Region</em> of your choice and press <strong>Enter</strong>.</p></li>
+
+<li><p>Press <strong>Option+Z</strong> (on a macOS) or <strong>ALT+Z</strong> (on Windows/Linux) to select the <em>Time Zone</em>.</p></li>
+
+<li><p>Use arrow up or down to move through the list of time zones. Press <strong>Enter</strong> to make your selection.</p></li>
+
+<li><p>Press <strong>F10</strong> when done.</p></li>
+</ol>
+
+<h3 id="slackware-1">Slackware</h3>
+
+<ol>
+<li><p>Call the <code>timeconfig</code> tool in a terminal:</p>
+
+<pre><code>timeconfig
+</code></pre></li>
+
+<li><p>Select <code>NO Hardware clock is set to local time</code>.</p></li>
+
+<li><p>Select a timezone.</p></li>
+</ol>
+
+<h3 id="check-the-time">Check the Time</h3>
+
+<p>Use the <code>date</code> command to view the current date and time according to your server.</p>
+
+<pre class="file terminal">
+  <code>
+root@localhost:~# date
+Thu Feb 16 12:17:52 EST 2018
+</code>
+</pre>
+
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Now that you&rsquo;ve learned the basics of using the Cloud Manager and working with your Linode, secure it and your Linode account from unauthorized access. See the following guides to begin:</p>
+
+<ul>
+<li><a href="/docs/security/securing-your-server/">Securing Your Server</a></li>
+<li><a href="/docs/security/linode-manager-security-controls-new-manager/">Linode Manager Security Controls</a></li>
+</ul>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+<blockquote class="classic_manager_link">
+  <strong class="callout-title">The <a href="https://manager.linode.com">Linode Classic Manager</a></strong>
+  <div>If you're using the Linode Classic Manager instead of the new <a href="https://cloud.linode.com">Cloud Manager</a>, you can still view the Classic Manager version of this <a href=http://localhost:1313/docs/getting-started-classic-manager/>Getting Started with Linode</a> guide.</div>
+</blockquote>
+
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library toc-long nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#welcome-to-linode">Welcome to Linode!</a></li>
+<li><a href="#sign-up">Sign Up</a></li>
+<li><a href="#create-a-linode">Create a Linode</a></li>
+<li><a href="#connect-to-your-linode-via-ssh">Connect to Your Linode via SSH</a>
+<ul>
+<li><a href="#find-your-linode-s-ip-address">Find your Linode&rsquo;s IP Address</a></li>
+<li><a href="#log-in-using-ssh">Log in Using SSH</a></li>
+</ul></li>
+<li><a href="#install-software-updates">Install Software Updates</a>
+<ul>
+<li><a href="#arch-linux">Arch Linux</a></li>
+<li><a href="#centos">CentOS</a></li>
+<li><a href="#debian-ubuntu">Debian / Ubuntu</a></li>
+<li><a href="#fedora">Fedora</a></li>
+<li><a href="#gentoo">Gentoo</a></li>
+<li><a href="#opensuse">OpenSUSE</a></li>
+<li><a href="#slackware">Slackware</a></li>
+</ul></li>
+<li><a href="#set-the-hostname">Set the Hostname</a>
+<ul>
+<li><a href="#arch-centos-7-debian-8-fedora-ubuntu-16-04-and-above">Arch / CentOS 7 / Debian 8 / Fedora / Ubuntu 16.04 and above</a></li>
+<li><a href="#centos-6">CentOS 6</a></li>
+<li><a href="#debian-7-slackware-ubuntu-14-04">Debian 7 / Slackware / Ubuntu 14.04</a></li>
+<li><a href="#gentoo-1">Gentoo</a></li>
+<li><a href="#opensuse-1">OpenSUSE</a></li>
+<li><a href="#update-your-system-s-hosts-file">Update Your System&rsquo;s hosts File</a></li>
+</ul></li>
+<li><a href="#set-the-timezone">Set the Timezone</a>
+<ul>
+<li><a href="#arch-linux-centos-7-fedora">Arch Linux / CentOS 7 / Fedora</a></li>
+<li><a href="#debian-ubuntu-1">Debian / Ubuntu</a></li>
+<li><a href="#gentoo-2">Gentoo</a></li>
+<li><a href="#opensuse-2">OpenSUSE</a></li>
+<li><a href="#slackware-1">Slackware</a></li>
+<li><a href="#check-the-time">Check the Time</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

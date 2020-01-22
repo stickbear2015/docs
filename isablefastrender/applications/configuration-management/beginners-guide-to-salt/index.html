@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>A Beginner&#39;s Guide to Salt</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="A look into Salt&#39;s primary components, features, and configurations for the new SaltStack user">
+        <meta name="keywords" content="salt, automation, saltstack, configuration management">
+        
+        <meta property="og:title" content="A Beginner&#39;s Guide to Salt">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/configuration-management/beginners-guide-to-salt/">
+        <meta property="og:description" content="A look into Salt&#39;s primary components, features, and configurations for the new SaltStack user">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/configuration-management/beginners-guide-to-salt/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/configuration-management/">Configuration Management</a>
+  
+</li>
+
+
+<li>
+  
+  A Beginner&#39;s Guide to Salt
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">A Beginner&#39;s Guide to Salt</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-07T14:28:52-05:00">Monday, January 7, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>Salt20</strong> for $20 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fbeginners-guide-to-salt%2f&via=linode&text=A%20Beginner%26%2339%3bs%20Guide%20to%20Salt" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fbeginners-guide-to-salt%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fconfiguration-management%2fbeginners-guide-to-salt%2f&t=A%20Beginner%27s%20Guide%20to%20Salt" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=A%20Beginner%27s%20Guide%20to%20Salt%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fconfiguration-management%2fbeginners-guide-to-salt%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cconfiguration-management%5cbeginners-guide-to-salt%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cconfiguration-management%5cbeginners-guide-to-salt%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><a href="https://www.saltstack.com">Salt</a> (also referred to as <em>SaltStack</em>) is a Python-based configuration management and orchestration system. Salt uses a master/client model in which a dedicated Salt <em>master</em> server manages one or more Salt <em>minion</em> servers. Two of Salt&rsquo;s primary jobs are:</p>
+
+<ul>
+<li><p>Remotely executing commands across a set of minions</p></li>
+
+<li><p>Applying Salt <em>states</em> to a set of minions (referred to generally as <em>configuration management</em>)</p></li>
+</ul>
+
+<p>This guide will introduce the core concepts that Salt employs to fulfill these jobs.</p>
+
+<h2 id="masters-and-minions">Masters and Minions</h2>
+
+<p>The Salt master is a server that acts as a command-and-control center for its minions, and it is where Salt&rsquo;s <a href="#remote-execution">remote execution</a> commands are run from. For example, this command reports the current disk usage for each of the minions that the master controls:</p>
+
+<pre><code>salt '*' disk.usage
+</code></pre>
+
+<p>Many other commands are available. This installs NGINX on the minion named <code>webserver1</code>:</p>
+
+<pre><code>salt 'webserver1' pkg.install nginx
+</code></pre>
+
+<p>Salt minions are your servers that actually run your applications and services. Each minion has an ID assigned to it (which can be automatically generated from the minion&rsquo;s hostname), and the Salt master can refer to this ID to <a href="#targeting-minions">target commands to specific minions</a>.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>When using Salt, you should configure and manage your minion servers from the master as much as possible, instead of logging into them directly via SSH or another protocol.</div>
+</blockquote>
+
+
+<p>To enable all of these functions, the Salt master server runs a daemon named <strong>salt-master</strong>, and the Salt minion servers run a daemon named <strong>salt-minion</strong>.</p>
+
+<h3 id="authentication">Authentication</h3>
+
+<p>Communication between the master and minions is performed over the <a href="https://docs.saltstack.com/en/latest/topics/development/topology.html">ZeroMQ</a> transport protocol, and all communication is encrypted with public/private keypairs. A keypair is generated by a minion when Salt is first installed on it, after which the minion will send its public key to the master. You will need to accept the minion&rsquo;s key from the master; communication can then proceed between the two.</p>
+
+<h2 id="remote-execution">Remote Execution</h2>
+
+<p>Salt offers a <a href="https://docs.saltstack.com/en/latest/ref/modules/all/">very wide array</a> of remote <em>execution modules</em>. An execution module is a collection of related functions that you can run on your minions <strong>from the master</strong>. For example:</p>
+
+<pre><code>salt 'webserver1' npm.install gulp
+</code></pre>
+
+<p>In this command <code>npm</code> is <a href="https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.npm.html">the module</a> and <code>install</code> is <a href="https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.npm.html#salt.modules.npm.install">the function</a>. This command installs the <a href="https://gulpjs.com">Gulp</a> Node.js package via the Node Package Manager (NPM). Other functions in the <code>npm</code> module handle uninstalling NPM packages, listing installed NPM packages, and related tasks.</p>
+
+<p>The execution modules that Salt makes available represent system administration tasks that you would otherwise perform in a shell, including but not limited to:</p>
+
+<ul>
+<li><p>Creating and managing <a href="https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.user.html">system users</a></p></li>
+
+<li><p>Installing and uninstalling <a href="https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.pkg.html">software</a></p></li>
+
+<li><p>Editing or creating configuration <a href="https://docs.saltstack.com/en/latest/ref/modules/all/salt.modules.file.html#module-salt.modules.file">files</a></p></li>
+</ul>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You can also <a href="/docs/applications/configuration-management/create-a-salt-execution-module/">write your own</a> execution modules.</div>
+</blockquote>
+
+
+<h3 id="cmd-run">cmd.run</h3>
+
+<p>The <code>cmd.run</code> function is used to run arbitrary commands on your minions from the master:</p>
+
+<pre><code>salt '*' cmd.run 'ls -l /etc'
+</code></pre>
+
+<p>This would return the contents of <code>/etc</code> on each minion.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Where possible, it&rsquo;s better to use execution modules than to &ldquo;shell out&rdquo; with <code>cmd.run</code>.</div>
+</blockquote>
+
+
+<h2 id="states-formulas-and-the-top-file">States, Formulas, and the Top File</h2>
+
+<p>The previous section described how to use remote execution to perform specific actions on a minion. With remote execution, you could administer a minion by entering a series of such commands.</p>
+
+<p>Salt offers another way to configure a minion in which you declare <strong>the state that a minion should be in</strong>. This kind of configuration is called a Salt <em>state</em>, and the methodology is referred to generally as <em>configuration management</em>.</p>
+
+<p>The distinction between the two styles is subtle; to illustrate, here&rsquo;s how installing NGINX is interpreted in each methodology:</p>
+
+<ul>
+<li><p><strong>Remote execution</strong>: &ldquo;Install NGINX on the minion&rdquo;</p></li>
+
+<li><p><strong>Configuration management</strong>: &ldquo;NGINX should be installed on the minion&rdquo;</p></li>
+</ul>
+
+<p>Salt states are defined in <em>state files</em>. Once you have recorded your states, you then <em>apply</em> them to a minion. Salt analyzes the state file and determines what it needs to do to make sure that the minion satisfies the state&rsquo;s declarations.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This sometimes results in the same command that would be run via remote execution, but sometimes it doesn&rsquo;t. In the NGINX example, if Salt sees that NGINX was already installed previously, it won&rsquo;t invoke the package manager again when the state is applied.</div>
+</blockquote>
+
+
+<h3 id="anatomy-of-a-state">Anatomy of a State</h3>
+
+<p>Here&rsquo;s an example state file which ensures that: rsync and curl are installed; NGINX is installed; and NGINX is run and enabled to run at boot:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/webserver_setup.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">network_utilities:
+  pkg.installed:
+    - pkgs:
+      - rsync
+      - curl
+
+nginx_pkg:
+  pkg.installed:
+    - name: nginx
+
+nginx_service:
+  service.running:
+    - name: nginx
+    - enable: True
+    - require:
+      - pkg: nginx_pkg</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>State files end with the extension <code>.sls</code> (<strong>S</strong>a<strong>L</strong>t <strong>S</strong>tate). State files can have one or more <em>state declarations</em>, which are the top-level sections of the file (<code>network_utilities</code>, <code>nginx_pkg</code>, and <code>nginx_service</code> in the above example). State declarations IDs are arbitrary, so you can name them however you prefer.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>If you were to name the ID to be the same as the relevant installed package, then you do not need to specify the <code>- name</code> option, as it will be inferred from the ID. For example, this snippet also installs NGINX:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">nginx:
+  pkg.installed</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+<p>The same name/ID inference convention is true for other Salt modules.</p>
+</div>
+</blockquote>
+
+
+<p>State declarations contain <em>state modules</em>. State modules are distinct from execution modules but often perform similar jobs. For example, a <code>pkg</code> state module exists with functions analogous to the <code>pkg</code> execution module, as with the <code>pkg.installed</code> state function and the <code>pkg.install</code> execution function. As with execution modules, Salt provides a <a href="https://docs.saltstack.com/en/latest/ref/states/all/">wide array</a> of state modules for you to use.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>State declarations are not necessarily applied in the order they appear in a state file, but you can specify that a declaration depends on another one using the <code>require</code> option. This is the case in the above example; Salt will not attempt to run and enable NGINX until it is installed.</div>
+</blockquote>
+
+
+<p>State files are really just collections of dictionaries, lists, strings, and numbers that are then interpreted by Salt. By default, Salt uses the <a href="https://docs.saltstack.com/en/latest/topics/yaml/">YAML syntax</a> for representing states.</p>
+
+<p>State files are often kept on the Salt master&rsquo;s filesystem, but they can also be stored in <a href="https://docs.saltstack.com/en/latest/ref/file_server/backends.html">other fileserver locations</a>, like a Git repository (in particular, GitHub).</p>
+
+<h3 id="applying-a-state-to-a-minion">Applying a State to a Minion</h3>
+
+<p>To apply a state to a minion, use the <code>state.apply</code> function from the master:</p>
+
+<pre><code>salt `webserver1` state.apply webserver_setup
+</code></pre>
+
+<p>This command applies the example <code>webserver_setup.sls</code> state to a minion named <code>webserver1</code>. When applying the state, the <code>.sls</code> suffix is not mentioned. All of the state declarations in the state file are applied.</p>
+
+<h3 id="salt-formulas">Salt Formulas</h3>
+
+<p>Formulas are just collections of states that together configure an application or system component on a minion. Formulas are usually organized across several different <code>.sls</code> files. Splitting a formula&rsquo;s states up across different files can make it easier to organize your work. State declarations can include and reference declarations across other files.</p>
+
+<p>Formulas that are sufficiently generic are often shared on GitHub to be used by others. The SaltStack organization maintains a <a href="https://github.com/saltstack-formulas">collection of popular formulas</a>. Salt&rsquo;s documentation has <a href="https://docs.saltstack.com/en/latest/topics/development/conventions/formulas.html">a guide on using a formula</a> hosted on GitHub.</p>
+
+<p>The definition of what constitutes a formula is somewhat loose, and the specific structure of a formula is not mandated by Salt.</p>
+
+<h3 id="the-top-file">The Top File</h3>
+
+<p>In addition to manually applying states to minions, Salt provides a way for you to automatically map which states should be applied to different minions. This map is called the <em>top file</em>.</p>
+
+<p>Here&rsquo;s a simple top file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/top.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">base:
+  <span class="s1">&#39;*&#39;</span>:
+    - universal_setup
+
+  <span class="s1">&#39;webserver1&#39;</span>:
+    - webserver_setup</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p><code>base</code> refers to the Salt <a href="https://docs.saltstack.com/en/latest/ref/states/top.html#environments"><em>environment</em></a>. You can specify more than one environment corresponding to different phases of your work; for example: development, QA, production, etc. <code>base</code> is the default.</p>
+
+<p>Groups of minions are specified under the environment, and states are listed for each set of minions. The above example top file says that a <code>universal_setup</code> state should be applied to all minions (<code>'*'</code>), and the <code>webserver_setup</code> state should be applied to the <code>webserver1</code> minion.</p>
+
+<p>If you run the <code>state.apply</code> function with no arguments, then Salt will inspect the top file and apply all states within it according to the mapping you&rsquo;ve created:</p>
+
+<pre><code>salt '*' state.apply
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This action is colloquially known as a <a href="https://docs.saltstack.com/en/latest/topics/tutorials/states_pt1.html#running-highstate"><em>highstate</em></a>.</div>
+</blockquote>
+
+
+<h3 id="benefits-of-states-and-configuration-management">Benefits of States and Configuration Management</h3>
+
+<p>Defining your configurations in states eases system administration:</p>
+
+<ul>
+<li><p>Setting up states minimizes human error, as you will not need to enter commands manually one-by-one.</p></li>
+
+<li><p>Applying a state to minion multiple times generally does not result in any changes beyond the first application. Salt understands when a state has already been implemented on a minion and will not perform unnecessary actions.</p></li>
+
+<li><p>If you update a state file and apply it to a minion, Salt will detect and only apply the changes, which makes updating your systems more efficient.</p></li>
+
+<li><p>A state can be reused and applied to more than one minion, which will result in identical configurations across different servers.</p></li>
+
+<li><p>State files can be entered into a version control system, which helps you track changes to your systems over time.</p></li>
+</ul>
+
+<h2 id="targeting-minions">Targeting Minions</h2>
+
+<p>You can match against your minions&rsquo; IDs using shell style globbing. This works at either the command line or in the top file.</p>
+
+<p>These examples would apply the <code>webserver_setup</code> state to all minions whose ID begins with <code>webserver</code> (e.g. <code>webserver1</code>, <code>webserver2</code>, etc):</p>
+
+<ul>
+<li><p>CLI:</p>
+
+<pre><code>salt 'webserver*' state.apply webserver_setup
+</code></pre></li>
+
+<li><p>Top file:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">base:
+  <span class="s1">&#39;webserver*&#39;</span>:
+    - webserver_setup</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ul>
+
+<p><a href="https://docs.saltstack.com/en/latest/topics/targeting/globbing.html#regular-expressions">Regular Expressions</a> and <a href="https://docs.saltstack.com/en/latest/topics/targeting/globbing.html#lists">lists</a> can also be used to match against minion IDs.</p>
+
+<h2 id="grains">Grains</h2>
+
+<p>Salt&rsquo;s <a href="https://docs.saltstack.com/en/latest/topics/grains/"><em>grains</em></a> system provides access to information that is generated by and stored on a minion. Examples include a minion&rsquo;s operating system, domain name, IP address, and so on. You can also specify custom grain data on a minion, as outlined in Salt&rsquo;s documentation.</p>
+
+<p>You can use grain data to target minions from the command line. This command installs httpd on all minions running CentOS:</p>
+
+<pre><code>salt -G 'os:CentOS' pkg.install httpd
+</code></pre>
+
+<p>You can also use grains in a top file:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">base:
+  <span class="s1">&#39;os:CentOS&#39;</span>:
+    - match: grain
+    - centos_setup</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Grain information generally isn&rsquo;t very dynamic, but it can change occasionally, and Salt will refresh its grain data when it does. To view your minions&rsquo; grain data:</p>
+
+<pre><code>salt '*' grains.items
+</code></pre>
+
+<h2 id="storing-data-and-secrets-in-pillar">Storing Data and Secrets in Pillar</h2>
+
+<p>Salt&rsquo;s <a href="https://docs.saltstack.com/en/latest/topics/tutorials/pillar.html"><em>pillar</em></a> feature takes data defined on the Salt master and distributes it to minions. A primary use for pillar is to store secrets, such as account credentials. Pillar is also a useful place to store non-secret data that you wouldn&rsquo;t want to record directly in your state files.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>In addition to storing pillar data on the master, you can also keep it in other locations, like in a <a href="https://docs.saltstack.com/en/latest/ref/pillar/all/salt.pillar.git_pillar.html">Git repository</a> or <a href="https://docs.saltstack.com/en/latest/ref/pillar/all/salt.pillar.vault.html">Hashicorp&rsquo;s Vault</a>.</div>
+</blockquote>
+
+
+<p>Let&rsquo;s say that you want to create system users on a minion and assign different shells to each of them. If you were to code this information into a state file, you would need a new declaration for each user. If you store the data in pillar instead, you can then just create one state declaration and inject the pillar data into it using Salt&rsquo;s <a href="#jinja-templates">Jinja templating</a> feature.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Salt Pillar is sometimes confused with Salt Grains, as they both keep data that is used in states and remote execution. The data that grains maintains originates <em>from</em> the minions, while the data in pillar originates on the master (or another backend) and is delivered <em>to</em> the minions.</div>
+</blockquote>
+
+
+<h3 id="anatomy-of-pillar-data">Anatomy of Pillar Data</h3>
+
+<p>Pillar data is kept in <code>.sls</code> files which are written in the same YAML syntax as states:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/pillar/user_info.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">users:
+  joe:
+    shell: /bin/zsh
+  amy:
+    shell: /bin/bash
+  sam
+    shell: /bin/fish</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>As with state files, a top file (separate from your states&rsquo; top file) maps pillar data to minions:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/pillar/top.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">base:
+  <span class="s1">&#39;webserver1&#39;</span>:
+    - user_info</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="jinja-templates">Jinja Templates</h2>
+
+<p>To inject pillar data into your states, use <a href="https://docs.saltstack.com/en/latest/topics/jinja/index.html">Jinja&rsquo;s template syntax</a>. While Salt uses the YAML syntax for state and pillar files, the files are first interpreted as Jinja templates (by default).</p>
+
+<p>This example state file uses the pillar data from the previous section to create system users and set the shell for each:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/user_setup.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="o">{</span>% <span class="k">for</span> user_name, user_info in pillar<span class="o">[</span><span class="s1">&#39;users&#39;</span><span class="o">]</span>.iteritems<span class="o">()</span> %<span class="o">}</span>
+<span class="o">{{</span> user_name <span class="o">}}</span>:
+  user.present:
+    - shell: <span class="o">{{</span> user_info<span class="o">[</span><span class="s1">&#39;shell&#39;</span><span class="o">]</span> <span class="o">}}</span>
+<span class="o">{</span>% endfor %<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Salt will compile the state file into something that looks like this before it is applied to the minion:</p>
+
+<dl class="file">
+
+<dd>
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">joe:
+  user.present:
+    - shell: /bin/zsh
+
+amy:
+  user.present:
+    - shell: /bin/bash
+
+sam:
+  user.present:
+    - shell: /bin/fish</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>You can also use Jinja to interact with grain data in your states. This example state will install Apache and adjust the name for the package according to the operating system:</p>
+
+<dl class="file">
+
+
+<dt>
+		/srv/salt/webserver_setup.sls 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">install_apache:
+  pkg.installed:
+    <span class="o">{</span>% <span class="k">if</span> grains<span class="o">[</span><span class="s1">&#39;os&#39;</span><span class="o">]</span> <span class="o">==</span> <span class="s1">&#39;CentOS&#39;</span> %<span class="o">}</span>
+    - name: httpd
+    <span class="o">{</span>% <span class="k">else</span> %<span class="o">}</span>
+    - name: apache
+    <span class="o">{</span>% endif %<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>In addition to Salt&rsquo;s documentation on Jinja, the <a href="http://jinja.pocoo.org/docs/2.10/templates/">official Jinja documentation</a> also details the template syntax.</div>
+</blockquote>
+
+
+<h2 id="beacons">Beacons</h2>
+
+<p>The <a href="https://docs.saltstack.com/en/latest/topics/beacons/">beacon</a> system is a way of monitoring a variety of system processes on Salt minions. There are a number of <a href="https://docs.saltstack.com/en/latest/ref/beacons/all/index.html">beacon modules</a> available.</p>
+
+<p>Beacons can trigger <a href="https://docs.saltstack.com/en/latest/topics/reactor/index.html#reactor">reactors</a> which can then help implement a change or troubleshoot an issue. For example, if a service&rsquo;s response times out, the reactor system can restart the service.</p>
+
+<h2 id="getting-started-with-salt">Getting Started with Salt</h2>
+
+<p>Now that you&rsquo;re familiar with some of Salt&rsquo;s basic terminology and components, move on to our guide <a href="https://www.linode.com/docs/applications/configuration-management/getting-started-with-salt-basic-installation-and-setup/">Getting Started with Salt - Basic Installation and Setup</a> to set up a configuration to start running commands and provisioning minion servers.</p>
+
+<p>The SaltStack documentation also contains a page of <a href="https://docs.saltstack.com/en/latest/topics/best_practices.html">best practices</a> to be mindful of when working with Salt. You should review this page and implement those practices into your own workflow whenever possible.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://docs.saltstack.com/">SaltStack Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#masters-and-minions">Masters and Minions</a>
+<ul>
+<li><a href="#authentication">Authentication</a></li>
+</ul></li>
+<li><a href="#remote-execution">Remote Execution</a>
+<ul>
+<li><a href="#cmd-run">cmd.run</a></li>
+</ul></li>
+<li><a href="#states-formulas-and-the-top-file">States, Formulas, and the Top File</a>
+<ul>
+<li><a href="#anatomy-of-a-state">Anatomy of a State</a></li>
+<li><a href="#applying-a-state-to-a-minion">Applying a State to a Minion</a></li>
+<li><a href="#salt-formulas">Salt Formulas</a></li>
+<li><a href="#the-top-file">The Top File</a></li>
+<li><a href="#benefits-of-states-and-configuration-management">Benefits of States and Configuration Management</a></li>
+</ul></li>
+<li><a href="#targeting-minions">Targeting Minions</a></li>
+<li><a href="#grains">Grains</a></li>
+<li><a href="#storing-data-and-secrets-in-pillar">Storing Data and Secrets in Pillar</a>
+<ul>
+<li><a href="#anatomy-of-pillar-data">Anatomy of Pillar Data</a></li>
+</ul></li>
+<li><a href="#jinja-templates">Jinja Templates</a></li>
+<li><a href="#beacons">Beacons</a></li>
+<li><a href="#getting-started-with-salt">Getting Started with Salt</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

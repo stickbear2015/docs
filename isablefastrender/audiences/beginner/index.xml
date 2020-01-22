@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Beginner on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/audiences/beginner/</link>
+    <description>Recent content in Beginner on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/audiences/beginner/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Why You Should Learn Julia</title>
+      <link>http://localhost:1313/docs/development/julia/why-learn-julia/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/julia/why-learn-julia/</guid>
+      <description>What is Julia? Julia is a functional programming language released in 2012. Its creators wanted to combine the readability and simplicity of Python with the speed of statically-typed, compiled languages like C.
+Who is Julia For? Julia is popular among data scientists and mathematicians. It shares features (such as 1-based array indexing and functional design) with mathematical and data software like Mathematica, and its syntax is closer to the way mathematicians are used to writing formulas.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started with Go Packages</title>
+      <link>http://localhost:1313/docs/development/go/getting-started-with-go-packages/</link>
+      <pubDate>Wed, 06 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/go/getting-started-with-go-packages/</guid>
+      <description>What is Go? Go is a compiled, statically typed programming language developed by Google. Many modern applications, including Docker, Kubernetes, and Caddy, are written in Go.
+Go packages allow developers to organize and reuse Go code in a simple and maintainable manner. Using and declaring Go packages are essential tasks that are performed when writing Go applications. This guide will demonstrate and help you to understand how to create and use Go packages.</description>
+    </item>
+    
+    <item>
+      <title>Manage Python Packages and Virtual Environments with Pipenv</title>
+      <link>http://localhost:1313/docs/development/python/manage-python-environments-pipenv/</link>
+      <pubDate>Tue, 01 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/manage-python-environments-pipenv/</guid>
+      <description>What is Pipenv? Pipenv is Python&amp;rsquo;s officially recommended package management tool. It combines the functionality of Pip and Virtualenv, along with the best features of packaging tools from other languages such as Bundler and NPM. This results in a simplified workflow for installing packages and managing virtual environments.
+Install Pipenv You will need to have Python installed on your system before installing Pipenv.
+If you are using Ubuntu 17.10 or higher, you can install Pipenv directly from the Pypa ppa:</description>
+    </item>
+    
+    <item>
+      <title>Introduction to Continuous Integration/Continuous Delivery (CI/CD)</title>
+      <link>http://localhost:1313/docs/development/ci/introduction-ci-cd/</link>
+      <pubDate>Wed, 18 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ci/introduction-ci-cd/</guid>
+      <description>What is Continuous Integration? In software development, integration is the process of incorporating changes like refactored code, new features, or bug fixes into the existing codebase.
+Traditionally, integration is performed in preparation of the deployment of a new release. This approach can lead to problems, as integrating multiple or large changes in one go may result in last-minute conflicts and bugs. Several strategies have emerged to mitigate these problems. Continuous Integration (CI) is one such solution: it creates a workflow where every commit made to the codebase is tested and built, and each developer on the project is expected to commit code at least once per day.</description>
+    </item>
+    
+    <item>
+      <title>String Manipulation in Python 3</title>
+      <link>http://localhost:1313/docs/development/python/string-manipulation-python-3/</link>
+      <pubDate>Fri, 13 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/string-manipulation-python-3/</guid>
+      <description>Strings in Python Strings are one of the most basic data types in Python, used to represent textual data. Almost every application involves working with strings, and Python&amp;rsquo;s str class provides a number of methods to make string manipulation easy.
+Basic String Operations Define a String Strings are denoted with either single or double quotes:
+string_1 = &amp;quot;Example string #1&amp;quot; string_2 = &#39;Example string #2&#39;  Both methods are equivalent.</description>
+    </item>
+    
+    <item>
+      <title>Install Ruby on Rails with Apache on Debian 9</title>
+      <link>http://localhost:1313/docs/development/ror/ruby-on-rails-apache-debian/</link>
+      <pubDate>Mon, 12 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ror/ruby-on-rails-apache-debian/</guid>
+      <description>What is Ruby on Rails? Ruby on Rails is a server-side web application framework. It maintains a curated set of components and a &amp;ldquo;convention over configuration&amp;rdquo; philosophy that makes it possible to develop applications quickly and without large amounts of boilerplate. This guide will show you how to deploy Rails applications on your Linode using Phusion Passenger. Passenger allows you to embed Rails apps directly in Apache applications without needing to worry about FastCGI or complex web server proxies.</description>
+    </item>
+    
+    <item>
+      <title>How to Deploy Interactive R Apps with Shiny Server</title>
+      <link>http://localhost:1313/docs/development/r/how-to-deploy-rshiny-server-on-ubuntu-and-debian/</link>
+      <pubDate>Wed, 07 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/r/how-to-deploy-rshiny-server-on-ubuntu-and-debian/</guid>
+      <description>What is Shiny? Shiny is a library for the R programming language that allows you to create interactive web apps in native R, without needing to use web technologies such as HTML, CSS, or JavaScript. There are many ways to deploy Shiny apps to the web; this guide uses Shiny Server to host an example Shiny app on a Linode.
+Before You Begin If you do not have RStudio installed on your local computer, follow our How to Deploy RStudio Using an NGINX Reverse Proxy guide to set up a remote workstation on a Linode.</description>
+    </item>
+    
+    <item>
+      <title>Deploy a React Application on Linode</title>
+      <link>http://localhost:1313/docs/development/javascript/deploy-a-react-app-on-linode/</link>
+      <pubDate>Wed, 31 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/javascript/deploy-a-react-app-on-linode/</guid>
+      <description>What is React? React is a popular JavaScript library for building user interfaces. While React is often used as a frontend for more complex applications, it&amp;rsquo;s also powerful enough to be used for full client-side applications on its own.
+Since a basic React app is static (it consists of compiled HTML, CSS, and JavaScript files), it is easy to deploy from a local computer to a Linode using Rsync. This guide shows how to set up your Linode and local machine so that you can easily deploy your app whenever changes are made.</description>
+    </item>
+    
+    <item>
+      <title>How to Deploy RStudio Server Using an NGINX Reverse Proxy</title>
+      <link>http://localhost:1313/docs/development/r/how-to-deploy-rstudio-server-using-an-nginx-reverse-proxy/</link>
+      <pubDate>Mon, 29 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/r/how-to-deploy-rstudio-server-using-an-nginx-reverse-proxy/</guid>
+      <description>What is RStudio Server? RStudio is an integrated development environment (IDE) for R, an open source statistical computing language. It includes debugging and plotting tools that make it easy to write, debug, and run R scripts. The IDE is available in both desktop and server configurations. By hosting the server configuration (RStudio Server) on a Linode, you can access the IDE from any computer with internet access. Since data analysis often uses large datasets and can be computationally expensive, keeping your data and running R scripts from a remote server can be more efficient than working from your personal computer.</description>
+    </item>
+    
+    <item>
+      <title>How to Install Go on Ubuntu</title>
+      <link>http://localhost:1313/docs/development/go/install-go-on-ubuntu/</link>
+      <pubDate>Mon, 29 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/go/install-go-on-ubuntu/</guid>
+      <description>What is Go? Go is a compiled, statically typed programming language developed by Google. Many modern applications, including Docker, Kubernetes, and Caddy, are written in Go.
+Install Go  Use curl or wget to download the current binary for Go from the official download page. As of this writing, the current version is 1.9.3. Check the download page for updates, and replace 1.9.3 with the most recent stable version if necessary.</description>
+    </item>
+    
+    <item>
+      <title>How to install R on Ubuntu and Debian</title>
+      <link>http://localhost:1313/docs/development/r/how-to-install-r-on-ubuntu-and-debian/</link>
+      <pubDate>Mon, 29 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/r/how-to-install-r-on-ubuntu-and-debian/</guid>
+      <description>What is R? R is a programming language used for statistical analysis in addition to data visualization. The language is highly extensible through the Comprehensive R Archive Network(CRAN), which hosts more than 10,000 R packages for producing publication quality figures, specialized computational tools, and more.
+Although R can be installed through the default Debian or Ubuntu repository, the method outlined in this guide will ensure that you install the most up-to-date stable release.</description>
+    </item>
+    
+    <item>
+      <title>Introduction to WebSockets</title>
+      <link>http://localhost:1313/docs/development/introduction-to-websockets/</link>
+      <pubDate>Fri, 05 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/introduction-to-websockets/</guid>
+      <description>What are WebSockets? The WebSocket Protocol is a widely supported open standard for developing real-time applications. Previous methods for simulating full-duplex connections were based on polling, a synchronous method wherein the client makes a request to the server to see if there is any information available. The client receives a response from the server even if there is no information available.
+Polling works well for cases where the exact interval of message availability is known.</description>
+    </item>
+    
+    <item>
+      <title>Use a Linode for Web Development on Remote Devices</title>
+      <link>http://localhost:1313/docs/development/use-a-linode-for-web-development-on-remote-devices/</link>
+      <pubDate>Thu, 14 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/use-a-linode-for-web-development-on-remote-devices/</guid>
+      <description>This guide will walk you through the necessary steps to configure your Linode to be an efficient remote development environment. You will then connect to this environment using a tablet and edit a simple web application using ssh and a text editor.
+Development Environments Local Development Environment A local development environment is usually faster, more powerful, and more comfortable than a remote environment. However, there some drawbacks associated with local development:</description>
+    </item>
+    
+    <item>
+      <title>Create a Python Virtual Environment on Ubuntu 16.10</title>
+      <link>http://localhost:1313/docs/development/python/create-a-python-virtualenv-on-ubuntu-1610/</link>
+      <pubDate>Sun, 13 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/create-a-python-virtualenv-on-ubuntu-1610/</guid>
+      <description>What is a Python Virtual Environment? A Python Virtual Environment - or virtualenv - is a tool to create an isolated Python environment on your Linode. This can be extremely powerful as you can create a virtual environment and install all Python executables/packages to it, leaving no dependencies outside of your created virtual environment.
+The purpose of this tutorial is to allow you to create and run Python virtual environments in your Ubuntu 16.</description>
+    </item>
+    
+    <item>
+      <title>Install Java on Centos 7</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-centos/</link>
+      <pubDate>Thu, 01 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-centos/</guid>
+      <description>Java is a powerful programming language. Software written in Java can compile and run on any system. Unlike Python or C, Java does not come pre-installed on Linode distribution images. This guide installs the OpenJDK 8 runtime environment and development kit in CentOS 7. OpenJDK is the free and open-source implementation of the Java SE Development Kit.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>Install Java on Debian 8</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-debian/</link>
+      <pubDate>Thu, 01 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-debian/</guid>
+      <description>Java is a powerful programming language. Software written in Java can be compiled and run on any system. Unlike Python or C, Java does not come pre-installed on Linode distribution images. This guide installs the OpenJDK 7 runtime environment and development kit in Debian 8. OpenJDK is the free and open-source implementation of the Java SE Development Kit.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>Install Java on Ubuntu 16.04</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-ubuntu-16-04/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-ubuntu-16-04/</guid>
+      <description>Java is one of the world&amp;rsquo;s most popular programming languages. Java can be used to create anything from software to basic web applications.
+In this guide, we&amp;rsquo;ll install the Oracle Java development kit for building Java applications. We&amp;rsquo;ll also cover OpenJDK, an open-source alternative to the Oracle Java development kit.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+    <item>
+      <title>Install Oracle Java SE Development Kit 11 on Ubuntu</title>
+      <link>http://localhost:1313/docs/development/java/install-java-on-ubuntu-18-04/</link>
+      <pubDate>Tue, 30 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/java/install-java-on-ubuntu-18-04/</guid>
+      <description>Java is one of the world&amp;rsquo;s most popular programming languages and can be used to create anything from software to basic web applications. Java was originally developed at Sun Microsystems, which was bought by Oracle. For this reason, Oracle&amp;rsquo;s Java platform is the most well known. However, there are other such as IBM Runtimes, Red Hat&amp;rsquo;s Open JDK, and Zulu.
+With the release of version 11, Oracle has updated the JDK license to be significantly different from previous versions.</description>
+    </item>
+    
+    <item>
+      <title>Install Apache Tomcat on Ubuntu 16.04</title>
+      <link>http://localhost:1313/docs/development/frameworks/apache-tomcat-on-ubuntu-16-04/</link>
+      <pubDate>Mon, 09 May 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/frameworks/apache-tomcat-on-ubuntu-16-04/</guid>
+      <description>Apache Tomcat is an open-source software implementation of the Java Servlet and Java Server Pages technologies. With this guide, you&amp;rsquo;ll run applications within Tomcat using the OpenJDK implementation of the Java development environment.
+Before You Begin  Ensure that your system is up to date and that you have completed the getting started guide. If you are new to Linux server administration, we recommend reviewing our beginner&amp;rsquo;s guide and the article concerning systems administration basics.</description>
+    </item>
+    
+    <item>
+      <title>Use Unicorn and Nginx to Configure Ruby on Rails Applications on Ubuntu 14.04</title>
+      <link>http://localhost:1313/docs/development/ror/use-unicorn-and-nginx-on-ubuntu-14-04/</link>
+      <pubDate>Wed, 30 Mar 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ror/use-unicorn-and-nginx-on-ubuntu-14-04/</guid>
+      <description>Ruby on Rails is a popular web-application framework that allows developers to create dynamic web applications. This guide describes how to deploy Rails applications on servers using Unicorn and nginx on Ubuntu 14.04.
+Unicorn is an HTTP server, just like Passenger or Puma. Since Unicorn cannot be accessed by users directly we will be using nginx as the reverse proxy that will buffer requests and response between users and Rails application.</description>
+    </item>
+    
+    <item>
+      <title>Clojure Deployment with Immutant and WildFly on Ubuntu 14.04</title>
+      <link>http://localhost:1313/docs/development/clojure-deployment-with-immutant-and-wildfly-on-ubuntu-14-04/</link>
+      <pubDate>Thu, 18 Feb 2016 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/clojure-deployment-with-immutant-and-wildfly-on-ubuntu-14-04/</guid>
+      <description>Clojure is a general-purpose programming language with an emphasis on functional programming. It is a dialect of the Lisp programming language running on the Java Virtual Machine (JVM). While Clojure allows you to write elegant and concise code, its ability to make use of the existing JVM infrastructure, such as libraries, tools and application servers, makes it also a very practical choice.
+This guide will show how to deploy a Clojure application to WildFly - the popular open-source Java application server developed by RedHat.</description>
+    </item>
+    
+    <item>
+      <title>Ruby on Rails with NGINX On Debian 9</title>
+      <link>http://localhost:1313/docs/development/ror/ruby-on-rails-nginx-debian/</link>
+      <pubDate>Thu, 25 Jun 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ror/ruby-on-rails-nginx-debian/</guid>
+      <description>Ruby on Rails is a web framework that allows web designers and developers to implement dynamic, fully featured web applications. When deploying a Rails app in production, developers can choose from several popular app servers including Puma, Unicorn, and Passenger. This guide will use Passenger, because of its convenient integration with NGINX.
+Note This guide is written for a non-root user. Commands that require elevated privileges are prefixed with sudo.</description>
+    </item>
+    
+    <item>
+      <title>How to Install Git and Clone a GitHub Repository</title>
+      <link>http://localhost:1313/docs/development/version-control/how-to-install-git-and-clone-a-github-repository/</link>
+      <pubDate>Fri, 06 Feb 2015 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/how-to-install-git-and-clone-a-github-repository/</guid>
+      <description>GitHub is a website that allows collaboration between developers using the Git version control system. With Git and GitHub, programmers from across the world can share ideas and code in an organized and up-to-date process.
+Install and Configure Git The directions below are for Debian or Ubuntu. For installation on Mac, Windows, or other Linux distributions, find instructions in the Git Source Control Management guide. While that guide focuses on Git, this guide focuses more on Git with GitHub.</description>
+    </item>
+    
+    <item>
+      <title>How to Install Node.js</title>
+      <link>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs/</link>
+      <pubDate>Thu, 18 Dec 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/how-to-install-nodejs/</guid>
+      <description>Node.js is a cross-platform runtime environment for server-side JavaScript applications. Node.js uses V8, Google&amp;rsquo;s JavaScript engine, which is also found in Chromium and Chrome. Depending on the use case, Node.js can supplement or replace traditional web servers and tools such as Apache, nginx, or PHP.
+Node.js can be installed and maintained multiple ways across the various platforms offered. Multiple releases of Node.js are available, along with multiple versions within the LTS branch.</description>
+    </item>
+    
+    <item>
+      <title>Ruby on Rails with Nginx on Debian 7 (Wheezy)</title>
+      <link>http://localhost:1313/docs/development/ror/ruby-on-rails-with-nginx-on-debian-7-wheezy/</link>
+      <pubDate>Tue, 11 Feb 2014 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ror/ruby-on-rails-with-nginx-on-debian-7-wheezy/</guid>
+      <description>Ruby on Rails is a popular rapid development web framework that allows web designers and developers to implement fully featured dynamic web applications using the Ruby programming language. This guide describes the required process for deploying Ruby on Rails with Passenger and the Nginx web server on Debian 7 (Wheezy). For the purposes of this tutorial, it is assumed that you&amp;rsquo;ve followed the steps outlined in our getting started guide, that your system is up to date, and that you&amp;rsquo;ve logged into your Linode as root via SSH.</description>
+    </item>
+    
+    <item>
+      <title>Install Ruby on Rails with Apache on Debian 8</title>
+      <link>http://localhost:1313/docs/development/ror/ruby-on-rails-apache-debian-8/</link>
+      <pubDate>Sat, 13 Jul 2013 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/ror/ruby-on-rails-apache-debian-8/</guid>
+      <description>Ruby on Rails is a rapid development web framework that allows web designers and developers to implement dynamic fully featured web applications. This guide deploys Rails applications using the Phusion Passenger or mod_rails method. Passenger allows you to embed Rails apps directly in Apache applications without needing to worry about FastCGI or complex web server proxies.
+Note This guide is written for a non-root user. Commands that require elevated privileges are prefixed with sudo.</description>
+    </item>
+    
+    <item>
+      <title>Manage Distributed Version Control with Mercurial</title>
+      <link>http://localhost:1313/docs/development/version-control/manage-distributed-version-control-with-mercurial/</link>
+      <pubDate>Mon, 26 Apr 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/version-control/manage-distributed-version-control-with-mercurial/</guid>
+      <description>Mercurial is one of the leading distributed version control systems which allows software developers and teams of collaborators to work on a common code base without the need to rely on a centralized server or constant network connection. Mercurial runs on multiple platforms and can be used to manage code projects on many different operating systems.
+Before You Begin  You will need root access to your Linode, or a user account with sudo privileges.</description>
+    </item>
+    
+    <item>
+      <title>Manage CPAN Modules with cpanminus</title>
+      <link>http://localhost:1313/docs/development/perl/manage-cpan-modules-with-cpan-minus/</link>
+      <pubDate>Mon, 12 Apr 2010 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/perl/manage-cpan-modules-with-cpan-minus/</guid>
+      <description>CPAN, the Comprehensive Perl Archive Network, is the primary source for publishing and fetching the latest modules and libraries for the Perl programming language. The default method for installing Perl modules, using the CPAN Shell, provides users with a great deal of power and flexibility, but this comes at the cost of a complex configuration and an inelegant default setup.
+The cpanm client attempts to make the power of CPAN accessible to all users, particularly those who aren&amp;rsquo;t Perl developers, but have experience with the CPAN shell.</description>
+    </item>
+    
+  </channel>
+</rss>

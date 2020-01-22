@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Set Up a Task Queue with Celery and RabbitMQ</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="How to Set Up a Task Queue with Celery and RabbitMQ">
+        <meta name="keywords" content="celery, Python, tasks, asynchronous, cluster">
+        
+        <meta property="og:title" content="How to Set Up a Task Queue with Celery and RabbitMQ">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/development/python/task-queue-celery-rabbitmq/">
+        <meta property="og:description" content="How to Set Up a Task Queue with Celery and RabbitMQ">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/development/python/task-queue-celery-rabbitmq/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/">Development</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/development/python/">Python</a>
+  
+</li>
+
+
+<li>
+  
+  How to Set Up a Task Queue with Celery and RabbitMQ
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Set Up a Task Queue with Celery and RabbitMQ</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-18T14:31:59-05:00">Tuesday, December 18, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Florent Houbart
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2ftask-queue-celery-rabbitmq%2f&via=linode&text=How%20to%20Set%20Up%20a%20Task%20Queue%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2ftask-queue-celery-rabbitmq%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fdevelopment%2fpython%2ftask-queue-celery-rabbitmq%2f&t=How%20to%20Set%20Up%20a%20Task%20Queue%20with%20Celery%20and%20RabbitMQ" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Set%20Up%20a%20Task%20Queue%20with%20Celery%20and%20RabbitMQ%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fdevelopment%2fpython%2ftask-queue-celery-rabbitmq%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/development%5cpython%5ctask-queue-celery-rabbitmq%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/development%5cpython%5ctask-queue-celery-rabbitmq%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="how-to-set-up-a-task-queue-with-celery-and-rabbitmq-smg.jpg" alt="How to Set Up a Task Queue with Celery and RabbitMQ" /></p>
+
+<p>Celery is a Python Task-Queue system that handle distribution of tasks on workers across threads or network nodes. It makes asynchronous task management easy. Your application just need to push messages to a broker, like RabbitMQ, and Celery workers will pop them and schedule task execution.</p>
+
+<p>Celery can be used in multiple configuration. Most frequent uses are horizontal application scaling by running resource intensive tasks on Celery workers distributed across a cluster, or to manage long asynchronous tasks in a web app, like thumbnail generation when a user post an image. This guide will take you through installation and usage of Celery with an example application that delegate file downloads to Celery workers, using Python 3, Celery 4.1.0, and RabbitMQ.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Familiarize yourself with our <a href="/docs/getting-started/">Getting Started</a> guide and complete the steps for setting your Linode&rsquo;s hostname and timezone.</p></li>
+
+<li><p>This guide will use <code>sudo</code> wherever possible. Complete the sections of our <a href="/docs/security/securing-your-server/">Securing Your Server</a> to create a standard user account, harden SSH access and remove unnecessary network services.</p></li>
+
+<li><p>Update your system:</p>
+
+<pre><code>sudo apt update &amp;&amp; sudo apt upgrade
+</code></pre></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This guide is written for a non-root user. Commands that require elevated privileges are prefixed with <code>sudo</code>. If you’re not familiar with the <code>sudo</code> command, see the <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</div>
+</blockquote>
+
+
+<h2 id="install-a-python-3-environment">Install a Python 3 Environment</h2>
+
+
+
+
+
+<!-- Installation instructions for Python 3. -->
+
+<ol>
+<li><p>Download and install Miniconda:</p>
+
+<pre><code>curl -OL https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
+</code></pre></li>
+
+<li><p>You will be prompted several times during the installation process. Review the terms and conditions and select &ldquo;yes&rdquo; for each prompt.</p></li>
+
+<li><p>Restart your shell session for the changes to your PATH to take effect.</p></li>
+
+<li><p>Check your Python version:</p>
+
+<pre><code>python --version
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h2 id="install-celery">Install Celery</h2>
+
+<p>Celery is available from PyPI. The easiest and recommended way is to install it with <code>pip</code>. You can go for a system wide installation for simplicity, or use a virtual environment if other Python applications runs on your system. This last method installs the libraries on a per project basis and prevent version conflicts with other applications.</p>
+
+<h3 id="system-wide-installation">System Wide Installation</h3>
+
+<p>Chose a system wide installation if your host won&rsquo;t run other python applications with specific version libraries requirements. Install Celery with the following command:</p>
+
+<pre><code>pip install celery
+</code></pre>
+
+<h3 id="installation-in-a-python-virtual-environment">Installation in a Python Virtual Environment</h3>
+
+<p>If other Python application are running on your host and you prefer to manage your libraries on a per project basis, use a virtual environment installation. This guide will use Anaconda but Virtualenv is also a good choice.</p>
+
+<ol>
+<li><p>Create your virtual environment:</p>
+
+<pre><code>conda create -n celeryenv
+</code></pre></li>
+
+<li><p>Activate your virtual environment:</p>
+
+<pre><code>source activate celeryenv
+</code></pre>
+
+<p>Your shell prompt will change to indicate which environment you are using</p></li>
+
+<li><p>Install Celery in the virtual environment:</p>
+
+<pre><code>pip install celery
+</code></pre></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you use a virtual environment, don&rsquo;t forget to activate your environment with step 3 when working on your project. All command in this guide assume the Celery virtual environment is activated.</div>
+</blockquote>
+
+
+<h2 id="install-rabbitmq">Install RabbitMQ</h2>
+
+<ul>
+<li><p>On Debian/Ubuntu:</p>
+
+<ul>
+<li><p>Install RabbitMQ with <code>apt</code>. The following command will install and start RabbitMQ with an acceptable default configuration:</p>
+
+<pre><code>sudo apt-get install rabbitmq-server
+</code></pre></li>
+</ul></li>
+
+<li><p>On CentOS:</p>
+
+<ul>
+<li><p>Install the <code>rabbitmq-server.noarch</code> package, enable the service to start at boot time and start the RabbitMQ server:</p>
+
+<pre><code>sudo yum install rabbitmq-server.noarch
+systemctl enable rabbitmq-server
+systemctl start rabbitmq-server
+</code></pre></li>
+</ul>
+
+<p>This will install RabbitMQ with the default configuration.</p></li>
+</ul>
+
+<h2 id="write-a-celery-application">Write a Celery Application</h2>
+
+<p>A Celery application is composed of two parts:</p>
+
+<ul>
+<li><p><em>Workers</em> that wait for messages from RabbitMQ and execute the tasks.</p></li>
+
+<li><p><em>Client</em> that submit messages to RabbitMQ to trigger task execution, and eventually retrieve the result at a later time</p></li>
+</ul>
+
+<p>The tasks are defined in a module that will be used both by the workers and the client. Workers will run the code to execute tasks, and clients will only use function definitions to expose them and hide the RabbitMQ publishing complexity.</p>
+
+<ol>
+<li><p>Create a directory <code>downloaderApp</code> to hold our new python module, and a directory <code>downloadedFiles</code> where the downloaded files will be stored:</p>
+
+<pre><code>mkdir ~/downloadedFiles ~/downloaderApp; cd ~/downloaderApp
+</code></pre></li>
+
+<li><p>Create a <code>downloaderApp.py</code> module that will contain two functions, <code>download</code> and <code>list</code>, that will be the asynchronous tasks. Replace <code>celery</code> in the <code>BASEDIR</code> path with your system username.</p>
+
+<dl class="file">
+
+
+<dt>
+		~/downloaderApp/downloaderApp.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="kn">from</span> <span class="nn">celery</span> <span class="kn">import</span> <span class="n">Celery</span>
+<span class="kn">import</span> <span class="nn">urllib.request</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="c1"># Where the downloaded files will be stored</span>
+<span class="n">BASEDIR</span><span class="o">=</span><span class="s2">&#34;/home/celery/downloadedFiles&#34;</span>
+
+<span class="c1"># Create the app and set the broker location (RabbitMQ)</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Celery</span><span class="p">(</span><span class="s1">&#39;downloaderApp&#39;</span><span class="p">,</span>
+             <span class="n">backend</span><span class="o">=</span><span class="s1">&#39;rpc://&#39;</span><span class="p">,</span>
+             <span class="n">broker</span><span class="o">=</span><span class="s1">&#39;pyamqp://guest@localhost//&#39;</span><span class="p">)</span>
+
+<span class="nd">@app.task</span>
+<span class="k">def</span> <span class="nf">download</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+    <span class="s2">&#34;&#34;&#34;
+</span><span class="s2">    Download a page and save it to the BASEDIR directory
+</span><span class="s2">      url: the url to download
+</span><span class="s2">      filename: the filename used to save the url in BASEDIR
+</span><span class="s2">    &#34;&#34;&#34;</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">BASEDIR</span><span class="o">+</span><span class="s2">&#34;/&#34;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+        <span class="nb">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="nb">file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="nd">@app.task</span>
+<span class="k">def</span> <span class="nf">list</span><span class="p">():</span>
+    <span class="s2">&#34;&#34;&#34; Return an array of all downloaded files &#34;&#34;&#34;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">BASEDIR</span><span class="p">)</span>
+
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<p>All the magic happens in the <code>@app.task</code> annotation. This tells celery that this function will not be run on the client, but sent to the workers via RabbitMQ. All the Celery configuration happens in following line:</p>
+
+<pre><code>app = Celery('downloaderApp', backend='rpc://', broker='pyamqp://guest@localhost//')
+</code></pre>
+
+<p>This line creates:</p>
+
+<ul>
+<li><p>A Celery application named <code>downloaderApp</code></p></li>
+
+<li><p>A <code>broker</code> on the localhost that will accept message via *<em>Advanced Message Queuing Protocol</em> (AMQP), the protocol used by RabbitMQ</p></li>
+
+<li><p>A response <code>backend</code> where workers will store the return value of the task so that clients can retrieve it later (remember that task execution is asynchronous). If you omit <code>backend</code>, the task will still run, but the return value will be lost. <code>rpc</code> means the response will be sent to a RabbitMQ queue in a <em>Remote Procedure Call</em> pattern.</p></li>
+</ul>
+
+<h2 id="start-the-workers">Start the Workers</h2>
+
+<p>The command <code>celery worker</code> is used to start a Celery worker. The <code>-A</code> flag is used to set the module that contain the Celery app. The worker will read the module and connect to RabbitMQ using the parameters in the <code>Celery()</code> call.</p>
+
+<ol>
+<li><p>Start a worker in debug mode with the following command:</p>
+
+<pre><code>celery -A downloaderApp worker --loglevel=debug
+</code></pre></li>
+
+<li><p>Open another ssh session to run the client (don&rsquo;t forget to activate your virtual environment if needed), go to your module folder and start a python shell:</p>
+
+<pre><code>cd ~/downloaderApp
+python
+</code></pre></li>
+
+<li><p>In the python shell, call the <code>delay()</code> method to submit a job to RabbitMQ, and then use the <code>ready()</code> function to determine if the task is finished:</p>
+
+<pre><code>from downloaderApp import download,list
+r = download.delay('https://www.python.org/static/community_logos/python-logo-master-v3-TM.png', 'python-logo.png')
+r.ready()
+</code></pre></li>
+
+<li><p>Exit the python shell, and check that the python logo has been downloaded:</p>
+
+<pre><code>ls ~/downloadedFiles
+</code></pre></li>
+
+<li><p>Start the python shell again and run the <code>list</code> task. Get the result with the <code>get()</code> function:</p>
+
+<pre><code>from downloaderApp import download,list
+r = list.delay()
+r.ready()
+r.get(timeout=1)
+</code></pre>
+
+<p>If you omit the <code>timeout</code> parameter, the client will wait for the task to complete in a synchronous manner. This is bad practice and should be avoided.</p></li>
+</ol>
+
+<h2 id="start-the-workers-as-daemons">Start the Workers as Daemons</h2>
+
+<p>In a production environment with more than one worker, the workers should be daemonized so that they are started automatically at server startup.</p>
+
+<ol>
+<li><p>Using <code>sudo</code>, create a new service definition file in <code>/etc/systemd/system/celeryd.service</code>. Change the <code>User</code> and <code>Group</code> properties according to your actual user and group name:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/systemd/system/celeryd.service 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="p">[</span><span class="n">Unit</span><span class="p">]</span>
+<span class="n">Description</span><span class="o">=</span><span class="n">Celery</span> <span class="n">Service</span>
+<span class="n">After</span><span class="o">=</span><span class="n">network</span><span class="o">.</span><span class="n">target</span>
+
+<span class="p">[</span><span class="n">Service</span><span class="p">]</span>
+<span class="n">Type</span><span class="o">=</span><span class="n">forking</span>
+<span class="n">User</span><span class="o">=</span><span class="n">celery</span>
+<span class="n">Group</span><span class="o">=</span><span class="n">celery</span>
+<span class="n">EnvironmentFile</span><span class="o">=/</span><span class="n">etc</span><span class="o">/</span><span class="n">default</span><span class="o">/</span><span class="n">celeryd</span>
+<span class="n">WorkingDirectory</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">celery</span><span class="o">/</span><span class="n">downloaderApp</span>
+<span class="n">ExecStart</span><span class="o">=/</span><span class="nb">bin</span><span class="o">/</span><span class="n">sh</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;${CELERY_BIN} multi start ${CELERYD_NODES} </span><span class="se">\
+</span><span class="se"></span><span class="s1">  -A ${CELERY_APP} --pidfile=${CELERYD_PID_FILE} </span><span class="se">\
+</span><span class="se"></span><span class="s1">  --logfile=${CELERYD_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL} ${CELERYD_OPTS}&#39;</span>
+<span class="n">ExecStop</span><span class="o">=/</span><span class="nb">bin</span><span class="o">/</span><span class="n">sh</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;${CELERY_BIN} multi stopwait ${CELERYD_NODES} </span><span class="se">\
+</span><span class="se"></span><span class="s1">  --pidfile=${CELERYD_PID_FILE}&#39;</span>
+<span class="n">ExecReload</span><span class="o">=/</span><span class="nb">bin</span><span class="o">/</span><span class="n">sh</span> <span class="o">-</span><span class="n">c</span> <span class="s1">&#39;${CELERY_BIN} multi restart ${CELERYD_NODES} </span><span class="se">\
+</span><span class="se"></span><span class="s1">  -A ${CELERY_APP} --pidfile=${CELERYD_PID_FILE} </span><span class="se">\
+</span><span class="se"></span><span class="s1">  --logfile=${CELERYD_LOG_FILE} --loglevel=${CELERYD_LOG_LEVEL} ${CELERYD_OPTS}&#39;</span>
+
+<span class="p">[</span><span class="n">Install</span><span class="p">]</span>
+<span class="n">WantedBy</span><span class="o">=</span><span class="n">multi</span><span class="o">-</span><span class="n">user</span><span class="o">.</span><span class="n">target</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create a<code>/etc/default/celeryd</code> configuration file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/default/celeryd 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-py" data-lang="py"><span class="c1"># The names of the workers. This example create two workers</span>
+<span class="n">CELERYD_NODES</span><span class="o">=</span><span class="s2">&#34;worker1 worker2&#34;</span>
+
+<span class="c1"># The name of the Celery App, should be the same as the python file</span>
+<span class="c1"># where the Celery tasks are defined</span>
+<span class="n">CELERY_APP</span><span class="o">=</span><span class="s2">&#34;downloaderApp&#34;</span>
+
+<span class="c1"># Log and PID directories</span>
+<span class="n">CELERYD_LOG_FILE</span><span class="o">=</span><span class="s2">&#34;/var/log/celery/%n%I.log&#34;</span>
+<span class="n">CELERYD_PID_FILE</span><span class="o">=</span><span class="s2">&#34;/var/run/celery/%n.pid&#34;</span>
+
+<span class="c1"># Log level</span>
+<span class="n">CELERYD_LOG_LEVEL</span><span class="o">=</span><span class="n">INFO</span>
+
+<span class="c1"># Path to celery binary, that is in your virtual environment</span>
+<span class="n">CELERY_BIN</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">celery</span><span class="o">/</span><span class="n">miniconda3</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">celery</span>
+    </code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create log and pid directories:</p>
+
+<pre><code>sudo mkdir /var/log/celery /var/run/celery
+sudo chown celery:celery /var/log/celery /var/run/celery
+</code></pre></li>
+
+<li><p>Reload systemctl daemon. You should run this command each time you change the service definition file.</p>
+
+<pre><code>sudo systemctl daemon-reload
+</code></pre></li>
+
+<li><p>Enable the service to startup at boot:</p>
+
+<pre><code>sudo systemctl enable celeryd
+</code></pre></li>
+
+<li><p>Start the service</p>
+
+<pre><code>sudo systemctl start celeryd
+</code></pre></li>
+
+<li><p>Check that your workers are running via log files:</p>
+
+<pre><code>cat /var/log/celery/worker1.log
+cat /var/log/celery/worker2.log
+</code></pre></li>
+
+<li><p>Send some tasks to both workers, in a python shell from the directory <code>/home/celery/downloaderApp</code>:</p>
+
+<pre><code>from downloaderApp import download,list
+r1 = download.delay('https://www.linode.com/media/images/logos/standard/light/linode-logo_standard_light_large.png', 'linode-logo.png')
+r2 = list.delay()
+r2.get(timeout=1)
+</code></pre>
+
+<p>Depending on how quickly you enter the commands, the worker for <code>list</code> task may finish before the worker for <code>download</code> task and you may not see the Linode logo in the list. Have a look at log files, like in step 7, and you will see which worker handled each task.</p></li>
+</ol>
+
+<h2 id="monitor-your-celery-cluster">Monitor your Celery Cluster</h2>
+
+<p>The <code>celery</code> binary provide some commands to monitor workers and tasks, far more convenient than browsing log files:</p>
+
+<ol>
+<li><p>Use the <strong>status</strong> command to get the list of workers:</p>
+
+<pre><code>celery -A downloaderApp status
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+worker1@celery: OK
+worker2@celery: OK
+celery@celery: OK
+</code>
+</pre>
+</li>
+
+<li><p>Use the <strong>inspect active</strong> command to see what the workers are currently doing:</p>
+
+<pre><code>celery -A downloaderApp inspect active
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+-> worker1@celery: OK
+    - empty -
+-> worker2@celery: OK
+    - empty -
+-> celery@celery: OK
+    - empty -
+</code>
+</pre>
+</li>
+
+<li><p>Use the <strong>inspect stats</strong> command to get statistics about the workers. It gives lot of information, like worker resource usage under <code>rusage</code> key, or the total tasks completed under <code>total</code> key.</p>
+
+<pre><code>celery -A downloaderApp inspect stats
+</code></pre></li>
+</ol>
+
+<h2 id="monitor-a-celery-cluster-with-flower">Monitor a Celery Cluster with Flower</h2>
+
+<p>Flower is a web-based monitoring tool that can be used instead of the <code>celery</code> command.</p>
+
+<ol>
+<li><p>Install Flower:</p>
+
+<pre><code>pip install wheel flower
+</code></pre></li>
+
+<li><p>If you run CentOS, you need to open your firewall on Flower port (default 5555). Skip this step if you are on Debian:</p>
+
+<ol>
+<li><p>Get your current zone, which will normally be <code>public</code>:</p>
+
+<pre><code>firewall-cmd --get-active-zones
+</code></pre></li>
+
+<li><p>Open port 5555. Change the zone according to your configuration:</p>
+
+<pre><code>sudo firewall-cmd --zone=public --add-port=5555/tcp --permanent
+</code></pre></li>
+
+<li><p>Reload the firewall:</p>
+
+<pre><code>sudo firewall-cmd --reload
+</code></pre></li>
+</ol></li>
+
+<li><p>Navigate to the directory with your Celery app and start Flower. 5555 is the default port, but this can be changed using the <code>--port</code> flag:</p>
+
+<pre><code>cd /home/celery/downloaderApp
+celery -A downloaderApp flower --port=5555
+</code></pre></li>
+
+<li><p>Point your browser to <code>localhost:5555</code> to view the dashboard:</p>
+
+<p><img src="flower-screenshot.png" alt="Flower screenshot" /></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If Flower is exposed through a public IP address, be sure to take additional steps to secure this through a <a href="https://flower.readthedocs.io/en/latest/reverse-proxy.html">reverse proxy</a>.</div>
+</blockquote>
+</li>
+</ol>
+
+<h2 id="start-celery-tasks-from-other-languages">Start Celery Tasks from Other Languages</h2>
+
+<p>Celery&rsquo;s ease of use comes from the decorator <code>@task</code> that adds Celery methods to the function object. This magic cannot be used in every programming language, so Celery provides two other methods to communicate with workers:</p>
+
+<ol>
+<li><p><a href="https://en.wikipedia.org/wiki/Webhook"><strong>Webhooks</strong></a>: Flower provides an API that allow you to interact with Celery by means of REST HTTP queries.</p></li>
+
+<li><p><a href="https://www.amqp.org/"><strong>AMQP</strong></a>: The <code>@task</code> decorator sends message to the broker when you call celery methods like <code>.delay()</code>. Some languages provide modules that perform this task for you, including <a href="https://github.com/mher/node-celery">node-celery</a> for NodeJS, or <a href="https://github.com/gjedeer/celery-php">celery-php</a> for PHP.</p></li>
+</ol>
+
+<p>You can use <code>curl</code> to practice interacting how to use the Flower API.</p>
+
+<ol>
+<li><p>Start Flower, if it&rsquo;s not already running:</p>
+
+<pre><code>cd /home/celery/downloaderApp
+celery -A downloaderApp flower --port=5555
+</code></pre></li>
+
+<li><p>Submit a download via the task API:</p>
+
+<pre><code>curl -X POST -d '{&quot;args&quot;:[&quot;http://www.celeryproject.org/static/img/logo.png&quot;,&quot;celery-logo.png&quot;]}' 'http://localhost:5555/api/task/async-apply/downloaderApp.download?refresh=True'
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+{"task-id": "f29ce7dd-fb4c-4f29-9adc-f834250eb14e", "state": "PENDING"}
+</code>
+</pre>
+
+
+<p>The <code>/api/task/async-apply</code> endpoint makes an asynchronous call to one of the app&rsquo;s tasks, in this case <code>doanloaderApp.download</code>. You can make a synchronous call with <code>/task/api/apply</code>.</p></li>
+
+<li><p>Open Flower UI in your browser and see that the task has been accepted.</p></li>
+</ol>
+
+<p>You can find a complete list of Flower API endpoints in the <a href="http://flower.readthedocs.io/en/latest/api.html">official API documentation</a>.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="http://www.celeryproject.org/">Celery Project page</a></li>
+
+<li><a href="http://docs.celeryproject.org/en/latest/index.html">Official Celery Documentation</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#install-a-python-3-environment">Install a Python 3 Environment</a></li>
+<li><a href="#install-celery">Install Celery</a>
+<ul>
+<li><a href="#system-wide-installation">System Wide Installation</a></li>
+<li><a href="#installation-in-a-python-virtual-environment">Installation in a Python Virtual Environment</a></li>
+</ul></li>
+<li><a href="#install-rabbitmq">Install RabbitMQ</a></li>
+<li><a href="#write-a-celery-application">Write a Celery Application</a></li>
+<li><a href="#start-the-workers">Start the Workers</a></li>
+<li><a href="#start-the-workers-as-daemons">Start the Workers as Daemons</a></li>
+<li><a href="#monitor-your-celery-cluster">Monitor your Celery Cluster</a></li>
+<li><a href="#monitor-a-celery-cluster-with-flower">Monitor a Celery Cluster with Flower</a></li>
+<li><a href="#start-celery-tasks-from-other-languages">Start Celery Tasks from Other Languages</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

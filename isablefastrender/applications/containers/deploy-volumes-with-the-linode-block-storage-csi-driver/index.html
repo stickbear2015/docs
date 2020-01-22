@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Deploy Persistent Volume Claims with the Linode Block Storage CSI Driver</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Deploy Persistent Volume Claims with the Linode Block Storage CSI Driver.">
+        <meta name="keywords" content="container, kubernetes, block, storage, volume, csi, interface, driver">
+        
+        <meta property="og:title" content="Deploy Persistent Volume Claims with the Linode Block Storage CSI Driver">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/deploy-volumes-with-the-linode-block-storage-csi-driver/">
+        <meta property="og:description" content="Deploy Persistent Volume Claims with the Linode Block Storage CSI Driver.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/deploy-volumes-with-the-linode-block-storage-csi-driver/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  Deploy Persistent Volume Claims with the Linode Block Storage CSI Driver
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Deploy Persistent Volume Claims with the Linode Block Storage CSI Driver</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-05-16T16:00:45-04:00">Thursday, May 16, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode Community
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-volumes-with-the-linode-block-storage-csi-driver%2f&via=linode&text=Deploy%20Persistent%20Volume%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-volumes-with-the-linode-block-storage-csi-driver%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-volumes-with-the-linode-block-storage-csi-driver%2f&t=Deploy%20Persistent%20Volume%20Claims%20with%20the%20Linode%20Block%20Storage%20CSI%20Driver" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Deploy%20Persistent%20Volume%20Claims%20with%20the%20Linode%20Block%20Storage%20CSI%20Driver%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fdeploy-volumes-with-the-linode-block-storage-csi-driver%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cdeploy-volumes-with-the-linode-block-storage-csi-driver%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cdeploy-volumes-with-the-linode-block-storage-csi-driver%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="what-is-the-linode-block-storage-csi-driver">What is the Linode Block Storage CSI Driver?</h2>
+
+<p>The <a href="https://github.com/container-storage-interface/spec/blob/master/spec.md">Container Storage Interface</a> (CSI) defines a standard that storage providers can use to expose block and file storage systems to container orchestration systems. Linode&rsquo;s Block Storage CSI driver follows this specification to allow container orchestration systems, like Kubernetes, to use <a href="https://www.linode.com/docs/platform/block-storage/">Block Storage Volumes</a> to persist data despite a Pod&rsquo;s lifecycle. A Block Storage Volume can be attached to any Linode to provide additional storage.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ul>
+<li><p>This guide assumes you have a working Kubernetes cluster running on Linode. You can deploy a Kubernetes cluster on Linode in the following ways:</p>
+
+<ol>
+<li><p>Use <a href="/docs/applications/containers/how-to-deploy-kubernetes-on-linode-with-k8s-alpha-cli/">Linode&rsquo;s k8s-alpha CLI</a> to deploy a Kubernetes cluster via the command line.</p></li>
+
+<li><p>Deploy a cluster using Terraform and the <a href="https://registry.terraform.io/modules/linode/k8s/linode/0.1.1">Linode Kubernetes Terraform installer</a>.</p></li>
+
+<li><p>Use kubeadm to manually deploy a Kubernetes cluster on Linode. You can follow the <a href="/docs/applications/containers/getting-started-with-kubernetes/">Getting Started with Kubernetes: Use kubeadm to Deploy a Cluster on Linode</a> guide to do this.</p></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><ul>
+<li><p>If using the k8s-alpha CLI or the Linode Kubernetes Terraform installer methods to deploy a cluster, you can skip the <a href="#installing-the-csi-driver">Installing the CSI Driver</a> section of this guide, since it will be automatically installed when you deploy a cluster.</p>
+
+<p>Move on to the <a href="#attach-a-pod-to-the-persistent-volume-claim">Attach a Pod to the Persistent Volume Claim</a> section to learn how to consume a Block Storage volume as part of your deployment.</p></li>
+</ul>
+</div>
+</blockquote>
+</li>
+
+<li><p>The Block Storage CSI supports Kubernetes version 1.13 or higher. To check the version of Kubernetes you are running, you can issue the following command:</p>
+
+<pre><code>kubectl version
+</code></pre></li>
+</ul>
+
+<h2 id="installing-the-csi-driver">Installing the CSI Driver</h2>
+
+<h3 id="create-a-kubernetes-secret">Create a Kubernetes Secret</h3>
+
+<p>A secret in Kubernetes is any token, password, or credential that you want Kubernetes to store for you. In the case of the Block Storage CSI, you&rsquo;ll want to store an API token, and for convenience, the region you would like your Block Storage Volume to be placed in.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Your Block Storage Volume must be in the same data center as your Kubernetes cluster.</div>
+</blockquote>
+
+
+<p>To create an API token:</p>
+
+<ol>
+<li><p>Log into the <a href="https://cloud.linode.com">Linode Cloud Manager</a>.</p></li>
+
+<li><p>Navigate to your account profile by clicking on your username at the top of the page and selecting <strong>My Profile</strong>. On mobile screen resolutions, this link is in the sidebar navigation.</p></li>
+
+<li><p>Click on the <strong>API Tokens</strong> tab.</p></li>
+
+<li><p>Click on <strong>Add a Personal Access Token</strong>. The <em>Add Personal Access Token</em> menu appears.</p></li>
+
+<li><p>Provide a label for the token. This is how you will reference your token within the Cloud Manager.</p></li>
+
+<li><p>Set an expiration date for the token with the <strong>Expiry</strong> dropdown.</p></li>
+
+<li><p>Set your permissions for the token. You will need Read/Write access for Volumes, and Read/Write access for Linodes.</p></li>
+
+<li><p>Click <strong>Submit</strong>.</p></li>
+</ol>
+
+<p>Your access token will appear on the screen. Copy this down somewhere safe, as once you click <strong>OK</strong> you will not be able to retrieve the token again, and will need to create a new one.</p>
+
+<p>Once you have your API token, it&rsquo;s time to create your secret.</p>
+
+<ol>
+<li><p>Run the following command to enter your token into memory:</p>
+
+<pre><code>read -s -p &quot;Linode API Access Token: &quot; LINODE_TOKEN
+</code></pre>
+
+<p>Press enter, and then paste in your API token.</p></li>
+
+<li><p>Run the following command to enter your region into memory:</p>
+
+<pre><code>read -p &quot;Linode Region of Cluster: &quot; LINODE_REGION
+</code></pre>
+
+<p>You can retrieve a full list of regions by using the <a href="/docs/platform/api/using-the-linode-cli/">Linode CLI</a>:</p>
+
+<pre><code>linode-cli regions list
+</code></pre>
+
+<p>For example, if you want to use the Newark, NJ, USA data center, you would use <code>us-east</code> as your region.</p></li>
+
+<li><p>Create the secret by piping in the following secret manifest to the <code>kubectl create</code> command. Issue the following here document:</p>
+
+<pre><code>cat &lt;&lt;EOF | kubectl create -f -
+</code></pre></li>
+
+<li><p>Now, paste in the following manifest and press enter:</p>
+
+<pre><code>apiVersion: v1
+kind: Secret
+metadata:
+  name: linode
+  namespace: kube-system
+stringData:
+  token: &quot;$LINODE_TOKEN&quot;
+  region: &quot;$LINODE_REGION&quot;
+EOF
+</code></pre></li>
+</ol>
+
+<p>You can check to see if the command was successful by running the <code>get secrets</code> command in the <code>kube-system</code> namespaces and looking for <code>linode</code> in the NAME column of the output:</p>
+
+<pre><code>kubectl -n kube-system get secrets
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre><code>NAME                                             TYPE                                  DATA   AGE
+...
+job-controller-token-6zzkw                       kubernetes.io/service-account-token   3      43h
+kube-proxy-token-td7k8                           kubernetes.io/service-account-token   3      43h
+linode                                           Opaque                                2      42h
+...
+</code></pre>
+
+<p>You are now ready to install the Block Storage CSI driver.</p>
+
+<h3 id="apply-csi-driver-to-your-cluster">Apply CSI Driver to your Cluster</h3>
+
+<p>To install the Block Storage CSI driver, use the <code>apply</code> command and specify the following URL:</p>
+
+<pre><code>kubectl apply -f https://raw.githubusercontent.com/linode/linode-blockstorage-csi-driver/master/pkg/linode-bs/deploy/releases/linode-blockstorage-csi-driver-v0.0.3.yaml
+</code></pre>
+
+<p>The above file concatenates a few files needed to run the Block Storage CSI driver, including the volume attachment, driver registration, and provisioning sidecars. To see these files individually, visit the project&rsquo;s <a href="https://github.com/linode/linode-blockstorage-csi-driver/tree/master/pkg/linode-bs/deploy/kubernetes/">GitHub repository</a>.</p>
+
+<p>Once you have the Block Storage CSI driver installed, you are ready to provision a Persistent Volume Claim.</p>
+
+<h2 id="create-a-persistent-volume-claim">Create a Persistent Volume Claim</h2>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div><p>The instructions in this section will create a Block Storage volume billable resource on your Linode account. A single volume can range from 10 GiB to 10,000 GiB in size and costs $0.10/GiB per month or $0.00015/GiB per hour. If you do not want to keep using the Block Storage volume that you create, be sure to delete it when you have finished the guide.</p>
+
+<p>If you remove the resources afterward, you will only be billed for the hour(s) that the resources were present on your account. Consult the <a href="/docs/platform/billing-and-support/billing-and-payments/">Billing and Payments</a> guide for detailed information about how hourly billing works and for a table of plan pricing.</p>
+</div>
+</blockquote>
+
+
+<p>A <em>Persistent Volume Claim</em> (PVC) consumes a Block Storage Volume. To create a PVC, create a manifest file with the following YAML:</p>
+
+<dl class="file">
+
+
+<dt>
+		pvc.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>PersistentVolumeClaim<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>pvc-example<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>accessModes<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>ReadWriteOnce<span class="w">
+</span><span class="w">  </span>resources<span class="p">:</span><span class="w">
+</span><span class="w">    </span>requests<span class="p">:</span><span class="w">
+</span><span class="w">      </span>storage<span class="p">:</span><span class="w"> </span>10Gi<span class="w">
+</span><span class="w">  </span>storageClassName<span class="p">:</span><span class="w"> </span>linode-block-storage</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This PVC represents a Block Storage Volume. Because Block Storage Volumes have a minimum size of 10 gigabytes, the storage has been set to <code>10Gi</code>. If you choose a size smaller than 10 gigabytes, the PVC will default to 10 gigabytes.</p>
+
+<p>Currently the only mode supported by the Linode Block Storage CSI driver is <code>ReadWriteOnce</code>, meaning that it can only be connected to one Kubernetes node at a time.</p>
+
+<p>To create the PVC in Kubernetes, issue the <code>create</code> command and pass in the <code>pvc.yaml</code> file:</p>
+
+<pre><code>kubectl create -f pvc.yaml
+</code></pre>
+
+<p>After a few moments your Block Storage Volume will be provisioned and your Persistent Volume Claim will be ready to use.</p>
+
+<p>You can check the status of your PVC by issuing the following command:</p>
+
+<pre><code>kubectl get pvc
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>NAME          STATUS   VOLUME                 CAPACITY   ACCESS MODES   STORAGECLASS           AGE
+pvc-example   Bound    pvc-0e95b811652111e9   10Gi       RWO            linode-block-storage   2m
+</code></pre>
+
+<p>Now that you have a PVC, you can attach it to a Pod.</p>
+
+<h2 id="attach-a-pod-to-the-persistent-volume-claim">Attach a Pod to the Persistent Volume Claim</h2>
+
+<p>Now you need to instruct a Pod to use the Persistent Volume Claim. For this example, you will create a Pod that is running an <a href="https://owncloud.org/">ownCloud</a> container, which will use the PVC.</p>
+
+<p>To create a pod that will use the PVC:</p>
+
+<ol>
+<li><p>Create a manifest file for the Pod and give it the following YAML:</p>
+
+<dl class="file">
+
+
+<dt>
+		owncloud-pod.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>kind<span class="p">:</span><span class="w"> </span>Pod<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>owncloud<span class="w">
+</span><span class="w">  </span>labels<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>owncloud<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>containers<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>owncloud<span class="w">
+</span><span class="w">      </span>image<span class="p">:</span><span class="w"> </span>owncloud/server<span class="w">
+</span><span class="w">      </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">        </span>-<span class="w"> </span>containerPort<span class="p">:</span><span class="w"> </span><span class="m">8080</span><span class="w">
+</span><span class="w">      </span>volumeMounts<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>mountPath<span class="p">:</span><span class="w"> </span><span class="s2">&#34;/mnt/data/files&#34;</span><span class="w">
+</span><span class="w">        </span>name<span class="p">:</span><span class="w"> </span>pvc-example<span class="w">
+</span><span class="w">  </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">    </span>-<span class="w"> </span>name<span class="p">:</span><span class="w"> </span>pvc-example<span class="w">
+</span><span class="w">      </span>persistentVolumeClaim<span class="p">:</span><span class="w">
+</span><span class="w">        </span>claimName<span class="p">:</span><span class="w"> </span>pvc-example</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This Pod will run the <code>owncloud/server</code> Docker container image. Because ownCloud stores its files in the <code>/mnt/data/files</code> directory, this <code>owncloud-pod.yaml</code> manifest instructs the ownCloud container to create a mount point at that file path for your PVC.</p>
+
+<p>In the <code>volumes</code> section of the <code>owncloud-pod.yaml</code>, it is important to set the <code>claimName</code> to the exact name you&rsquo;ve given your PersistentVolumeClaim in its manifest&rsquo;s metadata. In this case, the name is <code>pvc-example</code>.</p></li>
+
+<li><p>Use the <code>create</code> command to create the ownCloud Pod:</p>
+
+<pre><code>kubectl create -f owncloud-pod.yaml
+</code></pre></li>
+
+<li><p>After a few moments your Pod should be up and running. To see the status of your Pod, issue the <code>get pods</code> command:</p>
+
+<pre><code>kubectl get pods
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>NAME       READY   STATUS    RESTARTS   AGE
+owncloud   1/1     Running   0          2m
+</code></pre></li>
+
+<li><p>To list the contents of the <code>/mnt/data/files</code> directory within the container, which is the mount point for your PVC, issue the following command on your container:</p>
+
+<pre><code>kubectl exec -it owncloud -- /bin/sh -c &quot;ls /mnt/data/files&quot;
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre><code>admin  avatars  files_external  index.html  owncloud.db  owncloud.log
+</code></pre>
+
+<p>These files are created by ownCloud, and those files now live on your Block Storage Volume. The <code>admin</code> directory is the directory for the default user, and any files you upload to the <code>admin</code> account will appear in this folder.</p></li>
+</ol>
+
+<p>To complete the example, you should be able to access the ownCloud Pod via your browser. To accomplish this task, you will need to create a Service.</p>
+
+<ol>
+<li><p>Create a Service manifest file and copy in the following YAML:</p>
+
+<dl class="file">
+
+
+<dt>
+		owncloud-service.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">kind<span class="p">:</span><span class="w"> </span>Service<span class="w">
+</span><span class="w"></span>apiVersion<span class="p">:</span><span class="w"> </span>v1<span class="w">
+</span><span class="w"></span>metadata<span class="p">:</span><span class="w">
+</span><span class="w">  </span>name<span class="p">:</span><span class="w"> </span>owncloud<span class="w">
+</span><span class="w"></span>spec<span class="p">:</span><span class="w">
+</span><span class="w">  </span>selector<span class="p">:</span><span class="w">
+</span><span class="w">    </span>app<span class="p">:</span><span class="w"> </span>owncloud<span class="w">
+</span><span class="w">  </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">  </span>-<span class="w"> </span>protocol<span class="p">:</span><span class="w"> </span>TCP<span class="w">
+</span><span class="w">    </span>port<span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span><span class="w">    </span>targetPort<span class="p">:</span><span class="w"> </span><span class="m">8080</span><span class="w">
+</span><span class="w">  </span>type<span class="p">:</span><span class="w"> </span>NodePort</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>The service manifest file will use the <code>NodePort</code> method to get external traffic to the ownCloud service. NodePort opens a specific port on all cluster Nodes and any traffic that is sent to this port is forwarded to the service. Kubernetes will choose the port to open on the nodes if you do not provide one in your service manifest file. It is recommended to let Kubernetes handle the assignment. Kubernetes will choose a port in the default range, <code>30000-32767</code>.</p>
+
+<p>Alternatively, you could use the <code>LoadBalancer</code> service type, instead of NodePort, which will create Linode NodeBalancers that will direct traffic to the ownCloud Pods. Linode&rsquo;s Cloud Controller Manager (CCM) is responsible for provisioning the Linode NodeBalancers. For more details, see the <a href="https://github.com/linode/linode-cloud-controller-manager/blob/master/README.md">Kubernetes Cloud Controller Manager for Linode</a> repository.</p>
+</div>
+</blockquote>
+</li>
+
+<li><p>Create the service in Kubernetes by using the <code>create</code> command and passing in the <code>owncloud-service.yaml</code> file you created in the previous step:</p>
+
+<pre><code>kubectl create -f owncloud-service.yaml
+</code></pre></li>
+
+<li><p>To retrieve the port that the ownCloud Pod is listening on, use the <code>describe</code> command on the newly created Service:</p>
+
+<pre><code>kubectl describe service owncloud
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>Name:                     owncloud
+Namespace:                default
+Labels:                   &lt;none&gt;
+Annotations:              &lt;none&gt;
+Selector:                 app=owncloud
+Type:                     NodePort
+IP:                       10.106.101.155
+Port:                     &lt;unset&gt;  80/TCP
+TargetPort:               8080/TCP
+NodePort:                 &lt;unset&gt;  30068/TCP
+Endpoints:                10.244.1.17:8080
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:                   &lt;none&gt;
+</code></pre>
+
+<p>Find the <code>NodePort</code>. In this example the port is <code>30068</code>.</p></li>
+
+<li><p>Now you need to find out which Node your Pod is running on. Use the <code>describe</code> command on the Pod to find the IP address of the Node:</p>
+
+<pre><code>kubectl describe pod owncloud
+</code></pre>
+
+<p>You should see output like the following:</p>
+
+<pre><code>Name:               owncloud
+Namespace:          default
+Priority:           0
+PriorityClassName:  &lt;none&gt;
+Node:               kube-node/192.0.2.155
+Start Time:         Mon, 22 Apr 2019 17:07:20 +0000
+Labels:             app=owncloud
+Annotations:        &lt;none&gt;
+Status:             Running
+IP:                 10.244.1.17
+</code></pre>
+
+<p>The IP address of the Node in this example is <code>192.0.2.155</code>. Your ownCloud Pod in this example would be accessible from <code>http://192.9.2.155:30068</code>.</p></li>
+
+<li><p>Navigate to the URL of the Node, including the NodePort you looked up in a previous step. You will be presented with the ownCloud log in page. You can log in with the username <code>admin</code> and the password <code>admin</code>.</p></li>
+
+<li><p>Upload a file. You will use this file to test the Persistent Volume Claim.</p></li>
+
+<li><p>The Persistent Storage Claim has been created and is using your Block Storage Volume. To prove this point, you can delete the ownCloud Pod and recreate it, and the Persistent Storage Claim will continue to house your data:</p>
+
+<pre><code>kubectl delete pod owncloud
+
+kubectl create -f owncloud-pod.yaml
+</code></pre>
+
+<p>Once the Pod has finished provisioning you can log back in to ownCloud and view the file you previously uploaded.</p></li>
+</ol>
+
+<p>You have successfully
+You have successfully created a Block Storage Volume tied to a Persistent Volume Claim and have mounted it with a container in a Pod.</p>
+
+<h2 id="delete-a-persistent-volume-claim">Delete a Persistent Volume Claim</h2>
+
+<p>To delete the Block Storage volume created in this guide:</p>
+
+<ol>
+<li><p>First, delete the ownCloud Pod:</p>
+
+<pre><code>kubectl delete pods owncloud
+</code></pre></li>
+
+<li><p>Then, delete the persistent volume claim:</p>
+
+<pre><code>kubectl delete pvc pvc-example
+</code></pre></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#persistentvolumeclaims">Kubernetes PersistentVolumeClaims Documentation</a></li>
+
+<li><a href="https://github.com/container-storage-interface/spec/blob/master/spec.md">Container Storage Interface (CSI) Spec</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-the-linode-block-storage-csi-driver">What is the Linode Block Storage CSI Driver?</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#installing-the-csi-driver">Installing the CSI Driver</a>
+<ul>
+<li><a href="#create-a-kubernetes-secret">Create a Kubernetes Secret</a></li>
+<li><a href="#apply-csi-driver-to-your-cluster">Apply CSI Driver to your Cluster</a></li>
+</ul></li>
+<li><a href="#create-a-persistent-volume-claim">Create a Persistent Volume Claim</a></li>
+<li><a href="#attach-a-pod-to-the-persistent-volume-claim">Attach a Pod to the Persistent Volume Claim</a></li>
+<li><a href="#delete-a-persistent-volume-claim">Delete a Persistent Volume Claim</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Install Asterisk on CentOS 7</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Installing Asterisk on CentOS 7">
+        <meta name="keywords" content="asterisk 13, centos 7, centos, open source, private branch exchange, pbx, asterisk pbx, sip, session initiation protocol, sip protocol, IP PBX systems, VoIP gateways">
+        
+        <meta property="og:title" content="How to Install Asterisk on CentOS 7">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/voip/install-asterisk-on-centos-7/">
+        <meta property="og:description" content="Installing Asterisk on CentOS 7">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/voip/install-asterisk-on-centos-7/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/voip/">VoIP</a>
+  
+</li>
+
+
+<li>
+  
+  How to Install Asterisk on CentOS 7
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Install Asterisk on CentOS 7</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-02-04T17:06:42-05:00">Monday, February 4, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Nick Rahl
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fvoip%2finstall-asterisk-on-centos-7%2f&via=linode&text=How%20to%20Install%20Asterisk%20on%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fvoip%2finstall-asterisk-on-centos-7%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fvoip%2finstall-asterisk-on-centos-7%2f&t=How%20to%20Install%20Asterisk%20on%20CentOS%207" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Install%20Asterisk%20on%20CentOS%207%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fvoip%2finstall-asterisk-on-centos-7%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cvoip%5cinstall-asterisk-on-centos-7%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cvoip%5cinstall-asterisk-on-centos-7%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+<blockquote class="dedicated_cpu_link">
+  <strong class="callout-title">Dedicated CPU instances are available!</strong>
+  <div>Linode's Dedicated CPU instances are ideal for CPU-intensive workloads like those discussed in this guide. To learn more about Dedicated CPU, read our <a href="https://blog.linode.com/2019/02/05/introducing-linode-dedicated-cpu-instances?utm_source=library&utm_medium=banner&utm_campaign=dedicated_cpu">blog post</a>. To upgrade an existing Linode to a Dedicated CPU instance, review the <a href="/docs/platform/disk-images/resizing-a-linode/">Resizing a Linode</a> guide.</div>
+</blockquote>
+
+            
+
+<p><img src="how-to-install-asterisk-on-centos-7.jpg" alt="How to Install Asterisk on CentOS 7" title="How to Install Asterisk on CentOS 7" /></p>
+
+<h2 id="what-is-asterisk">What is Asterisk?</h2>
+
+<p>Asterisk is an open source <em>private branch exchange</em> (PBX) server that uses <em>Session Initiation Protocol</em> (SIP) to route and manage telephone calls. Notable features include customer service queues, music on hold, conference calling, and call recording, among others.</p>
+
+<p>This guide covers the steps necessary to provision a new CentOS 7 Linode as a dedicated Asterisk server for your home or office.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This guide is written for a non-root user. Commands that require elevated privileges are prefixed with <code>sudo</code>. If you&rsquo;re not familiar with the <code>sudo</code> command, you can check our <a href="/docs/tools-reference/linux-users-and-groups/">Users and Groups</a> guide.</div>
+</blockquote>
+
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Create a CentOS 7 Linode in your closest data center (barring Atlanta (us-southeast), which does not currently support SIP servers). A 2GB Linode is enough to handle 10-20 concurrent calls using a non-compressed codec, depending on the processing required on each channel.</p></li>
+
+<li><p>Ensure you have followed the <a href="/docs/getting-started/">Getting Started</a> and <a href="/docs/security/securing-your-server/">Securing Your Server</a> guides to prepare your Linode. <strong>Do not</strong> complete the steps to set up a firewall.</p></li>
+
+<li><p>Update your system:</p>
+
+<pre><code>sudo yum update
+</code></pre></li>
+
+<li><p>Disable SELinux and reboot your Linode. If you have <a href="/docs/uptime/monitoring-and-maintaining-your-server/#configure-shutdown-watchdog">Lassie</a> enabled, your Linode will be back up and running in a few minutes.</p>
+
+<pre><code>sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config
+
+sudo systemctl reboot
+</code></pre></li>
+</ol>
+
+<h2 id="configure-firewalld">Configure firewalld</h2>
+
+<ol>
+<li><p>CentOS 7 enables firewalld&rsquo;s <code>public</code> zone for the default interface (<code>eth0</code>). SSH and DHCPv6 services are also enabled by default. To verify your current firewalld zone:</p>
+
+<pre><code>sudo firewall-cmd --get-active-zones
+sudo firewall-cmd --permanent --list-services
+</code></pre>
+
+<p>That should return:</p>
+
+<pre class="file terminal">
+  <code>
+[user@asterisk ~]$ sudo firewall-cmd --get-active-zones
+public
+  interfaces: eth0
+</code>
+</pre>
+
+
+<p>And:</p>
+
+<pre class="file terminal">
+  <code>
+[user@asterisk ~]$ sudo firewall-cmd --permanent --list-services
+ssh dhcpv6-client
+</code>
+</pre>
+</li>
+
+<li><p>Add the SIP services.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>All the following firewalld rules contain the <code>--permanent</code> flag to ensure the rules persist after a system reboot.</div>
+</blockquote>
+
+
+<pre><code>sudo firewall-cmd --zone=public --permanent --add-service={sip,sips}
+</code></pre></li>
+
+<li><p>Depending on your needs, you may want to add other related ports:</p>
+
+<ul>
+<li><p>MGCP - If you use media gateway control protocol in your configuration.</p>
+
+<pre><code>sudo firewall-cmd --zone=public --permanent --add-port=2727/udp
+</code></pre></li>
+
+<li><p>RTP - The media stream - you can change this in <code>/etc/asterisk/rtp.conf</code>.</p>
+
+<pre><code>sudo firewall-cmd --zone=public --permanent --add-port=10000-20000/udp
+</code></pre></li>
+
+<li><p>If you plan to use FreePBX to manage Asterisk, add the following rule:</p>
+
+<pre><code>sudo firewall-cmd --zone=public --permanent --add-service={http,https}
+</code></pre></li>
+
+<li><p>IAX - If you need IAX, add the following rule. IAX is &ldquo;Inter-Asterisk Exchange&rdquo; and was meant to allow multiple Asterisk servers to communicate with one another. Some VOIP trunking providers use this, but most use SIP. Unless your VOIP provider requires it or you are running multiple Asterisk servers, you probably won&rsquo;t need IAX or IAX2.</p>
+
+<pre><code>sudo firewall-cmd --zone=public --permanent --add-port=4569/udp
+</code></pre></li>
+</ul></li>
+
+<li><p>Verify your new configuration with:</p>
+
+<pre><code>sudo firewall-cmd --permanent --list-services
+sudo firewall-cmd --permanent --list-ports
+</code></pre>
+
+<p>You should see the services and ports you just added in addition to default SSH and DCHPv6 services:</p>
+
+<pre class="file terminal">
+  <code>
+[user@asterisk ~]$ sudo firewall-cmd --list-ports
+2727/udp 10000-20000/udp 4569/udp
+</code>
+</pre>
+
+
+<pre class="file terminal">
+  <code>
+[user@asterisk ~]$ sudo firewall-cmd --permanent --list-services
+ssh dhcpv6-client sip sips http https
+</code>
+</pre>
+</li>
+</ol>
+
+<h2 id="install-pjproject">Install PJPROJECT</h2>
+
+<p>PJPROJECT is Asterisk&rsquo;s SIP channel driver. It should improve call clarity and performance over older drivers.</p>
+
+<ol>
+<li><p>Install build dependencies:</p>
+
+<pre><code>sudo yum install epel-release gcc-c++ ncurses-devel libxml2-devel wget openssl-devel newt-devel kernel-devel-`uname -r` sqlite-devel libuuid-devel gtk2-devel jansson-devel binutils-devel bzip2 patch libedit libedit-devel
+</code></pre></li>
+
+<li><p>As <strong>a non-root user</strong>, create a working directory for the build:</p>
+
+<pre><code>mkdir ~/build-asterisk
+</code></pre></li>
+
+<li><p>Change to that directory:</p>
+
+<pre><code>cd ~/build-asterisk
+</code></pre></li>
+
+<li><p>Use <code>wget</code> to download the PJSIP driver source code:</p>
+
+<pre><code>wget https://www.pjsip.org/release/2.8/pjproject-2.8.tar.bz2
+</code></pre></li>
+
+<li><p>Extract it:</p>
+
+<pre><code>tar -jxvf pjproject-2.8.tar.bz2
+</code></pre></li>
+
+<li><p>Change to the newly created directory:</p>
+
+<pre><code>cd pjproject-2.8
+</code></pre></li>
+
+<li><p>Specify the compiling flags and options:</p>
+
+<pre><code>./configure CFLAGS=&quot;-DNDEBUG -DPJ_HAS_IPV6=1&quot; --prefix=/usr --libdir=/usr/lib64 --enable-shared --disable-video --disable-sound --disable-opencore-amr
+</code></pre></li>
+
+<li><p>Ensure that all dependencies are in place:</p>
+
+<pre><code>make dep
+</code></pre></li>
+
+<li><p>If <code>make dep</code> completes successfully, then build the plugin. It should only take a few minutes.</p>
+
+<pre><code>make
+</code></pre></li>
+
+<li><p>Install the packages:</p>
+
+<pre><code>sudo make install
+sudo ldconfig
+</code></pre></li>
+
+<li><p>Ensure the libraries have been properly installed:</p>
+
+<pre><code>sudo ldconfig -p | grep pj
+</code></pre>
+
+<p>You should see:</p>
+
+<pre><code><pre class="file terminal">
+  <code>
+    libpjsua2.so.2 (libc6,x86-64) => /lib64/libpjsua2.so.2
+    libpjsua2.so (libc6,x86-64) => /lib64/libpjsua2.so
+    libpjsua.so.2 (libc6,x86-64) => /lib64/libpjsua.so.2
+    libpjsua.so (libc6,x86-64) => /lib64/libpjsua.so
+    libpjsip.so.2 (libc6,x86-64) => /lib64/libpjsip.so.2
+    libpjsip.so (libc6,x86-64) => /lib64/libpjsip.so
+    libpjsip-ua.so.2 (libc6,x86-64) => /lib64/libpjsip-ua.so.2
+    libpjsip-ua.so (libc6,x86-64) => /lib64/libpjsip-ua.so
+    libpjsip-simple.so.2 (libc6,x86-64) => /lib64/libpjsip-simple.so.2
+    libpjsip-simple.so (libc6,x86-64) => /lib64/libpjsip-simple.so
+    libpjnath.so.2 (libc6,x86-64) => /lib64/libpjnath.so.2
+    libpjnath.so (libc6,x86-64) => /lib64/libpjnath.so
+    libpjmedia.so.2 (libc6,x86-64) => /lib64/libpjmedia.so.2
+    libpjmedia.so (libc6,x86-64) => /lib64/libpjmedia.so
+    libpjmedia-videodev.so.2 (libc6,x86-64) => /lib64/libpjmedia-videodev.so.2
+    libpjmedia-videodev.so (libc6,x86-64) => /lib64/libpjmedia-videodev.so
+    libpjmedia-codec.so.2 (libc6,x86-64) => /lib64/libpjmedia-codec.so.2
+    libpjmedia-codec.so (libc6,x86-64) => /lib64/libpjmedia-codec.so
+    libpjmedia-audiodev.so.2 (libc6,x86-64) => /lib64/libpjmedia-audiodev.so.2
+    libpjmedia-audiodev.so (libc6,x86-64) => /lib64/libpjmedia-audiodev.so
+    libpjlib-util.so.2 (libc6,x86-64) => /lib64/libpjlib-util.so.2
+    libpjlib-util.so (libc6,x86-64) => /lib64/libpjlib-util.so
+    libpj.so.2 (libc6,x86-64) => /lib64/libpj.so.2
+    libpj.so (libc6,x86-64) => /lib64/libpj.so
+</code>
+</pre>
+
+</code></pre></li>
+</ol>
+
+<!--
+## Install DAHDI (Optional)
+
+DAHDI, or *Digium/Asterisk Hardware Device Interface*, is the kernel module that controls telephone interface cards. This type of card is usually used when adding Asterisk to an existing call center that uses older technology.
+
+Since it's not possible to add physical cards to a virtual machine you probably won't need the DAHDI driver installed. There is one exception: if you plan to host conference calls on your Asterisk box where more than one person can join a conference room. DAHDI provides the required timing source for this feature to work.
+
+#### Build DAHDI
+
+1.  Be sure you're in your build directory. You don't want to build DAHDI from the `pjproject-*` directory you changed into earlier.
+
+        cd ~/build-asterisk
+
+1.  Download the latest version of DAHDI (version 3.0.0 at the time of this writing):
+
+        wget http://downloads.asterisk.org/pub/telephony/dahdi-linux-complete/dahdi-linux-complete-current.tar.gz
+
+1.  Untar the file:
+
+        tar -zxvf dahdi-linux-complete-current.tar.gz
+
+1.  Change to the new directory:
+
+        cd dahdi-linux-complete-3.0.0+3.0.0/
+
+    If the directory cannot be found, run the `ls` command and take note of the folder name and `cd` into that directory instead.
+
+1.  Build DAHDI:
+
+        make
+
+1.  Install DAHDI:
+
+        sudo make install
+        sudo make config
+-->
+
+<h2 id="install-asterisk">Install Asterisk</h2>
+
+<ol>
+<li><p>Return to your build directory:</p>
+
+<pre><code>cd ~/build-asterisk
+</code></pre></li>
+
+<li><p>Download the latest version of Asterisk 16:</p>
+
+<pre><code>wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-16-current.tar.gz
+</code></pre></li>
+
+<li><p>Untar the file:</p>
+
+<pre><code>tar -zxvf asterisk-16-current.tar.gz
+</code></pre></li>
+
+<li><p>Switch to the new Asterisk directory, replacing <code>16.1.1</code> if needed:</p>
+
+<pre><code>cd asterisk-16.1.1
+</code></pre></li>
+</ol>
+
+<h3 id="enable-mp3-support">Enable MP3 Support</h3>
+
+<ol>
+<li><p>To use MP3 files for Music on Hold, install Subversion:</p>
+
+<pre><code>sudo yum install svn
+</code></pre></li>
+
+<li><p>Run the configuration script:</p>
+
+<pre><code>contrib/scripts/get_mp3_source.sh
+</code></pre></li>
+</ol>
+
+<h3 id="configure-and-build-asterisk">Configure and Build Asterisk</h3>
+
+<ol>
+<li><p>In your build directory for Asterisk, run the <code>configure</code> script to prepare the Asterisk source code for compiling:</p>
+
+<pre><code>./configure --libdir=/usr/lib64 --with-jansson-bundled
+</code></pre></li>
+
+<li><p>Start the build process. After a short while, you should see a menu on screen allowing you to configure the features you want to build.</p>
+
+<pre><code>make menuselect
+</code></pre></li>
+
+<li><p>If you want to use the MP3 format with Music on Hold, you should select <code>Add-Ons</code>, then use the right arrow to move to the right-hand list. Navigate to <code>format_mp3</code> and press <strong>Enter</strong> to select it.</p></li>
+
+<li><p>Select additional core sound packages and Music on Hold packages in the left menu, and enable <code>.wav</code> format for your desired language (ie. use the <code>EN</code> package for English.).</p></li>
+
+<li><p>Press <strong>F12</strong> to save and exit.</p></li>
+
+<li><p>Compile Asterisk. When finished, you should see a message which says Asterisk has successfully been built.</p>
+
+<pre><code>sudo make
+</code></pre></li>
+
+<li><p>Install Asterisk:</p>
+
+<pre><code>sudo make install
+</code></pre></li>
+
+<li><p>Install sample configuration files:</p>
+
+<pre><code>sudo make samples
+</code></pre></li>
+
+<li><p>Configure Asterisk to start itself automatically on boot:</p>
+
+<pre><code>sudo make config
+</code></pre></li>
+</ol>
+
+<h3 id="test-connection">Test Connection</h3>
+
+<p>You now have a working Asterisk phone server. Fire up Asterisk and make sure it runs.</p>
+
+<ol>
+<li><p>Start Asterisk:</p>
+
+<pre><code>sudo systemctl start asterisk
+</code></pre></li>
+
+<li><p>Connect to Asterisk:</p>
+
+<pre><code>sudo asterisk -rvv
+</code></pre>
+
+<p>You should see an output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+Asterisk 16.0.0, Copyright (C) 1999 - 2018, Digium, Inc. and others.
+Created by Mark Spencer <markster@digium.com>
+Asterisk comes with ABSOLUTELY NO WARRANTY; type 'core show warranty' for details.
+This is free software, with components licensed under the GNU General Public
+License version 2 and other licenses; you are welcome to redistribute it under
+certain conditions. Type 'core show license' for details.
+=========================================================================
+Connected to Asterisk 16.0.0 currently running on li73-122 (pid = 980)
+</code>
+</pre>
+</li>
+
+<li><p>To see a list of possible commands:</p>
+
+<pre><code>core show help
+</code></pre></li>
+
+<li><p>To disconnect type:</p>
+
+<pre><code>exit
+</code></pre>
+
+<p>Once disconnected, Asterisk continues to run in the background.</p></li>
+</ol>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Now that you have an Asterisk server running on your Linode, it&rsquo;s time to connect some phones, add extensions, and configure the various options that are available with Asterisk. For detailed instructions, check out the Asterisk Project&rsquo;s guide to <a href="https://wiki.asterisk.org/wiki/display/AST/Basic+PBX+Functionality">Configuring Asterisk</a>.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>When running a phone system on a remote server such as a Linode, it&rsquo;s always good practice to secure the signaling data with TLS and the audio portion of calls using SRTP to prevent eavesdropping. Once you have a working dial-plan, be sure to follow the <a href="https://wiki.asterisk.org/wiki/display/AST/Secure+Calling">Secure Calling Guide</a> to encrypt your communications.</div>
+</blockquote>
+
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-asterisk">What is Asterisk?</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#configure-firewalld">Configure firewalld</a></li>
+<li><a href="#install-pjproject">Install PJPROJECT</a></li>
+<li><a href="#install-asterisk">Install Asterisk</a>
+<ul>
+<li><a href="#enable-mp3-support">Enable MP3 Support</a></li>
+<li><a href="#configure-and-build-asterisk">Configure and Build Asterisk</a></li>
+<li><a href="#test-connection">Test Connection</a></li>
+</ul></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

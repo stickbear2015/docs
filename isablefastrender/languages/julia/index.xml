@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Julia on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/languages/julia/</link>
+    <description>Recent content in Julia on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/languages/julia/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Why You Should Learn Julia</title>
+      <link>http://localhost:1313/docs/development/julia/why-learn-julia/</link>
+      <pubDate>Tue, 11 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/julia/why-learn-julia/</guid>
+      <description>What is Julia? Julia is a functional programming language released in 2012. Its creators wanted to combine the readability and simplicity of Python with the speed of statically-typed, compiled languages like C.
+Who is Julia For? Julia is popular among data scientists and mathematicians. It shares features (such as 1-based array indexing and functional design) with mathematical and data software like Mathematica, and its syntax is closer to the way mathematicians are used to writing formulas.</description>
+    </item>
+    
+  </channel>
+</rss>

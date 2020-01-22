@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Install FreeNAS on a Linode with Block Storage</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="FreeNAS is network-attached storage software configured through a web interface. This guide shows how to install FreeNAS and connect it to a Block Storage Volume.">
+        <meta name="keywords" content="zfs, freenas, block storage, nas">
+        
+        <meta property="og:title" content="Install FreeNAS on a Linode with Block Storage">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/cloud-storage/freenas-blockstorage/">
+        <meta property="og:description" content="FreeNAS is network-attached storage software configured through a web interface. This guide shows how to install FreeNAS and connect it to a Block Storage Volume.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/cloud-storage/freenas-blockstorage/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/cloud-storage/">Cloud Storage</a>
+  
+</li>
+
+
+<li>
+  
+  Install FreeNAS on a Linode with Block Storage
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Install FreeNAS on a Linode with Block Storage</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-07-23T15:19:02-04:00">Monday, July 23, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Edward Angert
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcloud-storage%2ffreenas-blockstorage%2f&via=linode&text=Install%20FreeNAS%20on%20a%20Linode%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcloud-storage%2ffreenas-blockstorage%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcloud-storage%2ffreenas-blockstorage%2f&t=Install%20FreeNAS%20on%20a%20Linode%20with%20Block%20Storage" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Install%20FreeNAS%20on%20a%20Linode%20with%20Block%20Storage%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcloud-storage%2ffreenas-blockstorage%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccloud-storage%5cfreenas-blockstorage%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccloud-storage%5cfreenas-blockstorage%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Network-attached storage (NAS) allows multiple client devices to access the connected storage media as though it&rsquo;s stored locally to the device. FreeNAS is FreeBSD-based NAS software, configurable via a browser interface.</p>
+
+<p>This guides shows how to install FreeNAS on a Linode and attach a <a href="/blockstorage/">Block Storage Volume</a> so that you can access both FreeNAS and the Storage Volume from your computer, phone, or tablet almost anywhere in the world.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div><p>FreeNAS is not officially supported by Linode at this time. This means that features like the <a href="/docs/platform/backup-service">Linode Backup Service</a> and Lish will be unavailable to you.</p>
+
+<p>Any issues you may encounter with FreeNAS on your Linode are outside the scope of Linode Support. For further help with this guide&rsquo;s subject, you can ask questions on the <a href="https://www.linode.com/community/questions/">Linode Community Site</a>.</p>
+</div>
+</blockquote>
+
+
+<h2 id="prepare-your-linode">Prepare Your Linode</h2>
+
+<ol>
+<li><p>Create a Linode in your preferred data center. Ensure that your Linode has at least 8GB RAM and at least 11GB of available disk space. FreeNAS recommends 16GB of RAM for media servers. Visit the <a href="http://www.freenas.org/hardware-requirements/">official requirements</a> for more information.</p></li>
+
+<li><p>Disable the <a href="/docs/uptime/monitoring-and-maintaining-your-server/#configure-shutdown-watchdog/">Lassie Shutdown Watchdog</a> to prevent it from attempting to restart your Linode without your input. You can disable Lassie in the <strong>Settings</strong> tab of the Linode Manager under <strong>Shutdown Watchdog</strong>.</p></li>
+
+<li><p><a href="/docs/platform/disk-images/disk-images-and-configuration-profiles/#creating-a-blank-disk/">Create two disk images</a>:</p>
+
+<ol>
+<li><p><strong>Label:</strong> Installer</p>
+
+<ul>
+<li><strong>Type:</strong> unformatted / raw</li>
+<li><strong>Size:</strong> 1024</li>
+</ul></li>
+
+<li><p><strong>Label:</strong> FreeNAS</p>
+
+<ul>
+<li><strong>Type:</strong> unformatted / raw</li>
+<li><strong>Size:</strong> Can be set to use remaining disk. At least 10240MB</li>
+</ul></li>
+</ol></li>
+
+<li><p>Create two configuration profiles with the following settings. In each profile, disable all of the options under <strong>Filesystem/Boot Helpers</strong>.</p>
+
+<ol>
+<li><p><strong>Label:</strong> Installer</p>
+
+<ul>
+<li><strong>Kernel:</strong> Direct Disk</li>
+<li><strong>/dev/sda:</strong> FreeNAS</li>
+<li><strong>/dev/sdb:</strong> Installer</li>
+<li><strong>root / boot device:</strong> Standard /dev/sdb</li>
+<li><strong>Filesystem/Boot Helpers:</strong> Select No for each Helper</li>
+</ul></li>
+
+<li><p><strong>Label:</strong> FreeNAS</p>
+
+<ul>
+<li><strong>Kernel:</strong> Direct Disk</li>
+<li><strong>/dev/sda:</strong> FreeNAS</li>
+<li><strong>root / boot device:</strong> Standard /dev/sda</li>
+<li><strong>Filesystem/Boot Helpers:</strong> Select No for each Helper</li>
+</ul></li>
+</ol></li>
+</ol>
+
+<h2 id="create-an-installer-disk">Create an Installer Disk</h2>
+
+<ol>
+<li><p>Boot into <strong>Rescue Mode</strong> with the installer disk mounted to <code>/dev/sda</code> and access your Linode using <a href="/docs/platform/manager/using-the-linode-shell-lish/">Lish</a> from the <strong>Remote Access</strong> tab of the Linode Manager.</p></li>
+
+<li><p>Once in Rescue Mode, run the following command to set the <a href="http://www.freenas.org/download-freenas-release/">latest FreeNAS release</a> (11.1 at the time of this writing) as a variable:</p>
+
+<pre><code>iso=https://download.freenas.org/11/latest/x64/FreeNAS-11.1-U4.iso
+</code></pre></li>
+
+<li><p>Run the <code>update-ca-certificates</code> program to allow the secure download:</p>
+
+<pre><code>update-ca-certificates
+</code></pre></li>
+
+<li><p>Download the FreeNAS ISO image and expand it to the Installer disk:</p>
+
+<pre><code>curl $iso | dd of=/dev/sda
+</code></pre></li>
+
+<li><p>When the command finishes, reboot into the <strong>Installer profile</strong>:</p>
+
+<p><img src="reboot-installer-profile.png" alt="Screenshot of the Dashboard, ready to reboot into the Installer profile." title="Screenshot of the Dashboard, ready to reboot into the Installer profile." /></p></li>
+
+<li><p>Go to the <strong>Remote Access</strong> tab in the Linode Manager. Access your Linode using <a href="/docs/platform/manager/using-the-linode-graphical-shell-glish/">Glish</a> to start the installation.</p></li>
+</ol>
+
+<h2 id="install-freenas">Install FreeNAS</h2>
+
+<ol>
+<li>Press <strong>Enter</strong> to Install/Upgrade.</li>
+
+<li><p>Press the <strong>Spacebar</strong> to select the FreeNAS disk (<code>da0</code> in this screenshot) and press <strong>Enter</strong>:</p>
+
+<p><img src="freenas-installation-select-disk.png" alt="Select the FreeNAS disk" title="Select the FreeNAS disk." /></p></li>
+
+<li><p>The installation shows a warning that all data on the disk will be deleted. Press <strong>Enter</strong> to continue.</p></li>
+
+<li><p>Enter a root password, tab to the next field to re-enter it, and press <strong>Enter</strong> to continue.</p></li>
+
+<li><p>Press <strong>Enter</strong> to Boot via BIOS.</p></li>
+
+<li><p>There&rsquo;s no media to remove. Press <strong>Enter</strong> to acknowledge the successful installation message.</p></li>
+
+<li><p>Press <strong>4</strong> to select Shutdown System, and press <strong>Enter</strong> to end the session. Close the Glish window.</p></li>
+
+<li><p>In the Manager, shut the Linode down.</p></li>
+</ol>
+
+<h2 id="boot-and-configure-freenas">Boot and Configure FreeNAS</h2>
+
+<ol>
+<li><p>Select the FreeNAS configuration profile, and click <strong>Boot</strong>:</p>
+
+<p><img src="reboot-freenas-profile.png" alt="Screenshot of the Dashboard, ready to reboot into the FreeNAS profile." title="Screenshot of the Dashboard, ready to reboot into the FreeNAS profile." /></p>
+
+<p>SSH and Lish are disabled in FreeNAS. Use Glish to monitor the first boot which takes several minutes. Once booted, close Glish and proceed to the next step to use the web interface for configuration.</p></li>
+
+<li><p>Use a web browser to navigate to the Linode&rsquo;s IP address. Log in with the user <code>root</code> and the password set in Step 4 of the previous section. Close any popup menu that appears when you first log in.</p></li>
+
+<li><p>Click the <strong>Network</strong> icon and complete the network information using the Default Gateways and DNS Resolvers found in the <a href="/docs/platform/manager/remote-access/">Remote Access</a> tab of the Linode Manager. Use the DNS Resolvers information to fill in the Nameserver fields. Click <strong>Save</strong> before continuing.</p></li>
+
+<li><p>Select the <strong>Interfaces</strong> section of the Network tab, and click <strong>Add Interface</strong>. Name the interface and enable DHCP, then click <strong>OK</strong>.</p></li>
+</ol>
+
+<h2 id="add-a-block-storage-volume-to-freenas">Add a Block Storage Volume to FreeNAS</h2>
+
+<ol>
+<li><p><a href="/docs/platform/how-to-use-block-storage-with-your-linode/#how-to-add-a-block-storage-volume-to-a-linode">Add or attach a Block Storage Volume</a> to the Linode. After you attach your Block Storage Volume, the Linode Manager will present command-line instructions for mounting it from your Linode, but you can disregard these.</p></li>
+
+<li><p>Reboot the Linode from the Linode Manager. After a few minutes, launch Glish from the <strong>Remote Access</strong> tab again. You can monitor the reboot progress in Glish.</p></li>
+</ol>
+
+<h3 id="format-block-storage-volume-as-zfs">Format Block Storage Volume as ZFS</h3>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>Formatting will erase all data on the volume.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Log back into the web interface for FreeNAS.</p></li>
+
+<li><p>Click the <strong>Storage</strong> icon at the top, then <strong>View Disks</strong> to confirm that FreeNAS recognized the Block Storage Volume.</p></li>
+
+<li><p>Return to the <strong>Storage</strong> tab and click <strong>Volume Manager</strong>. Enter a Volume Name and under Available Disks click the <strong>+</strong> next to the Block Storage Volume. Below Volume layout, select <strong>Stripe</strong>. Click <strong>Add Volume</strong> to format and attach the Volume:</p>
+
+<p><img src="freenas-storage-add-volume.png" alt="Volume Manager - Add a Volume" title="Volume Manager - Add a Volume" /></p></li>
+</ol>
+
+<h3 id="set-permissions-share-the-volume-and-complete-configuration">Set Permissions, Share the Volume, and Complete Configuration</h3>
+
+<ol>
+<li><p>Click the Wizard icon:</p>
+
+<p><img src="freenas-wizard-icon.png" alt="FreeNAS Wizard Icon" title="FreeNAS Wizard Icon" /></p></li>
+
+<li><p>Select your language, keyboard map, and timezone and click <strong>Next</strong>:</p>
+
+<p><img src="freenas-wizard-lang-keyboard-timezone.png" alt="Wizard Keyboard and Timezone Selection" title="Wizard Keyboard and Timezone Selection" /></p></li>
+
+<li><p>When prompted for the Directory Service, press <strong>Next</strong> to skip the step.</p></li>
+
+<li><p>Enter a Share name and purpose. Click <strong>Ownership</strong> to configure the Permissions to allow the client to access and manage access. Visit the <a href="http://doc.freenas.org/11/storage.html#change-permissions">official FreeNAS documentation</a> for more information about the available options. Click <strong>Add</strong>, then <strong>Next</strong> to continue.</p></li>
+
+<li><p>Configure e-mail notification settings or press <strong>Next</strong> to skip and continue.</p></li>
+
+<li><p>Press <strong>Confirm</strong> and the Wizard will complete the remaining configuration.</p></li>
+</ol>
+
+<h2 id="enable-ssh-root-login-optional">Enable SSH Root Login (Optional)</h2>
+
+<p>FreeNAS has SSH disabled by default. This is a more secure configuration, but makes it difficult to troubleshoot issues from the command line.</p>
+
+<ol>
+<li><p>Click the <strong>Services</strong> icon, then the wrench icon on the SSH line:</p>
+
+<p><img src="freenas-services.png" alt="FreeNAS Services" title="FreeNAS Services" /></p></li>
+
+<li><p>Check <strong>Login as Root with password</strong> and press <strong>OK</strong>. Check <strong>Start on Boot</strong> if you would like to keep the setting enabled through future reboots. Click <strong>Start Now</strong>.</p>
+
+<p>Use the same username and password as for the web interface.</p></li>
+</ol>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>Now that FreeNAS is running connected to your Block Storage Volume, you can <a href="http://doc.freenas.org/11/sharing.html">connect to it from your local machine</a>, to a <a href="http://www.freenas.org/blog/plex-on-freenas/">Plex server</a>, or a variety of other platforms using <a href="http://doc.freenas.org/11/plugins.html#available-plugins">plugins</a>.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="http://doc.freenas.org/11/storage.html">FreeNAS Volume Manager Manual</a></li>
+
+<li><a href="http://doc.freenas.org/11/plugins.html#available-plugins">Available FreeNAS Plugins</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#prepare-your-linode">Prepare Your Linode</a></li>
+<li><a href="#create-an-installer-disk">Create an Installer Disk</a></li>
+<li><a href="#install-freenas">Install FreeNAS</a></li>
+<li><a href="#boot-and-configure-freenas">Boot and Configure FreeNAS</a></li>
+<li><a href="#add-a-block-storage-volume-to-freenas">Add a Block Storage Volume to FreeNAS</a>
+<ul>
+<li><a href="#format-block-storage-volume-as-zfs">Format Block Storage Volume as ZFS</a></li>
+<li><a href="#set-permissions-share-the-volume-and-complete-configuration">Set Permissions, Share the Volume, and Complete Configuration</a></li>
+</ul></li>
+<li><a href="#enable-ssh-root-login-optional">Enable SSH Root Login (Optional)</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

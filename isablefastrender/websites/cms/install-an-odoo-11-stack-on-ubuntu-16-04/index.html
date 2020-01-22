@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Install an Odoo 11 Stack on Ubuntu 16.04</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Odoo is an open-source suite of over 5,500 business applications. Odoo allows administrators to install, configure and customize any application to satisfy their needs. This guide covers how to install and configure Odoo using Git source so it will be easy to upgrade and maintain.">
+        <meta name="keywords" content="Odoo, Odoo ERP, CMS, Ubuntu, CRM, OpenERP, Odoo 11, Ubuntu 16.04">
+        
+        <meta property="og:title" content="Install an Odoo 11 Stack on Ubuntu 16.04">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/websites/cms/install-an-odoo-11-stack-on-ubuntu-16-04/">
+        <meta property="og:description" content="Odoo is an open-source suite of over 5,500 business applications. Odoo allows administrators to install, configure and customize any application to satisfy their needs. This guide covers how to install and configure Odoo using Git source so it will be easy to upgrade and maintain.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/websites/cms/install-an-odoo-11-stack-on-ubuntu-16-04/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/">Website Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/cms/">Control Panels &amp; Content Management Systems</a>
+  
+</li>
+
+
+<li>
+  
+  Install an Odoo 11 Stack on Ubuntu 16.04
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Install an Odoo 11 Stack on Ubuntu 16.04</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-06-01T09:30:58-04:00">Friday, June 1, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    <a href="https://twitter.com/damasosanoja">Damaso Sanoja
+      
+      <i class="fa fa-twitter"></i>
+      
+    </a>
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2finstall-an-odoo-11-stack-on-ubuntu-16-04%2f&via=linode&text=Install%20an%20Odoo%2011%20Stack%20on%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2finstall-an-odoo-11-stack-on-ubuntu-16-04%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2finstall-an-odoo-11-stack-on-ubuntu-16-04%2f&t=Install%20an%20Odoo%2011%20Stack%20on%20Ubuntu%2016.04" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Install%20an%20Odoo%2011%20Stack%20on%20Ubuntu%2016.04%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fwebsites%2fcms%2finstall-an-odoo-11-stack-on-ubuntu-16-04%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/websites%5ccms%5cinstall-an-odoo-11-stack-on-ubuntu-16-04%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/websites%5ccms%5cinstall-an-odoo-11-stack-on-ubuntu-16-04%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="install-an-odoo-11-stack-on-ubuntu-16-04-using-linode.png" alt="Install an Odoo 11 Stack on Ubuntu 16.04 using Linode" title="Odoo 11 on Ubuntu 16.04 Title Graphic" /></p>
+
+<h2 id="what-is-odoo">What is Odoo?</h2>
+
+<p><a href="https://www.odoo.com/">Odoo</a> (formerly known as OpenERP) is a self-hosted suite of over 10,000 open source applications for a variety of business needs, including CRM, eCommerce, accounting, inventory, point of sale, and project management. These applications are all fully integrated and can be installed and accessed through a web interface, making it easy to automate and manage your company&rsquo;s processes.</p>
+
+<p>For simple installations, Odoo and its dependencies can be installed on a single Linode (see our <a href="/docs/websites/cms/install-odoo-10-on-ubuntu-16-04/">Install Odoo 10 on Ubuntu</a> guide for details). However, this single-server setup is not suited for production deployments. This guide covers how to configure a production Odoo 11 cluster in which the Odoo server and PostgreSQL database are hosted on separate Linodes, with database replication for added performance and reliability.</p>
+
+<h2 id="system-requirements">System Requirements</h2>
+
+<p>The setup in this guide requires the following <em>minimal</em> Linode specifications:</p>
+
+<ul>
+<li>PostgreSQL databases (master and slave) - Linode <strong>2GB</strong></li>
+<li>Odoo 11 web application - Linode <strong>1GB</strong></li>
+</ul>
+
+<p>Keep in mind that your implementation may need more nodes or higher-memory plans depending on the number of end-users you want to serve and the number of modules you plan to incorporate.</p>
+
+<p>All examples in this guide are for Ubuntu 16.04. If you plan to use a different operating system, adapt the commands as necessary.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Familiarize yourself with our <a href="/docs/getting-started">Getting Started</a> guide and complete the steps for setting your Linode&rsquo;s hostname and timezone.</p></li>
+
+<li><p>This guide will use <code>sudo</code> wherever possible. Complete the sections of our <a href="/docs/security/securing-your-server">Securing Your Server</a> to create a standard user account, harden SSH access and remove unnecessary network services.</p></li>
+
+<li><p>Update your system:</p>
+
+<pre><code>sudo apt-get update &amp;&amp; sudo apt-get upgrade
+</code></pre></li>
+
+<li><p>Install <code>software-properties-common</code>:</p>
+
+<pre><code>sudo apt install software-properties-common
+</code></pre></li>
+</ol>
+
+<h2 id="configure-firewall-rules-for-odoo">Configure Firewall Rules for Odoo</h2>
+
+<p>If you want to configure a firewall for your Linodes, open the following ports:</p>
+
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th align="center">Open TCP Ports</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Odoo 11 application</td>
+<td align="center"><code>22, 6010, 5432, 8070</code></td>
+</tr>
+
+<tr>
+<td>PostgreSQL database (Master &amp; Slave)</td>
+<td align="center"><code>22, 6010, 5432</code></td>
+</tr>
+</tbody>
+</table>
+
+<p>Ports <code>22</code>, <code>80</code>, and <code>5432</code> are the defaults for SSH, HTTP and PostgreSQL communications respectively. Port <code>6010</code> is used for Odoo communications and port <code>8070</code> is used by Odoo&rsquo;s webserver. To open a particular port you can use:</p>
+
+<pre><code>sudo ufw allow 22/tcp
+</code></pre>
+
+<p>For more detailed information about firewall setup please read our guide <a href="/docs/security/firewalls/configure-firewall-with-ufw/">How to Configure a Firewall with UFW</a>.</p>
+
+<h2 id="hostname-assignment">Hostname Assignment</h2>
+
+<p>In order to simplify communication between Linodes, set hostnames for each server. You can use private IPs if the Linodes are all in the same data center, or Fully Qualified Domain Names (FQDNs) if available. This guide will use the following FQDN and hostname conventions:</p>
+
+<table>
+<thead>
+<tr>
+<th>Node</th>
+<th align="center">Hostname</th>
+<th align="center">FQDN</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td>Odoo 11</td>
+<td align="center">odoo</td>
+<td align="center">odoo.yourdomain.com</td>
+</tr>
+
+<tr>
+<td>PostgreSQL Master</td>
+<td align="center">masterdb</td>
+<td align="center">masterdb.yourdomain.com</td>
+</tr>
+
+<tr>
+<td>PostgreSQL Slave</td>
+<td align="center">slavedb</td>
+<td align="center">slavedb.yourdomain.com</td>
+</tr>
+</tbody>
+</table>
+
+<ol>
+<li><p>PostgreSQL Master:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">127.0.0.1       localhost
+127.0.1.1       masterdb.yourdomain.com   masterdb
+
+10.1.1.20       slavedb.yourdomain.com    slavedb
+10.1.3.10       odoo.yourdomain.com       odoo</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>PostgreSQL Slave:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">127.0.0.1       localhost
+127.0.1.1       slavedb.yourdomain.com    slavedb
+
+10.1.1.10       masterdb.yourdomain.com   masterdb
+10.1.3.10       odoo.yourdomain.com       odoo</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Odoo 11 server:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/hosts 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">127.0.0.1       localhost
+127.0.1.1       odoo.yourdomain.com       odoo
+
+10.1.1.10       masterdb.yourdomain.com   masterdb
+10.1.1.20       slavedb.yourdomain.com    slavedb</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<p>FQDNs will be used throughout this guide whenever possible to avoid confusion.</p>
+
+<h2 id="set-up-postgresql">Set up PostgreSQL</h2>
+
+<p>Configure the database backend. A <strong>Master</strong> node will be in charge of all transactions and additionally will stream to a secondary server: the <strong>Slave</strong>.</p>
+
+<h3 id="install-postgresql">Install PostgreSQL</h3>
+
+<p>PostgreSQL version 9.6 offers significant improvements for database replication, but unfortunately, it is not included in the default Ubuntu 16.04 repositories. Install the newest version on all database nodes.</p>
+
+<ol>
+<li><p>Add the official PostgreSQL-Xenial repository to your system:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main&quot;
+</code></pre></li>
+
+<li><p>Import the repository key:</p>
+
+<pre><code>wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Update <code>apt</code> cache:</p>
+
+<pre><code>sudo apt update
+</code></pre></li>
+
+<li><p>Install PostgreSQL 9.6 in the database nodes:</p>
+
+<pre><code>sudo apt install postgresql-9.6 postgresql-server-dev-9.6
+</code></pre></li>
+</ol>
+
+<h3 id="create-postgresql-users">Create PostgreSQL Users</h3>
+
+<p>Begin with the PostgreSQL user needed for Odoo communications. Create this user on both <strong>Master</strong> and <strong>Slave</strong> nodes.</p>
+
+<ol>
+<li><p>Switch to the <code>postgres</code> user and create the database user <code>odoo</code> in charge of all operations. Use a strong password and save it in a secure location, you will need it later:</p>
+
+<pre><code>sudo -u postgres createuser odoo -U postgres -dRSP
+</code></pre>
+
+<p>Use the same password for the Odoo <code>postgres</code> user on all nodes. Odoo is not aware of database replication, so it will be easier to trigger an eventual failover procedure if both servers share the same information.</p></li>
+
+<li><p>Now you need to create the <code>replicauser</code> on the <strong>Master</strong> node:</p>
+
+<pre><code>sudo -u postgres createuser replicauser -U postgres -P --replication
+</code></pre>
+
+<p>Set a strong password that you&rsquo;ll remember.</p>
+
+<p>The <code>replicauser</code> user has fewer privileges than the <code>odoo</code> user because the <code>replicauser</code>&rsquo;s only purpose is to allow the <strong>Slave</strong> to read information from the <strong>Master</strong> nodes. The <code>--replication</code> option grants the required privilege that <code>replicauser</code> need to perform its job.</p></li>
+</ol>
+
+<h3 id="configure-host-based-authentication">Configure Host Based Authentication</h3>
+
+<ol>
+<li><p>Stop the PostgreSQL service on all nodes:</p>
+
+<pre><code>sudo systemctl stop postgresql
+</code></pre></li>
+
+<li><p>Edit <code>pg_hba.conf</code> to allow PostgreSQL nodes to communicate with each other. Add the following lines to the <strong>Master</strong> database server:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.6/main/pg_hba.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">host    replication     replicauser      slavedb.yourdomain.com         md5
+host    all             odoo             odoo.yourdomain.com            md5</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Each line provides the client authentication permissions to connect to a specific database. For example, the first line allows the <strong>Slave</strong> to connect to the <strong>Master</strong> node using <code>replicauser</code>, and the second line grants the <code>odoo</code> user the rights connect to <code>all</code> databases within this server.</p></li>
+
+<li><p>Add a similar configuration to the <strong>Slave</strong> node, this will make it easier to promote it to <code>master</code> status if necessary:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.6/main/pg_hba.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">host    all             odoo             odoo.yourdomain.com            md5</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<p>The settings in the <code>pg_hba.conf</code> file are:</p>
+
+<ul>
+<li><code>host</code>: Enables connections using Unix-domain sockets.</li>
+<li><code>replication</code>: Specifies a replication connection for the given user. No database name is required for this type of connection.</li>
+<li><code>replicauser</code>: The user created in the previous section.</li>
+<li><code>md5</code>: Make use of client-supplied MD5-encrypted password for authentication.</li>
+<li><code>all</code>: Match all databases in the server. You could provide specific Odoo database names (separated by commas if more than one) if you know them beforehand.</li>
+<li><code>odoo</code>: The Odoo user responsible for application/database communications.</li>
+</ul>
+
+<h3 id="configure-archiving-and-replication">Configure Archiving and Replication</h3>
+
+<p><strong>On the Master node</strong></p>
+
+<ol>
+<li><p>Create an <code>archive</code> directory for WAL files:</p>
+
+<pre><code>sudo mkdir -p /var/lib/postgresql/9.6/main/archive/
+</code></pre></li>
+
+<li><p>Change the <code>archive</code> directory permissions to allow the <code>postgres</code> user to read and write:</p>
+
+<pre><code>sudo chown postgres: -R /var/lib/postgresql/9.6/main/archive/
+</code></pre></li>
+
+<li><p>Edit <code>postgresql.conf</code>, and uncomment lines as necessary:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.6/main/postgresql.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">#From CONNECTIONS AND AUTHENTICATION Section
+listen_addresses = &#39;*&#39;
+#From WRITE AHEAD LOG Section
+wal_level = replica
+min_wal_size = 80MB
+max_wal_size = 1GB
+archive_mode = on
+archive_command = &#39;cp %p /var/lib/postgresql/9.6/main/archive/%f&#39;
+archive_timeout = 1h
+#From REPLICATION Section
+max_wal_senders = 3
+wal_keep_segments = 10</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<p><strong>On the Slave node</strong></p>
+
+<p>Edit the <strong>Slave&rsquo;s</strong> <code>postgresql.conf</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/postgresql/9.6/main/postgresql.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">listen_addresses = &#39;*&#39;
+#From WRITE AHEAD LOG Section
+wal_level = replica
+#From REPLICATION Section
+max_wal_senders = 3
+wal_keep_segments = 10
+hot_standby = on</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>These settings are:</p>
+
+<ul>
+<li><code>listen_addresses</code>: What IP addresses lo listen on. The <code>'*'</code> means that the server will listen to all IP addresses. You can limit this to only include the IP addresses that you consider safe.</li>
+<li><code>wal_level</code>: Set to <code>replica</code> to perform the required operations.</li>
+<li><code>min_wal_size</code>: Minimum size the transaction log will be.</li>
+<li><code>max_wal_size</code>: Actual target size of WAL at which a new checkpoint is triggered.</li>
+<li><code>archive_mode</code>: Set to <code>on</code> to activate the archive storage (see below).</li>
+<li><code>archive_timeout</code>: Forces the server to send a WAL segment periodically (even if <code>min_wal_size</code> is not reached). This is useful if you expect little WAL traffic.</li>
+<li><code>archive_command</code>: Local shell command to execute in order to archive a completed WAL file segment.</li>
+<li><code>max_wal_senders</code>: Maximum number of concurrent connections from the <strong>Slave</strong> node.</li>
+<li><code>wal_keep_segments</code>: Minimum number of past log file segments kept in the <code>pg_xlog</code> directory, in case a standby server (<strong>Slave</strong> node) needs to fetch them for streaming replication.</li>
+<li><code>hot_standby = on</code>: Specifies that the <strong>Slave</strong> server can connect and run queries during recovery.</li>
+</ul>
+
+<h3 id="synchronize-master-and-slave-node-data">Synchronize Master and Slave Node Data</h3>
+
+<ol>
+<li><p>Confirm that the <strong>Slave</strong> PostgreSQL service is not running:</p>
+
+<pre><code>sudo systemctl status postgresql
+</code></pre></li>
+
+<li><p>Start the <strong>Master</strong> PostgreSQL service:</p>
+
+<pre><code>sudo systemctl start postgresql
+</code></pre></li>
+
+<li><p>Rename the <strong>Slave&rsquo;s</strong> data directory before continuing:</p>
+
+<pre><code>sudo mv /var/lib/postgresql/9.6/main /var/lib/postgresql/9.6/main_old
+</code></pre></li>
+
+<li><p>From the <strong>Slave</strong> node, enter the following to transfer all of the <strong>Master&rsquo;s</strong> data over:</p>
+
+<pre><code>sudo -u postgres pg_basebackup -h masterdb.yourdomain.com --xlog-method=stream \
+ -D /var/lib/postgresql/9.6/main/ -U replicauser -v -P
+</code></pre>
+
+<p>You will be prompted with the <code>replicauser</code> password. Once the transfer is complete your <strong>Slave</strong> will be synchronized with the <strong>Master</strong> database. This puts an exact replica of the Master database on the Slave.</p></li>
+</ol>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>Do not start the Slave&rsquo;s PostgreSQL service until Step 3 of the next section, when all configuration is complete.</div>
+</blockquote>
+
+
+<h3 id="create-the-recovery-file-on-the-slave-node">Create the Recovery File on the Slave Node</h3>
+
+<ol>
+<li><p>Copy the sample recovery file as a template for your requirements:</p>
+
+<pre><code>sudo cp -avr /usr/share/postgresql/9.6/recovery.conf.sample \
+/var/lib/postgresql/9.6/main/recovery.conf
+</code></pre></li>
+
+<li><p>Edit the new copy of the recovery file:</p>
+
+<dl class="file">
+
+
+<dt>
+		/var/lib/postgresql/9.6/main/recovery.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">standby_mode = &#39;on&#39;
+primary_conninfo = &#39;host=masterdb.yourdomain.com port=5432 user=replicauser password=REPLICAUSER_PWD&#39;
+restore_command = &#39;cp /var/lib/postgresql/9.6/main/archive/%f %p&#39;
+trigger_file = &#39;/tmp/postgresql.trigger.5432&#39;</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Start the PostgreSQL service on the <strong>Slave</strong> node:</p>
+
+<pre><code>sudo systemctl start postgresql
+</code></pre></li>
+</ol>
+
+<p>These parameters configure your <strong>Slave</strong> to restore data. Failover and more options are described in the <a href="https://www.postgresql.org/docs/9.6/static/recovery-config.html">PostgreSQL documentation for recovery</a>.</p>
+
+<h3 id="test-replication">Test Replication</h3>
+
+<p>Test your setup to check that everything works as expected.</p>
+
+<ol>
+<li><p>In the <strong>Master</strong> server change to the <code>postgres</code> user and verify the replication status:</p>
+
+<pre><code>sudo -u postgres psql -x -c &quot;select * from pg_stat_replication;&quot;
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+-[ RECORD 1 ]----+------------------------------
+pid              | 6005
+usesysid         | 16385
+usename          | replicauser
+application_name | walreceiver
+client_addr      | 66.228.54.56
+client_hostname  |
+client_port      | 36676
+backend_start    | 2018-01-23 19:14:26.573184+00
+backend_xmin     |
+state            | streaming
+sent_location    | 0/6000F60
+write_location   | 0/6000F60
+flush_location   | 0/6000F60
+replay_location  | 0/6000F60
+sync_priority    | 0
+sync_state       | async
+</code>
+</pre>
+</li>
+
+<li><p>To see the replication in action, create a test database on your <strong>Master</strong> server with the <code>odoo</code> user:</p>
+
+<pre><code>sudo createdb -h localhost -p 5432 -U odoo helloworld
+</code></pre></li>
+
+<li><p>On the <strong>Slave</strong>, check the presence of the new database you just created using the <code>postgres</code> user and <code>psql</code>:</p>
+
+<pre><code>sudo -u postgres psql
+</code></pre></li>
+
+<li><p>List all databases:</p>
+
+<pre><code>\l
+</code></pre></li>
+
+<li><p>Exit <code>psql</code>:</p>
+
+<pre><code>\q
+</code></pre></li>
+</ol>
+
+<p>This test not only confirms that replication is working, but also that the <code>odoo</code> user is ready to perform database operations.</p>
+
+<h3 id="enable-postgresql-on-startup">Enable PostgreSQL on Startup</h3>
+
+<p>Enable the <code>postgresql</code> service on both <strong>masterdb</strong> and <strong>slavedb</strong>:</p>
+
+<pre><code>sudo systemctl enable postgresql
+</code></pre>
+
+<h2 id="odoo-11-setup">Odoo 11 Setup</h2>
+
+<p>Configure your Odoo 11 web application to work with the PostgreSQL database backend.</p>
+
+<h3 id="create-the-odoo-user">Create the Odoo User</h3>
+
+<p>In order to separate Odoo from other services, create a new Odoo system user to run its processes:</p>
+
+<pre><code>sudo adduser --system --home=/opt/odoo --group odoo
+</code></pre>
+
+<h3 id="configure-logs">Configure Logs</h3>
+
+<p>The examples in this guide use a separate file for logging Odoo activity:</p>
+
+<pre><code>sudo mkdir /var/log/odoo
+</code></pre>
+
+<h3 id="install-odoo-11">Install Odoo 11</h3>
+
+<ol>
+<li><p>Install git:</p>
+
+<pre><code>sudo apt install git
+</code></pre></li>
+
+<li><p>Use Git to clone the Odoo files onto your server:</p>
+
+<pre><code>sudo git clone https://www.github.com/odoo/odoo --depth 1 \
+--branch 11.0 --single-branch /opt/odoo
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Odoo 11 application now uses Python 3.x instead of Python 2.7. If you are using Ubuntu 14.04 this may mean additional steps for your installation. Dependencies are now grouped to highlight the new changes.</div>
+</blockquote>
+</li>
+
+<li><p>Enforce the use of POSIX locale this will prevent possible errors during installation (this has nothing to do with the Odoo language):</p>
+
+<pre><code>export LC_ALL=C
+</code></pre></li>
+
+<li><p>Install new Python3 dependencies:</p>
+
+<pre><code>sudo apt-get install python3 python3-pip python3-suds python3-all-dev \
+python3-dev python3-setuptools python3-tk
+</code></pre></li>
+
+<li><p>Install global dependencies (common to Odoo version 10):</p>
+
+<pre><code>sudo apt install git libxml2-dev libxslt1-dev libevent-dev libsasl2-dev libldap2-dev \
+pkg-config libtiff5-dev libjpeg8-dev libjpeg-dev zlib1g-dev libfreetype6-dev \
+liblcms2-dev liblcms2-utils libwebp-dev tcl8.6-dev tk8.6-dev libyaml-dev fontconfig
+</code></pre></li>
+
+<li><p>Install Odoo 11 specific Python dependencies:</p>
+
+<pre><code>sudo -H pip3 install --upgrade pip
+sudo -H pip3 install -r /opt/odoo/doc/requirements.txt
+sudo -H pip3 install -r /opt/odoo/requirements.txt
+</code></pre></li>
+
+<li><p>Install Less CSS via Node.js and npm:</p>
+
+<pre><code>sudo curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash - \
+&amp;&amp; sudo apt-get install -y nodejs \
+&amp;&amp; sudo npm install -g less less-plugin-clean-css
+</code></pre></li>
+
+<li><p>Download the <code>wkhtmltopdf</code> stable package. Replace the version number <code>0.12.4</code> in this command with the latest release on <a href="https://github.com/wkhtmltopdf/wkhtmltopdf/releases/">Github</a>:</p>
+
+<pre><code>cd /tmp
+wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.4/wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+</code></pre></li>
+
+<li><p>Extract the package:</p>
+
+<pre><code>tar -xvf wkhtmltox-0.12.4_linux-generic-amd64.tar.xz
+</code></pre></li>
+
+<li><p>To ensure that <code>wkhtmltopdf</code> functions properly, move the binaries to a location in your executable path and give them the necessary permission for execution:</p>
+
+<pre><code>sudo mv wkhtmltox/bin/wk* /usr/bin/ \
+&amp;&amp; sudo chmod a+x /usr/bin/wk*
+</code></pre></li>
+</ol>
+
+<h3 id="configure-the-odoo-server">Configure the Odoo Server</h3>
+
+<ol>
+<li><p>Copy the included configuration file to <code>/etc/</code> and change its name to <code>odoo-server.conf</code></p>
+
+<pre><code>sudo cp /opt/odoo/debian/odoo.conf /etc/odoo-server.conf
+</code></pre></li>
+
+<li><p>Modify the configuration file. The complete file should look similar to the following, depending on your deployment needs:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/odoo-server.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">[options]
+admin_passwd = admin
+db_host = masterdb.yourdomain.com
+db_port = False
+db_user = odoo
+db_password = odoo_password
+addons_path = /opt/odoo/addons
+logfile = /var/log/odoo/odoo-server.log
+xmlrpc_port = 8070</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<ul>
+<li><code>admin_passwd</code>: The password that allows administrative operations within Odoo GUI. Be sure to change <code>admin</code> to something more secure.</li>
+<li><code>db_host</code>: The <strong>masterdb</strong> FQDN.</li>
+<li><code>db_port</code>: Odoo uses PostgreSQL&rsquo;s default port <code>5432</code>, change this only if you&rsquo;re using custom PostgreSQL settings.</li>
+<li><code>db_user</code>: Name of the PostgreSQL database user.</li>
+<li><code>db_password</code>: Use the PostgreSQL <code>odoo</code> user password you created previously.</li>
+<li><code>addons_path</code>: Default addons path, you can add custom paths separating them with commas: <code>&lt;/path/to/custom/modules&gt;</code></li>
+<li><code>logfile</code>: Path to your Odoo logfiles.</li>
+<li><code>xmlrpc_port</code>: Port that Odoo will listen on.</li>
+</ul>
+
+<h3 id="create-an-odoo-service">Create an Odoo Service</h3>
+
+<p>Create a systemd unit called <code>odoo-server</code> to allow your application to behave as a service. Create a new file at <code>/lib/systemd/system/odoo-server.service</code> and add the following:</p>
+
+<dl class="file">
+
+
+<dt>
+		/lib/systemd/system/odoo-server.service 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-shell" data-lang="shell"><span class="o">[</span>Unit<span class="o">]</span>
+<span class="nv">Description</span><span class="o">=</span>Odoo Open Source ERP and CRM
+
+<span class="o">[</span>Service<span class="o">]</span>
+<span class="nv">Type</span><span class="o">=</span>simple
+<span class="nv">PermissionsStartOnly</span><span class="o">=</span><span class="nb">true</span>
+<span class="nv">SyslogIdentifier</span><span class="o">=</span>odoo-server
+<span class="nv">User</span><span class="o">=</span>odoo
+<span class="nv">Group</span><span class="o">=</span>odoo
+<span class="nv">ExecStart</span><span class="o">=</span>/opt/odoo/odoo-bin --config<span class="o">=</span>/etc/odoo-server.conf --addons-path<span class="o">=</span>/opt/odoo/addons/
+<span class="nv">WorkingDirectory</span><span class="o">=</span>/opt/odoo/
+
+<span class="o">[</span>Install<span class="o">]</span>
+<span class="nv">WantedBy</span><span class="o">=</span>multi-user.target</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h3 id="change-file-ownership-and-permissions">Change File Ownership and Permissions</h3>
+
+<ol>
+<li><p>Change the <code>odoo-server</code> service permissions and ownership so only root can write to it, while the <code>odoo</code> user will only be able to read and execute it:</p>
+
+<pre><code>sudo chmod 755 /lib/systemd/system/odoo-server.service \
+&amp;&amp; sudo chown root: /lib/systemd/system/odoo-server.service
+</code></pre></li>
+
+<li><p>Since the <code>odoo</code> user will run the application, change its ownership accordingly:</p>
+
+<pre><code>sudo chown -R odoo: /opt/odoo/
+</code></pre></li>
+
+<li><p>Set the <code>odoo</code> user as the owner of log directory as well:</p>
+
+<pre><code>sudo chown odoo:root /var/log/odoo
+</code></pre></li>
+
+<li><p>Protect the server configuration file. Change its ownership and permissions so no other non-root user can access it:</p>
+
+<pre><code>sudo chown odoo: /etc/odoo-server.conf \
+&amp;&amp; sudo chmod 640 /etc/odoo-server.conf
+</code></pre></li>
+</ol>
+
+<h3 id="test-your-odoo-stack">Test your Odoo Stack</h3>
+
+<p>Confirm that everything is working as expected.</p>
+
+<ol>
+<li><p>Start the Odoo server:</p>
+
+<pre><code>sudo systemctl start odoo-server
+</code></pre></li>
+
+<li><p>Confirm that <code>odoo-server</code> is running:</p>
+
+<pre><code>sudo systemctl status odoo-server
+</code></pre></li>
+
+<li><p>In a browser, navigate to <code>odoo.yourdomain.com</code> or the IP address of the <strong>odoo</strong> Linode. If your proxy and your DNS configuration are working properly a login screen will appear.</p></li>
+
+<li><p>Click on the <strong>Manage Databases</strong> link:</p>
+
+<p><img src="odoo-11-login-screen.png" alt="Odoo 11 Login Screen" title="Odoo 11 Login Screen" /></p>
+
+<p>Now you can see the test database you created earlier.</p></li>
+
+<li><p>Click <strong>Create Database</strong> and fill out the form with a test database. Check the <strong>Load demonstation data</strong> box to populate your database with sample data.</p>
+
+<p><img src="odoo-11-create-db.png" alt="Odoo 11 Create Database" title="Odoo 11 Create Database" /></p></li>
+
+<li><p>In the browser, you should see a list of available apps, indicating that database creation was successful:</p>
+
+<p><img src="odoo-11-welcome.png" alt="Odoo 11 Welcome Screen" title="Odoo 11 Welcome Screen" /></p>
+
+<p>The first time you create a database, Odoo may take several minutes to load all of its add-ons. Do not reload the page during this process.</p></li>
+</ol>
+
+<h3 id="enable-the-odoo-service">Enable the Odoo Service</h3>
+
+<ol>
+<li><p>Enable the <code>odoo-server</code> service to start automatically on reboot:</p>
+
+<pre><code>sudo systemctl enable odoo-server
+</code></pre></li>
+
+<li><p>Reboot your Linode from the Linode Manager.</p></li>
+
+<li><p>Check the Odoo logs to verify that the Odoo server is running:</p>
+
+<pre><code>sudo cat /var/log/odoo/odoo-server.log
+</code></pre></li>
+</ol>
+
+<h2 id="back-up-odoo-databases">Back Up Odoo Databases</h2>
+
+<p>If all components of the Odoo stack are running on a single server, it is simple to back up your databases using the Odoo web interface. However, this will not work with the configuration in this guide, since PostgreSQL was not installed on the <strong>odoo</strong> Linode.</p>
+
+<p>You have two options to backup or transfer your production database:</p>
+
+<ol>
+<li><p>You can install PostgreSQL 9.6 on the <strong>odoo</strong> server using the procedure used for <strong>masterdb</strong> and <strong>slavedb</strong>. This will install <code>pg_dump</code> and other utilities, allowing you to use the Odoo GUI as before. Since Odoo configuration is explicit about database connection you will not have to worry about anything else. This method will restore the database to the <strong>masterdb</strong> server rather than <strong>odoo</strong>.</p></li>
+
+<li><p>You can also use a procedure similar to the one in <a href="#synchronize-master-and-slave-node-data">Synchronize Master and Slave Node Data</a>. Instead of synchronizing with a slave node, you can synchronize to a test or backup database server:</p>
+
+<ol>
+<li>Edit <code>/etc/postgresql/9.6/main/pg_hba.conf</code> on <strong>masterdb</strong> to allow the test server to connect to it.</li>
+
+<li><p>On the test server, stop the PostgreSQL service, move/rename/delete its current data, and run the <code>pg_basebackup</code> command as before:</p>
+
+<pre><code>sudo systemctl stop postgresql
+
+sudo mv /var/lib/postgresql/9.6/main /var/lib/postgresql/9.6/main_old
+
+sudo -u postgres pg_basebackup -h &lt;masterdb public ip&gt; --xlog-method=stream -D /var/lib/postgresql/9.6/main/ -U replicauser -v -P
+</code></pre></li>
+</ol></li>
+</ol>
+
+<h3 id="update-odoo-modules">Update Odoo Modules</h3>
+
+<p>Once you have restored, transferred, or synchronized your production database to the testing server you can update Odoo modules.</p>
+
+<p>From your test server restart the Odoo service using the following flags to instruct the system to search for updates and apply any changes to modules:</p>
+
+<pre><code>sudo service odoo-server restart -u all -d &lt;production_database_name&gt;
+</code></pre>
+
+<h3 id="update-your-system">Update your System</h3>
+
+<p>If all your tests pass, you can safely update your installation.</p>
+
+<ol>
+<li><p>From your Linode download the new code from source:</p>
+
+<pre><code>cd /opt/odoo \
+&amp;&amp; sudo git fetch origin 11.0
+</code></pre></li>
+
+<li><p>Apply the changes to your repository:</p>
+
+<pre><code>sudo git reset --hard origin/11.0
+</code></pre></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Do not confuse the Odoo system update with an Odoo <strong>version</strong> upgrade. With the method explained above, you are updating your Odoo application within the same version rather than <strong>upgrading</strong> to a newer Odoo version. Migrating from one version to another often requires several tests and manual modifications on the PostgreSQL database which are highly dependent on the version of Odoo you are upgrading from.</div>
+</blockquote>
+
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://www.odoo.com/documentation/user/11.0/">Odoo User Documentation</a></li>
+
+<li><a href="https://www.odoo.com/documentation/11.0">Odoo Developer Documentation</a></li>
+
+<li><a href="https://www.postgresql.org/docs/9.6/static/index.html">PostgreSQL 9.6 Documentation</a></li>
+
+<li><a href="/docs/security/ssl/install-lets-encrypt-to-create-ssl-certificates">Install an SSL certificate with LetsEncrypt</a></li>
+
+<li><a href="/docs/networking/vpn/how-to-set-up-tinc-peer-to-peer-vpn/">How to Set up tinc, a Peer-to-Peer VPN</a></li>
+
+<li><a href="/docs/applications/configuration-management/how-to-build-your-infrastructure-using-terraform-and-linode/">Using Terraform to Provision Linode Environments</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library toc-long nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-odoo">What is Odoo?</a></li>
+<li><a href="#system-requirements">System Requirements</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#configure-firewall-rules-for-odoo">Configure Firewall Rules for Odoo</a></li>
+<li><a href="#hostname-assignment">Hostname Assignment</a></li>
+<li><a href="#set-up-postgresql">Set up PostgreSQL</a>
+<ul>
+<li><a href="#install-postgresql">Install PostgreSQL</a></li>
+<li><a href="#create-postgresql-users">Create PostgreSQL Users</a></li>
+<li><a href="#configure-host-based-authentication">Configure Host Based Authentication</a></li>
+<li><a href="#configure-archiving-and-replication">Configure Archiving and Replication</a></li>
+<li><a href="#synchronize-master-and-slave-node-data">Synchronize Master and Slave Node Data</a></li>
+<li><a href="#create-the-recovery-file-on-the-slave-node">Create the Recovery File on the Slave Node</a></li>
+<li><a href="#test-replication">Test Replication</a></li>
+<li><a href="#enable-postgresql-on-startup">Enable PostgreSQL on Startup</a></li>
+</ul></li>
+<li><a href="#odoo-11-setup">Odoo 11 Setup</a>
+<ul>
+<li><a href="#create-the-odoo-user">Create the Odoo User</a></li>
+<li><a href="#configure-logs">Configure Logs</a></li>
+<li><a href="#install-odoo-11">Install Odoo 11</a></li>
+<li><a href="#configure-the-odoo-server">Configure the Odoo Server</a></li>
+<li><a href="#create-an-odoo-service">Create an Odoo Service</a></li>
+<li><a href="#change-file-ownership-and-permissions">Change File Ownership and Permissions</a></li>
+<li><a href="#test-your-odoo-stack">Test your Odoo Stack</a></li>
+<li><a href="#enable-the-odoo-service">Enable the Odoo Service</a></li>
+</ul></li>
+<li><a href="#back-up-odoo-databases">Back Up Odoo Databases</a>
+<ul>
+<li><a href="#update-odoo-modules">Update Odoo Modules</a></li>
+<li><a href="#update-your-system">Update your System</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

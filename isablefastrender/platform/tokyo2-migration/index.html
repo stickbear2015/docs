@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Migrating from Tokyo 1 to Tokyo 2</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Linode is retiring our Tokyo 1 data center, and this guide shows how to migrate to our new Tokyo 2 location.">
+        <meta name="keywords" content="tokyo 1, tokyo 2, migrate, migration, migrating, data center">
+        
+        <meta property="og:title" content="Migrating from Tokyo 1 to Tokyo 2">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/platform/tokyo2-migration/">
+        <meta property="og:description" content="Linode is retiring our Tokyo 1 data center, and this guide shows how to migrate to our new Tokyo 2 location.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/platform/tokyo2-migration/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/">Linode Platform</a>
+  
+</li>
+
+
+<li>
+  
+  Migrating from Tokyo 1 to Tokyo 2
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Migrating from Tokyo 1 to Tokyo 2</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-04-16T23:40:43&#43;08:00">Tuesday, April 16, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Migrating%20from%20Tokyo%201%20to%20Tokyo%202%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fplatform%2ftokyo2-migration%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/platform%5ctokyo2-migration%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/platform%5ctokyo2-migration%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>In November 2016, Linode <a href="https://blog.linode.com/2016/11/21/new-linode-datacenter-tokyo-2/">announced and opened</a> the Tokyo 2 data center. This is the second facility operated by Linode in the Tokyo region. Linode is now making preparations to retire the original Tokyo 1 facility. All Linodes hosted in this data center will be migrated to Tokyo 2. This guide is written to prepare customers for this migration and to make migrating easier.</p>
+
+<h2 id="benefits-of-tokyo-2">Benefits of Tokyo 2</h2>
+
+<p>The Tokyo 2 data center provides access to features that are not available in Tokyo 1. These features are:</p>
+
+<ul>
+<li>The <a href="https://www.linode.com/blockstorage">Block Storage Service</a>.</li>
+<li>The <a href="https://blog.linode.com/2018/05/17/updated-linode-plans-new-larger-linodes/">newest Linode plans</a>.</li>
+<li>Future features on Linode&rsquo;s product roadmap.</li>
+</ul>
+
+<h2 id="when-will-my-linodes-be-migrated">When will My Linodes be Migrated?</h2>
+
+<p>The <a href="https://manager.linode.com">Linode Classic Manager</a> will display the scheduled dates and times for the migrations of your Tokyo 1 Linodes. If you visit the Classic Manager before this schedule is set by Linode, the information will not be displayed.</p>
+
+<p>When your migration schedule first becomes visible in the Classic Manager, you will receive a support ticket from Linode to let you know. This ticket will be sent to you at least two months in advance of the start of your first migration. Your different Linodes will be scheduled to migrate on different dates and times. <strong>Linode will not be able to adjust this schedule of migrations.</strong></p>
+
+<p>You are able to move your servers to Tokyo 2 before the scheduled migration dates. We recommend that all customers move their servers early. Moving early will help you better control the uptime of your services.</p>
+
+<h3 id="will-my-linode-backups-be-migrated">Will my Linode Backups be Migrated?</h3>
+
+<p>If your Tokyo 1 Linode is enrolled in the <a href="https://www.linode.com/backups">Linode Backup Service</a>, it will remain enrolled in the service after the migration. However, the saved backups and snapshots that have been created for your Linode prior to the migration <strong>will not move</strong> to the new Tokyo 2 facility. Instead, your Linode will start creating new scheduled backups after it is migrated to the Tokyo 2 date center (according to its <a href="/docs/platform/disk-images/linode-backup-service/#schedule-backups">backup schedule</a>).</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Before migrating, we recommend that you create at least one backup <strong>separate from the Linode Backup Service</strong> for each of your Tokyo 1 Linodes. The <a href="https://linode.com/docs/security/backups/backing-up-your-data/">Backing Up your Data</a> guide has suggestions for alternative ways to back up your Linode.</div>
+</blockquote>
+
+
+<h2 id="what-are-my-options-for-migrating">What are My Options for Migrating?</h2>
+
+<p>There are three different options for moving your servers to the Tokyo 2 data center. The first two of these methods can be followed before the scheduled migration deadlines for your Linodes.</p>
+
+<p>Regardless of which option you choose, <strong>all of your Tokyo 1 Linodes&rsquo; IP addresses will change</strong> when moving to the new location. This includes all public and private IPv4 addresses, as well as public and link-local IPv6 addresses. When the schedule for your Linodes&rsquo; migrations is set, new IP addresses in the Tokyo 2 data center will be reserved in advance for each of your Tokyo 1 Linodes. These reserved addresses will be listed for each Linode under the <a href="/docs/platform/manager/remote-access/">Remote Access tab</a> of the Linode&rsquo;s dashboard.</p>
+
+<p>Later sections in this guide describe how to update your <a href="#update-your-network-configuration">network interface configuration</a> and <a href="#update-dns-records">DNS records</a> to use the new IPs.</p>
+
+<h3 id="option-1-migrate-early">Option 1: Migrate Early</h3>
+
+<p>When you receive the support ticket which announces your Tokyo 1 Linodes&rsquo; migrations, you will also see a new banner appear in the dashboard of each of your Tokyo 1 Linodes. This banner will give you the option to initiate an early migration of your Linode to Tokyo 2.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>The early migration banner will actually appear on your Tokyo 1 Linodes&rsquo; dashboards before you receive the support ticket which announces the migrations. You will be able to perform a migration as soon as you see this banner. However, new IPs in the Tokyo 2 data center will not be reserved for your Linode until you receive the support ticket.</p>
+
+<p>This means that if you migrate before you receive your ticket, you will not know what your new IP addresses will be before you start the migration. Once you start the early migration, your new Tokyo 2 IP addresses will become visible in the <a href="/docs/platform/manager/remote-access/">Remote Access tab</a> of the Linode&rsquo;s dashboard.</p>
+</div>
+</blockquote>
+
+
+<p>Clicking on the banner will take you to a new page which shows the estimated duration for the migration. This page will let you initiate the migration.</p>
+
+<p>The following sequence executes when you start the migration:</p>
+
+<ol>
+<li><p>If your Linode is running, your Linode is gracefully powered down.</p></li>
+
+<li><p>At the same time, your Linode will be assigned its reserved Tokyo 2 IP addresses. These new IPs will become visible in the <a href="/docs/platform/manager/remote-access/">Remote Access tab</a> of your Linode&rsquo;s dashboard.</p></li>
+
+<li><p>The migration of your Linode is started immediately after the shutdown completes.</p></li>
+
+<li><p>If the Linode was running before the migration started, it will be automatically booted after the migration completes. If the Linode was not running, it will remain offline after the migration.</p></li>
+</ol>
+
+<p>You will be able to monitor the progress of your Linode&rsquo;s migration from its dashboard. While waiting on the migration to complete, update your <a href="#update-dns-records">DNS records</a> to use your new IP addresses. DNS changes can take time to propagate, so we recommend doing this quickly after the migration is initiated. Consider updating your <a href="#update-your-ttl">domain&rsquo;s TTL</a> <em>before</em> you initiate the migration.</p>
+
+<p>When the migration finishes, you may need to update your Linode&rsquo;s <a href="#update-your-network-configuration">network configuration</a> to work properly with its new IP addresses.</p>
+
+<h3 id="option-2-clone-your-linodes">Option 2: Clone your Linodes</h3>
+
+<p>Because migrating a Linode will power it down during the migration, your Linode&rsquo;s services will be offline during that time. In addition, if you run a cluster of multiple Linodes for a service, then migrating one or more of them may cause problems for the cluster.</p>
+
+<p>To avoid these issues, you can instead create new Linodes in Tokyo 2 and then <strong>clone</strong> your Tokyo 1 Linode&rsquo;s disks to them. Performing a clone will create exact copies of your disks on the new Linode.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You can perform a clone of a Linode when it is running. However, this can sometimes result in filesystem inconsistencies on the target Linode (your source Linode will never be negatively affected, even if the clone fails). You may need to power your source Linode down to perform a successful clone.</div>
+</blockquote>
+
+
+<p>Cloning your Linodes offers these benefits:</p>
+
+<ul>
+<li><p>You will be able to set up your new Linodes in Tokyo 2 and verify that they run normally before you remove your Tokyo 1 Linodes.</p></li>
+
+<li><p>To move your customers to your new Tokyo 2 servers, you can update your DNS records with your new Tokyo 2 IP addresses. You can keep your Tokyo 1 servers running while you update your DNS. Updating your DNS records in this way will gracefully direct your users to your new servers without downtime.</p></li>
+</ul>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>New Linodes that you create in Tokyo 2 will not receive the IP addresses that are reserved for your Tokyo 1 Linodes&rsquo; scheduled migrations. If you choose to clone your Linodes, your new Tokyo 2 Linodes&rsquo; IP addresses will be listed in the <a href="/docs/platform/manager/remote-access/">Remote Access tab</a> of your Linodes&rsquo; dashboards.</div>
+</blockquote>
+
+
+<p>To clone a Linode, follow these steps:</p>
+
+<ol>
+<li><p>Create a new Linode in Tokyo 2. Make sure that you <a href="https://www.linode.com/pricing">select a plan</a> that has as much disk space as the size of your disks on your source Tokyo 1 Linode.</p></li>
+
+<li><p>Follow the <a href="/docs/platform/disk-images/clone-your-linode/">cloning guide</a> to complete the clone operation. When following these steps, enable all of the configuration profile options for your Linode.</p></li>
+
+<li><p>Boot the new Tokyo 2 Linode when the clone completes.</p></li>
+</ol>
+
+<p>After you have completed the clone, you may need to update your new Linode&rsquo;s <a href="#update-your-network-configuration">network configuration</a> to work properly with its new IP addresses. After making sure that your new Tokyo 2 servers all work as expected, update your <a href="#update-dns-records">DNS records</a>. Consider updating your <a href="#update-your-ttl">domain&rsquo;s TTL</a> <em>before</em> you update your DNS records.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>If you clone your Tokyo 1 Linodes to Tokyo 2, your Tokyo 1 Linodes will remain running and active on your account by default. To prevent double-billing, <a href="/docs/platform/billing-and-support/billing-and-payments/#removing-services">remove</a> the original Tokyo 1 Linodes after you have finished your clones.</div>
+</blockquote>
+
+
+<h3 id="option-3-migrate-when-scheduled">Option 3: Migrate when Scheduled</h3>
+
+<p>If you do not choose to migrate or clone early, Linode will automatically start your migrations at the time listed in your support ticket.</p>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>If Linode initiates your migration when it is scheduled, <strong>your Linode will not be powered on automatically when the migration finishes</strong>. Your Linode is not powered on in order to minimize potential security issues that could result from booting under a new IP assignment.</div>
+</blockquote>
+
+
+<p>After the scheduled migration completes, you can log into the Linode&rsquo;s dashboard and power it on. You may need to update your new Linode&rsquo;s <a href="#update-your-network-configuration">network configuration</a> to work properly with its new IP addresses. Then, update your <a href="#update-dns-records">DNS records</a>. You can also choose to update your DNS records as soon as the migration starts. Consider updating your <a href="#update-your-ttl">domain&rsquo;s TTL</a> <em>before</em> the scheduled migration starts.</p>
+
+<h2 id="update-your-network-configuration">Update your Network Configuration</h2>
+
+<p>In order for your new IP address assignment to work, your Linux deployment&rsquo;s network interface configuration needs to use the new IPs. If Linode&rsquo;s <a href="/docs/platform/network-helper/">Network Helper</a> tool is enabled for your configuration profile, your network interface should automatically adopt the new IPs without any extra action needed from you.</p>
+
+<p>If Network Helper is not enabled, but you use DHCP for your network assignments, then your networking should also work automatically.</p>
+
+<p>If you do not use Network Helper or DHCP, then you will need to update your static interface configuration files. Follow the <a href="/docs/networking/linux-static-ip-configuration/">Linux Static IP Configuration</a> guide to enter your new IP addresses. Your new IPs are listed in the <a href="/docs/platform/manager/remote-access/">Remote Access tab</a> of your Linode&rsquo;s dashboard. These new IPs will only appear <strong>after you start its migration</strong> (if you choose to migrate instead of cloning).</p>
+
+<p>You may also need to update the configuration of your applications if they explicitly bind to your public or private IP addresses. Review Linode&rsquo;s <a href="/docs/web-servers/">web server</a> and <a href="/docs/applications/">application</a> guides for more information on this topic.</p>
+
+<h2 id="update-dns-records">Update DNS Records</h2>
+
+<p>To direct your users to your new Tokyo 2 servers&rsquo; IPs, you need to update your DNS records to use the new IPs. If you are using Linode&rsquo;s DNS Manager, follow the DNS Manager guide to update your <a href="/docs/platform/manager/dns-manager/#edit-records">DNS records</a>.</p>
+
+<p>If you use a different DNS provider, you will need to visit that provider&rsquo;s website to update your records.</p>
+
+
+
+
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Updating DNS records at common nameserver authorities
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper">The following support documents describe how to update DNS records at common nameserver authorities:</p>
+
+<ul>
+<li><a href="https://support.cloudflare.com/hc/en-us/articles/200168686-What-do-I-do-if-I-changed-my-server-IP-address-or-hosting-provider-">CloudFlare</a></li>
+<li><a href="https://www.godaddy.com/help/manage-dns-zone-files-680">GoDaddy</a></li>
+<li><a href="https://help.dreamhost.com/hc/en-us/articles/215414867-How-do-I-add-custom-DNS-records">DreamHost</a></li>
+<li><a href="https://doc.gandi.net/en/dns/zone">Gandi</a></li>
+<li><a href="https://www.1and1.com/help/domains/configuring-your-ip-address/connecting-a-domain-to-a-static-ip-address/">1&amp;1</a></li>
+<li><a href="http://www.networksolutions.com/support/how-to-manage-advanced-dns-records/">Network Solutions</a></li>
+<li><a href="https://my.bluehost.com/hosting/help/559">Bluehost</a></li>
+<li><a href="https://support.hostgator.com/articles/manage-dns-records-with-hostgatorenom">HostGator</a></li>
+<li><a href="https://www.namecheap.com/support/knowledgebase/article.aspx/319/2237/how-can-i-set-up-an-a-address-record-for-my-domain">Namecheap</a></li>
+<li><a href="https://help.hover.com/hc/en-us/articles/217282457-How-to-Edit-DNS-records-A-AAAA-CNAME-MX-TXT-SRV-">Hover</a></li>
+</ul></div></div>
+</blockquote>
+
+
+
+
+
+<h3 id="update-your-ttl">Update your TTL</h3>
+
+<p>DNS resolvers hold a cache for your domain&rsquo;s records. A resolver will update its cached records according to your domain&rsquo;s <em>Time To Live</em> (TTL) value. This means that when you update your DNS records, other DNS resolvers will not immediately update their records for your domain. Instead, they will receive your new records when their caches expires.</p>
+
+<p>Having a short TTL means that your users will be directed to your new IP addresses faster when you update your DNS records. It is recommended that you lower your TTL ahead of your migrations. To set the TTL, review the <a href="/docs/platform/manager/dns-manager/#set-the-time-to-live-or-ttl">DNS Manager</a> guide. After you complete your migrations and have updated your DNS successfully, you can raise your TTL back to the default value of 24 hours.</p>
+
+<h2 id="contact-linode-support">Contact Linode Support</h2>
+
+<p>If you have any issues when migrating or cloning to Tokyo 2, or if you have any questions about this process, please <a href="/docs/platform/billing-and-support/support/#contacting-linode-support">contact Linode Support</a>. Technical questions about your Linux deployment&rsquo;s configuration are often outside the scope of support. For any out-of-scope issues, we also recommend searching and asking technical questions in the <a href="/community/questions/">Linode Community Site</a>.</p>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#benefits-of-tokyo-2">Benefits of Tokyo 2</a></li>
+<li><a href="#when-will-my-linodes-be-migrated">When will My Linodes be Migrated?</a>
+<ul>
+<li><a href="#will-my-linode-backups-be-migrated">Will my Linode Backups be Migrated?</a></li>
+</ul></li>
+<li><a href="#what-are-my-options-for-migrating">What are My Options for Migrating?</a>
+<ul>
+<li><a href="#option-1-migrate-early">Option 1: Migrate Early</a></li>
+<li><a href="#option-2-clone-your-linodes">Option 2: Clone your Linodes</a></li>
+<li><a href="#option-3-migrate-when-scheduled">Option 3: Migrate when Scheduled</a></li>
+</ul></li>
+<li><a href="#update-your-network-configuration">Update your Network Configuration</a></li>
+<li><a href="#update-dns-records">Update DNS Records</a>
+<ul>
+<li><a href="#update-your-ttl">Update your TTL</a></li>
+</ul></li>
+<li><a href="#contact-linode-support">Contact Linode Support</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

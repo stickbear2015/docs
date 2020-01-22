@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Deploy Minio on Kubernetes using Kubespray and Ansible</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Minio is an open source S3 compatible object store that can be installed on a Kubernetes cluster. Learn how to use a combination of Kubespray and Ansible to provision a cluster and deploy Minio as a private cloud storage.">
+        <meta name="keywords" content="ansible, kubernetes, cluster, s3, aws">
+        
+        <meta property="og:title" content="Deploy Minio on Kubernetes using Kubespray and Ansible">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/deploy-minio-on-kubernetes-using-kubespray-and-ansible/">
+        <meta property="og:description" content="Minio is an open source S3 compatible object store that can be installed on a Kubernetes cluster. Learn how to use a combination of Kubespray and Ansible to provision a cluster and deploy Minio as a private cloud storage.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/deploy-minio-on-kubernetes-using-kubespray-and-ansible/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  Deploy Minio on Kubernetes using Kubespray and Ansible
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Deploy Minio on Kubernetes using Kubespray and Ansible</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-11-20T11:41:17-05:00">Tuesday, November 20, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Sam Foo
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-minio-on-kubernetes-using-kubespray-and-ansible%2f&via=linode&text=Deploy%20Minio%20on%20Kubernetes%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-minio-on-kubernetes-using-kubespray-and-ansible%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploy-minio-on-kubernetes-using-kubespray-and-ansible%2f&t=Deploy%20Minio%20on%20Kubernetes%20using%20Kubespray%20and%20Ansible" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Deploy%20Minio%20on%20Kubernetes%20using%20Kubespray%20and%20Ansible%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fdeploy-minio-on-kubernetes-using-kubespray-and-ansible%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cdeploy-minio-on-kubernetes-using-kubespray-and-ansible%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cdeploy-minio-on-kubernetes-using-kubespray-and-ansible%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="Deploy_Minio.jpg" alt="Minio_Banner" /></p>
+
+<h2 id="what-is-minio">What is Minio?</h2>
+
+<p>Minio is an open source, S3 compatible object store that can be hosted on a Linode. Deployment on a Kubernetes cluster is supported in both standalone and distributed modes. This guide uses <a href="https://github.com/kubernetes-incubator/kubespray">Kubespray</a> to deploy a Kubernetes cluster on three servers running Ubuntu 16.04. Kubespray comes packaged with Ansible playbooks that simplify setup on the cluster. Minio is then installed in standalone mode on the cluster to demonstrate how to create a service.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>For demonstration purposes, this guide installs <code>etcd</code> and the Kubernetes master on the same node. High availability clusters will require a different configuration, which is beyond the scope of this guide.</p></li>
+
+<li><p>Each Linode to be used in the cluster should have a user with sudo privileges.</p></li>
+
+<li><p>A cluster can be simulated locally using <a href="https://github.com/kubernetes/minikube">Minikube</a> to get comfortable with Kubernetes clusters.</p></li>
+
+<li><p>The IP addresses of each node in the cluster and their roles will be represented as <code>kubernetes-master-ip</code>, <code>etcd-ip</code>, and <code>slave-ip</code></p></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you do not want to install Ansible and other software locally, consider using another Linode as a jumpbox that will be used to connect with the master node.</div>
+</blockquote>
+
+
+<h2 id="install-ansible">Install Ansible</h2>
+
+<ol>
+<li><p>Update if needed.</p>
+
+<pre><code>sudo apt-get update
+sudo apt-get install software-properties-common
+</code></pre></li>
+
+<li><p>Add the Ansible PPA; press enter when prompted.</p>
+
+<pre><code>sudo apt-add-repository ppa:ansible/ansible
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+ Ansible is a simple IT automation platform that makes your applications and systems easier to deploy. Avoid writing scripts or custom code to deploy and update your applications— automate in a language that approaches plain English, using SSH, with no agents to install on remote systems.
+
+http://ansible.com/
+ More info: https://launchpad.net/~ansible/+archive/ubuntu/ansible
+Press [ENTER] to continue or ctrl-c to cancel adding it
+
+gpg: keyring `/tmp/tmp81pkp_0b/secring.gpg' created
+gpg: keyring `/tmp/tmp81pkp_0b/pubring.gpg' created
+gpg: requesting key 7BB9C367 from hkp server keyserver.ubuntu.com
+gpg: /tmp/tmp81pkp_0b/trustdb.gpg: trustdb created
+gpg: key 7BB9C367: public key "Launchpad PPA for Ansible, Inc." imported
+gpg: Total number processed: 1
+gpg:               imported: 1  (RSA: 1)
+OK
+</code>
+</pre>
+</li>
+
+<li><p>Update again then install Ansible.</p>
+
+<pre><code>sudo apt-get update
+sudo apt-get install ansible
+</code></pre></li>
+</ol>
+
+<h3 id="additional-installation">Additional Installation</h3>
+
+<p>Kubespray exists as a Git repository and requires <code>python-netaddr</code> for network address manipulation.</p>
+
+<ol>
+<li><p>Install Git:</p>
+
+<pre><code>sudo apt install git
+</code></pre></li>
+
+<li><p>Install <code>python-netaddr</code>:</p>
+
+<pre><code>sudo apt install python-netaddr
+</code></pre></li>
+</ol>
+
+<h2 id="modify-kubespray-configurations">Modify Kubespray Configurations</h2>
+
+<p>Kubespray comes with several configuration options not shown in this guide. Refer to the <a href="https://kubespray.io/documents/">documentation</a> for more information on topics such as networking with Flannel, Helm installation, and large scale deployments.</p>
+
+<ol>
+<li><p>Clone the Kubespray repository from Github then navigate into the repository.</p>
+
+<pre><code>git clone https://github.com/kubernetes-incubator/kubespray.git
+cd kubespray
+</code></pre></li>
+
+<li><p>Check out a tag for the desired version of Kubespray. This guide is written for version 2.4.0.</p>
+
+<pre><code>git checkout -b tag/v.2.4.0
+</code></pre></li>
+
+<li><p>Modify <code>~/kubespray/ansible.cfg</code> to run Ansible playbooks on hosts as a given user. Replace <code>username</code> with your Unix account username in <code>remote_user=username</code> under <code>[defaults]</code>.</p>
+
+<dl class="file">
+
+
+<dt>
+		~/kubespray/ansible.cfg 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-cfg" data-lang="cfg"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-cfg" data-lang="cfg"><span class="k">[ssh_connection]</span>
+<span class="na">pipelining</span><span class="o">=</span><span class="s">True</span>
+<span class="na">ssh_args</span> <span class="o">=</span> <span class="s">-o ControlMaster=auto -o ControlPersist=30m -o ConnectionAttempts=100 -o UserKnownHostsFile=/dev/null</span>
+<span class="c1">#control_path = ~/.ssh/ansible-%%r@%%h:%%p</span>
+<span class="k">[defaults]</span>
+<span class="na">host_key_checking</span><span class="o">=</span><span class="s">False</span>
+<span class="na">gathering</span> <span class="o">=</span> <span class="s">smart</span>
+<span class="na">fact_caching</span> <span class="o">=</span> <span class="s">jsonfile</span>
+<span class="na">fact_caching_connection</span> <span class="o">=</span> <span class="s">/tmp</span>
+<span class="na">stdout_callback</span> <span class="o">=</span> <span class="s">skippy</span>
+<span class="na">library</span> <span class="o">=</span> <span class="s">./library</span>
+<span class="na">callback_whitelist</span> <span class="o">=</span> <span class="s">profile_tasks</span>
+<span class="na">roles_path</span> <span class="o">=</span> <span class="s">roles:$VIRTUAL_ENV/usr/local/share/kubespray/roles:$VIRTUAL_ENV/usr/local/share/ansible/roles:/usr/share/kubespray/roles</span>
+<span class="na">deprecation_warnings</span><span class="o">=</span><span class="s">False</span>
+<span class="na">remote_user</span><span class="o">=</span><span class="s">username</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Copy the example inventory directory and rename it:</p>
+
+<pre><code>cp -r inventory/sample inventory/minio
+</code></pre></li>
+
+<li><p>Use Kubespray&rsquo;s inventory generator to build an inventory of hosts for Ansible. Declare the list of IP addresses for each Linode.</p>
+
+<pre><code>declare -a IPS=(kubernetes-master-ip etcd-ip slave-ip)
+CONFIG_FILE=inventory/minio/hosts.ini python3 contrib/inventory_builder/inventory.py ${IPS[@]}
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Do not use hostnames when declaring <code>$IPS</code>. Only IP addresses are supported by the inventory generator at this time.</div>
+</blockquote>
+</li>
+
+<li><p>Example configuration for the cluster in this guide.</p>
+
+<dl class="file">
+
+
+<dt>
+		~/kubespray/inventory/minio/hosts.ini 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-ini" data-lang="ini"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-ini" data-lang="ini"><span class="k">[all]</span>
+<span class="na">node1    ansible_host</span><span class="o">=</span><span class="s">kubernetes-master-ip ip=kubernetes-master-ip</span>
+<span class="na">node2    ansible_host</span><span class="o">=</span><span class="s">etcd-ip ip=etcd-ip</span>
+<span class="na">node3    ansible_host</span><span class="o">=</span><span class="s">slave-ip ip=slave-ip</span>
+
+<span class="k">[kube-master]</span>
+<span class="na">node1</span>
+
+<span class="k">[kube-node]</span>
+<span class="na">node2</span>
+<span class="na">node3</span>
+
+<span class="k">[etcd]</span>
+<span class="na">node1</span>
+
+<span class="k">[k8s-cluster:children]</span>
+<span class="na">kube-node</span>
+<span class="na">kube-master</span>
+
+<span class="k">[calico-rr]</span>
+
+<span class="k">[vault]</span>
+<span class="na">node1</span>
+<span class="na">node2</span>
+<span class="na">node3</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Uncomment the line <code>docker_dns_servers_strict: false</code> in <code>~/kubernetes/inventory/minio/group_vars/all.yml</code></p></li>
+</ol>
+
+<h2 id="prepare-hosts-for-ansible">Prepare Hosts for Ansible</h2>
+
+<p>Before Ansible can properly run Kubespray&rsquo;s playbooks, the hosts must have a passwordless sudo user enabled, and swap disabled for Kubernetes. Make sure the specified user exists on each Linode prior to starting these steps. This section shows how to copy SSH keys to each Linode and modify the sudoers file over SSH.</p>
+
+<ol>
+<li><p>Create a private key if you <strong>do not</strong> have one:</p>
+
+<pre><code>ssh-keygen -b 4096
+</code></pre></li>
+
+<li><p>Copy your SSH key to each IP listed in the inventory using the <code>$IPS</code> variable declared earlier and replace <code>username</code> with the username for each of the hosts.</p>
+
+<pre><code>for IP in ${IPS[@]}; do ssh-copy-id username@$IP; done
+</code></pre></li>
+</ol>
+
+<h3 id="create-passwordless-sudo-on-nodes">Create Passwordless Sudo on Nodes</h3>
+
+<p>Below is a loop that adds the line <code>username ALL=(ALL:ALL) NOPASSWD: ALL</code> to the last line of the sudoers file. You will be prompted for the password for each server.</p>
+
+<pre><code>for IP in ${IPS[@]}; do ssh -t username@$IP &quot;echo 'username ALL=(ALL:ALL) NOPASSWD: ALL' | sudo EDITOR='tee -a' visudo&quot;; done
+</code></pre>
+
+<h3 id="disable-swap">Disable swap</h3>
+
+<p>Add this snippet below at the end of <code>~/kubespray/roles/bootstrap-os/tasks/main.yml</code> to disable swap using Ansible.</p>
+
+<dl class="file">
+
+
+<dt>
+		~/kubespray/roles/bootstrap-os/tasks/main.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: Disable swap
+  command: swapoff -a</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="run-ansible-playbook">Run Ansible Playbook</h2>
+
+<p>Before running the Ansible playbook, make sure firewalls are turned off to avoid unexpected errors.</p>
+
+<p>Run the <code>cluster.yml</code> Ansible playbook. If your private key is named differently or located elsewhere, add <code>--private-key=/path/to/id_rsa</code> to the end.</p>
+
+<pre><code>ansible-playbook -i inventory/minio/hosts.ini cluster.yml -b -v
+</code></pre>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>This could take up to 20 minutes.</div>
+</blockquote>
+
+
+<h3 id="add-or-remove-nodes">Add or Remove Nodes</h3>
+
+<ol>
+<li><p>Navigate into <code>~/kubespray/inventory/minio/hosts.ini</code> and add the IP address of the new node.</p></li>
+
+<li><p>Run ssh-copy-id to copy your SSH key to the new node:</p>
+
+<pre><code>ssh-copy-id username@new-node-ip
+</code></pre></li>
+
+<li><p>Run the <code>scale.yml</code> Ansible playbook:</p>
+
+<pre><code>ansible-playbook -i inventory/minio/hosts.ini scale.yml -b -v
+</code></pre></li>
+
+<li><p>SSH into the Kubernetes master node to list all the available nodes:</p>
+
+<pre><code>kubectl get nodes
+</code></pre></li>
+
+<li><p>To remove a node, simply turn off the server and clean up on the master node with:</p>
+
+<pre><code>kubectl delete node &lt;ip-of-node&gt;
+</code></pre></li>
+</ol>
+
+<h2 id="minio-on-kubernetes">Minio on Kubernetes</h2>
+
+<p>The commands in this section should be executed from the <code>kubernetes-master</code> Linode.</p>
+
+<h3 id="create-a-persistent-volume">Create a Persistent Volume</h3>
+
+<p>Persistent Volumes(PV) are an abstraction in Kubernetes that represents a unit of storage provisioned in the cluster. A <code>PersistentVolumeClaim</code>(PVC) will allow a pod to consume the storage set aside by a PV. This section creates a PV of 15Gi (<a href="https://en.wikipedia.org/wiki/Binary_prefix">gibibytes</a>) then allow Minio to claim 10Gi of space.</p>
+
+<ol>
+<li><p>On the Kubernetes master node, create a file called <code>minio-volume.yaml</code> with the following YAML below. Replace <code>username</code> on the <code>hostPath</code> with the appropriate path.</p>
+
+<dl class="file">
+
+
+<dt>
+		minio-volume.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: minio-pv-volume
+  labels:
+    type: <span class="nb">local</span>
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 15Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: <span class="s2">&#34;/home/username&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the PV:</p>
+
+<pre><code>kubectl create -f minio-volume.yaml
+</code></pre></li>
+
+<li><p>Create a PVC with <code>minio-pvc.yaml</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		minio-pvc.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minio-pv-claim
+  labels:
+    app: minio-storage-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the PVC:</p>
+
+<pre><code>kubectl create -f minio-pvc.yaml
+</code></pre></li>
+</ol>
+
+<h3 id="create-a-deployment">Create a Deployment</h3>
+
+<ol>
+<li><p>Create a Deployment configuration in <code>minio-deployment.yaml</code> and substitute <code>username</code> on the last line. The access and secret key are in the YAML file.</p>
+
+<dl class="file">
+
+
+<dt>
+		minio-deployment.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">apiVersion: apps/v1 <span class="c1">#  for k8s versions before 1.9.0 use apps/v1beta2  and before 1.8.0 use extensions/v1beta1</span>
+kind: Deployment
+metadata:
+  <span class="c1"># This name uniquely identifies the Deployment</span>
+  name: minio-deployment
+spec:
+  selector:
+    matchLabels:
+      app: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        <span class="c1"># Label is used as selector in the service.</span>
+        app: minio
+    spec:
+      <span class="c1"># Refer to the PVC created earlier</span>
+      volumes:
+      - name: storage
+        persistentVolumeClaim:
+          <span class="c1"># Name of the PVC created earlier</span>
+          claimName: minio-pv-claim
+      containers:
+      - name: minio
+        <span class="c1"># Pulls the default Minio image from Docker Hub</span>
+        image: minio/minio:latest
+        args:
+        - server
+        - /storage
+        env:
+        <span class="c1"># Minio access key and secret key</span>
+        - name: MINIO_ACCESS_KEY
+          value: <span class="s2">&#34;minio&#34;</span>
+        - name: MINIO_SECRET_KEY
+          value: <span class="s2">&#34;minio123&#34;</span>
+        ports:
+        - containerPort: <span class="m">9000</span>
+          hostPort: <span class="m">9000</span>
+        <span class="c1"># Mount the volume into the pod</span>
+        volumeMounts:
+        - name: storage <span class="c1"># must match the volume name, above</span>
+          mountPath: <span class="s2">&#34;/home/username&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the Deployment.</p>
+
+<pre><code>kubectl create -f minio-deployment.yaml
+</code></pre></li>
+</ol>
+
+<h3 id="create-a-service">Create a Service</h3>
+
+<ol>
+<li><p>Create a file for the service called <code>minio-service.yaml</code></p>
+
+<dl class="file">
+
+
+<dt>
+		minio-service.yaml 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">apiVersion: v1
+kind: Service
+metadata:
+  name: minio-service
+spec:
+  type: LoadBalancer
+  ports:
+    - port: <span class="m">9000</span>
+      targetPort: <span class="m">9000</span>
+      protocol: TCP
+  selector:
+    app: minio</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Deploy the Minio service:</p>
+
+<pre><code>kubectl create -f minio-service.yaml
+</code></pre></li>
+
+<li><p>See a list of running services. Under the column <code>PORT(S)</code>, you can see that the Minio service is running internally on port 9000, with 30593 exposed externally by the LoadBalancer.</p>
+
+<pre><code>kubectl get services
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+NAME            TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+kubernetes      ClusterIP      10.233.0.1      <none>        443/TCP          1d
+minio-service   LoadBalancer   10.233.28.163   <pending>     9000:30593/TCP   20m
+</code>
+</pre>
+</li>
+
+<li><p>In a browser, navigate to the public IP address of any of the Linodes in the cluster, at the exposed port (30593 in the example above):</p>
+
+<p><img src="minio-login-screen.png" alt="Minio Login Screen" /></p></li>
+
+<li><p>Minio has similar functionality to S3: file uploads, creating buckets, and storing other data.</p>
+
+<p><img src="minio-browser.png" alt="Minio Browser" /></p></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://kubernetes.io/docs/concepts/overview/what-is-kubernetes/">Kubernetes</a></li>
+
+<li><a href="https://www.minio.io/">Minio</a></li>
+
+<li><a href="https://github.com/kubernetes-incubator/kubespray">Kubespray</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-minio">What is Minio?</a></li>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#install-ansible">Install Ansible</a>
+<ul>
+<li><a href="#additional-installation">Additional Installation</a></li>
+</ul></li>
+<li><a href="#modify-kubespray-configurations">Modify Kubespray Configurations</a></li>
+<li><a href="#prepare-hosts-for-ansible">Prepare Hosts for Ansible</a>
+<ul>
+<li><a href="#create-passwordless-sudo-on-nodes">Create Passwordless Sudo on Nodes</a></li>
+<li><a href="#disable-swap">Disable swap</a></li>
+</ul></li>
+<li><a href="#run-ansible-playbook">Run Ansible Playbook</a>
+<ul>
+<li><a href="#add-or-remove-nodes">Add or Remove Nodes</a></li>
+</ul></li>
+<li><a href="#minio-on-kubernetes">Minio on Kubernetes</a>
+<ul>
+<li><a href="#create-a-persistent-volume">Create a Persistent Volume</a></li>
+<li><a href="#create-a-deployment">Create a Deployment</a></li>
+<li><a href="#create-a-service">Create a Service</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

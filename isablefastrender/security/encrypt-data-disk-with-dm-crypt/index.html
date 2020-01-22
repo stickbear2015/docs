@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Encrypt Your Data with dm-crypt</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide shows how to use dm-crypt in plain mode or with LUKS to encrypt your data disk, partition or file container.">
+        <meta name="keywords" content="dm-crypt, encryption, encrypt, luks">
+        
+        <meta property="og:title" content="How to Encrypt Your Data with dm-crypt">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/security/encrypt-data-disk-with-dm-crypt/">
+        <meta property="og:description" content="dm-crypt is a transparent encryption subsystem. In this guide you will learn how to encrypt disks, partition, swap, and use encrypted files. ">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/security/encrypt-data-disk-with-dm-crypt/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/security/">Security, Upgrades &amp; Backups</a>
+  
+</li>
+
+
+<li>
+  
+  How to Encrypt Your Data with dm-crypt
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Encrypt Your Data with dm-crypt</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-12-18T20:15:58Z">Tuesday, December 18, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Alexandru Andrei
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fsecurity%2fencrypt-data-disk-with-dm-crypt%2f&via=linode&text=How%20to%20Encrypt%20Your%20Data%20with%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fsecurity%2fencrypt-data-disk-with-dm-crypt%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fsecurity%2fencrypt-data-disk-with-dm-crypt%2f&t=How%20to%20Encrypt%20Your%20Data%20with%20dm-crypt" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Encrypt%20Your%20Data%20with%20dm-crypt%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fsecurity%2fencrypt-data-disk-with-dm-crypt%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/security%5cencrypt-data-disk-with-dm-crypt%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/security%5cencrypt-data-disk-with-dm-crypt%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="How_to_Encrypt_Your_Data_with_dm-crypt_smg.png" alt="How to Encrypt Your Data with dm-crypt" title="How to Encrypt Your Data with dm-crypt" /></p>
+
+<p>dm-crypt is a transparent disk encryption subsystem. In this guide you will learn how to encrypt disks, partition, swap and even use files as encrypted, and portable containers for your sensitive data.</p>
+
+<p><em>dm-crypt</em> maps a physical block device to a virtual block device. When you write to the virtual device, every block of data is encrypted and stored on the physical device. When you read from the virtual device, every block is decrypted at runtime. Consequently, The blocks of data are encrypted on the storage device and the virtual device looks like a normal, unencrypted block device as far as the system is concerned. Because of this you should be aware of two important aspects:</p>
+
+<ul>
+<li><p>Closing the virtual device when not in use will maximize the safety of your data.</p></li>
+
+<li><p>When the virtual device is open, if an attacker manages to break into your server and gains access to the Linux kernel, he may be able to read from that device. While this is hard to do on a well-configured, secure, Linode, you can increase security by looking into ways to harden the Linux kernel (e.g. <em>grsecurity</em>) and/or <em>Mandatory Access Control</em> systems like <em>AppArmor</em> or <em>SELinux</em>.</p></li>
+</ul>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The steps in this guide require root privileges. Be sure to run the steps below as <code>root</code> or with the <code>sudo</code> prefix. For more information on privileges, see our <a href="/docs/tools-reference/linux-users-and-groups">Users and Groups</a> guide.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Familiarize yourself with our <a href="/docs/getting-started">Getting Started</a> guide, deploy a Debian 9 image, reserving approximately 4096 MB for your operating system so that you can use the rest of your available disk space as encrypted storage:</p>
+
+<p><img src="debian_allocation.png" alt="Debian Allocation" /></p></li>
+
+<li><p>Go to the Linode Manager dashboard, create a new disk and select <strong>unformatted / raw</strong> under <strong>Type</strong>:</p>
+
+<p><img src="data_disk.png" alt="Data Disk" /></p></li>
+
+<li><p>Open your <a href="/docs/platform/disk-images/disk-images-and-configuration-profiles">configuration profile</a> and review your <strong>Block Device Assignment</strong>. Add any additional disk(s) and/or block storage devices if they aren&rsquo;t already included. Throughout this guide replace <code>/dev/sdX</code> with the device name of your storage disk.</p>
+
+<p><img src="configuration_profile.png" alt="Configuration Profile" /></p></li>
+
+<li><p>After your block device assignments are configured, boot your Linode.</p></li>
+
+<li><p>Log in as root and update your system:</p>
+
+<pre><code>apt update &amp;&amp; apt upgrade
+</code></pre></li>
+
+<li><p>Install <code>cryptsetup</code>:</p>
+
+<pre><code>apt install cryptsetup
+</code></pre></li>
+</ol>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Another way to set up an encrypted data partition is by attaching a <a href="/docs/platform/how-to-use-block-storage-with-your-linode">Block Storage</a> volume to your Linode, and skipping the instructions for creating a filesystem and mounting the device, since that will be done on the virtual device mapped by dm-crypt.</div>
+</blockquote>
+
+
+<h2 id="how-to-map-whole-disks-partitions-and-files">How to Map Whole Disks, Partitions and Files</h2>
+
+<p>Mapping a whole disk or a partition can be done by changing parameters in the <code>cryptsetup</code> command. Files can be used as block devices by dm-crypt. This is also simple, and consists of pointing <code>cryptsetup</code> to the desired <code>/path/to/file</code> instead of <code>/dev/sdb</code>. However, you have to allocate the space used by that file beforehand. Store these files in <code>/root/</code>. The following command will allocate a 10GB file:</p>
+
+<pre><code>fallocate -l 10G /root/encrypted-container
+</code></pre>
+
+<p>Another way to create a 10GB file container is with this command:</p>
+
+<pre><code>truncate -s 10G /root/encrypted-container
+</code></pre>
+
+<p>The advantage of this command is that the file starts out by occupying 0 bytes on the filesystem and grows as required.</p>
+
+<p>A benefit of using files as encrypted containers is that they&rsquo;re slightly easier to move around from system to system. But keep in mind that files are also more prone to being deleted accidentally.</p>
+
+<h2 id="dm-crypt-in-plain-mode-vs-dm-crypt-with-luks-extension">dm-crypt in Plain Mode vs dm-crypt with LUKS Extension</h2>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>In plain mode, dm-crypt simply encrypts the device sector-by-sector, without adding any kind of headers or metadata. It&rsquo;s advised that beginners do not use this until they understand the risks.</div>
+</blockquote>
+
+
+<p>Advantages of using Plain Mode:</p>
+
+<ul>
+<li>It&rsquo;s more resistant to damage compared to LUKS. The header can&rsquo;t be destroyed, resulting in a lost data set.</li>
+<li>Details of the encryption algorithm are obscured.</li>
+<li>It&rsquo;s not immediately obvious that the user is using encryption or dm-crypt.</li>
+</ul>
+
+<p>Disadvantages of using Plain Mode:</p>
+
+<ul>
+<li>If you enter the wrong password, no checks are performed and dm-crypt accepts any passphrase without complaining. Although you may notice something is wrong when your filesystem refuses to mount, there&rsquo;s still the potential of overwriting useful data.</li>
+<li>The same is true for opening your block device with different encryption settings. This might happen when you upgrade your distribution and the defaults change or when you open your device on a different operating system.</li>
+<li>There&rsquo;s no easy way of changing your password, the whole container will have to be decrypted with the old password and re-encrypted with the new secret.</li>
+<li>There are no mechanisms by which to strengthen your passphrase against brute-force attacks.</li>
+</ul>
+
+<p>This doesn&rsquo;t mean that plain mode is worse than LUKS, just that one mode of operation is simple and raw, that some experts might prefer, and requires more attention and care, while the other is a more user-friendly option, includes more bells and whistles and tries to protect beginners against some common mistakes.</p>
+
+<p>Advantages of using the LUKS extension:</p>
+
+<ul>
+<li>You can change your password without re-encrypting the whole block device.</li>
+<li>Multiple decryption keys are supported so you can share the container with others but without sharing your password. Keys can also be revoked.</li>
+<li>Has mechanisms to strengthen passphrases against brute-force attacks.</li>
+<li>Encryption settings are stored in a header and protect you against accidentally re-encrypting with a different password or different cryptographic parameters.</li>
+</ul>
+
+<p>Disadvantages of using LUKS:</p>
+
+<ul>
+<li>The header is not encrypted so containers are easily recognizable. Encryption settings are also stored in the clear.</li>
+<li>The header contains the master key so if that is overwritten there is no way to recover your data.</li>
+</ul>
+
+<h2 id="how-to-use-dm-crypt-in-plain-mode-without-luks">How to Use dm-crypt in Plain Mode without LUKS</h2>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Remember to replace <code>sdX</code> with the name of the device you want to encrypt.</div>
+</blockquote>
+
+
+<ol>
+<li><p>To map your device in plain mode:</p>
+
+<pre><code>cryptsetup --verify-passphrase open --type plain /dev/sdX sdX-plain
+</code></pre></li>
+
+<li><p>Now you can use the newly created virtual block device <code>/dev/mapper/sdX-plain</code>. It can be partitioned, formatted, and used just like a normal block device. It&rsquo;s not necessary to partition it before creating a filesystem, but you can if your use case requires it. Create an ext4 filesystem:</p>
+
+<pre><code>mkfs.ext4 /dev/mapper/sdX-plain
+</code></pre></li>
+
+<li><p>Set up a mount point in the <code>root</code> directory.</p>
+
+<pre><code>mkdir /root/encrypted
+</code></pre></li>
+
+<li><p>Mount the mapped device:</p>
+
+<pre><code>mount /dev/mapper/sdX-plain /root/encrypted/
+</code></pre>
+
+<p>And that&rsquo;s it, everything you write to <code>/root/encrypted</code> will be encrypted on your real block device.</p></li>
+
+<li><p>When you&rsquo;re done working with the filesystem, unmount it, and close the mapped device to maximize the safety of your data:</p>
+
+<pre><code>cd /root/ &amp;&amp; umount /root/encrypted &amp;&amp; cryptsetup close sdX-plain
+</code></pre></li>
+</ol>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>As mentioned earlier, dm-crypt in plain mode doesn&rsquo;t check to see if you&rsquo;re using the same password or encryption settings every time. This exposes your server to the risk of being re-encrypted and having useful data overwritten. It&rsquo;s a good idea to routinely specify encryption settings on the command line every time you use dm-crypt in plain mode. Here&rsquo;s an example you can use: <code>cryptsetup --verify-passphrase --hash ripemd160 --cipher aes-cbc-essiv:sha256 --key-size 256 open --type plain /dev/sdX sdX-plain</code></div>
+</blockquote>
+
+
+<h2 id="how-to-use-dm-crypt-with-luks">How to Use dm-crypt with LUKS</h2>
+
+<ol>
+<li><p>If you&rsquo;ve followed the steps in the previous section, make sure the virtual device is closed (see: step 5). Add a LUKS header to your block device:</p>
+
+<pre><code>cryptsetup luksFormat /dev/sdX
+</code></pre></li>
+
+<li><p>Open your LUKS container and map it to the virtual device:</p>
+
+<pre><code>cryptsetup luksOpen /dev/sdX sdX-luks
+</code></pre></li>
+
+<li><p>Create an ext4 filesystem:</p>
+
+<pre><code>mkfs.ext4 /dev/mapper/sdX-luks
+</code></pre></li>
+
+<li><p>If you didn&rsquo;t follow the steps in the previous section, then create a mount point in the root user&rsquo;s home directory with <code>mkdir /root/encrypted</code> and then mount your filesystem:</p>
+
+<pre><code>mount /dev/mapper/sdX-luks /root/encrypted/
+</code></pre></li>
+
+<li><p>When you&rsquo;re done working with the encrypted container, unmount the filesystem and close the virtual device to keep your data safe:</p>
+
+<pre><code>cd /root/ &amp;&amp; umount /root/encrypted &amp;&amp; cryptsetup luksClose sdX-luks
+</code></pre></li>
+</ol>
+
+<h3 id="backup-and-restore-the-luks-header">Backup and Restore the LUKS Header</h3>
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>Follow these steps very carefully.</div>
+</blockquote>
+
+
+<ol>
+<li><p>Since the LUKS header is so important and losing it means losing your entire container, back it up:</p>
+
+<pre><code>cryptsetup luksHeaderBackup /dev/sdX --header-backup-file sdX-luks-header
+</code></pre></li>
+
+<li><p>Test a scenario where the LUKS header is accidentally overwritten:</p>
+
+<pre><code>dd conv=notrunc if=/dev/zero of=/dev/sdX bs=128 count=1
+</code></pre></li>
+
+<li><p>Trying to open your container will now return an error:</p>
+
+<pre><code>cryptsetup luksOpen /dev/sdX sdX-luks
+</code></pre></li>
+
+<li><p>Restore the valid header:</p>
+
+<pre><code>cryptsetup luksHeaderRestore /dev/sdX --header-backup-file sdX-luks-header
+</code></pre></li>
+
+<li><p>Open your container again:</p>
+
+<pre><code>cryptsetup luksOpen /dev/sdX sdX-luks
+</code></pre></li>
+</ol>
+
+<h3 id="manage-luks-keys">Manage LUKS Keys</h3>
+
+<p>LUKS provides eight key slots, each of which can be used to store a password that can be used to access and decrypt your data. This section will review the basic commands to edit, add, and delete these passwords.</p>
+
+<ol>
+<li><p>To change your passphrase:</p>
+
+<pre><code>cryptsetup luksChangeKey /dev/sdX
+</code></pre></li>
+
+<li><p>To set up an additional passphrase that can unlock the container:</p>
+
+<pre><code>cryptsetup luksAddKey /dev/sdX
+</code></pre></li>
+
+<li><p>To remove a passphrase from a key slot:</p>
+
+<pre><code>cryptsetup luksRemoveKey /dev/sdX
+</code></pre></li>
+
+<li><p>To see which key slots are in use:</p>
+
+<pre><code>cryptsetup luksDump /dev/sdX
+</code></pre></li>
+</ol>
+
+<h2 id="encrypt-swap">Encrypt Swap</h2>
+
+<p>Swapped memory keeps data indefinitely on the physical device until it is overwritten, exposing you to the possibility of leaking private information. You can disable it entirely if you have a large amount of RAM on your Linode, or encrypt it with a random key each time your Linode boots.</p>
+
+<ol>
+<li><p>Open <code>/etc/crypttab</code> in a text editor and append the following line, replacing <code>/dev/sdX</code> with the path to your swap device:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/crypttab 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">swap-encrypted  /dev/sdX  /dev/urandom   swap,noearly</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Save the file, then open <code>/etc/fstab</code> and append the following line:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/fstab 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">/dev/mapper/swap-encrypted none swap sw 0 0</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Also, remove the line that points to unencrypted swap. It should look similar to this:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/fstab 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">/dev/sdb         none            swap    sw              0       0</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Save the file and reboot your Linode.</p></li>
+</ol>
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#how-to-map-whole-disks-partitions-and-files">How to Map Whole Disks, Partitions and Files</a></li>
+<li><a href="#dm-crypt-in-plain-mode-vs-dm-crypt-with-luks-extension">dm-crypt in Plain Mode vs dm-crypt with LUKS Extension</a></li>
+<li><a href="#how-to-use-dm-crypt-in-plain-mode-without-luks">How to Use dm-crypt in Plain Mode without LUKS</a></li>
+<li><a href="#how-to-use-dm-crypt-with-luks">How to Use dm-crypt with LUKS</a>
+<ul>
+<li><a href="#backup-and-restore-the-luks-header">Backup and Restore the LUKS Header</a></li>
+<li><a href="#manage-luks-keys">Manage LUKS Keys</a></li>
+</ul></li>
+<li><a href="#encrypt-swap">Encrypt Swap</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

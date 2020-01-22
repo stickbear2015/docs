@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Speed Up a WordPress Website</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide shows how to analyze performance bottlenecks for a WordPress website and describes optimization best practices for WordPress">
+        <meta name="keywords" content="htaccess, apache, wordpress">
+        
+        <meta property="og:title" content="How to Speed Up a WordPress Website">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/websites/cms/how-to-speed-up-a-wordpress-website/">
+        <meta property="og:description" content="This guide shows how to analyze performance bottlenecks for a WordPress website and describes optimization best practices for WordPress">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/websites/cms/how-to-speed-up-a-wordpress-website/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/">Website Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/websites/cms/">Control Panels &amp; Content Management Systems</a>
+  
+</li>
+
+
+<li>
+  
+  How to Speed Up a WordPress Website
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Speed Up a WordPress Website</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-01T14:52:57-04:00">Wednesday, August 1, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Nathan Melehan
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2fhow-to-speed-up-a-wordpress-website%2f&via=linode&text=How%20to%20Speed%20Up%20a%20WordPress%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2fhow-to-speed-up-a-wordpress-website%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fwebsites%2fcms%2fhow-to-speed-up-a-wordpress-website%2f&t=How%20to%20Speed%20Up%20a%20WordPress%20Website" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Speed%20Up%20a%20WordPress%20Website%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fwebsites%2fcms%2fhow-to-speed-up-a-wordpress-website%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/websites%5ccms%5chow-to-speed-up-a-wordpress-website%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/websites%5ccms%5chow-to-speed-up-a-wordpress-website%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="goals-for-this-guide">Goals For This Guide</h2>
+
+<p>This guide outlines two primary steps to lowering the response time of a WordPress website:</p>
+
+<ul>
+<li><p>Analyze and identify performance bottlenecks.</p></li>
+
+<li><p>Implement best practices for site optimization.</p></li>
+</ul>
+
+<h3 id="how-this-guide-is-structured">How This Guide is Structured</h3>
+
+<p>This guide provides a testing environment which will be used to illustrate the process of optimizing WordPress. The environment has two components:</p>
+
+<ul>
+<li><p>A Docker Compose file is provided which sets up a WordPress installation. This installation is intentionally pre-configured with poorly performing customizations. When the site is initially loaded in a web browser, it will take upwards of 15-20 seconds to appear.</p>
+
+<p>This test environment was designed to highlight the kinds of performance bottlenecks that can appear in some plugins or themes: high CPU usage, high memory usage, slow SQL queries, and slow JavaScript. This guide will focus on troubleshooting the test site by removing those customizations until the response time for requests is minimized.</p>
+
+<p>The Docker Compose file also installs a PHP profiling tool which collects performance data for each request to the website. This data is pushed to a Mongo database that the second Docker Compose file provisions.</p></li>
+
+<li><p>A second Docker Compose file is responsible for the Mongo database that collects profiling data from the site. This second Compose file also runs a visualization app for viewing that profiling data. This tool will be used to identify the slow customizations that were installed.</p></li>
+</ul>
+
+<p>These two Compose files are decoupled. This decoupling allows you to separately install the second Compose file on a server running your own WordPress site instead of the test site after you finish reading the guide.</p>
+
+<h2 id="setting-up-the-test-environment">Setting Up the Test Environment</h2>
+
+<p>You can use this guide without installing the environment, but working through the steps presented may help you better understand the process. If you would prefer to not perform this work, skip to the <a href="#profiling-the-application">Profiling the Application</a> section.</p>
+
+<p>To install the test environment, you will need a Linode which does not have any running processes already bound to ports <code>80</code>, <code>8080</code>, <code>3306</code>, and <code>27017</code>.</p>
+
+<h3 id="install-docker">Install Docker</h3>
+
+
+
+
+
+<!-- Install Docker CE using the official Docker repositories. -->
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>docker run hello-world
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="install-docker-compose">Install Docker Compose</h3>
+
+
+
+
+
+<!--- Installation instructions for Docker Compose -->
+
+<ol>
+<li><p>Download the latest version of Docker Compose. Check the <a href="https://github.com/docker/compose/releases">releases</a> page and replace <code>1.21.2</code> in the command below with the version tagged as <strong>Latest release</strong>:</p>
+
+<pre><code>sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+</code></pre></li>
+
+<li><p>Set file permissions:</p>
+
+<pre><code>sudo chmod +x /usr/local/bin/docker-compose
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="download-the-test-environment">Download the Test Environment</h3>
+
+<p>Run these commands from your Linode:</p>
+
+<ol>
+<li><p>Download the test environment Tar file:</p>
+
+<pre><code>wget https://raw.githubusercontent.com/linode/docs-scripts/master/hosted_scripts/how-to-speed-up-a-wordpress-website/speed-up-wp-test-env.tar
+</code></pre></li>
+
+<li><p>Unpack the file:</p>
+
+<pre><code>tar -xvf speed-up-wp-test-env.tar
+</code></pre></li>
+</ol>
+
+<h3 id="start-the-wordpress-test-site">Start the WordPress Test Site</h3>
+
+<ol>
+<li><p>Change to the directory containing the Compose file:</p>
+
+<pre><code>cd speed-up-wp-test-env/xhprof_host_net_wordpress/
+</code></pre></li>
+
+<li><p>Run the Compose file in a detached state:</p>
+
+<pre><code>docker-compose up -d
+</code></pre></li>
+
+<li><p>Verify that you can view the site by loading <code>http://&lt;your-Linode-IP-address&gt;</code> in a web browser. This should take 15-20 seconds to load.</p></li>
+
+<li><p>Open a Bash shell on the WordPress Docker container:</p>
+
+<pre><code>docker exec -it xhprof_host_net_wordpress_wordpress_1 bash
+</code></pre></li>
+
+<li><p>Set the password for the WordPress admin user via the WordPress CLI:</p>
+
+<pre><code>wp --path='/var/www/html' --allow-root user update wpuser --user_pass='your_new_wordpress_login_password'
+</code></pre></li>
+
+<li><p>Verify that you can login to the WordPress admin site at <code>http://&lt;your-Linode-IP-address&gt;/wp-admin</code> with the password you&rsquo;ve set. Enter <code>wpuser</code> for the admin user name.</p></li>
+
+<li><p>Exit the Bash shell in the WordPress container:</p>
+
+<pre><code>exit
+</code></pre></li>
+</ol>
+
+<h3 id="start-the-php-profile-visualization-application">Start the PHP Profile Visualization Application</h3>
+
+<ol>
+<li><p>Change to the directory containing the Compose file:</p>
+
+<pre><code>cd ../xhgui_app/
+</code></pre></li>
+
+<li><p>Run the Compose file in a detached state:</p>
+
+<pre><code>docker-compose up -d
+</code></pre></li>
+
+<li><p>Verify that you can view the visualization app by loading <code>http://&lt;your-Linode-IP-address&gt;:8080</code> in a web browser:</p>
+
+<p><img src="/docs/websites/cms/how-to-speed-up-a-wordpress-website/php-profile-visualization-started.png" alt="Visualization app started" title="Visualization app started" /></p></li>
+</ol>
+
+<h2 id="profiling-the-application">Profiling the Application</h2>
+
+<p>The profiling visualization app used in this guide is named <a href="https://github.com/perftools/xhgui">XHGUI</a>. This app provides bar charts, line plots, flamegraphs, and other representations of the raw profiling data collected for the test WordPress site.</p>
+
+<p>The profiling data is collected by a tool called <a href="http://pecl.php.net/package/xhprof">XHProf</a>. The original XHProf distribution does not support PHP 7 (which the test WordPress site runs on), so this guide uses a PHP 7-compatible fork of XHProf called <a href="https://github.com/tideways/php-xhprof-extension">Tideways</a>. The data generated by Tideways will be stored in a Mongo database, and XHGUI will read from this database.</p>
+
+<h3 id="test-response-time">Test Response Time</h3>
+
+<p>Run this <code>curl</code> command from your home computer to test the site speed prior to troubleshooting:</p>
+
+<pre><code>time curl http://&lt;your-Linode-IP-address&gt; -s 1&gt;/dev/null
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+12.79 real
+0.01 user
+0.02 sys
+</code>
+</pre>
+
+
+<p>The time displayed can vary between requests. If you do not have <code>curl</code> installed on your computer, you can use an in-browser speed test like <a href="https://developers.google.com/speed/pagespeed/insights/">Google PageSpeed Insights</a>.</p>
+
+<h3 id="view-the-profiling-data">View the Profiling Data</h3>
+
+<ol>
+<li><p>Visit XHGUI in your browser on port <code>8080</code>: <code>http://&lt;your-Linode-IP-address&gt;:8080</code>. A page which lists entries for your recent requests should appear:</p>
+
+<p><img src="recent-runs.png" alt="XHGUI Recent Requests View" title="XHGUI Recent Requests View" /></p></li>
+
+<li><p>Click the timestamp link for the most recent <code>GET</code> request on <code>/</code>. A page will appear which shows detailed information for that request, including bar charts of the highest CPU usage (referred to as Wall Time) and memory usage ordered by function. This page also has links to other useful visualizations for the request, like the Flamegraph:</p>
+
+<p><img src="request-profile-detail.png" alt="XHGUI Request Detail View" title="XHGUI Request Detail View" /></p></li>
+</ol>
+
+<h3 id="investigate-cpu-usage-pi-widget-calculatepi">Investigate CPU Usage: Pi_Widget::calculatePi</h3>
+
+<p>Under the bar chart for CPU usage, the first item listed is labeled <code>Pi_Widget::calculatePi</code>. This function had a wall time of <code>5,693,944 µs</code>, or about 5.7 seconds. To find the code responsible for this function call, execute these commands from the Linode:</p>
+
+<ol>
+<li><p>Open a Bash shell on the WordPress Docker container:</p>
+
+<pre><code>docker exec -it xhprof_host_net_wordpress_wordpress_1 bash
+</code></pre></li>
+
+<li><p>From the document root of the container, search for the function name:</p>
+
+<pre><code>root@localhost:/var/www/html# grep -R calculatePi .
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+./wp-content/plugins/pi_widget/pi_widget.php:		public function calculatePi() {
+./wp-content/plugins/pi_widget/pi_widget.php:			echo $this->calculatePi();
+</code>
+</pre>
+
+
+<p>We can see that a plugin (named Pi Widget) is responsible for this call, though we may have guessed that from the XHGUI view. Further examination of the plugin shows that it calculates a value for Pi using 100 billion iterations of an approximation algorithm.</p></li>
+
+<li><p>Deactivate this plugin from the Plugins section of your site&rsquo;s WordPress admin page.</p></li>
+
+<li><p>Re-test the site response time from your home computer:</p>
+
+<pre><code>time curl http://&lt;your-Linode-IP-address&gt; -s 1&gt;/dev/null
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+5.96 real
+0.01 user
+0.02 sys
+</code>
+</pre>
+</li>
+</ol>
+
+<h3 id="investigate-cpu-usage-mysqli-query">Investigate CPU Usage: mysqli_query</h3>
+
+<p>The next highest CPU usage function call displayed by XHGUI was labeled <code>mysqli_query</code>. This is the PHP-MySQL interface that WordPress uses to run database queries.</p>
+
+<p>This name is too generic for us to search the WordPress code base for the cause of the query. To continue troubleshooting:</p>
+
+<ol>
+<li><p>Install the <em>Query Monitor</em> WordPress plugin, which will show the individual queries that WordPress runs. Go to the Plugins section of your site&rsquo;s WordPress admin page, click the <code>Add New</code> button at the top, and then search for <code>Query Monitor</code>. Be sure to activate the plugin once you install it.</p></li>
+
+<li><p>Re-load the WordPress site in your browser. In the admin menu bar at the top you will see an orange-highlighted collection of site statistics. Hovering over this highlight will show a drop-down menu, and clicking on the Slow Queries option will bring up a list of slow queries:</p>
+
+<p><img src="query-monitor.png" alt="Query Monitor" title="Query Monitor" /></p>
+
+<p>The slow query that was found is the following statement: <code>SELECT SLEEP(5)</code>. This simply sleeps the database for 5 seconds without taking any other action.</p></li>
+
+<li><p>The Queries by Component section of Query Monitor will sometimes show the name of a plugin that was responsible for the query. That is not the case for this query, so you will search the code base for where it appears. Run this command from the Bash shell you already opened on the WordPress Docker container:</p>
+
+<pre><code>root@localhost:/var/www/html# grep -R 'SELECT SLEEP' .
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+./wp-content/plugins/slow_query_test/slow_query_test.php:      $wpdb->query($wpdb->prepare ( "SELECT SLEEP(%d)", array(5) ));
+</code>
+</pre>
+</li>
+
+<li><p>This reveals that the Slow Query Test plugin is responsible. Deactivate this plugin from the WordPress admin page.</p></li>
+
+<li><p>Re-test the site response time from your home computer:</p>
+
+<pre><code>time curl http://&lt;your-Linode-IP-address&gt; -s 1&gt;/dev/null
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+0.96 real
+0.00 user
+0.02 sys
+</code>
+</pre>
+</li>
+</ol>
+
+<h3 id="investigate-memory-usage-openssl-random-pseudo-bytes">Investigate Memory Usage: openssl_random_pseudo_bytes</h3>
+
+<p>XHGUI showed that a function named openssl_random_pseudo_bytes was responsible for allocating 30 MB of memory. Searching the code base reveals that the High Memory Test plugin is responsible:</p>
+
+<pre><code>root@localhost:/var/www/html# grep -R openssl_random_pseudo_bytes .
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+./wp-content/plugins/high_memory_test/high_memory_test.php:		$data = openssl_random_pseudo_bytes(1000000);
+./wp-includes/random_compat/random_bytes_openssl.php: * Since openssl_random_pseudo_bytes() uses openssl's
+./wp-includes/random_compat/random_bytes_openssl.php:    $buf = openssl_random_pseudo_bytes($bytes, $secure);
+./wp-includes/random_compat/random_bytes_com_dotnet.php: * openssl_random_pseudo_bytes() available, so let's use
+./wp-includes/random_compat/random.php:         *   5. openssl_random_pseudo_bytes() (absolute last resort)
+./wp-includes/random_compat/random.php:         * openssl_random_pseudo_bytes()
+</code>
+</pre>
+
+
+<p>Other files in the <code>wp-includes</code> folder call this function, but they are part of the WordPress core. Deactivate the High Memory Test plugin and then re-test speed:</p>
+
+<pre><code>time curl http://&lt;your-Linode-IP-address&gt; -s 1&gt;/dev/null
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+0.20 real
+0.00 user
+0.02 sys
+</code>
+</pre>
+
+
+<h3 id="investigate-slow-loading-time-render-blocking-javascript">Investigate Slow Loading Time: Render-Blocking JavaScript</h3>
+
+<p>The load time reported by cURL is now low, but if you load the page in a web browser, it can still take 5 seconds to show content. Because of this, we can deduce that the slowness is likely the result of a client-side bottleneck. We will use the developer tools of the <a href="https://www.mozilla.org/en-US/firefox/developer/">Firefox Developer Edition</a> browser to investigate this:</p>
+
+<ol>
+<li><p>Visit the WordPress site in Firefox and then open the <a href="https://developer.mozilla.org/en-US/docs/Tools/Performance">Performance</a> tab of the developer tools.</p></li>
+
+<li><p>Click the <em>Start Recording Performance</em> button and then reload the page in the browser.</p></li>
+
+<li><p>When the page has finished loading, click the <em>Stop Recording Performance</em> button.</p></li>
+
+<li><p>A waterfall graph will appear, and each row in it represents a browser rendering event. Scroll down in this graph until you see the following longer event, and then click on that event:</p>
+
+<p><img src="performance-tool.png" alt="Firefox Performance Tool" title="Firefox Performance Tool" /></p></li>
+
+<li><p>In the panel that appears on the right side, click on the numbered blue link. A view of the HTML document tree will appear and will highlight the responsible script. The responsible script is a sleep function:</p>
+
+<p><img src="dom-tree.png" alt="Firefox DOM Tree" title="DOM Tree" /></p></li>
+
+<li><p>In the Bash shell on your WordPress Docker container, search for this code:</p>
+
+<pre><code>root@localhost:/var/www/html# grep -R 'function sleep( timeInMilliseconds ){' .
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+./wp-content/plugins/blocking_js_test/blocking_js_test.php:		function sleep( timeInMilliseconds ){
+</code>
+</pre>
+</li>
+
+<li><p>The Blocking JS Test plugin is responsible for this code. Deactivate this plugin. The page should now load in less than a second in the browser.</p></li>
+</ol>
+
+<h3 id="a-note-about-plugins-and-themes">A Note About Plugins and Themes</h3>
+
+<p>The slow code examples used all correlated with specific plugins, and the solution was to deactivate them. If you need the functionality of a plugin but it is slow to load, try searching for other plugins that do the same thing and test them to see if they are more efficient.</p>
+
+<p>Slow code can also be found in WordPress themes, and so if you can&rsquo;t find bottlenecks in your plugins, it&rsquo;s also a good idea to try different themes.</p>
+
+<h2 id="best-practices">Best Practices</h2>
+
+<p>In addition to identifying bottlenecks in your code, you can implement general best practices for speeding up your site. Many of these practices can be easily set up by publicly-available WordPress plugins.</p>
+
+<h3 id="asset-optimization">Asset Optimization</h3>
+
+<p>High-resolution images can slow down the speed of a site. Reduce the resolution of your images and optimize them for the web. Plugins like <a href="https://wordpress.org/plugins/wp-smushit/">WP Smush</a> can handle this task.</p>
+
+<p>Minify CSS and JavaScript loaded by your site. Minification is the process of compressing code so that it is harder for a human to read, but faster for a computer to process. Scripts are often distributed in minified and non-minified versions, so you can look up the minified style for each of your scripts and upload them to your server. Some WordPress plugins can also automatically minify your scripts.</p>
+
+<h3 id="browser-caching">Browser Caching</h3>
+
+<p>By default, all page assets (images, scripts, styles) are downloaded from your site&rsquo;s web server each time a user visits it, even if they have recently visited it and already downloaded those items. Your web server can be set to flag assets so that the browser instead caches those items on disk. The <a href="http://httpd.apache.org/docs/current/mod/mod_expires.html">mod_expires</a> module controls this behavior for Apache.</p>
+
+<h3 id="web-server-file-compression">Web Server File Compression</h3>
+
+<p>Your web server can be configured to compress files on the server before they are sent to your web browser, reducing download sizes:</p>
+
+<ul>
+<li><p><a href="https://httpd.apache.org/docs/2.4/mod/mod_deflate.html">Apache mod_deflate</a></p></li>
+
+<li><p><a href="https://docs.nginx.com/nginx/admin-guide/web-server/compression/">NGINX Compression and Decompression</a></p></li>
+</ul>
+
+<h3 id="wordpress-caching-plugins">WordPress Caching Plugins</h3>
+
+<p>When you visit a WordPress page, the page is dynamically generated on each request by PHP and your database process. This is more taxing on your server than serving a static HTML page. WordPress caching plugins pre-compile your pages into static downloads. Two example plugins that do this are <a href="https://wp-rocket.me/">WP Rocket</a> and <a href="https://wordpress.org/plugins/w3-total-cache/">W3 Total Cache</a>. Some of these plugins also bundle in other best practices.</p>
+
+<h3 id="web-server-and-database-tuning">Web Server and Database Tuning</h3>
+
+<p>After you fix code performance bottlenecks and install other best practice measures, you can fine-tune the basic settings for your web server and database. This involves estimating the average memory and CPU usage of a request, comparing it with the total level of resources for your server, and then adjusting your software configuration to make the most of those resources. Linode has guides on optimizing Apache and MySQL:</p>
+
+<ul>
+<li><p><a href="/docs/web-servers/apache-tips-and-tricks/tuning-your-apache-server/">Tuning Your Apache Server</a></p></li>
+
+<li><p><a href="/docs/databases/mysql/how-to-optimize-mysql-performance-using-mysqltuner/">How to Optimize MySQL Performance Using MySQLTuner</a></p></li>
+</ul>
+
+<h2 id="optional-profile-your-own-wordpress-site">Optional: Profile Your Own WordPress Site</h2>
+
+<p>You can reuse the XHGUI Docker Compose file provided by this guide to profile your own WordPress site. There are two halves to setting this up:</p>
+
+<ol>
+<li><p>Run the provided XHGUI Docker Compose file to store and view profiling data from your WordPress site.</p></li>
+
+<li><p>Insert the XHProf code into your WordPress app so that the data is actually generated on each request.</p></li>
+</ol>
+
+<p>Perform the steps in the Setting Up the Test Environment section, and stop after you <a href="#download-the-test-environment">Download the Test Environment</a>.</p>
+
+<h3 id="run-the-xhgui-app">Run the XHGUI app</h3>
+
+<ol>
+<li><p>Change into the directory that corresponds with this Docker Compose file:</p>
+
+<pre><code>cd speed-up-wp-test-env/xhgui_app/
+</code></pre></li>
+
+<li><p>Start the app:</p>
+
+<pre><code>docker-compose up -d
+</code></pre></li>
+</ol>
+
+<h3 id="insert-the-xhprof-code-into-your-wordpress-site">Insert the XHProf code into your WordPress site</h3>
+
+<p>These instructions will only succeed if you are running PHP 7, and have <code>unzip</code> and the <code>php-dev</code> packages installed. For earlier versions of PHP, you will need to replace Tideways with the original distribution of XHProf.</p>
+
+<p>These instructions walk through downloading the source code for XHGUI. This may seem strange, as the Docker Compose file is already responsible for running the XHGUI app. The reason the code is downloaded again is because XHGUI also provides helper tools for injecting the XHProf/Tideways profiling code into your app. Without these helper functions, you would need to manually add calls to XHProf/Tideways to your WordPress code, and also set up the connection to the Mongo database running inside Docker Compose.</p>
+
+<ol>
+<li><p>Install Tideways:</p>
+
+<pre><code>wget -O tideways-xhprof.zip https://github.com/tideways/php-xhprof-extension/archive/master.zip
+unzip tideways-xhprof.zip
+cd php-xhprof-extension-master/
+phpize
+./configure
+make
+sudo make install
+</code></pre></li>
+
+<li><p>Add a line with the value <code>extension=tideways_xhprof.so</code> to your <code>php.ini</code> configuration file.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>There may be multiple <code>php.ini</code> files in different locations, like <code>/etc/php/7.0/apache2/php.ini</code> and <code>/etc/php/7.0/cli/php.ini</code>. Add this value in each <code>php.ini</code> file both in this step and in Step 4 that follows.</div>
+</blockquote>
+</li>
+
+<li><p>Install the MongoDB PHP Driver:</p>
+
+<pre><code>sudo pecl install mongodb
+</code></pre></li>
+
+<li><p>Add a line with the value <code>extension=mongodb.so</code> to your <code>php.ini</code> configuration file.</p></li>
+
+<li><p>Download the source for XHGUI, install its dependencies (via the provided <code>install.php</code>), and copy the source to your document root. Replace instances of <code>/var/www/html</code> with the document root for your web server:</p>
+
+<pre><code>wget -O xhgui.zip https://github.com/perftools/xhgui/archive/master.zip
+unzip xhgui.zip
+sudo cp -r xhgui-master /var/www/html/xhgui
+cd /var/www/html/xhgui/xhgui-master
+sudo chown www-data:www-data -R .
+sudo php install.php
+sudo cp config/config.default.php config/config.php
+</code></pre></li>
+
+<li><p>Install XHGUI&rsquo;s helper injection function.</p>
+
+<p><strong>For Apache servers,</strong> insert this line into your Virtual Host&ndash;remember to substitute in your document root&ndash; and then reload Apache with <code>sudo systemctl reload apache2</code>:</p>
+
+<pre><code>php_admin_value auto_prepend_file &quot;/var/www/html/xhgui/external/header.php&quot;
+</code></pre>
+
+<p>This line will call XHGUI&rsquo;s <code>header.php</code> at the beginning of every PHP file that is served.</p>
+
+<p><strong>For NGINX,</strong> add this line to your server block, then reload the configuration file with <code>sudo nginx -s reload</code>:</p>
+
+<pre><code>fastcgi_param PHP_VALUE &quot;auto_prepend_file=/var/www/html/xhgui/external/header.php&quot;;
+</code></pre></li>
+
+<li><p>Configure which web requests are profiled by updating the <code>profiler.enable</code> function in <code>xhgui/config/config.php</code>. The default configuration will profile 1 in 100 requests:</p>
+
+<pre><code>'profiler.enable' =&gt; function() {
+    return rand(1, 100) === 42;
+}
+</code></pre>
+
+<p>If you want to profile every request, change this to always return true:</p>
+
+<pre><code>'profiler.enable' =&gt; function() {
+    return true;
+}
+</code></pre></li>
+
+<li><p>Your XHGUI app should now be collecting profiling data for requests on your site. The XHGUI app can be reached on port <code>8080</code> at your Linode&rsquo;s IP address.</p></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://deliciousbrains.com/finding-bottlenecks-wordpress-code/">Finding Bottlenecks in WordPress Code</a></li>
+
+<li><a href="https://pressjitsu.com/blog/profiling-wordpress-performance/">Profiling WordPress Performance</a></li>
+
+<li><a href="https://www.engineyard.com/blog/topic/profiling-with-xhprof-and-xhgui">Profiling with XHProf and XHGUI</a></li>
+
+<li><a href="https://github.com/tideways/php-xhprof-extension">Tideways XHProf Extension</a></li>
+
+<li><a href="https://github.com/perftools/xhgui">XHGUI</a></li>
+
+<li><a href="/docs/applications/containers/how-to-use-docker-compose/">How to Use Docker Compose</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library toc-long nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#goals-for-this-guide">Goals For This Guide</a>
+<ul>
+<li><a href="#how-this-guide-is-structured">How This Guide is Structured</a></li>
+</ul></li>
+<li><a href="#setting-up-the-test-environment">Setting Up the Test Environment</a>
+<ul>
+<li><a href="#install-docker">Install Docker</a></li>
+<li><a href="#install-docker-compose">Install Docker Compose</a></li>
+<li><a href="#download-the-test-environment">Download the Test Environment</a></li>
+<li><a href="#start-the-wordpress-test-site">Start the WordPress Test Site</a></li>
+<li><a href="#start-the-php-profile-visualization-application">Start the PHP Profile Visualization Application</a></li>
+</ul></li>
+<li><a href="#profiling-the-application">Profiling the Application</a>
+<ul>
+<li><a href="#test-response-time">Test Response Time</a></li>
+<li><a href="#view-the-profiling-data">View the Profiling Data</a></li>
+<li><a href="#investigate-cpu-usage-pi-widget-calculatepi">Investigate CPU Usage: Pi_Widget::calculatePi</a></li>
+<li><a href="#investigate-cpu-usage-mysqli-query">Investigate CPU Usage: mysqli_query</a></li>
+<li><a href="#investigate-memory-usage-openssl-random-pseudo-bytes">Investigate Memory Usage: openssl_random_pseudo_bytes</a></li>
+<li><a href="#investigate-slow-loading-time-render-blocking-javascript">Investigate Slow Loading Time: Render-Blocking JavaScript</a></li>
+<li><a href="#a-note-about-plugins-and-themes">A Note About Plugins and Themes</a></li>
+</ul></li>
+<li><a href="#best-practices">Best Practices</a>
+<ul>
+<li><a href="#asset-optimization">Asset Optimization</a></li>
+<li><a href="#browser-caching">Browser Caching</a></li>
+<li><a href="#web-server-file-compression">Web Server File Compression</a></li>
+<li><a href="#wordpress-caching-plugins">WordPress Caching Plugins</a></li>
+<li><a href="#web-server-and-database-tuning">Web Server and Database Tuning</a></li>
+</ul></li>
+<li><a href="#optional-profile-your-own-wordpress-site">Optional: Profile Your Own WordPress Site</a>
+<ul>
+<li><a href="#run-the-xhgui-app">Run the XHGUI app</a></li>
+<li><a href="#insert-the-xhprof-code-into-your-wordpress-site">Insert the XHProf code into your WordPress site</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

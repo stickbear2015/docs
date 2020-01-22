@@ -1,0 +1,1835 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How To Create an OAuth App with the Linode Python API Library</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Create an OAuth 2 app utilizing the Linode API through the Linode APIv4 Python library.">
+        <meta name="keywords" content="linode, api, python, library, oauth">
+        
+        <meta property="og:title" content="How To Create an OAuth App with the Linode Python API Library">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/platform/api/how-to-create-an-oauth-app-with-the-linode-python-api-library/">
+        <meta property="og:description" content="Create an OAuth 2 app utilizing the Linode API through the Linode APIv4 Python library.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/platform/api/how-to-create-an-oauth-app-with-the-linode-python-api-library/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/">Linode Platform</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/api/">Linode API</a>
+  
+</li>
+
+
+<li>
+  
+  How To Create an OAuth App with the Linode Python API Library
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How To Create an OAuth App with the Linode Python API Library</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-01-29T10:56:04-05:00">Tuesday, January 29, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    Linode
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fapi%2fhow-to-create-an-oauth-app-with-the-linode-python-api-library%2f&via=linode&text=How%20To%20Create%20an%20OAuth%20App%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fapi%2fhow-to-create-an-oauth-app-with-the-linode-python-api-library%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fapi%2fhow-to-create-an-oauth-app-with-the-linode-python-api-library%2f&t=How%20To%20Create%20an%20OAuth%20App%20with%20the%20Linode%20Python%20API%20Library" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20To%20Create%20an%20OAuth%20App%20with%20the%20Linode%20Python%20API%20Library%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fplatform%2fapi%2fhow-to-create-an-oauth-app-with-the-linode-python-api-library%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/platform%5capi%5chow-to-create-an-oauth-app-with-the-linode-python-api-library%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/platform%5capi%5chow-to-create-an-oauth-app-with-the-linode-python-api-library%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>Linode supports the OAuth 2 authorization protocol. OAuth 2 allows a user to safely grant a third-party app permission to act on their behalf. This means that a user could authorize an app to access data and / or make changes to their Linode account and services that are exposed by the <a href="https://developers.linode.com/api/v4">Linode APIv4</a>. For example, an app could create or destroy Linodes, manage a NodeBalancer, or alter a domain.</p>
+
+<p>This guide will show you how to create a simple OAuth application using <a href="http://flask.pocoo.org/">Flask</a> and the <a href="https://linode-api4.readthedocs.io/en/latest/index.html">Linode Python API library</a>. This app allows a user to log in with their Linode account and create a Linode with a StackScript. The complete code for this example is available in the <a href="https://github.com/linode/linode_api4-python/tree/master/examples/install-on-linode">Linode APIv4 Python library example</a> repository.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ol>
+<li><p>Normally, in order to create an OAuth app with Linode your server must have HTTPS enabled. The only exceptions to this rule are <code>localhost</code> addresses, which can use HTTP. As this guide is just a primer and is not intended to supply production ready code, we will be working with a local workstation, using <code>localhost</code>. If you choose to create an app for production, you will need to generate SSL certificates for HTTPS access.</p></li>
+
+<li><p>Ensure that Python 3 is installed on your workstation.</p></li>
+</ol>
+
+<h2 id="obtaining-a-client-id-and-a-client-secret">Obtaining a Client ID and a Client Secret</h2>
+
+<p>In order for Linode to verify the identity of your app, called a <em>client</em>, you will need to generate a set of credentials, specifically a client ID and a client secret.</p>
+
+<ol>
+<li><p>Log in to the <a href="https://cloud.linode.com">Linode Cloud Manager</a> and navigate to your Account Profile.</p>
+
+<p><img src="oauth-account.png" alt="OAuth Account Profile" /></p></li>
+
+<li><p>From there, click on the <strong>My Apps</strong> tab and select <strong>Create My App</strong>. You will be prompted to supply a label for your app and a callback URL. We will discuss the role of the callback URL in depth <a href="#manage-the-oauth-2-callback-url">later in this guide</a>. For now you can supply the following URL:</p>
+
+<pre><code>http://localhost:5000/auth_callback
+</code></pre>
+
+<p>Leave <em>Public</em> unchecked and click <strong>Submit</strong>.</p>
+
+<p><img src="oauth-create-app.png" alt="OAuth Account Profile" /></p></li>
+
+<li><p>A window will appear with your client secret. Copy this down somewhere secure, as once you exit this window you will not be able to retrieve the client secret again, and will be forced to generate a new one.</p>
+
+<p><img src="oauth-client-secret.png" alt="OAuth Account Profile" /></p></li>
+
+<li><p>Once you exit the client secret window your app will appear as part of a list of apps. Note your client ID, as this is the last piece of information you will need to verify your app&rsquo;s identity.</p>
+
+<p><img src="oauth-client-id.png" alt="OAuth Account Profile" /></p></li>
+</ol>
+
+<p>In summary, you should have these three bits of information, with values similar to the ones provided here:</p>
+
+<ul>
+<li><strong>Client ID</strong>: ce571a8cdad1ba4a0a7d</li>
+<li><strong>Client Secret</strong>: fab8e2222e83b9b2f50a76012122ec20a5acb005ed088f3fccda2c9c2c4e1cbd</li>
+<li><strong>Callback URL</strong>: <a href="http://localhost:5000/auth_callback">http://localhost:5000/auth_callback</a></li>
+</ul>
+
+<h2 id="oauth-2-authentication-exchange">OAuth 2 Authentication Exchange</h2>
+
+<p>The OAuth 2 workflow is a series of exchanges between your third-party app and Linode. Below is an explanation of these exchanges.</p>
+
+<ol>
+<li>The end user visits your client application&rsquo;s website and attempts to login.</li>
+<li>Your client application redirects the end user to the authentication server (<a href="https://login.linode.com/login">https://login.linode.com</a>) with your client application’s client ID and requested OAuth scopes, which appear in the URL of the login page.</li>
+<li>The end user inputs their username and password to the authorization server and authorizes the login.</li>
+<li>The authorization server redirects the end user back to your client application with a temporary authorization code (sometimes called an exchange code) in the URL.</li>
+<li>The client application issues a POST request to the authentication server containing the authorization code and the client application’s client secret.</li>
+<li>The authentication server responds to the client application with a newly issued OAuth access token.</li>
+</ol>
+
+<p>In the following sections you will write the code to perform each one of these steps, using the Linode Python API library.</p>
+
+<h2 id="setup-your-development-environment">Setup Your Development Environment</h2>
+
+<ol>
+<li><p>Create a project folder and move into that folder.</p>
+
+<pre><code>mkdir ~/linode-oauth-project &amp;&amp; cd ~/linode-oauth-project
+</code></pre></li>
+
+<li><p>For this project, you will need to use pip to download and install the required Python libraries. Install pip if you do not already have it:</p>
+
+<pre><code>apt install python-pip
+</code></pre></li>
+
+<li><p>Install the required Python libraries:</p>
+
+<pre><code>pip install flask flask-session linode_api4
+</code></pre></li>
+</ol>
+
+<h2 id="configure-your-app">Configure Your App</h2>
+
+<p>In a text editor, create a file named <code>config.py</code>. Add the following variables and values, being sure to change the values to your own.</p>
+
+<p>The StackScript used in this example is for demo purposes. To explore other available StackScripts, visit the <a href="https://www.linode.com/stackscripts">Linode StackScript Library</a>. Note that the <code>stackscript_id</code> does not have quotation marks around it. The <code>secret key</code> is used for serializing session data, and should be a value only you know.</p>
+
+<dl class="file">
+
+
+<dt>
+		config.py 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">client_id</span> <span class="o">=</span> <span class="s1">&#39;ce571a8cdad1ba4a0a7d&#39;</span>
+<span class="nv">client_secret</span> <span class="o">=</span> <span class="s1">&#39;fab8e2222e83b9b2f50a76012122ec20a5acb005ed088f3fccda2c9c2c4e1cbd&#39;</span>
+<span class="nv">stackscript_id</span> <span class="o">=</span> <span class="m">320826</span>
+<span class="nv">application_name</span> <span class="o">=</span> <span class="s1">&#39;my-application-name&#39;</span>
+<span class="nv">secret_key</span> <span class="o">=</span> <span class="s1">&#39;my-secret-key&#39;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="author-an-oauth2-app">Author an OAuth2 App</h2>
+
+<p>In this section, you will write the code for the app.</p>
+
+<h3 id="include-imports">Include Imports</h3>
+
+<p>Ensure you are in the <code>linode-oauth-project</code> directory and create and open a file called <code>app.py</code> in the text editor of your choice. Include the following libraries:</p>
+
+<dl class="file">
+
+
+<dt>
+		app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">redirect</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">session</span><span class="p">,</span> <span class="n">send_from_directory</span>
+<span class="kn">from</span> <span class="nn">flask_session</span> <span class="kn">import</span> <span class="n">Session</span>
+<span class="kn">from</span> <span class="nn">linode_api4</span> <span class="kn">import</span> <span class="p">(</span><span class="n">LinodeClient</span><span class="p">,</span> <span class="n">LinodeLoginClient</span><span class="p">,</span> <span class="n">StackScript</span><span class="p">,</span> <span class="n">Image</span><span class="p">,</span> <span class="n">Region</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">OAuthScopes</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">config</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h3 id="set-up-flask-and-session-key">Set Up Flask and Session Key</h3>
+
+<p>Copy in the following code to set up Flask and the session secret key:</p>
+
+<dl class="file">
+
+
+<dt>
+		app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+
+<span class="n">app</span><span class="o">=</span><span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;SECRET_KEY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">secret_key</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h3 id="create-a-function-to-return-the-linode-login-client">Create a Function to Return the Linode Login Client</h3>
+
+<p>In <code>app.py</code> add the following function to return the <a href="https://linode-api4.readthedocs.io/en/latest/linode_api4/login_client.html?highlight=linode_login_client">LinodeLoginClient class</a>. The LinodeLoginClient class is the library&rsquo;s OAuth interface. Note that we are passing the <code>client_id</code> and <code>client_secret</code> parameters from our <code>config.py</code> file to the class:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">get_login_client</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">LinodeLoginClient</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">client_id</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">client_secret</span><span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h3 id="create-an-index-route">Create an Index Route</h3>
+
+<p>In Flask you can create HTTP endpoints with <em>routes</em>. The index route, defined in the code below at the document root <code>/</code>, will be the route the user will see when they navigate to <code>http://localhost:5000/</code>. This route will be responsible for displaying the available Linode plan types, the available regions, and the StackScript-compatible images that a user will choose from when creating their new Linode.</p>
+
+<p>To query a list of available plan types and regions you can use the <a href="https://linode-api4.readthedocs.io/en/latest/linode_api4/linode_client.html?highlight=LinodeClient#linodeclient-class">LinodeClient class</a>, which is an interface for Linode&rsquo;s APIv4. Viewing the Linode plan types and regions does not require any sort of authorization, so you can provide a dummy value of <code>no-token</code> to instantiate the class:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">index</span><span class="p">():</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">LinodeClient</span><span class="p">(</span><span class="s1">&#39;no-token&#39;</span><span class="p">)</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">linode</span><span class="o">.</span><span class="n">types</span><span class="p">(</span><span class="n">Type</span><span class="o">.</span><span class="n">label</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&#34;Linode&#34;</span><span class="p">))</span>
+    <span class="n">regions</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">regions</span><span class="p">()</span>
+    <span class="n">stackscript</span> <span class="o">=</span> <span class="n">StackScript</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">stackscript_id</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;configure.html&#39;</span><span class="p">,</span>
+        <span class="n">types</span><span class="o">=</span><span class="n">types</span><span class="p">,</span>
+        <span class="n">regions</span><span class="o">=</span><span class="n">regions</span><span class="p">,</span>
+        <span class="n">application_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">application_name</span><span class="p">,</span>
+        <span class="n">stackscript</span><span class="o">=</span><span class="n">stackscript</span>
+    <span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>It is important to note that the two API queries in the above code are slightly different from one another. The <code>client.regions</code> method is a top-level method, just as it appears in the <a href="https://developers.linode.com/api/v4#tag/Regions">Linode API</a>. The <code>client.linode.types</code> method, on the other hand, is part of the Linode group, which is a collection of methods that deal with Linodes. Again, this is because Linode endpoints are grouped that way in the <a href="https://developers.linode.com/api/v4#tag/Linode-Types">API</a>. Some methods in the Linode Python library are top level, such as <code>domain_create</code>, while others, like <code>networking.ip_assign</code>, are part of a group. For more information on the top-level methods and groupings, consult the <a href="https://linode-api4.readthedocs.io/en/latest/linode_api4/linode_client.html#grouping">library documentation</a>.</p>
+
+<p>In addition to querying the API, the above route also renders the <code>configure.html</code> template by passing it the types, regions, application name, and StackScript object. The StackScript object contains a list of StackScript compatible images. We will cover templating in a later section.</p>
+
+<h3 id="create-a-login-route">Create a Login Route</h3>
+
+<p>Next, create a login route in <code>app.py</code>. This route will perform two functions. First, it will serialize the user&rsquo;s plan type, region, and image selections into the session.</p>
+
+<p>Second, this route will redirect the user to Linode&rsquo;s login page where they will be prompted to authorize your client app and the <em>scopes</em> you have requested for it. Scopes are sets of permissions that define the access level of your client app. For instance, to create a Linode, your end user must authorize the <code>OAuthScopes.Linodes.create</code> scope.</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&#34;POST&#34;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">start_auth</span><span class="p">():</span>
+    <span class="n">login_client</span> <span class="o">=</span> <span class="n">get_login_client</span><span class="p">()</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;dc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;region&#39;</span><span class="p">]</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;distro&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;distribution&#39;</span><span class="p">]</span>
+    <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="n">login_client</span><span class="o">.</span><span class="n">generate_login_url</span><span class="p">(</span><span class="n">scopes</span><span class="o">=</span><span class="n">OAuthScopes</span><span class="o">.</span><span class="n">Linodes</span><span class="o">.</span><span class="n">create</span><span class="p">))</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When the user returns to your app from the Linode login page, they will be directed to the callback URL.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div><p>Below is a list of available scopes:</p>
+
+<ul>
+<li>OAuthScopes.Linodes</li>
+<li>OAuthScopes.Domains</li>
+<li>OAuthScopes.StackScripts</li>
+<li>OAuthScopes.Users</li>
+<li>OAuthScopes.NodeBalancers</li>
+<li>OAuthScopes.Tokens</li>
+<li>OAuthScopes.IPs</li>
+<li>OAuthScopes.Tickets</li>
+<li>OAuthScopes.Clients</li>
+<li>OAuthScopes.Account</li>
+<li>OAuthScopes.Events</li>
+<li>OAuthScopes.Volumes</li>
+</ul>
+
+<p>Each scope is broken into five permissions: <code>view</code>, <code>create</code>, <code>modify</code>, <code>delete</code>, and <code>all</code>. The <code>all</code> permission encompasses the other four permissions.</p>
+</div>
+</blockquote>
+
+
+<h3 id="manage-the-oauth-2-callback-url">Manage the OAuth 2 Callback URL</h3>
+
+<p>The OAuth 2 callback URL has two main responsibilities. Its first responsibility is to help prove the identity of the client application. When a user attempts to log in to Linode through OAuth, instead of redirecting the user back to the page they came from, Linode&rsquo;s OAuth implementation matches the client ID to the callback URL you have registered with your app on Linode&rsquo;s system. This ensures that a nefarious third party can&rsquo;t just steal the client ID, which is public, and attempt to authorize their own app with it.</p>
+
+<p>The callback URL&rsquo;s second responsibility is to kick off the process of exchanging an authorization code for an access token. This second process is done over POST, and so it doesn&rsquo;t require the user to physically leave the page they are returned to after they log in to Linode. Now you will write the code that satisfies this second responsibility.</p>
+
+<p>In <code>app.py</code>, add the following lines:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/auth_callback&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">auth_callback</span><span class="p">():</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">)</span>
+    <span class="n">login_client</span> <span class="o">=</span> <span class="n">get_login_client</span><span class="p">()</span>
+    <span class="n">token</span><span class="p">,</span> <span class="n">scopes</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">login_client</span><span class="o">.</span><span class="n">finish_oauth</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+
+    <span class="c1"># ensure we have sufficient scopes</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">OAuthScopes</span><span class="o">.</span><span class="n">Linodes</span><span class="o">.</span><span class="n">create</span> <span class="ow">in</span> <span class="n">scopes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;error.html&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s1">&#39;Insufficient scopes granted to deploy {}&#39;</span>\
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">application_name</span><span class="p">))</span>
+
+    <span class="p">(</span><span class="n">linode</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="o">=</span> <span class="n">make_instance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;dc&#39;</span><span class="p">],</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;distro&#39;</span><span class="p">])</span>
+
+    <span class="n">get_login_client</span><span class="p">()</span><span class="o">.</span><span class="n">expire_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;success.html&#39;</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+        <span class="n">linode</span><span class="o">=</span><span class="n">linode</span><span class="p">,</span>
+        <span class="n">application_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">application_name</span>
+    <span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Let&rsquo;s take a look at what each of the parts of this section does.</p>
+
+<p>First, a route is defined for the callback with <code>@app.route()</code>, then a function called <code>auth_callback</code> is defined that will run whenever this route is accessed:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/auth_callback&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">auth_callback</span><span class="p">():</span>
+<span class="o">...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When the user is returned to the callback URL, an authorization code is appended to the URL. The variable <code>code</code> is set to retrieve this value from the URL&rsquo;s request arguments:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;code&#39;</span><span class="p">)</span>
+<span class="o">...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Then you retrieve an instance of the LinodeLoginClient class:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+    <span class="n">login_client</span> <span class="o">=</span> <span class="n">get_login_client</span><span class="p">()</span>
+<span class="o">...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Once you have the LinodeLoginClient class, you can pass the authorization code to the <code>finish_oauth</code> method, which is a helper method that will manage the authorization code to OAuth token exchange. This method returns an OAuth token, and the scopes the user has agreed upon.</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+    <span class="n">token</span><span class="p">,</span> <span class="n">scopes</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">login_client</span><span class="o">.</span><span class="n">finish_oauth</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+<span class="o">...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The next section compares the scopes your app requested from the user to the scopes returned by Linode&rsquo;s OAuth login page. If the returned scopes do not include the correct scopes, in this case the <code>OAuthScopes.Linode.create</code> scope, then an error template is rendered and an error message is displayed:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+    <span class="c1"># ensure we have sufficient scopes</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">OAuthScopes</span><span class="o">.</span><span class="n">Linodes</span><span class="o">.</span><span class="n">create</span> <span class="ow">in</span> <span class="n">scopes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;error.html&#39;</span><span class="p">,</span> <span class="n">error</span><span class="o">=</span><span class="s1">&#39;Insufficient scopes granted to deploy {}&#39;</span>\
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">application_name</span><span class="p">))</span>
+<span class="o">...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Once your app has determined that it has the correct permissions, it creates the Linode using the Linode plan type, the region, and the image that the app serialized into session storage. You will create the <code>make_instance</code> function in <a href="#create-a-function-to-deploy-a-linode">the next step</a>. The <code>make_instance</code> function returns the <code>linode</code> object, which contains the Linode&rsquo;s label, group, and IP address, and the function also returns a randomly generated password:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+    <span class="p">(</span><span class="n">linode</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="o">=</span> <span class="n">make_instance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;dc&#39;</span><span class="p">],</span> <span class="n">session</span><span class="p">[</span><span class="s1">&#39;distro&#39;</span><span class="p">])</span>
+<span class="o">...</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Once the Linode has been created, the app expires the OAuth access token. Expiring tokens after use is a strong security measure but if your app is performing many actions on behalf of the user, you might find that time-based expiration scheme is more suitable to your needs. The app then renders the success template by passing it the <code>linode</code> object, the password, and application name:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+    <span class="n">get_login_client</span><span class="p">()</span><span class="o">.</span><span class="n">expire_token</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s1">&#39;success.html&#39;</span><span class="p">,</span>
+        <span class="n">password</span><span class="o">=</span><span class="n">password</span><span class="p">,</span>
+        <span class="n">linode</span><span class="o">=</span><span class="n">linode</span><span class="p">,</span>
+        <span class="n">application_name</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">application_name</span>
+    <span class="p">)</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h3 id="create-a-function-to-deploy-a-linode">Create a Function to Deploy a Linode</h3>
+
+<p>Now, create the <code>make_instance</code> function that you referenced above:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="o">...</span>
+
+<span class="k">def</span> <span class="nf">make_instance</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">type_id</span><span class="p">,</span> <span class="n">region_id</span><span class="p">,</span> <span class="n">distribution_id</span><span class="p">):</span>
+    <span class="n">client</span> <span class="o">=</span> <span class="n">LinodeClient</span><span class="p">(</span><span class="s1">&#39;{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">token</span><span class="p">))</span>
+    <span class="n">stackscript</span> <span class="o">=</span> <span class="n">StackScript</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">stackscript_id</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">linode</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">linode</span><span class="o">.</span><span class="n">instance_create</span><span class="p">(</span><span class="n">type_id</span><span class="p">,</span> <span class="n">region_id</span><span class="p">,</span>
+            <span class="n">group</span><span class="o">=</span><span class="n">config</span><span class="o">.</span><span class="n">application_name</span><span class="p">,</span>
+            <span class="n">image</span><span class="o">=</span><span class="n">distribution_id</span><span class="p">,</span> <span class="n">stackscript</span><span class="o">=</span><span class="n">stackscript</span><span class="o">.</span><span class="nb">id</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">linode</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&#34;it didn&#39;t work&#34;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">linode</span><span class="p">,</span> <span class="n">password</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The <code>make_instance</code> function takes an OAuth access token, the type ID, the region ID, and the image (Linux distribution) ID as parameters. It creates an instance of the LinodeClient class, and unlike the instance of LinodeClient used earlier in the guide, this one requires an OAuth token because you will be using it to create a Linode. The function then creates a Linode using the <code>linode.instance_create</code> method, returning the <code>linode</code> object and the password.</p>
+
+<p>Finally, if there was an error with the creation of the Linode, the <code>if not linode</code> statement will raise a runtime error.</p>
+
+<h3 id="set-the-name-variable">Set the <strong>name</strong> Variable</h3>
+
+<p>At the end of your <code>app.py</code>, paste in the following code to make sure you can run your app:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/app.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">debug</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="create-app-templates">Create App Templates</h2>
+
+<p>Now that you have written the backend code for your app, you&rsquo;ll need to create a frontend user interface. Begin by creating  a <code>templates</code> directory in your project directory and moving into it:</p>
+
+<pre><code>mkdir ~/linode-oauth-project/templates &amp;&amp; cd ~/linode-oauth-project/templates
+</code></pre>
+
+<p>Using your preferred text editor, create and open <code>base.html</code>. This will be the base template from which your other templates will inherit their stylesheets and JavaScript files:</p>
+
+<dl class="file">
+
+
+<dt>
+		~/linode-oauth-project/templates/base.html 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Install On Linode<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&#34;stylesheet&#34;</span> <span class="na">href</span><span class="o">=</span><span class="s">&#34;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css&#34;</span>
+        <span class="na">integrity</span><span class="o">=</span><span class="s">&#34;sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7&#34;</span> <span class="na">crossorigin</span><span class="o">=</span><span class="s">&#34;anonymous&#34;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+        <span class="nt">body</span><span class="p">{</span>
+            <span class="k">text-align</span><span class="p">:</span> <span class="kc">center</span><span class="p">;</span>
+            <span class="k">background-color</span><span class="p">:</span> <span class="mh">#333333</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">form-group</span><span class="p">{</span>
+            <span class="k">display</span><span class="p">:</span> <span class="kc">inline</span><span class="o">-</span><span class="kc">block</span><span class="p">;</span>
+            <span class="k">text-align</span><span class="p">:</span> <span class="kc">left</span><span class="p">;</span>
+            <span class="k">width</span><span class="p">:</span> <span class="mi">250</span><span class="kt">px</span><span class="p">;</span>
+            <span class="k">border</span><span class="p">:</span> <span class="mi">1</span><span class="kt">px</span> <span class="kc">solid</span> <span class="mh">#cccccc</span><span class="p">;</span>
+            <span class="k">margin</span><span class="p">:</span> <span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+            <span class="k">padding</span><span class="p">:</span> <span class="mi">5</span><span class="kt">px</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">form-group</span> <span class="nt">label</span><span class="p">{</span>
+            <span class="k">color</span><span class="p">:</span> <span class="mh">#337ab7</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">form-group</span> <span class="nt">select</span><span class="p">{</span>
+            <span class="k">font-size</span><span class="p">:</span> <span class="mi">16</span><span class="kt">px</span><span class="p">;</span>
+            <span class="k">outline</span><span class="p">:</span> <span class="kc">none</span><span class="p">;</span>
+            <span class="k">border</span><span class="p">:</span> <span class="mi">0</span><span class="kt">px</span> <span class="kc">solid</span> <span class="mh">#000000</span><span class="p">;</span>
+            <span class="k">box-shadow</span><span class="p">:</span> <span class="kc">inset</span> <span class="mi">0</span> <span class="mi">1</span><span class="kt">px</span> <span class="mi">1</span><span class="kt">px</span> <span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+            <span class="kp">-webkit-</span><span class="k">box-shadow</span><span class="p">:</span> <span class="kc">inset</span> <span class="mi">0</span> <span class="mi">1</span><span class="kt">px</span> <span class="mi">1</span><span class="kt">px</span> <span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">form-group</span> <span class="nt">select</span><span class="p">:</span><span class="nd">focus</span><span class="p">{</span>
+            <span class="k">box-shadow</span><span class="p">:</span> <span class="kc">inset</span> <span class="mi">0</span> <span class="mi">1</span><span class="kt">px</span> <span class="mi">1</span><span class="kt">px</span> <span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+            <span class="kp">-webkit-</span><span class="k">box-shadow</span><span class="p">:</span> <span class="kc">inset</span> <span class="mi">0</span> <span class="mi">1</span><span class="kt">px</span> <span class="mi">1</span><span class="kt">px</span> <span class="nb">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">btn-lg</span><span class="p">{</span>
+            <span class="k">border-radius</span><span class="p">:</span> <span class="mi">0</span><span class="kt">px</span><span class="p">;</span>
+            <span class="k">margin-top</span><span class="p">:</span> <span class="mi">20</span><span class="kt">px</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">row</span><span class="p">{</span>
+            <span class="k">margin-bottom</span><span class="p">:</span> <span class="mi">20</span><span class="kt">px</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">pop</span><span class="p">{</span>
+            <span class="k">color</span><span class="p">:</span> <span class="mh">#337ab7</span><span class="p">;</span>
+            <span class="k">font-weight</span><span class="p">:</span> <span class="kc">bold</span>
+        <span class="p">}</span>
+        <span class="nt">code</span><span class="p">{</span>
+            <span class="k">color</span><span class="p">:</span> <span class="mh">#337ab7</span><span class="p">;</span>
+            <span class="k">background-color</span><span class="p">:</span> <span class="mh">#eeeeee</span>
+        <span class="p">}</span>
+        <span class="p">.</span><span class="nc">boxy</span><span class="p">{</span>
+            <span class="k">border</span><span class="p">:</span> <span class="mi">1</span><span class="kt">px</span> <span class="kc">solid</span> <span class="mh">#cccccc</span><span class="p">;</span>
+            <span class="k">width</span><span class="p">:</span> <span class="mi">400</span><span class="kt">px</span><span class="p">;</span>
+            <span class="k">background-color</span><span class="p">:</span> <span class="mh">#f9f9f9</span><span class="p">;</span>
+            <span class="k">margin</span><span class="p">:</span> <span class="kc">auto</span><span class="p">;</span>
+            <span class="k">padding</span><span class="p">:</span> <span class="mi">10</span><span class="kt">px</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;container&#39;</span> <span class="na">style</span><span class="o">=</span><span class="s">&#39;background-color: white; border-left: grey; border-right: grey; height: 100%; padding: 20px;&#39;</span><span class="p">&gt;</span>
+        {% block content %}
+        {% endblock %}
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+    <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js&#34;</span>
+        <span class="na">integrity</span><span class="o">=</span><span class="s">&#34;sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS&#34;</span>
+        <span class="na">crossorigin</span><span class="o">=</span><span class="s">&#34;anonymous&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The important thing to note in the above template is the Jinja2 templating tags. They are:</p>
+
+<pre><code>{% block content %}
+{% endblock %}
+</code></pre>
+
+<p>As you will see, any template that extends the <code>base.html</code> template and includes code between the opening and closing <code>content</code> block, will render the code laid out by <code>base.html</code>.</p>
+
+<p>Create a file called <code>configure.html</code>, which will be the UI a user will see when they reach the document root endpoint (<code>/</code>). Copy in the following code:</p>
+
+<dl class="file">
+
+
+<dt>
+		templates/configure.html 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html">{% extends &#39;base.html&#39; %}
+{% block content %}
+    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;POST&#34;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Deploy <span class="p">&lt;</span><span class="nt">span</span> <span class="na">style</span><span class="o">=</span><span class="s">&#34;color: #337ab7;&#34;</span><span class="p">&gt;</span>{{application_name}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> to a Linode<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>
+                This will create a brand new Linode running {{application_name}} on your
+                account and give you the credentials.
+            <span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;form-group&#39;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&#39;type&#39;</span><span class="p">&gt;</span>Type<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">select</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;type&#39;</span><span class="na">i</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;type&#39;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;form-control&#39;</span>
+                    <span class="na">onblur</span><span class="o">=</span><span class="s">&#34;blurring(this)&#34;</span> <span class="na">onfocus</span><span class="o">=</span><span class="s">&#34;focusing(this)&#34;</span><span class="p">&gt;</span>
+                    {% for s in types %}
+                        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;{{s.id}}&#34;</span><span class="p">&gt;</span>{{s.label}}<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                    {% endfor %}
+                <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;form-group&#39;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&#39;region&#39;</span><span class="p">&gt;</span>Region<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">select</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;region&#39;</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;region&#39;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;form-control&#39;</span>
+                    <span class="na">onblur</span><span class="o">=</span><span class="s">&#34;blurring(this)&#34;</span> <span class="na">onfocus</span><span class="o">=</span><span class="s">&#34;focusing(this)&#34;</span><span class="p">&gt;</span>
+                    {% for o in regions %}
+                        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;{{o.id}}&#34;</span><span class="p">&gt;</span>{{o.id}}<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                    {% endfor %}
+                <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;form-group&#39;</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">label</span> <span class="na">for</span><span class="o">=</span><span class="s">&#39;distribution&#39;</span><span class="p">&gt;</span>Images<span class="p">&lt;/</span><span class="nt">label</span><span class="p">&gt;</span>
+                <span class="p">&lt;</span><span class="nt">select</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;distribution&#39;</span> <span class="na">id</span><span class="o">=</span><span class="s">&#39;distribution&#39;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;form-control&#39;</span>
+                    <span class="na">onblur</span><span class="o">=</span><span class="s">&#34;blurring(this)&#34;</span> <span class="na">onfocus</span><span class="o">=</span><span class="s">&#34;focusing(this)&#34;</span><span class="p">&gt;</span>
+                    {% for d in stackscript.images %}
+                        <span class="p">&lt;</span><span class="nt">option</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;{{d.id.id}}&#34;</span><span class="p">&gt;</span>{{d.id.id}}<span class="p">&lt;/</span><span class="nt">option</span><span class="p">&gt;</span>
+                    {% endfor %}
+                <span class="p">&lt;/</span><span class="nt">select</span><span class="p">&gt;</span>
+            <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;submit&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;Deploy Linode&#34;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;btn btn-primary btn-lg&#39;</span><span class="p">/&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+        <span class="kd">function</span> <span class="nx">focusing</span><span class="p">(</span><span class="nx">ele</span><span class="p">){</span>
+            <span class="nx">ele</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">borderColor</span> <span class="o">=</span> <span class="s2">&#34;#337ab7&#34;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="kd">function</span> <span class="nx">blurring</span><span class="p">(</span><span class="nx">ele</span><span class="p">){</span>
+            <span class="nx">ele</span><span class="p">.</span><span class="nx">parentElement</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">borderColor</span> <span class="o">=</span> <span class="s2">&#34;#cccccc&#34;</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+{% endblock %}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Here the template begins with two statements: <code>{% extends 'base.html' %}</code> and a <code>{% block content %}</code> statement. These two tags tell Jinja2 to extend the code within <code>base.html</code>, and to place everything within <code>{% block content %} ... {% endblock %}</code> in <code>configure.html</code> between the corresponding <code>{% block content %} ... {% endblock %}</code> tags in <code>base.html</code>.</p>
+
+<p><code>configure.html</code> includes Jinja2 logic, with the inclusion of <code>for</code> statements like <code>{% for o in regions %}</code>. These statements are like <code>for</code> statements in other languages, and are used to iterate over an array or list. In this example, it is iterating over the regions that <a href="#create-an-index-route">we passed to the template from the index route</a>. <code>configure.html</code> also contains variables, which are denoted by double curly brackets: <code>{{ s.id }}</code>.</p>
+
+<p>Create another file called <code>error.html</code>. This will be the template that appears whenever there is an error in the Linode deployment. Copy in the following code:</p>
+
+<dl class="file">
+
+
+<dt>
+		templates/error.html 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html">{% extends &#39;base.html&#39; %}
+{% block content %}
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;pop&#34;</span><span class="p">&gt;</span>Error<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>{{error}}<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span> <span class="na">style</span><span class="o">=</span><span class="s">&#39;margin-top: 20px&#39;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&#39;/&#39;</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;btn btn-lg btn-default&#39;</span><span class="p">&gt;</span>Try Again<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+{% endblock %}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This template works the same way that <code>configure.html</code> does, by extending <code>base.html</code> and providing its own <code>content</code> block.</p>
+
+<p>Lastly, create another file called <code>success.html</code>. This file follows the pattern set by <code>configure.html</code> and <code>error.html</code>, and will present the user with a confirmation message whenever a Linode is successfully created. This message includes the Linode&rsquo;s label, group, IP address, and password:</p>
+
+<dl class="file">
+
+
+<dt>
+		templates/success.html 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-html" data-lang="html">{% extends &#39;base.html&#39; %}
+{% block content %}
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Success!<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>{{application_name}} has been deployed to <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&#34;pop&#34;</span><span class="p">&gt;</span>{{linode.label}}<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> in the {{linode.group}} group.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;row&#39;</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&#39;boxy&#39;</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>You can access your Linode with the following command:<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">code</span><span class="p">&gt;</span>ssh root@{{linode.ipv4[0]}}<span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">br</span> <span class="p">/&gt;</span>
+            <span class="p">&lt;</span><span class="nt">br</span> <span class="p">/&gt;</span>
+            <span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Your root password is:<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">code</span><span class="p">&gt;</span>{{password}}<span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+{% endblock %}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="run-your-app">Run Your App</h2>
+
+<p>You are now ready to run your app. Change back to your project&rsquo;s main directory:</p>
+
+<pre><code>cd ~/linode-oauth-project
+</code></pre>
+
+<p>Run the <code>app.py</code> script:</p>
+
+<pre><code>python3 app.py
+</code></pre>
+
+<p>Open your browser to the following URL:</p>
+
+<pre><code>http://localhost:5000/
+</code></pre>
+
+<p>You should be greeted with your new app. Select a plan, a region, and an image to deploy a Linode using the Linode API Python library.</p>
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>The app you&rsquo;ve created shows off some of the aspects of the Linode API Python library. You can use <code>LinodeLoginClient</code> to authorize your OAuth app with the appropriate scopes, and can create Linodes through the use of <code>LinodeClient</code>.</p>
+
+<p>In extending this app, you might want to add multiple functionalities, like creating NodeBalancers from a list of available Linodes, or managing domains. To achieve this goal you&rsquo;ll probably want to separate the login logic from the Linode creation logic. One way to do this would be store the OAuth token in the session, implementing a time-based expiration mechanism to expire your tokens instead.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://linode-api4.readthedocs.io/en/latest/index.html">Linode APIv4 Python library documentation</a></li>
+
+<li><a href="https://github.com/linode/linode_api4-python/tree/master/examples/install-on-linode">Linode APIv4 Python library example app repository</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#obtaining-a-client-id-and-a-client-secret">Obtaining a Client ID and a Client Secret</a></li>
+<li><a href="#oauth-2-authentication-exchange">OAuth 2 Authentication Exchange</a></li>
+<li><a href="#setup-your-development-environment">Setup Your Development Environment</a></li>
+<li><a href="#configure-your-app">Configure Your App</a></li>
+<li><a href="#author-an-oauth2-app">Author an OAuth2 App</a>
+<ul>
+<li><a href="#include-imports">Include Imports</a></li>
+<li><a href="#set-up-flask-and-session-key">Set Up Flask and Session Key</a></li>
+<li><a href="#create-a-function-to-return-the-linode-login-client">Create a Function to Return the Linode Login Client</a></li>
+<li><a href="#create-an-index-route">Create an Index Route</a></li>
+<li><a href="#create-a-login-route">Create a Login Route</a></li>
+<li><a href="#manage-the-oauth-2-callback-url">Manage the OAuth 2 Callback URL</a></li>
+<li><a href="#create-a-function-to-deploy-a-linode">Create a Function to Deploy a Linode</a></li>
+<li><a href="#set-the-name-variable">Set the <strong>name</strong> Variable</a></li>
+</ul></li>
+<li><a href="#create-app-templates">Create App Templates</a></li>
+<li><a href="#run-your-app">Run Your App</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

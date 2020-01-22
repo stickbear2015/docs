@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Deploy Microservices with Docker</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="This guide describes how to effectively use Docker in production using a sample NGINX/Flask/Gunicorn/Redis/Postgresql Application Stack.">
+        <meta name="keywords" content="docker, nginx, flask, gunicorn, redis, postgresql, microservice">
+        
+        <meta property="og:title" content="How to Deploy Microservices with Docker">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/containers/deploying-microservices-with-docker/">
+        <meta property="og:description" content="This guide shows how to deploy a simple microservice using Docker. Best practices for using Docker in production are also demonstrated and explained.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/containers/deploying-microservices-with-docker/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/containers/">Containers</a>
+  
+</li>
+
+
+<li>
+  
+  How to Deploy Microservices with Docker
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Deploy Microservices with Docker</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-24T10:08:37-04:00">Friday, August 24, 2018</time> by Bob Strecansky</small>
+  <small class="contributed-by">
+  
+    Contributed by
+    
+    <a href="https://twitter.com/bobstrecansky">Bob Strecansky
+      
+      <i class="fa fa-twitter"></i>
+      
+    </a>
+    
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploying-microservices-with-docker%2f&via=linode&text=How%20to%20Deploy%20Microservices%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploying-microservices-with-docker%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fcontainers%2fdeploying-microservices-with-docker%2f&t=How%20to%20Deploy%20Microservices%20with%20Docker" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Deploy%20Microservices%20with%20Docker%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fcontainers%2fdeploying-microservices-with-docker%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5ccontainers%5cdeploying-microservices-with-docker%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5ccontainers%5cdeploying-microservices-with-docker%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="how-to-deploy-microservices-with-docker-smg.jpg" alt="Deploying Microservices with Docker" /></p>
+
+<h2 id="what-is-a-microservice">What is a Microservice?</h2>
+
+<p>Microservices are an increasingly popular architecture for building large-scale applications. Rather than using a single, monolithic codebase, applications are broken down into a collection of smaller components called microservices. This approach offers several benefits, including the ability to scale individual microservices, keep the codebase easier to understand and test, and enable the use of different programming languages, databases, and other tools for each microservice.</p>
+
+<p><a href="https://www.docker.com">Docker</a> is an excellent tool for managing and deploying microservices. Each microservice can be further broken down into processes running in separate Docker containers, which can be specified with Dockerfiles and Docker Compose configuration files. Combined with a provisioning tool such as Kubernetes, each microservice can then be easily deployed, scaled, and collaborated on by a developer team. Specifying an environment in this way also makes it easy to link microservices together to form a larger application.</p>
+
+<p>This guide shows how to build and deploy an example microservice using Docker and Docker Compose.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>You will need a Linode with Docker and Docker Compose installed to complete this guide.</p>
+
+<h3 id="install-docker">Install Docker</h3>
+
+
+
+
+
+<!-- Install Docker CE using the official Docker repositories. -->
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>docker run hello-world
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="install-docker-compose">Install Docker Compose</h3>
+
+
+
+
+
+<!--- Installation instructions for Docker Compose -->
+
+<ol>
+<li><p>Download the latest version of Docker Compose. Check the <a href="https://github.com/docker/compose/releases">releases</a> page and replace <code>1.21.2</code> in the command below with the version tagged as <strong>Latest release</strong>:</p>
+
+<pre><code>sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+</code></pre></li>
+
+<li><p>Set file permissions:</p>
+
+<pre><code>sudo chmod +x /usr/local/bin/docker-compose
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h2 id="prepare-the-environment">Prepare the Environment</h2>
+
+<p>This section uses Dockerfiles to configure Docker images. For more information about Dockerfile syntax and best practices, see our <a href="/docs/applications/containers/how-to-use-dockerfiles/">How To Use Dockerfiles guide</a> and Docker&rsquo;s <a href="https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/#sort-multi-line-arguments">Dockerfile Best Practices guide</a>.</p>
+
+<ol>
+<li><p>Create a directory for the microservice:</p>
+
+<pre><code>mkdir flask-microservice
+</code></pre></li>
+
+<li><p>Create the directory structure for the microservice components within the new directory:</p>
+
+<pre><code>cd flask-microservice
+mkdir nginx postgres web
+</code></pre></li>
+</ol>
+
+<h3 id="nginx">NGINX</h3>
+
+<ol>
+<li><p>Within the new <code>nginx</code> subdirectory, create a Dockerfile for the NGINX image:</p>
+
+<dl class="file">
+
+
+<dt>
+		nginx/Dockerfile 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">from<span class="w"> </span>nginx<span class="p">:</span>alpine<span class="w">
+</span><span class="w"></span>COPY<span class="w"> </span>nginx.conf<span class="w"> </span>/etc/nginx/nginx.conf</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create the <code>nginx.conf</code> referenced in the Dockerfile:</p>
+
+<dl class="file">
+
+
+<dt>
+		/nginx/nginx.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">user</span>  <span class="s">nginx</span><span class="p">;</span>
+<span class="k">worker_processes</span> <span class="mi">1</span><span class="p">;</span>
+<span class="k">error_log</span>  <span class="s">/dev/stdout</span> <span class="s">info</span><span class="p">;</span>
+<span class="k">error_log</span> <span class="no">off</span><span class="p">;</span>
+<span class="k">pid</span>        <span class="s">/var/run/nginx.pid</span><span class="p">;</span>
+
+<span class="k">events</span> <span class="p">{</span>
+    <span class="kn">worker_connections</span>  <span class="mi">1024</span><span class="p">;</span>
+    <span class="kn">use</span> <span class="s">epoll</span><span class="p">;</span>
+    <span class="kn">multi_accept</span> <span class="no">on</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">http</span> <span class="p">{</span>
+    <span class="kn">include</span>       <span class="s">/etc/nginx/mime.types</span><span class="p">;</span>
+    <span class="kn">default_type</span>  <span class="s">application/octet-stream</span><span class="p">;</span>
+
+    <span class="kn">log_format</span>  <span class="s">main</span>  <span class="s">&#39;</span><span class="nv">$remote_addr</span> <span class="s">-</span> <span class="nv">$remote_user</span> <span class="s">[</span><span class="nv">$time_local]</span> <span class="s">&#34;</span><span class="nv">$request&#34;</span> <span class="s">&#39;</span>
+                      <span class="s">&#39;</span><span class="nv">$status</span> <span class="nv">$body_bytes_sent</span> <span class="s">&#34;</span><span class="nv">$http_referer&#34;</span> <span class="s">&#39;</span>
+                      <span class="s">&#39;&#34;</span><span class="nv">$http_user_agent&#34;</span> <span class="s">&#34;</span><span class="nv">$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+
+    <span class="kn">access_log</span>  <span class="s">/dev/stdout</span> <span class="s">main</span><span class="p">;</span>
+    <span class="kn">access_log</span> <span class="no">off</span><span class="p">;</span>
+    <span class="kn">keepalive_timeout</span> <span class="mi">65</span><span class="p">;</span>
+    <span class="kn">keepalive_requests</span> <span class="mi">100000</span><span class="p">;</span>
+    <span class="kn">tcp_nopush</span> <span class="no">on</span><span class="p">;</span>
+    <span class="kn">tcp_nodelay</span> <span class="no">on</span><span class="p">;</span>
+
+    <span class="kn">server</span> <span class="p">{</span>
+        <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+        <span class="kn">proxy_pass_header</span> <span class="s">Server</span><span class="p">;</span>
+
+        <span class="kn">location</span> <span class="s">/</span> <span class="p">{</span>
+            <span class="kn">proxy_set_header</span> <span class="s">Host</span> <span class="nv">$host</span><span class="p">;</span>
+            <span class="kn">proxy_set_header</span> <span class="s">X-Real-IP</span> <span class="nv">$remote_addr</span><span class="p">;</span>
+
+            <span class="c1"># app comes from /etc/hosts, Docker added it for us!
+</span><span class="c1"></span>            <span class="kn">proxy_pass</span> <span class="s">http://flaskapp:8000/</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<h3 id="postgresql">PostgreSQL</h3>
+
+<p>The PostgreSQL image for this microservice will use the official <code>postgresql</code> image on Docker Hub, so no Dockerfile is necessary.</p>
+
+<p>In the <code>postgres</code> subdirectory, create an <code>init.sql</code> file:</p>
+
+<dl class="file">
+
+
+<dt>
+		postgres/init.sql 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">SET <span class="nv">statement_timeout</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+SET <span class="nv">lock_timeout</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+SET <span class="nv">idle_in_transaction_session_timeout</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span>
+SET <span class="nv">client_encoding</span> <span class="o">=</span> <span class="s1">&#39;UTF8&#39;</span><span class="p">;</span>
+SET <span class="nv">standard_conforming_strings</span> <span class="o">=</span> on<span class="p">;</span>
+SET <span class="nv">check_function_bodies</span> <span class="o">=</span> false<span class="p">;</span>
+SET <span class="nv">client_min_messages</span> <span class="o">=</span> warning<span class="p">;</span>
+SET <span class="nv">row_security</span> <span class="o">=</span> off<span class="p">;</span>
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog<span class="p">;</span>
+COMMENT ON EXTENSION plpgsql IS <span class="s1">&#39;PL/pgSQL procedural language&#39;</span><span class="p">;</span>
+SET <span class="nv">search_path</span> <span class="o">=</span> public, pg_catalog<span class="p">;</span>
+SET <span class="nv">default_tablespace</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+SET <span class="nv">default_with_oids</span> <span class="o">=</span> false<span class="p">;</span>
+CREATE TABLE visitors <span class="o">(</span>
+    site_id integer,
+    site_name text,
+    visitor_count integer
+<span class="o">)</span><span class="p">;</span>
+
+ALTER TABLE visitors OWNER TO postgres<span class="p">;</span>
+COPY visitors <span class="o">(</span>site_id, site_name, visitor_count<span class="o">)</span> FROM stdin<span class="p">;</span>
+<span class="m">1</span> 	linodeexample.com  	<span class="m">0</span>
+<span class="se">\.</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="caution">
+  <strong class="callout-title">Caution</strong>
+  <div>In Line 22 of <code>init.sql</code>, make sure your text editor does not convert tabs to spaces. The app will not work without tabs between the entries in this line.</div>
+</blockquote>
+
+
+<h3 id="web">Web</h3>
+
+<p>The <code>web</code> image will hold an example Flask app. Add the following files to the <code>web</code> directory to prepare the app:</p>
+
+<ol>
+<li><p>Create a <code>.python-version</code> file to specify the use of Python 3.6:</p>
+
+<pre><code>echo &quot;3.6.0&quot; &gt;&gt; web/.python-version
+</code></pre></li>
+
+<li><p>Create a Dockerfile for the <code>web</code> image:</p>
+
+<dl class="file">
+
+
+<dt>
+		web/Dockerfile 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">from<span class="w"> </span>python<span class="p">:</span><span class="m">3.6</span>.<span class="m">2</span>-slim<span class="w">
+</span><span class="w"></span>RUN<span class="w"> </span>groupadd<span class="w"> </span>flaskgroup<span class="w"> </span><span class="cp">&amp;&amp;</span><span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-g<span class="w"> </span>flaskgroup<span class="w"> </span>-s<span class="w"> </span>/bin/bash<span class="w"> </span>flask<span class="w">
+</span><span class="w"></span>RUN<span class="w"> </span>echo<span class="w"> </span><span class="s2">&#34;flask ALL=(ALL) NOPASSWD:ALL&#34;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>/etc/sudoers<span class="w">
+</span><span class="w"></span>RUN<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/home/flask/app/web<span class="w">
+</span><span class="w"></span>WORKDIR<span class="w"> </span>/home/flask/app/web<span class="w">
+</span><span class="w"></span>COPY<span class="w"> </span>requirements.txt<span class="w"> </span>/home/flask/app/web<span class="w">
+</span><span class="w"></span>RUN<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>--no-cache-dir<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w">
+</span><span class="w"></span>RUN<span class="w"> </span>chown<span class="w"> </span>-R<span class="w"> </span>flask<span class="p">:</span>flaskgroup<span class="w"> </span>/home/flask<span class="w">
+</span><span class="w"></span>USER<span class="w"> </span>flask<span class="w">
+</span><span class="w"></span>ENTRYPOINT<span class="w"> </span><span class="p">[</span><span class="s2">&#34;/usr/local/bin/gunicorn&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;--bind&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;:8000&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;linode:app&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;--reload&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;--workers&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;16&#34;</span><span class="p">]</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create <code>web/linode.py</code> and add the example app script:</p>
+
+<dl class="file">
+
+
+<dt>
+		web/linode.py 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-python" data-lang="python"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">psycopg2</span>
+<span class="kn">import</span> <span class="nn">redis</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">StrictRedis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;redis&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">)</span>
+
+<span class="c1"># Configure Logging</span>
+<span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">))</span>
+<span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">PgFetch</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+
+    <span class="c1"># Connect to an existing database</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">psycopg2</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&#34;host=&#39;postgres&#39; dbname=&#39;linode&#39; user=&#39;postgres&#39; password=&#39;linode123&#39;&#34;</span><span class="p">)</span>
+
+    <span class="c1"># Open a cursor to perform database operations</span>
+    <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="c1"># Query the database and obtain data as Python objects</span>
+    <span class="n">dbquery</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;GET&#39;</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">fetchone</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&#34;&#34;</span>
+
+    <span class="c1"># Make the changes to the database persistent</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+    <span class="c1"># Close communication with the database</span>
+    <span class="n">cur</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello_world</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">cache</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s1">&#39;visitor_count&#39;</span><span class="p">):</span>
+        <span class="n">cache</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s1">&#39;visitor_count&#39;</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;visitor_count&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">update</span> <span class="o">=</span> <span class="n">PgFetch</span><span class="p">(</span><span class="s2">&#34;UPDATE visitors set visitor_count = &#34;</span> <span class="o">+</span> <span class="n">count</span> <span class="o">+</span> <span class="s2">&#34; where site_id = 1;&#34;</span><span class="p">,</span> <span class="s2">&#34;POST&#34;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cache_refresh</span> <span class="o">=</span> <span class="n">PgFetch</span><span class="p">(</span><span class="s2">&#34;SELECT visitor_count FROM visitors where site_id = 1;&#34;</span><span class="p">,</span> <span class="s2">&#34;GET&#34;</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cache_refresh</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">cache</span><span class="o">.</span><span class="nb">set</span><span class="p">(</span><span class="s1">&#39;visitor_count&#39;</span><span class="p">,</span> <span class="n">count</span><span class="p">)</span>
+        <span class="n">cache</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s1">&#39;visitor_count&#39;</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="p">(</span><span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;visitor_count&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;Hello Linode!  This page has been viewed </span><span class="si">%s</span><span class="s1"> time(s).&#39;</span> <span class="o">%</span> <span class="n">count</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/resetcounter&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">resetcounter</span><span class="p">():</span>
+    <span class="n">cache</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s1">&#39;visitor_count&#39;</span><span class="p">)</span>
+    <span class="n">PgFetch</span><span class="p">(</span><span class="s2">&#34;UPDATE visitors set visitor_count = 0 where site_id = 1;&#34;</span><span class="p">,</span> <span class="s2">&#34;POST&#34;</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&#34;reset visitor count&#34;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&#34;Successfully deleted redis and postgres counters&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Add a <code>requirements.txt</code> file with the required Python dependencies:</p>
+
+<dl class="file">
+
+
+<dt>
+		web/requirements.txt 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-text" data-lang="text"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-text" data-lang="text">flask
+gunicorn
+psycopg2
+redis</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<h2 id="docker-compose">Docker Compose</h2>
+
+<p>Docker Compose will be used to be define the connections between containers and their configuration settings.</p>
+
+<p>Create a <code>docker-compose.yml</code> file in the <code>flask-microservice</code> directory and add the following:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w"> </span><span class="c"># Define the Flask web application</span><span class="w">
+</span><span class="w"> </span>flaskapp<span class="p">:</span><span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Build the Dockerfile that is in the web directory</span><span class="w">
+</span><span class="w">   </span>build<span class="p">:</span><span class="w"> </span>./web<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Always restart the container regardless of the exit status; try and restart the container indefinitely</span><span class="w">
+</span><span class="w">   </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Expose port 8000 to other containers (not to the host of the machine)</span><span class="w">
+</span><span class="w">   </span>expose<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span><span class="s2">&#34;8000&#34;</span><span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Mount the web directory within the container at /home/flask/app/web</span><span class="w">
+</span><span class="w">   </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>./web<span class="p">:</span>/home/flask/app/web<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Don&#39;t create this container until the redis and postgres containers (below) have been created</span><span class="w">
+</span><span class="w">   </span>depends_on<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>redis<span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>postgres<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Link the redis and postgres containers together so that they can talk to one another</span><span class="w">
+</span><span class="w">   </span>links<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>redis<span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>postgres<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Pass environment variables to the flask container (this debug level lets you see more useful information)</span><span class="w">
+</span><span class="w">   </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">     </span>FLASK_DEBUG<span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Deploy with 3 replicas in the case of failure of one of the containers (only in Docker Swarm)</span><span class="w">
+</span><span class="w">   </span>deploy<span class="p">:</span><span class="w">
+</span><span class="w">     </span>mode<span class="p">:</span><span class="w"> </span>replicated<span class="w">
+</span><span class="w">     </span>replicas<span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span><span class="w">
+</span><span class="w"> </span><span class="c"># Define the redis Docker container</span><span class="w">
+</span><span class="w"> </span>redis<span class="p">:</span><span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># use the redis:alpine image: https://hub.docker.com/_/redis/</span><span class="w">
+</span><span class="w">   </span>image<span class="p">:</span><span class="w"> </span>redis<span class="p">:</span>alpine<span class="w">
+</span><span class="w">   </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">   </span>deploy<span class="p">:</span><span class="w">
+</span><span class="w">     </span>mode<span class="p">:</span><span class="w"> </span>replicated<span class="w">
+</span><span class="w">     </span>replicas<span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span><span class="w">
+</span><span class="w"> </span><span class="c"># Define the redis NGINX forward proxy container</span><span class="w">
+</span><span class="w"> </span>nginx<span class="p">:</span><span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># build the nginx Dockerfile: http://bit.ly/2kuYaIv</span><span class="w">
+</span><span class="w">   </span>build<span class="p">:</span><span class="w"> </span>nginx/<span class="w">
+</span><span class="w">   </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Expose port 80 to the host machine</span><span class="w">
+</span><span class="w">   </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span><span class="s2">&#34;80:80&#34;</span><span class="w">
+</span><span class="w">   </span>deploy<span class="p">:</span><span class="w">
+</span><span class="w">     </span>mode<span class="p">:</span><span class="w"> </span>replicated<span class="w">
+</span><span class="w">     </span>replicas<span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># The Flask application needs to be available for NGINX to make successful proxy requests</span><span class="w">
+</span><span class="w">   </span>depends_on<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>flaskapp<span class="w">
+</span><span class="w">
+</span><span class="w"> </span><span class="c"># Define the postgres database</span><span class="w">
+</span><span class="w"> </span>postgres<span class="p">:</span><span class="w">
+</span><span class="w">   </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">   </span><span class="c"># Use the postgres alpine image: https://hub.docker.com/_/postgres/</span><span class="w">
+</span><span class="w">   </span>image<span class="p">:</span><span class="w"> </span>postgres<span class="p">:</span>alpine<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Mount an initialization script and the persistent postgresql data volume</span><span class="w">
+</span><span class="w">   </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>./postgres/init.sql<span class="p">:</span>/docker-entrypoint-initdb.d/init.sql<span class="w">
+</span><span class="w">     </span>-<span class="w"> </span>./postgres/data<span class="p">:</span>/var/lib/postgresql/data<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Pass postgres environment variables</span><span class="w">
+</span><span class="w">   </span>environment<span class="p">:</span><span class="w">
+</span><span class="w">     </span>POSTGRES_PASSWORD<span class="p">:</span><span class="w"> </span>linode123<span class="w">
+</span><span class="w">     </span>POSTGRES_DB<span class="p">:</span><span class="w"> </span>linode<span class="w">
+</span><span class="w">
+</span><span class="w">   </span><span class="c"># Expose port 5432 to other Docker containers</span><span class="w">
+</span><span class="w">   </span>expose<span class="p">:</span><span class="w">
+</span><span class="w">     </span>-<span class="w"> </span><span class="s2">&#34;5432&#34;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="test-the-microservice">Test the Microservice</h2>
+
+<ol>
+<li><p>Use Docker Compose to build all of the images and start the microservice:</p>
+
+<pre><code>cd flask-microservice/ &amp;&amp; docker-compose up
+</code></pre>
+
+<p>You should see all of the services start in your terminal.</p></li>
+
+<li><p>Open a new terminal window and make a request to the example application:</p>
+
+<pre><code>curl localhost
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Hello Linode! This page has been viewed 1 time(s).
+</code>
+</pre>
+</li>
+
+<li><p>Reset the page hit counter:</p>
+
+<pre><code>curl localhost/resetcounter
+</code></pre>
+
+<pre class="file terminal">
+  <code>
+Successfully deleted redis and postgres counters
+</code>
+</pre>
+</li>
+
+<li><p>Return to the terminal window where Docker Compose was started to view the standard out log:</p>
+
+<pre class="file terminal">
+  <code>
+flaskapp_1  | DEBUG in linode [/home/flask/app/web/linode.py:56]:
+flaskapp_1  | reset visitor count
+</code>
+</pre>
+</li>
+</ol>
+
+<h2 id="using-containers-in-production-best-practices">Using Containers in Production: Best Practices</h2>
+
+<p>The containers used in the example microservice are intended to demonstrate the following best practices for using containers in production:</p>
+
+<p>Containers should be:</p>
+
+<ol>
+<li><p><strong>Ephemeral</strong>: It should be easy to stop, destroy, rebuild, and redeploy containers with minimal setup and configuration.</p>
+
+<p>The Flask microservice is an ideal example of this. The entire microservice can be brought up or down using Docker Compose. No additional configuration is necessary after the containers are running, which makes it easy to modify the application.</p></li>
+
+<li><p><strong>Disposable</strong>: Ideally, any single container within a larger application should be able to fail without impacting the performance of the application. Using a <code>restart: on-failure</code> option in the <code>docker-compose.yml</code> file, as well as having a replica count, makes it possible for some containers in the example microservice to fail gracefully while still serving the web application with no degradation to the end user.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The replica count directive will only be effective when this configuration is deployed as part of a <a href="/docs/applications/containers/how-to-create-a-docker-swarm-manager-and-nodes-on-linode/">Docker Swarm</a>, which is not covered in this guide.</div>
+</blockquote>
+</li>
+
+<li><p><strong>Quick to start</strong>: Avoiding additional installation steps in the Docker file, removing dependencies that aren&rsquo;t needed, and building a target image that can be reused are three of the most important steps in making a web application that has a quick initialization time within Docker. The example application uses short, concise, prebuilt Dockerfiles in order to minimize initialization time.</p></li>
+
+<li><p><strong>Quick to stop</strong>: Validate that a <code>docker kill --signal=SIGINT {APPNAME}</code> stops the application gracefully. This, along with a restart condition and a replica condition, will ensure that when containers fail, they will be brought back online efficiently.</p></li>
+
+<li><p><strong>Lightweight</strong>: Use the smallest base container that provides all of the utilities that are needed to build and run your application. Many Docker images are based on <a href="https://alpinelinux.org/about/">Alpine Linux</a>, a light and simple Linux distribution that takes up only 5MB in a Docker image. Using a small distro saves network and operational overhead and greatly increases container performance. The example application uses alpine images where applicable (NGINX, Redis, and PostgreSQL), and uses a python-slim base image for the Gunicorn / Flask application.</p></li>
+
+<li><p><strong>Stateless</strong>: Since they are ephemeral, containers typically shouldn&rsquo;t maintain state. An application&rsquo;s state should be stored in a separate, persistent data volume, as is the case with the microservice&rsquo;s PostgreSQL data store. The Redis key-value store does maintain data within a container, but this data is not application-critical; the Redis store will fail back gracefully to the database should the container not be able to respond.</p></li>
+
+<li><p><strong>Portable</strong>: All of an app&rsquo;s dependencies that are needed for the container runtime should be locally available. All of the example microservice&rsquo;s dependencies and startup scripts are stored in the directory for each component. These can be checked into version control, making it easy to share and deploy the application.</p></li>
+
+<li><p><strong>Modular</strong>: Each container should have one responsibility and one process. In this microservice, each of the major processes (NGINX, Python, Redis, and PostgreSQL) is deployed in a separate container.</p></li>
+
+<li><p><strong>Logging</strong>: All containers should log to <code>STDOUT</code>. This uniformity makes it easy to view the logs for all of the processes in a single stream.</p></li>
+
+<li><p><strong>Resilient</strong>: The example application restarts its containers if they are exited for any reason. This helps give your Dockerized application high availability and performance, even during maintenance periods.</p></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://github.com/bobstrecansky/flask-microservice">Github Repository for Example Microservice</a></li>
+
+<li><a href="https://medium.com/aws-activate-startup-blog/using-containers-to-build-a-microservices-architecture-6e1b8bacb7d1">Using Containers to Build a Microservices Architecture</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-a-microservice">What is a Microservice?</a></li>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#install-docker">Install Docker</a></li>
+<li><a href="#install-docker-compose">Install Docker Compose</a></li>
+</ul></li>
+<li><a href="#prepare-the-environment">Prepare the Environment</a>
+<ul>
+<li><a href="#nginx">NGINX</a></li>
+<li><a href="#postgresql">PostgreSQL</a></li>
+<li><a href="#web">Web</a></li>
+</ul></li>
+<li><a href="#docker-compose">Docker Compose</a></li>
+<li><a href="#test-the-microservice">Test the Microservice</a></li>
+<li><a href="#using-containers-in-production-best-practices">Using Containers in Production: Best Practices</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

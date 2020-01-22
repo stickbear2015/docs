@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Serve PHP with PHP-FPM and NGINX</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Proxy PHP requests with NGINX and FastCGI using PHP-FPM.">
+        <meta name="keywords" content="php, php-fpm, fastcgi">
+        
+        <meta property="og:title" content="Serve PHP with PHP-FPM and NGINX">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/web-servers/nginx/serve-php-php-fpm-and-nginx/">
+        <meta property="og:description" content="Proxy PHP requests with NGINX and FastCGI using PHP-FPM.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/web-servers/nginx/serve-php-php-fpm-and-nginx/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/">Web Server Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/nginx/">NGINX</a>
+  
+</li>
+
+
+<li>
+  
+  Serve PHP with PHP-FPM and NGINX
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">Serve PHP with PHP-FPM and NGINX</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-11-19T16:49:19-05:00">Monday, November 19, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fserve-php-php-fpm-and-nginx%2f&via=linode&text=Serve%20PHP%20with%20PHP-FPM%20and%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fserve-php-php-fpm-and-nginx%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fserve-php-php-fpm-and-nginx%2f&t=Serve%20PHP%20with%20PHP-FPM%20and%20NGINX" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=Serve%20PHP%20with%20PHP-FPM%20and%20NGINX%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fweb-servers%2fnginx%2fserve-php-php-fpm-and-nginx%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/web-servers%5cnginx%5cserve-php-php-fpm-and-nginx%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/web-servers%5cnginx%5cserve-php-php-fpm-and-nginx%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="serve-php-with-phpfpm-and-nginx-smp.jpg" alt="Serve PHP with PHP-FPM and NGINX" /></p>
+
+<p>The <a href="https://php-fpm.org/">PHP Fast Process Manager</a> is a <a href="https://en.wikipedia.org/wiki/FastCGI">FastCGI</a> handler for <a href="https://secure.php.net/">PHP</a> scripts and applications. It&rsquo;s commonly paired with web servers to serve applications which require a PHP framework, such as web forums or login gateways, while the web server returns HTML, JavaScript, and other non-PHP content.</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<ul>
+<li><p><strong>You will need a working NGINX setup.</strong> If you do not already have that, complete Part 1 of our Getting Started with NGINX series: <a href="/docs/web-servers/nginx/nginx-installation-and-basic-setup/"><em>Basic Installation and Setup</em></a>.</p></li>
+
+<li><p>You will need root access to the system, or a user account with <code>sudo</code> privileges.</p></li>
+
+<li><p>Update your system’s packages.</p></li>
+</ul>
+
+<h2 id="install-and-configure-php-fpm">Install and Configure PHP-FPM</h2>
+
+<ol>
+<li><p>Install the PHP process manager. On CentOS, Debian, and Ubuntu, the package name to install is <code>php-fpm</code>.</p>
+
+<p>You can verify the PHP-FPM service is running with:</p>
+
+<pre><code>systemctl status php7.0-fpm.service
+</code></pre></li>
+
+<li><p>Depending on your distribution and PHP version, the PHP configuration files will be stored in different locations. This guide is using PHP 7.0 from Ubuntu&rsquo;s repositories on Ubuntu 16.04 as an example, and the <code>/etc/php/7.0/fpm/pool.d/www.conf</code> and <code>/etc/php/7.0/fpm/php.ini</code> files are what we&rsquo;ll be modifying.</p>
+
+<p>Find those full file paths using a <code>find</code> command:</p>
+
+<pre><code>find / \( -iname &quot;php.ini&quot; -o -name &quot;www.conf&quot; \)
+</code></pre>
+
+<p>The output should look similar to:</p>
+
+<pre><code>root@localhost:~# find / \( -iname &quot;php.ini&quot; -o -name &quot;www.conf&quot; \)
+/etc/php/7.0/fpm/php.ini
+/etc/php/7.0/fpm/pool.d/www.conf
+/etc/php/7.0/cli/php.ini
+</code></pre></li>
+
+<li><p>The <code>listen.owner</code> and <code>listen.group</code> variables are set to <code>www-data</code> by default, but they need to match the user and group NGINX is running as. If you installed NGINX using our <a href="/docs/web-servers/"><em>Getting Started with NGINX</em></a> series, then your setup will be using the <code>nginx</code> user and group. You can verify with:</p>
+
+<pre><code>ps -aux | grep nginx
+</code></pre>
+
+<p>The output should be similar to:</p>
+
+<pre><code>root@localhost:~# ps -aux | grep nginx
+root      3448  0.0  0.0  32500  3516 ?        Ss   18:21   0:00 nginx: master process /        usr/sbin/nginx -c /etc/nginx/nginx.conf
+nginx     3603  0.0  0.0  32912  2560 ?        S    18:24   0:00 nginx: worker process
+nginx     3604  0.0  0.0  32912  3212 ?        S    18:24   0:00 nginx: worker process
+</code></pre>
+
+<p>This shows the NGINX master process is running as <code>root</code>, and the worker processes are running as the <code>nginx</code> user and group. Change the <code>listen</code> variables to that:</p>
+
+<pre><code>sed -i 's/listen.owner = www-data/listen.owner = nginx/g' /etc/php/7.0/fpm/pool.d/www.conf
+sed -i 's/listen.group = www-data/listen.group = nginx/g' /etc/php/7.0/fpm/pool.d/www.conf
+</code></pre></li>
+
+<li><p>When pairing NGINX with PHP-FPM, it&rsquo;s possible to return to NGINX a <code>.php</code> URI that does not actually exist within the site&rsquo;s directory structure. The PHP processor will process the URI, and execute the <code>.php</code> file, because its job is to process anything handed to it by NGINX. This presents a security problem.</p>
+
+<p>It&rsquo;s important to limit what NGINX passes to PHP-FPM so malicious scripts can&rsquo;t be injected into return streams to the server. Instead, the request is stopped, possibly then resulting in a 404. There are multiple ways to do this (<a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/?highlight=pitfalls#passing-uncontrolled-requests-to-php">see the NGINX wiki</a>) but here we chose to specify the setting in PHP-FPM rather than in NGINX&rsquo;s configuration.</p>
+
+<pre><code>sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.0/fpm/php.ini
+</code></pre>
+
+<p>You&rsquo;ll notice that <code>;cgi.fix_pathinfo=1</code> is commented out by default. Setting it to <code>0</code> and uncommenting it will enforce the configuration should there be any upstream changes in the default value in the future.</p></li>
+
+<li><p>Restart PHP-FPM to apply the changes:</p>
+
+<pre><code>systemctl restart php7.0-fpm.service
+</code></pre></li>
+</ol>
+
+<h2 id="configure-the-nginx-server-block">Configure the NGINX Server Block</h2>
+
+<ol>
+<li><p>Again pulling from <a href="/docs/web-servers/nginx/nginx-installation-and-basic-setup/#configuration-recap">Part 1 of our NGINX series</a>, we&rsquo;ll start with a basic Server Block for a static HTTP page being served from <code>/var/www/example.com</code>. Replace <code>example.com</code> with your site&rsquo;s domain or IP address, and the <code>root</code> directive with your site&rsquo;s root directory.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>         <span class="mi">80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">listen</span>         <span class="s">[::]:80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">server_name</span>    <span class="s">example.com</span> <span class="s">www.example.com</span><span class="p">;</span>
+    <span class="kn">root</span>           <span class="s">/var/www/example.com</span><span class="p">;</span>
+    <span class="kn">index</span>          <span class="s">index.html</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>To the Server Block above, add a <code>location</code> block containing the PHP directives. You should then have:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>         <span class="mi">80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">listen</span>         <span class="s">[::]:80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">server_name</span>    <span class="s">example.com</span> <span class="s">www.example.com</span><span class="p">;</span>
+    <span class="kn">root</span>           <span class="s">/var/www/example.com</span><span class="p">;</span>
+    <span class="kn">index</span>          <span class="s">index.html</span><span class="p">;</span>
+
+  <span class="kn">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">\.php</span>$ <span class="p">{</span>
+    <span class="kn">fastcgi_pass</span> <span class="s">unix:/run/php/php7.0-fpm.sock</span><span class="p">;</span>
+    <span class="kn">include</span>         <span class="s">fastcgi_params</span><span class="p">;</span>
+    <span class="kn">fastcgi_param</span>   <span class="s">SCRIPT_FILENAME</span>    <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+    <span class="kn">fastcgi_param</span>   <span class="s">SCRIPT_NAME</span>        <span class="nv">$fastcgi_script_name</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>This is just a bare minimum to get PHP-FPM working and you will want to configure it further for your specific needs. Some further points about the configuration above:</p>
+
+<ul>
+<li>The location <code>~* \.php$</code> means that NGINX will apply this configuration to all <code>.php</code> files (file names are not case sensitive) in your site&rsquo;s root directory, including any subdirectories containing PHP files.</li>
+<li>The <code>*</code> in the <code>~* \.php$</code> location directive indicates that PHP file names are not case sensitive. This can be removed if you prefer to enforce letter case.</li>
+<li>The <code>fastcgi_pass</code> location must match the <code>listen =</code> value in <code>/etc/php/7.0/fpm/pool.d/www.conf</code>. It is preferable for performance reasons for PHP-FPM to listen on a UNIX socket instead of a TCP address. Only change this if you require PHP-FPM use network connections.</li>
+<li>Using <code>$document_root</code> in the <code>SCRIPT_FILENAME</code> parameter instead of an absolute path is preferred by <a href="https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/?highlight=pitfalls#fastcgi-path-in-script-filename">NGINX&rsquo;s documentation</a>.</li>
+</ul>
+
+<p>Here&rsquo;s a variation of the <code>location</code> block above. This includes an <code>if</code> statement which disallows the FPM to process files in the <code>/uploads/</code> directory. This is a security measure which prevents people from being able to upload <code>.php</code> files to your server or application which the FastCGI process manager would then execute.</p>
+
+<p>This only applicable if you allow users to upload or submit files to your site. Change the name of the directory from <code>uploads</code> to whatever suits your need.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx">  <span class="k">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">\.php</span>$ <span class="p">{</span>
+    <span class="kn">if</span> <span class="s">(</span><span class="nv">$uri</span> <span class="s">!~</span> <span class="s">&#34;^/uploads/&#34;)</span> <span class="p">{</span>
+        <span class="kn">fastcgi_pass</span> <span class="s">unix:/run/php/php7.0-fpm.sock</span><span class="p">;</span>
+        <span class="p">}</span>
+    <span class="kn">include</span>         <span class="s">fastcgi_params</span><span class="p">;</span>
+    <span class="kn">fastcgi_param</span>   <span class="s">SCRIPT_FILENAME</span>    <span class="nv">$document_root$fastcgi_script_name</span><span class="p">;</span>
+    <span class="kn">fastcgi_param</span>   <span class="s">SCRIPT_NAME</span>        <span class="nv">$fastcgi_script_name</span><span class="p">;</span>
+  <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Reload NGINX:</p>
+
+<pre><code>nginx -s reload
+</code></pre></li>
+
+<li><p>Create a test PHP file so you can verify FPM is working. In the Server Block above, our site is being served from <code>/var/www/example.com</code>, so we&rsquo;ll create a test file there:</p>
+
+<pre><code>echo &quot;&lt;?php phpinfo(); ?&gt;&quot; &gt;&gt; /var/www/example.com/test.php
+</code></pre></li>
+
+<li><p>Access <code>test.php</code> from a web browser, using your site&rsquo;s domain or Linode&rsquo;s IP address. You should see the PHP configuration page:</p>
+
+<p><img src="test-php.png" alt="PHP configuration page" title="PHP configuration page" /></p></li>
+</ol>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://secure.php.net/docs.php">PHP Manual</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#before-you-begin">Before You Begin</a></li>
+<li><a href="#install-and-configure-php-fpm">Install and Configure PHP-FPM</a></li>
+<li><a href="#configure-the-nginx-server-block">Configure the NGINX Server Block</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

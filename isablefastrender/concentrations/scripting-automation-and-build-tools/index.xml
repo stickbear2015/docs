@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scripting, Automation, and Build Tools on Linode Guides &amp; Tutorials</title>
+    <link>http://localhost:1313/docs/concentrations/scripting-automation-and-build-tools/</link>
+    <description>Recent content in Scripting, Automation, and Build Tools on Linode Guides &amp; Tutorials</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    
+	<atom:link href="http://localhost:1313/docs/concentrations/scripting-automation-and-build-tools/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>String Manipulation in Python 3</title>
+      <link>http://localhost:1313/docs/development/python/string-manipulation-python-3/</link>
+      <pubDate>Fri, 13 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/string-manipulation-python-3/</guid>
+      <description>Strings in Python Strings are one of the most basic data types in Python, used to represent textual data. Almost every application involves working with strings, and Python&amp;rsquo;s str class provides a number of methods to make string manipulation easy.
+Basic String Operations Define a String Strings are denoted with either single or double quotes:
+string_1 = &amp;quot;Example string #1&amp;quot; string_2 = &#39;Example string #2&#39;  Both methods are equivalent.</description>
+    </item>
+    
+    <item>
+      <title>Use Scrapy to Extract Data From HTML Tags</title>
+      <link>http://localhost:1313/docs/development/python/use-scrapy-to-extract-data-from-html-tags/</link>
+      <pubDate>Mon, 04 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/use-scrapy-to-extract-data-from-html-tags/</guid>
+      <description>Scrapy is a Python framework for creating web scraping applications. It provides a programming interface to crawl the web by identifying new links, and extracts structured data from the downloaded content.
+This guide will provide you with instructions to build a spider which recursively checks all &amp;lt;a&amp;gt; tags of a website and tracks broken links. This guide is written for Python version 3.4 or above, and with Scrapy version 1.</description>
+    </item>
+    
+    <item>
+      <title>How to Set Up a Task Queue with Celery and RabbitMQ</title>
+      <link>http://localhost:1313/docs/development/python/task-queue-celery-rabbitmq/</link>
+      <pubDate>Thu, 30 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/python/task-queue-celery-rabbitmq/</guid>
+      <description>Celery is a Python Task-Queue system that handle distribution of tasks on workers across threads or network nodes. It makes asynchronous task management easy. Your application just need to push messages to a broker, like RabbitMQ, and Celery workers will pop them and schedule task execution.
+Celery can be used in multiple configuration. Most frequent uses are horizontal application scaling by running resource intensive tasks on Celery workers distributed across a cluster, or to manage long asynchronous tasks in a web app, like thumbnail generation when a user post an image.</description>
+    </item>
+    
+    <item>
+      <title>Use Nightmare.js to Automate Headless Browsing</title>
+      <link>http://localhost:1313/docs/development/nodejs/use-nightmarejs-to-automate-headless-browsing/</link>
+      <pubDate>Mon, 09 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>http://localhost:1313/docs/development/nodejs/use-nightmarejs-to-automate-headless-browsing/</guid>
+      <description>Nightmare.js is a high-level browser automation library, designed to automate browsing tasks for sites that don&amp;rsquo;t have APIs. The library itself is a wrapper around Electron, which Nightmare.js uses as a browser to interact with web sites. This guide helps you install Nightmare.js on Ubuntu 16.04 and run automation scripts without the need for a graphical user interface.
+Before You Begin  Familiarize yourself with our Getting Started guide and complete the steps for setting your Linode&amp;rsquo;s hostname and timezone.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Install Mastodon on Ubuntu 16.04</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Installation and basic usage guide of Mastodon, an open source alternative to Twitter.">
+        <meta name="keywords" content="mastodon, twitter alternative, micro blog, fediverse">
+        
+        <meta property="og:title" content="How to Install Mastodon on Ubuntu 16.04">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/applications/messaging/install-mastodon-on-ubuntu-1604/">
+        <meta property="og:description" content="Installation and basic usage guide of Mastodon, an open source alternative to Twitter.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/applications/messaging/install-mastodon-on-ubuntu-1604/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/">Applications</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/applications/messaging/">Messaging &amp; Chat</a>
+  
+</li>
+
+
+<li>
+  
+  How to Install Mastodon on Ubuntu 16.04
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Install Mastodon on Ubuntu 16.04</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-21T15:38:10-04:00">Tuesday, August 21, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fmessaging%2finstall-mastodon-on-ubuntu-1604%2f&via=linode&text=How%20to%20Install%20Mastodon%20on%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fmessaging%2finstall-mastodon-on-ubuntu-1604%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fapplications%2fmessaging%2finstall-mastodon-on-ubuntu-1604%2f&t=How%20to%20Install%20Mastodon%20on%20Ubuntu%2016.04" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Install%20Mastodon%20on%20Ubuntu%2016.04%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fapplications%2fmessaging%2finstall-mastodon-on-ubuntu-1604%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/applications%5cmessaging%5cinstall-mastodon-on-ubuntu-1604%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/applications%5cmessaging%5cinstall-mastodon-on-ubuntu-1604%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<h2 id="what-is-mastodon">What is Mastodon?</h2>
+
+<p><a href="https://joinmastodon.org/"><strong>Mastodon</strong></a> is a free, decentralized, and open source social network alternative to Twitter. Like Twitter, Mastodon users can follow other users and post messages, images, and videos. Unlike Twitter, there is no single central authority and store for content on the network.</p>
+
+<p>Instead, anyone can create a Mastodon server, invite friends to join it, and build their own communities. In addition, while each Mastodon instance is privately operated, users from different servers can still communicate with and follow each other across instances.</p>
+
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe src="//www.youtube.com/embed/IPSbNdBmWKE" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+
+<h3 id="the-fediverse">The Fediverse</h3>
+
+<p>The grouping of all the independent social network servers is referred to as the <a href="https://en.wikipedia.org/wiki/Fediverse">Fediverse</a>. Mastodon can communicate with any server implementing the <a href="https://en.wikipedia.org/wiki/ActivityPub">ActivityPub</a> and/or <a href="https://en.wikipedia.org/wiki/OStatus">OStatus</a> protocols (one other example is <a href="https://en.wikipedia.org/wiki/GNU_social">GNU Social</a>), and Mastodon is just one implementation of these protocols.</p>
+
+<p>While Mastodon servers are privately-operated, they are often open to public registration. Some servers are small, and some are very large (for example, <a href="https://mastodon.social">Mastodon.social</a> has over 180,000 users). Servers are frequently centered on specific interests of their users, or by the principles those users have defined. To enforce those principles, each Mastodon server has the power to moderate and set rules for the content created by the users on that server (for example, see Mastodon.social&rsquo;s <a href="https://mastodon.social/about/more">Code of Conduct</a>).</p>
+
+<h2 id="before-you-begin">Before You Begin</h2>
+
+<p>This guide will create a Mastodon server on a Linode running Ubuntu 16.04. Docker Compose is used to install Mastodon. If you prefer a different Linux distribution, you may be able to use this guide with small changes to the listed commands.</p>
+
+<ol>
+<li><p>Familiarize yourself with Linode&rsquo;s <a href="/docs/getting-started/">Getting Started</a> guide and complete the steps for deploying and setting up a Linode, including setting the hostname and timezone.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Consult Mastodon&rsquo;s <a href="https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/Resources-needed.md">resource usage examples</a> when considering which Linode plan to deploy on.</div>
+</blockquote>
+</li>
+
+<li><p>This guide uses sudo wherever possible. Complete the sections of our <a href="/docs/security/securing-your-server/">Securing Your Server</a> guide to create a standard user account, harden SSH access and remove unnecessary network services.</p></li>
+
+<li><p>Replace each instance of <code>example.com</code> in this guide with your Mastodon site’s domain name.</p></li>
+
+<li><p>Complete the <a href="/docs/websites/set-up-web-server-host-website/#add-dns-records">Add DNS Records</a> steps to register a domain name that will point to your Mastodon Linode.</p></li>
+
+<li><p>Ensure your system is up to date:</p>
+
+<pre><code>sudo apt update &amp;&amp; sudo apt upgrade
+</code></pre></li>
+
+<li><p>Mastodon will serve its content over HTTPS, so you will need to obtain an SSL/TLS certificate. Request and download a free certificate from <a href="https://letsencrypt.org">Let&rsquo;s Encrypt</a> using <a href="https://certbot.eff.org">Certbot</a>:</p>
+
+<pre><code>sudo apt install software-properties-common
+sudo add-apt-repository ppa:certbot/certbot
+sudo apt update
+sudo apt install certbot
+sudo certbot certonly --standalone -d example.com
+</code></pre>
+
+<p>These commands will download a certificate to <code>/etc/letsencrypt/live/example.com/</code> on your Linode.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Why not use the Docker Certbot image?
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper">When Certbot is run, you generally pass a command with the <a href="https://certbot.eff.org/docs/api/hooks.html#certbot.hooks.deploy_hook"><code>--deploy-hook</code> option</a> which reloads your web server. In your deployment, the web server will run in its own container, and the Certbot container would not be able to directly reload it. Another workaround would be needed to enable this architecture.</div></div>
+</blockquote></li>
+
+<li><p>Mastodon sends email notifications to users for different events, like when a user first signs up, or when someone else requests to follow them. You will need to supply an SMTP server which will be used to send these messages.</p>
+
+<p>One option is to install your own mail server using the <a href="/docs/email/postfix/email-with-postfix-dovecot-and-mysql/">Email with Postfix, Dovecot, and MySQL</a> guide. You can install such a mail server on the same Linode as your Mastodon server, or on a different one. If you follow this guide, be sure to create a <code>notifications@example.com</code> email address which you will later use for notifications. If you install your mail server on the same Linode as your Mastodon deployment, you can use your Let&rsquo;s Encrypt certificate in <code>/etc/letsencrypt/live/example.com/</code> for the mail server too.</p>
+
+<p>If you would rather not self-host an email server, you can use a third-party SMTP service. The instructions in this guide will also include settings for using <a href="https://www.mailgun.com/">Mailgun</a> as your SMTP provider.</p></li>
+
+<li><p>This guide uses Mastodon&rsquo;s Docker Compose deployment method. Before proceeding, <a href="/docs/applications/messaging/install-mastodon-on-ubuntu-1604/#install-docker">install Docker and Docker Compose</a>. If you haven&rsquo;t used Docker before, it&rsquo;s recommended that you review the <a href="/docs/applications/containers/introduction-to-docker/">Introduction to Docker</a> and <a href="/docs/applications/containers/how-to-use-docker-compose/">How to Use Docker Compose</a> guides.</p></li>
+</ol>
+
+<h3 id="install-docker">Install Docker</h3>
+
+
+
+
+
+<!-- Install Docker CE using the official Docker repositories. -->
+
+<p>These steps install Docker Community Edition (CE) using the official Ubuntu repositories. To install on another distribution, see the official <a href="https://docs.docker.com/install/">installation page</a>.</p>
+
+<ol>
+<li><p>Remove any older installations of Docker that may be on your system:</p>
+
+<pre><code>sudo apt remove docker docker-engine docker.io
+</code></pre></li>
+
+<li><p>Make sure you have the necessary packages to allow the use of Docker&rsquo;s repository:</p>
+
+<pre><code>sudo apt install apt-transport-https ca-certificates curl software-properties-common
+</code></pre></li>
+
+<li><p>Add Docker&rsquo;s GPG key:</p>
+
+<pre><code>curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+</code></pre></li>
+
+<li><p>Verify the fingerprint of the GPG key:</p>
+
+<pre><code>sudo apt-key fingerprint 0EBFCD88
+</code></pre>
+
+<p>You should see output similar to the following:</p>
+
+<pre class="file terminal">
+  <code>
+pub   4096R/0EBFCD88 2017-02-22
+        Key fingerprint = 9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid                  Docker Release (CE deb) <docker@docker.com>
+sub   4096R/F273FCD8 2017-02-22
+</code>
+</pre>
+</li>
+
+<li><p>Add the <code>stable</code> Docker repository:</p>
+
+<pre><code>sudo add-apt-repository &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable&quot;
+</code></pre></li>
+
+<li><p>Update your package index and install Docker CE:</p>
+
+<pre><code>sudo apt update
+sudo apt install docker-ce
+</code></pre></li>
+
+<li><p>Add your limited Linux user account to the <code>docker</code> group:</p>
+
+<pre><code>sudo usermod -aG docker $USER
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>After entering the <code>usermod</code> command, you will need to close your SSH session and open a new one for this change to take effect.</div>
+</blockquote>
+</li>
+
+<li><p>Check that the installation was successful by running the built-in &ldquo;Hello World&rdquo; program:</p>
+
+<pre><code>docker run hello-world
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h3 id="install-docker-compose">Install Docker Compose</h3>
+
+
+
+
+
+<!--- Installation instructions for Docker Compose -->
+
+<ol>
+<li><p>Download the latest version of Docker Compose. Check the <a href="https://github.com/docker/compose/releases">releases</a> page and replace <code>1.21.2</code> in the command below with the version tagged as <strong>Latest release</strong>:</p>
+
+<pre><code>sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+</code></pre></li>
+
+<li><p>Set file permissions:</p>
+
+<pre><code>sudo chmod +x /usr/local/bin/docker-compose
+</code></pre></li>
+</ol>
+
+
+
+
+
+<h2 id="set-up-mastodon">Set Up Mastodon</h2>
+
+<p>Mastodon has a number of components: <a href="/docs/databases/postgresql/configure-postgresql/#what-is-postgresql">PostgreSQL</a> and <a href="https://redis.io/">Redis</a> are used to store data, and three different Ruby on Rails services are used to power the web application. These are all combined in a Docker Compose file that Mastodon provides.</p>
+
+<h3 id="download-mastodon-and-configure-docker-compose">Download Mastodon and Configure Docker Compose</h3>
+
+<ol>
+<li><p>SSH into your Linode and clone Mastodon&rsquo;s Git repository:</p>
+
+<pre><code>cd ~/
+git clone https://github.com/tootsuite/mastodon
+cd mastodon
+</code></pre></li>
+
+<li><p>The Git repository includes an example <code>docker-compose.yml</code> which needs some updates to be used in your deployment. The first update you will make is to specify a release of the Mastodon Docker image. The Mastodon GitHub page maintains a chronological <a href="https://github.com/tootsuite/mastodon/releases">list of releases</a>, and you should generally choose the latest version available.</p>
+
+<p>Open <code>docker-compose.yml</code> in your favorite text editor, comment-out the <code>build</code> lines, and add a version number to the <code>image</code> lines for the <code>web</code>, <code>streaming</code>, and <code>sidekiq</code> services:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>web<span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="c">#    build: .</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>tootsuite/mastodon<span class="p">:</span>v2.<span class="m">4.2</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>streaming<span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="c">#    build: .</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>tootsuite/mastodon<span class="p">:</span>v2.<span class="m">4.2</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>sidekiq<span class="p">:</span><span class="w">
+</span><span class="w"></span><span class="c">#    build: .</span><span class="w">
+</span><span class="w">    </span>image<span class="p">:</span><span class="w"> </span>tootsuite/mastodon<span class="p">:</span>v2.<span class="m">4.2</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>This guide uses Mastodon <a href="https://github.com/tootsuite/mastodon/releases/tag/v2.4.2">v2.4.2</a>. At the time of writing, there was a <a href="https://github.com/tootsuite/mastodon/issues/8001">known issue</a> with <a href="https://github.com/tootsuite/mastodon/releases/tag/v2.4.3">v2.4.3</a> during installation.</div>
+</blockquote>
+</li>
+
+<li><p>For the <code>db</code>, <code>redis</code>, <code>web</code>, and <code>sidekiq</code> services, set the volumes listed in this snippet:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">  </span>db<span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./postgres<span class="p">:</span>/var/lib/postgresql/data<span class="w">
+</span><span class="w">
+</span><span class="w">  </span>redis<span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./redis<span class="p">:</span>/data<span class="w">
+</span><span class="w">
+</span><span class="w">  </span>web<span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./public/system<span class="p">:</span>/mastodon/public/system<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./public/assets<span class="p">:</span>/mastodon/public/assets<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./public/packs<span class="p">:</span>/mastodon/public/packs<span class="w">
+</span><span class="w">
+</span><span class="w">  </span>sidekiq<span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./public/system<span class="p">:</span>/mastodon/public/system<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>./public/packs<span class="p">:</span>/mastodon/public/packs</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>After the <code>sidekiq</code> service and before the final <code>networks</code> section, add a new <code>nginx</code> service. NGINX will be used to proxy requests on HTTP and HTTPS to the Mastodon Ruby on Rails application:</p>
+
+<dl class="file">
+
+
+<dt>
+		docker-compose.yml 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-yaml" data-lang="yaml">version<span class="p">:</span><span class="w"> </span><span class="s1">&#39;3&#39;</span><span class="w">
+</span><span class="w">
+</span><span class="w"></span>services<span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>sidekiq<span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">
+</span><span class="w">  </span>nginx<span class="p">:</span><span class="w">
+</span><span class="w">    </span>build<span class="p">:</span><span class="w">
+</span><span class="w">      </span>context<span class="p">:</span><span class="w"> </span>./nginx<span class="w">
+</span><span class="w">      </span>dockerfile<span class="p">:</span><span class="w"> </span>Dockerfile<span class="w">
+</span><span class="w">    </span>ports<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="s2">&#34;80:80&#34;</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span><span class="s2">&#34;443:443&#34;</span><span class="w">
+</span><span class="w">    </span>volumes<span class="p">:</span><span class="w">
+</span><span class="w">       </span>-<span class="w"> </span>/etc/letsencrypt/<span class="p">:</span>/etc/letsencrypt/<span class="w">
+</span><span class="w">       </span>-<span class="w"> </span>./public/<span class="p">:</span>/home/mastodon/live/public<span class="w">
+</span><span class="w">       </span>-<span class="w"> </span>/usr/share/nginx/html<span class="p">:</span>/usr/share/nginx/html<span class="w">
+</span><span class="w">    </span>restart<span class="p">:</span><span class="w"> </span>always<span class="w">
+</span><span class="w">    </span>depends_on<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>web<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>streaming<span class="w">
+</span><span class="w">    </span>networks<span class="p">:</span><span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>external_network<span class="w">
+</span><span class="w">      </span>-<span class="w"> </span>internal_network<span class="w">
+</span><span class="w">
+</span><span class="w"></span>networks<span class="p">:</span><span class="w">
+</span><span class="w">  </span><span class="c"># [...]</span><span class="w">
+</span><span class="w">  </span>st</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Compare your edited <code>docker-compose.yml</code> with this <a href="./docker-compose.yml">copy of the complete file</a> and make sure all the necessary changes were included.</p></li>
+
+<li><p>Create a new <code>nginx</code> directory within the Mastodon Git repository:</p>
+
+<pre><code>mkdir nginx
+</code></pre></li>
+
+<li><p>Create a file named <code>Dockerfile</code> in the <code>nginx</code> directory and paste in the following contents:</p>
+
+<dl class="file">
+
+
+<dt>
+		nginx/Dockerfile 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="k">FROM</span><span class="s"> nginx:latest</span><span class="err">
+</span><span class="err">
+</span><span class="err"></span>COPY default.conf /etc/nginx/conf.d</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Create a file named <code>default.conf</code> in the <code>nginx</code> directory and paste in the following contents. Change each instance of <code>example.com</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		nginx/default.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-conf" data-lang="conf">map $http_upgrade $connection_upgrade {
+  default upgrade;
+  &#39;&#39;      close;
+}
+
+server {
+  listen 80;
+  listen [::]:80;
+  server_name example.com;
+  # Useful for Let&#39;s Encrypt
+  location /.well-known/acme-challenge/ { root /usr/share/nginx/html; allow all; }
+  location / { return 301 https://$host$request_uri; }
+}
+
+server {
+  listen 443 ssl http2;
+  listen [::]:443 ssl http2;
+  server_name example.com;
+
+  ssl_protocols TLSv1.2;
+  ssl_ciphers HIGH:!MEDIUM:!LOW:!aNULL:!NULL:!SHA;
+  ssl_prefer_server_ciphers on;
+  ssl_session_cache shared:SSL:10m;
+
+  ssl_certificate     /etc/letsencrypt/live/example.com/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/example.com/privkey.pem;
+
+  keepalive_timeout    70;
+  sendfile             on;
+  client_max_body_size 0;
+
+  root /home/mastodon/live/public;
+
+  gzip on;
+  gzip_disable &#34;msie6&#34;;
+  gzip_vary on;
+  gzip_proxied any;
+  gzip_comp_level 6;
+  gzip_buffers 16 8k;
+  gzip_http_version 1.1;
+  gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
+
+  add_header Strict-Transport-Security &#34;max-age=31536000&#34;;
+
+  location / {
+    try_files $uri @proxy;
+  }
+
+  location ~ ^/(packs|system/media_attachments/files|system/accounts/avatars) {
+    add_header Cache-Control &#34;public, max-age=31536000, immutable&#34;;
+    try_files $uri @proxy;
+  }
+
+  location @proxy {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Proxy &#34;&#34;;
+    proxy_pass_header Server;
+
+    proxy_pass http://web:3000;
+    proxy_buffering off;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+
+    tcp_nodelay on;
+  }
+
+  location /api/v1/streaming {
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Proxy &#34;&#34;;
+
+    proxy_pass http://streaming:4000;
+    proxy_buffering off;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection $connection_upgrade;
+
+    tcp_nodelay on;
+  }
+
+  error_page 500 501 502 503 504 /500.html;
+}</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<h3 id="configure-mastodon">Configure Mastodon</h3>
+
+<p>The configuration settings for Mastodon are held in the <code>.env.production</code> file at the root of the Mastodon Git repository.</p>
+
+<ol>
+<li><p>Create the <code>.env.production</code> file and copy in the following contents. Replace all instances of <code>example.com</code> with your domain name. Fill in the <code>SMTP_SERVER</code> and <code>SMTP_PASSWORD</code> fields with the domain and credentials from your mail server:</p>
+
+<dl class="file">
+
+
+<dt>
+		.env.production 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">LOCAL_DOMAIN</span><span class="o">=</span>example.com
+<span class="nv">SINGLE_USER_MODE</span><span class="o">=</span><span class="nb">false</span>
+<span class="nv">SECRET_KEY_BASE</span><span class="o">=</span>
+<span class="nv">OTP_SECRET</span><span class="o">=</span>
+<span class="nv">VAPID_PRIVATE_KEY</span><span class="o">=</span>
+<span class="nv">VAPID_PUBLIC_KEY</span><span class="o">=</span>
+
+<span class="c1"># Database settings</span>
+<span class="nv">DB_HOST</span><span class="o">=</span>db
+<span class="nv">DB_PORT</span><span class="o">=</span><span class="m">5432</span>
+<span class="nv">DB_NAME</span><span class="o">=</span>postgres
+<span class="nv">DB_USER</span><span class="o">=</span>postgres
+<span class="nv">DB_PASS</span><span class="o">=</span>
+
+<span class="c1"># Redis settings</span>
+<span class="nv">REDIS_HOST</span><span class="o">=</span>redis
+<span class="nv">REDIS_PORT</span><span class="o">=</span><span class="m">6379</span>
+<span class="nv">REDIS_PASSWORD</span><span class="o">=</span>
+
+<span class="c1"># Mail settings</span>
+<span class="nv">SMTP_SERVER</span><span class="o">=</span>your_smtp_server_domain_name
+<span class="nv">SMTP_PORT</span><span class="o">=</span><span class="m">587</span>
+<span class="nv">SMTP_LOGIN</span><span class="o">=</span>notifications@example.com
+<span class="nv">SMTP_PASSWORD</span><span class="o">=</span>your_smtp_password
+<span class="nv">SMTP_AUTH_METHOD</span><span class="o">=</span>plain
+<span class="nv">SMTP_OPENSSL_VERIFY_MODE</span><span class="o">=</span>none
+<span class="nv">SMTP_FROM_ADDRESS</span><span class="o">=</span>Mastodon &lt;notifications@example.com&gt;</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>If you&rsquo;re using Mailgun for your mail service, remove all the lines from the <code>Mail settings</code> section and enter the following options:</p>
+
+<dl class="file">
+
+
+<dt>
+		.env.production 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="nv">SMTP_SERVER</span><span class="o">=</span>smtp.mailgun.org
+<span class="nv">SMTP_PORT</span><span class="o">=</span><span class="m">587</span>
+<span class="nv">SMTP_LOGIN</span><span class="o">=</span>your_mailgun_email
+<span class="nv">SMTP_PASSWORD</span><span class="o">=</span>your_mailgun_email_password</code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Use Docker and Mastodon to generate a new value for the <code>SECRET_KEY_BASE</code> setting:</p>
+
+<pre><code>SECRET_KEY_BASE=$(docker-compose run --rm web bundle exec rake secret)
+</code></pre>
+
+<p>This creates a string of random characters. If you encounter an error in the next step, run the command again to generate another string.</p></li>
+
+<li><p>Insert the <code>SECRET_KEY_BASE</code> setting into <code>.env.production</code> using the <code>sed</code> command:</p>
+
+<pre><code>sed -i -e &quot;s/SECRET_KEY_BASE=/&amp;${SECRET_KEY_BASE}/&quot; .env.production
+</code></pre></li>
+
+<li><p>Combine the previous two actions into one step to set a value for the <code>OTP_SECRET</code> setting in <code>.env.production</code>:</p>
+
+<pre><code>sed -i &quot;s/OTP_SECRET=$/&amp;$(docker-compose run --rm web bundle exec rake secret)/&quot; .env.production
+</code></pre></li>
+
+<li><p>Generate values for <code>VAPID_PRIVATE_KEY</code> and <code>VAPID_PUBLIC_KEY</code>settings:</p>
+
+<pre><code>docker-compose run --rm web bundle exec rake mastodon:webpush:generate_vapid_key
+</code></pre></li>
+
+<li><p>Copy the output from the previous command, open <code>.env.production</code> in your text editor, and paste the command output into the two lines for <code>VAPID_PRIVATE_KEY</code> and <code>VAPID_PUBLIC_KEY</code>.</p></li>
+
+<li><p>Build the Docker Compose file:</p>
+
+<pre><code>docker-compose build
+</code></pre></li>
+</ol>
+
+<h3 id="complete-the-mastodon-setup">Complete the Mastodon Setup</h3>
+
+<ol>
+<li><p>Set Mastodon as the owner of the <code>public</code> directory inside the Mastodon Git repository:</p>
+
+<pre><code>sudo chown -R 991:991 public
+</code></pre>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>The UID that Mastodon will run under is <code>991</code>, but there is no <code>mastodon</code> user created on your system.</div>
+</blockquote>
+</li>
+
+<li><p>Create a directory which will hold <a href="https://letsencrypt.org/how-it-works/">Let&rsquo;s Encrypt challenge files</a> for future certificate renewals:</p>
+
+<pre><code>sudo mkdir -p /usr/share/nginx/html
+</code></pre></li>
+
+<li><p>Set up the database:</p>
+
+<pre><code>docker-compose run --rm web bundle exec rake db:migrate
+</code></pre></li>
+
+<li><p>Pre-compile Mastodon&rsquo;s assets:</p>
+
+<pre><code>docker-compose run --rm web bundle exec rake assets:precompile
+</code></pre>
+
+<p>This command will take a while to complete.</p></li>
+
+<li><p>Start Mastodon:</p>
+
+<pre><code>docker-compose up -d
+</code></pre></li>
+</ol>
+
+<h3 id="create-your-mastodon-user">Create your Mastodon User</h3>
+
+<ol>
+<li><p>Visit your domain in a web browser:</p>
+
+<p><img src="mastodon-sign-up-screen.png" alt="Mastodon Sign Up Screen" title="Mastodon Sign Up Screen" /></p></li>
+
+<li><p>Enter a new username, email address, and password to create a new user on your Mastodon instance. When communicating with users of other Mastodon servers, your full username is <code>@your_username@example.com</code>.</p></li>
+
+<li><p>Mastodon will attempt to send you a confirmation email. Check your email and click the provided link to confirm your registration.</p>
+
+<p>If you did not set up email notifications, you can manually confirm the new user by running the <code>confirm_email</code> task on the Docker container:</p>
+
+<pre><code>docker-compose run web bundle exec rake mastodon:confirm_email USER_EMAIL=your_email_address
+</code></pre></li>
+
+<li><p>Run the <code>make_admin</code> task on your Docker container to make this new user an admin for the Mastodon instance:</p>
+
+<pre><code>docker-compose run web bundle exec rake mastodon:make_admin USERNAME=your_mastodon_instance_user
+</code></pre></li>
+</ol>
+
+<h2 id="troubleshooting">Troubleshooting</h2>
+
+<p>If your Mastodon site doesn&rsquo;t load in your browser, try reviewing the logs generated by Docker for more information. To see these errors:</p>
+
+<ol>
+<li><p>Shut down your containers:</p>
+
+<pre><code>cd mastodon
+docker-compose down
+</code></pre></li>
+
+<li><p>Run Docker Compose in an attached state so that you can view the logs generated by each container:</p>
+
+<pre><code>docker-compose up
+</code></pre></li>
+
+<li><p>To shut down Docker Compose and return to the command prompt again, enter <code>CTRL-C</code>.</p></li>
+</ol>
+
+<p>If your Mastodon site appears, but some specific site functions are not working, use the tools available in Mastodon&rsquo;s administrative settings, found through <code>example.com/admin/settings/edit</code>. The Sidekiq dashboard displays the status of jobs issued by Mastodon:</p>
+
+<p><img src="sidekiq-dashboard.png" alt="Sidekiq Dashboard" title="Sidekiq Dashboard" /></p>
+
+<h2 id="maintenance">Maintenance</h2>
+
+<p>To update your Mastodon version, review the instructions from the Mastodon GitHub&rsquo;s <a href="https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/Docker-Guide.md#updating">Docker Guide</a>. You should also review the <a href="https://github.com/tootsuite/mastodon/releases">Mastodon release notes</a>.</p>
+
+<h3 id="renew-your-let-s-encrypt-certificate">Renew your Let&rsquo;s Encrypt Certificate</h3>
+
+<ol>
+<li><p>Open your Crontab in your editor:</p>
+
+<pre><code>sudo crontab -e
+</code></pre></li>
+
+<li><p>Add a line which will invoke Certbot at 11PM every day. Replace <code>example.com</code> with your domain:</p>
+
+<pre><code>0 23 * * *   certbot certonly -n --webroot -w /usr/share/nginx/html -d example.com --deploy-hook='docker exec mastodon_nginx_1 nginx -s reload'
+</code></pre></li>
+
+<li><p>You can test your new job with the <code>--dry-run</code> option:</p>
+
+<pre><code>sudo bash -c &quot;certbot certonly -n --webroot -w /usr/share/nginx/html -d example.com --deploy-hook='docker exec mastodon_nginx_1 nginx -s reload' --dry-run&quot;
+</code></pre></li>
+</ol>
+
+<h2 id="using-your-new-mastodon-instance">Using your New Mastodon Instance</h2>
+
+<p>Now that your new instance is running, you can start participating in the Mastodon network. The official <a href="https://github.com/tootsuite/documentation/blob/master/Using-Mastodon/User-guide.md">Mastodon User&rsquo;s Guide</a> describes the mechanics of the application and network. Mastodon&rsquo;s founder, Eugen Rochko, has also written a non-technical blog post that outlines his best practices for building a new community: <a href="https://medium.com/tootsuite/how-to-start-a-mastodon-server-dea0dec56028">How to start a Mastodon server</a>.</p>
+
+<p><a href="https://discourse.joinmastodon.org">Mastodon&rsquo;s discussion forum</a> hosts conversations about technical issues and governance/community concerns. <a href="https://blog.joinmastodon.org">Mastodon&rsquo;s official blog</a> highlights new releases and features articles on the philosophy of Mastodon&rsquo;s design.</p>
+
+<p>To add your new instance to the list at <a href="https://joinmastodon.org">joinmastodon.org</a>, submit it through <a href="https://instances.social/admin">instances.social</a>.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/Docker-Guide.md">Mastodon GitHub - Docker Guide</a></li>
+
+<li><a href="https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/Production-guide.md">Mastodon GitHub - Production Guide</a></li>
+
+<li><a href="https://github.com/tootsuite/documentation/blob/master/Running-Mastodon/List-of-Rake-tasks.md">Mastodon GitHub - List of Rake Tasks</a></li>
+
+<li><a href="https://hub.docker.com/r/gargron/mastodon/">Docker Hub - Mastodon</a></li>
+
+<li><a href="https://codekoalas.com/blog/setting-your-first-mastodon-instance">Code Koalas - Setting Up Your First Mastodon Instance</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#what-is-mastodon">What is Mastodon?</a>
+<ul>
+<li><a href="#the-fediverse">The Fediverse</a></li>
+</ul></li>
+<li><a href="#before-you-begin">Before You Begin</a>
+<ul>
+<li><a href="#install-docker">Install Docker</a></li>
+<li><a href="#install-docker-compose">Install Docker Compose</a></li>
+</ul></li>
+<li><a href="#set-up-mastodon">Set Up Mastodon</a>
+<ul>
+<li><a href="#download-mastodon-and-configure-docker-compose">Download Mastodon and Configure Docker Compose</a></li>
+<li><a href="#configure-mastodon">Configure Mastodon</a></li>
+<li><a href="#complete-the-mastodon-setup">Complete the Mastodon Setup</a></li>
+<li><a href="#create-your-mastodon-user">Create your Mastodon User</a></li>
+</ul></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#maintenance">Maintenance</a>
+<ul>
+<li><a href="#renew-your-let-s-encrypt-certificate">Renew your Let&rsquo;s Encrypt Certificate</a></li>
+</ul></li>
+<li><a href="#using-your-new-mastodon-instance">Using your New Mastodon Instance</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

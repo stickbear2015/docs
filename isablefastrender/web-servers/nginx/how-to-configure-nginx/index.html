@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Configure NGINX</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="NGINX is a high-performance web server that delivers large amounts of static content quickly. This doc will outline the basic NGINX parameters and conventions.">
+        <meta name="keywords" content="nginx, web server, configuration">
+        
+        <meta property="og:title" content="How to Configure NGINX">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/web-servers/nginx/how-to-configure-nginx/">
+        <meta property="og:description" content="NGINX is a high-performance web server that delivers large amounts of static content quickly. This tutorial will outline the basic NGINX parameters and conventions.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/web-servers/nginx/how-to-configure-nginx/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/">Web Server Guides</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/web-servers/nginx/">NGINX</a>
+  
+</li>
+
+
+<li>
+  
+  How to Configure NGINX
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Configure NGINX</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2019-04-05T19:32:26-04:00">Friday, April 5, 2019</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Linode
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fhow-to-configure-nginx%2f&via=linode&text=How%20to%20Configure%20NGINX" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fhow-to-configure-nginx%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fweb-servers%2fnginx%2fhow-to-configure-nginx%2f&t=How%20to%20Configure%20NGINX" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Configure%20NGINX%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fweb-servers%2fnginx%2fhow-to-configure-nginx%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/web-servers%5cnginx%5chow-to-configure-nginx%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/web-servers%5cnginx%5chow-to-configure-nginx%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p><img src="how_to_configure_nginx.png" alt="Introduction to NGINX" title="Introduction to NGINX" /></p>
+
+<p><a href="https://www.nginx.com/">NGINX</a> is a lightweight, high-performance web server designed for high-traffic use cases.</p>
+
+<p>One of NGINX&rsquo;s strongest features is the ability to efficiently serve static content such as HTML and media files. NGINX uses an asynchronous event-driven model which provides predictable performance under load.</p>
+
+<p>NGINX hands off dynamic content to CGI, FastCGI, or other web servers such as Apache. This content is then passed back to NGINX for delivery to the client. This document will familiarize you with basic NGINX parameters and conventions.</p>
+
+<h2 id="directives-blocks-and-contexts">Directives, Blocks, and Contexts</h2>
+
+<p>All NGINX configuration files are located in the <code>/etc/nginx/</code> directory. The primary configuration file is <code>/etc/nginx/nginx.conf</code>.</p>
+
+<p>Configuration options in NGINX are called <a href="http://nginx.org/en/docs/dirindex.html">directives</a>. Directives are organized into groups known as <strong>blocks</strong> or <strong>contexts</strong>. The two terms are synonymous.</p>
+
+<p>Lines preceded by a <code>#</code> character are comments and not interpreted by NGINX. Lines containing directives must end with a <code>;</code> or NGINX will fail to load the configuration and report an error.</p>
+
+<p>Below is a condensed copy of the <code>/etc/nginx/nginx.conf</code> file that is included with installations from the NGINX repositories. The file starts with 4 directives: <code>user</code>, <code>worker_processes</code>, <code>error_log</code>, and <code>pid</code>. These are outside any specific block or context, so they&rsquo;re said to exist in the <code>main</code> context. The <code>events</code> and <code>http</code> blocks are areas for additional directives, and they also exist in the <code>main</code> context.</p>
+
+<p>See <a href="https://nginx.org/en/docs/ngx_core_module.html">the NGINX docs</a> for explanations of these directives and others available in the <code>main</code> context.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/nginx.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-bash" data-lang="bash">user  nginx<span class="p">;</span>
+worker_processes  <span class="m">1</span><span class="p">;</span>
+
+error_log  /var/log/nginx/error.log warn<span class="p">;</span>
+pid        /var/run/nginx.pid<span class="p">;</span>
+
+events <span class="o">{</span>
+       . . .
+<span class="o">}</span>
+
+http <span class="o">{</span>
+       . . .
+<span class="o">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="the-http-block">The http Block</h2>
+
+<p>The <code>http</code> block contains directives for handling web traffic. These directives are often referred to as <em>universal</em> because they are passed on to all website configurations NGINX serves. See <a href="https://nginx.org/en/docs/http/ngx_http_core_module.html">the NGINX docs</a> for a list of available directives for the <code>http</code> block.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/nginx.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">http</span> <span class="p">{</span>
+    <span class="kn">include</span>       <span class="s">/etc/nginx/mime.types</span><span class="p">;</span>
+    <span class="kn">default_type</span>  <span class="s">application/octet-stream</span><span class="p">;</span>
+
+    <span class="kn">log_format</span>  <span class="s">main</span>  <span class="s">&#39;</span><span class="nv">$remote_addr</span> <span class="s">-</span> <span class="nv">$remote_user</span> <span class="s">[</span><span class="nv">$time_local]</span> <span class="s">&#34;</span><span class="nv">$request&#34;</span> <span class="s">&#39;</span>
+                      <span class="s">&#39;</span><span class="nv">$status</span> <span class="nv">$body_bytes_sent</span> <span class="s">&#34;</span><span class="nv">$http_referer&#34;</span> <span class="s">&#39;</span>
+                      <span class="s">&#39;&#34;</span><span class="nv">$http_user_agent&#34;</span> <span class="s">&#34;</span><span class="nv">$http_x_forwarded_for&#34;&#39;</span><span class="p">;</span>
+
+    <span class="kn">access_log</span>  <span class="s">/var/log/nginx/access.log</span>  <span class="s">main</span><span class="p">;</span>
+
+    <span class="kn">sendfile</span>        <span class="no">on</span><span class="p">;</span>
+    <span class="c1">#tcp_nopush     on;
+</span><span class="c1"></span>
+    <span class="kn">keepalive_timeout</span>  <span class="mi">65</span><span class="p">;</span>
+
+    <span class="c1">#gzip  on;
+</span><span class="c1"></span>
+    <span class="kn">include</span> <span class="s">/etc/nginx/conf.d/*.conf</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h2 id="server-blocks">Server Blocks</h2>
+
+<p>The <code>http</code> block above contains an <code>include</code> directive which tells NGINX where website configuration files are located.</p>
+
+<ul>
+<li><p>If you installed from the official NGINX repository, this line will say <code>include /etc/nginx/conf.d/*.conf;</code> as it does in the <code>http</code> block above. Each website you host with NGINX should have its own configuration file in <code>/etc/nginx/conf.d/</code>, with the name formatted as <code>example.com.conf</code>. Sites which are disabled (not being served by NGINX) should be named <code>example.com.conf.disabled</code>.</p></li>
+
+<li><p>If you installed NGINX from the Debian or Ubuntu repositories, this line will say <code>include /etc/nginx/sites-enabled/*;</code>. The <code>../sites-enabled/</code> folder contains symlinks to the site configuration files stored in <code>/etc/nginx/sites-available/</code>. Sites in <code>sites-available</code> can be disabled by removing the symlink to <code>sites-enabled</code>.</p></li>
+
+<li><p>Depending on your installation source, you&rsquo;ll find an example configuration file at <code>/etc/nginx/conf.d/default.conf</code> or <code>etc/nginx/sites-enabled/default</code>.</p></li>
+</ul>
+
+<p>Regardless of the installation source, server configuration files will contain a <code>server</code> block (or blocks) for a website. For example:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server</span> <span class="p">{</span>
+    <span class="kn">listen</span>         <span class="mi">80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">listen</span>         <span class="s">[::]:80</span> <span class="s">default_server</span><span class="p">;</span>
+    <span class="kn">server_name</span>    <span class="s">example.com</span> <span class="s">www.example.com</span><span class="p">;</span>
+    <span class="kn">root</span>           <span class="s">/var/www/example.com</span><span class="p">;</span>
+    <span class="kn">index</span>          <span class="s">index.html</span><span class="p">;</span>
+    <span class="kn">try_files</span> <span class="nv">$uri</span> <span class="s">/index.html</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<h3 id="listening-ports">Listening Ports</h3>
+
+<p>The <code>listen</code> directive tells NGINX the hostname/IP and the TCP port where it should listen for HTTP connections. The argument <code>default_server</code> means this virtual host will answer requests on port 80 that don&rsquo;t specifically match another virtual host&rsquo;s listen statement. The second statement listens over IPv6 and behaves similarly.</p>
+
+<h3 id="name-based-virtual-hosting">Name-Based Virtual Hosting</h3>
+
+<p>The <code>server_name</code> directive allows multiple domains to be served from a single IP address. The server decides which domain to serve based on the request header it receives.</p>
+
+<p>You typically should create one file per domain or site you want to host on your server. Here are some examples:</p>
+
+<ol>
+<li><p>Process requests for both <code>example.com</code> and <code>www.example.com</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server_name</span>   <span class="s">example.com</span> <span class="s">www.example.com</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>The <code>server_name</code> directive can also use wildcards. <code>*.example.com</code> and <code>.example.com</code> both instruct the server to process requests for all subdomains of <code>example.com</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server_name</span>   <span class="s">*.example.com</span><span class="p">;</span>
+<span class="k">server_name</span>   <span class="s">.example.com</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+
+<li><p>Process requests for all domain names beginning with <code>example.</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/conf.d/example.com.conf 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">server_name</span>   <span class="s">example.*</span><span class="p">;</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+</li>
+</ol>
+
+<p>NGINX allows you to specify server names that are not valid domain names. NGINX uses the name from the HTTP header to answer requests, regardless of whether the domain name is valid or not.</p>
+
+<p>Using non-domain hostnames is useful if your server is on a LAN, or if you already know all of the clients that will be making requests of the server. This includes front-end proxy servers with <code>/etc/hosts</code> entries configured for the IP address on which NGINX is listening.</p>
+
+<h2 id="location-blocks">Location Blocks</h2>
+
+<p>The <code>location</code> setting lets you configure how NGINX will respond to requests for resources within the server. Just like the <code>server_name</code> directive tells NGINX how to process requests for the domain, <code>location</code> directives cover requests for specific files and folders, such as <code>http://example.com/blog/</code>. Here are some examples:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/sites-available/example.com 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">location</span> <span class="s">/</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">location</span> <span class="s">/images/</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">location</span> <span class="s">/blog/</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">location</span> <span class="s">/planet/</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">location</span> <span class="s">/planet/blog/</span> <span class="p">{</span> <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>The locations above are <em>literal string</em> matches, which match any part of an HTTP request that comes after the host segment:</p>
+
+<p><strong>Request:</strong> <code>http://example.com/</code></p>
+
+<p><strong>Returns:</strong> Assuming that there is a <code>server_name</code> entry for <code>example.com</code>, the <code>location /</code> directive will determine what happens with this request.</p>
+
+<p>NGINX always fulfills requests using the most specific match:</p>
+
+<p><strong>Request:</strong> <code>http://example.com/planet/blog/</code> or <code>http://example.com/planet/blog/about/</code></p>
+
+<p><strong>Returns:</strong> This is fulfilled by the <code>location /planet/blog/</code> directive because it is more specific, even though <code>location /planet/</code> also matches this request.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/sites-available/example.com 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">location</span> <span class="p">~</span> <span class="sr">IndexPage\.php$</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">location</span> <span class="p">~</span> <span class="sr">^/BlogPlanet(/|/index\.php)$</span> <span class="p">{</span> <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>When a <code>location</code> directive is followed by a tilde (<strong>~</strong>), NGINX performs a <em>regular expression</em> match. These matches are always case-sensitive. So, <code>IndexPage.php</code> would match the first example above, but <code>indexpage.php</code> would not. In the second example, the regular expression <code>^/BlogPlanet(/|index\.php)$</code> will match requests for <code>/BlogPlanet/</code> and <code>/BlogPlanet/index.php</code>, but <strong>not</strong> <code>/BlogPlanet</code>, <code>/blogplanet/</code>, or <code>/blogplanet/index.php</code>. NGINX uses <a href="http://perldoc.perl.org/perlre.html">Perl Compatible Regular Expressions</a> (PCRE).</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/sites-available/example.com 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">\.(pl|cgi|perl|prl)</span>$ <span class="p">{</span> <span class="p">}</span>
+<span class="k">location</span> <span class="p">~</span><span class="sr">*</span> <span class="s">\.(md|mdwn|txt|mkdn)</span>$ <span class="p">{</span> <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>If you want matches to be case-<em>insensitive</em>, use a tilde with an asterisk (<strong>~</strong>*). The examples above all specify how nginx should process requests that end in a particular file extension. In the first example, any file ending in: <code>.pl</code>, <code>.PL</code>, <code>.cgi</code>, <code>.CGI</code>, <code>.perl</code>, <code>.Perl</code>, <code>.prl</code>, and <code>.PrL</code> (among others) will match the request.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/sites-available/example.com 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">location</span> <span class="s">^~</span> <span class="s">/images/IndexPage/</span> <span class="p">{</span> <span class="p">}</span>
+<span class="k">location</span> <span class="s">^~</span> <span class="s">/blog/BlogPlanet/</span> <span class="p">{</span> <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Adding a caret and tilde (<strong>^~</strong>) to your <code>location</code> directives tells NGINX, if it matches a particular string, to stop searching for more specific matches and use the directives here instead. Other than that, these directives work like the literal string matches in the first group. Even if there&rsquo;s a more specific match later, if a request matches one of these directives, the settings here will be used. See below for more information about the order and priority of <code>location</code> directive processing.</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/sites-available/example.com 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">location</span> <span class="p">=</span> <span class="s">/</span> <span class="p">{</span> <span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>Finally, if you add an equals sign (<strong>=</strong>) to the <code>location</code> setting, this forces an exact match with the path requested and then stops searching for more specific matches. For instance, the final example will match only <code>http://example.com/</code>, not <code>http://example.com/index.html</code>. Using exact matches can speed up request times slightly, which can be useful if you have some requests that are particularly popular.</p>
+
+<p>Directives are processed in the following order:</p>
+
+<ol>
+<li>Exact string matches are processed first. If a match is found, NGINX stops searching and fulfills the request.</li>
+<li>Remaining literal string directives are processed next. If NGINX encounters a match where the <strong>^~</strong> argument is used, it stops here and fulfills the request. Otherwise, NGINX continues to process location directives.</li>
+<li>All location directives with regular expressions (<strong>~</strong> and <strong>~</strong>*) are processed. If a regular expression matches the request, nginx stops searching and fulfills the request.</li>
+<li>If no regular expressions match, the most specific literal string match is used.</li>
+</ol>
+
+<p>Make sure each file and folder under a domain will match at least one <code>location</code> directive.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>Nested location blocks are not recommended or supported.</div>
+</blockquote>
+
+
+<h3 id="location-root-and-index">Location Root and Index</h3>
+
+<p>The <code>location</code> setting is another variable that has its own block of arguments.</p>
+
+<p>Once NGINX has determined which <code>location</code> directive best matches a given request, the response to this request is determined by the contents of the associated <code>location</code> directive block. Here&rsquo;s an example:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/sites-available/example.com 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">location</span> <span class="s">/</span> <span class="p">{</span>
+    <span class="kn">root</span> <span class="s">html</span><span class="p">;</span>
+    <span class="kn">index</span> <span class="s">index.html</span> <span class="s">index.htm</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In this example, the document root is located in the <code>html/</code> directory. Under the default installation prefix for NGINX, the full path to this location is <code>/etc/nginx/html/</code>.</p>
+
+<p><strong>Request:</strong> <code>http://example.com/blog/includes/style.css</code></p>
+
+<p><strong>Returns:</strong> NGINX will attempt to serve the file located at <code>/etc/nginx/html/blog/includes/style.css</code></p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>You can use absolute paths for the <code>root</code> directive if desired.</div>
+</blockquote>
+
+
+<p>The <code>index</code> variable tells NGINX which file to serve if none is specified. For example:</p>
+
+<p><strong>Request:</strong> <code>http://example.com</code></p>
+
+<p><strong>Returns:</strong> NGINX will attempt to serve the file located at <code>/etc/nginx/html/index.html</code>.</p>
+
+<p>If multiple files are specified for the <code>index</code> directive, NGINX will process the list in order and fulfill the request with the first file that exists. If <code>index.html</code> doesn&rsquo;t exist in the relevant directory, then <code>index.htm</code> will be used. If neither exists, a 404 message will be sent.</p>
+
+<p>Here&rsquo;s a more complex example, showcasing a set of <code>location</code> directives for a server responding to the domain <code>example.com</code>:</p>
+
+<dl class="file">
+
+
+<dt>
+		/etc/nginx/sites-available/example.com location directive 
+</dt>
+
+
+<dd>
+
+
+
+
+
+
+
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-nginx" data-lang="nginx"><span class="k">location</span> <span class="s">/</span> <span class="p">{</span>
+    <span class="kn">root</span>   <span class="s">/srv/www/example.com/public_html</span><span class="p">;</span>
+    <span class="kn">index</span>  <span class="s">index.html</span> <span class="s">index.htm</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">location</span> <span class="p">~</span> <span class="sr">\.pl$</span> <span class="p">{</span>
+    <span class="kn">gzip</span> <span class="no">off</span><span class="p">;</span>
+    <span class="kn">include</span> <span class="s">/etc/nginx/fastcgi_params</span><span class="p">;</span>
+    <span class="kn">fastcgi_pass</span> <span class="s">unix:/var/run/fcgiwrap.socket</span><span class="p">;</span>
+    <span class="kn">fastcgi_index</span> <span class="s">index.pl</span><span class="p">;</span>
+    <span class="kn">fastcgi_param</span> <span class="s">SCRIPT_FILENAME</span> <span class="s">/srv/www/example.com/public_html</span><span class="nv">$fastcgi_script_name</span><span class="p">;</span>
+<span class="p">}</span></code></pre></td></tr></table>
+</div>
+</div>
+</dd>
+</dl>
+
+
+<p>In this example, all requests for resources that end in a <code>.pl</code> extension are handled by the second location block, which specifies a <code>fastcgi</code> handler for these requests. Otherwise, NGINX uses the first location directive. Resources are located on the file system at <code>/srv/www/example.com/public_html/</code>. If no file name is specified in the request, NGINX will look for and provide the <code>index.html</code> or <code>index.htm</code> file. If no <code>index</code> files are found, the server will return a 404 error.</p>
+
+<p>Let&rsquo;s analyze what happens during a few requests:</p>
+
+<p><strong>Request:</strong> <code>http://example.com/</code></p>
+
+<p><strong>Returns:</strong> <code>/srv/www/example.com/public_html/index.html</code> if it exists. If that file doesn&rsquo;t exist, it will serve <code>/srv/www/example.com/public_html/index.htm</code>. If neither exists, NGINX returns a 404 error.</p>
+
+<p><strong>Request:</strong> <code>http://example.com/blog/</code></p>
+
+<p><strong>Returns:</strong> <code>/srv/www/example.com/public_html/blog/index.html</code> if it exists. If that file doesn&rsquo;t exist, it will serve <code>/srv/www/example.com/public_html/blog/index.htm</code>. If neither exists, NGINX returns a 404 error.</p>
+
+<p><strong>Request:</strong> <code>http://example.com/tasks.pl</code></p>
+
+<p><strong>Returns:</strong> NGINX will use the FastCGI handler to execute the file located at <code>/srv/www/example.com/public_html/tasks.pl</code> and return the result.</p>
+
+<p><strong>Request:</strong> <code>http://example.com/username/roster.pl</code></p>
+
+<p><strong>Returns:</strong> NGINX will use the FastCGI handler to execute the file located at <code>/srv/www/example.com/public_html/username/roster.pl</code> and return the result.</p>
+
+<blockquote class="community">
+  <strong class="callout-title"><strong>Still have a few questions?</strong></strong>
+  <p><a href="https://www.linode.com/community/questions/">Join our Community</a> and post your questions for other Linode and Linux enthusiasts to help you out.<br></p>
+    <strong>Related Questions:</strong>
+  <div><ul>
+<li><a href="https://www.linode.com/community/questions/466/nginx-troubleshooting">Nginx troubleshooting</a></li>
+<li><a href="https://www.linode.com/community/questions/16980/nginx-font-rules">Nginx font rules</a></li>
+<li><a href="https://www.linode.com/community/questions/408/set-up-ssl-on-my-nginx-linode">How to set up SSL with NGINX</a></li>
+</ul></div>
+</blockquote>
+
+
+            
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#directives-blocks-and-contexts">Directives, Blocks, and Contexts</a></li>
+<li><a href="#the-http-block">The http Block</a></li>
+<li><a href="#server-blocks">Server Blocks</a>
+<ul>
+<li><a href="#listening-ports">Listening Ports</a></li>
+<li><a href="#name-based-virtual-hosting">Name-Based Virtual Hosting</a></li>
+</ul></li>
+<li><a href="#location-blocks">Location Blocks</a>
+<ul>
+<li><a href="#location-root-and-index">Location Root and Index</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>

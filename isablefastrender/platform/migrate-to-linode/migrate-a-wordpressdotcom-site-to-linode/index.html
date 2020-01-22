@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>How to Migrate a WordPress.com Website to Linode</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <meta name="description" content="Shows how to export posts from a WordPress.com website and import them to WordPress on a Linode.">
+        <meta name="keywords" content="wordpress, wordpress.com, migrate, website migration">
+        
+        <meta property="og:title" content="How to Migrate a WordPress.com Website to Linode">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="http://localhost:1313/docs/platform/migrate-to-linode/migrate-a-wordpressdotcom-site-to-linode/">
+        <meta property="og:description" content="Shows how to export posts from a WordPress.com website and import them to WordPress on a Linode.">
+        <meta property="og:site_name" content="Linode Guides &amp; Tutorials">
+        
+        
+        <meta name="twitter:card" content="summary">
+        
+        <meta name="twitter:site" content="@linode">
+        <link rel="alternate" type="application/rss&#43;xml" href="http://localhost:1313/docs/index.xml">
+
+        
+             <link href="/docs/build/stylesheets/home.css" rel='stylesheet' type='text/css'>
+
+        
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/algoliasearch/3/algoliasearch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/autocomplete.js/0/autocomplete.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch.min.css">
+        <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/instantsearch.js@2.10.0/dist/instantsearch-theme-algolia.min.css">
+        <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,900' rel='stylesheet' type='text/css'>
+        <link rel="canonical" href="http://localhost:1313/docs/platform/migrate-to-linode/migrate-a-wordpressdotcom-site-to-linode/">
+        <link rel="shortcut icon" href="/favicon.ico">
+    </head>
+    <body class="no-subnav">
+      <div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="searchLabel" id="ds-search-modal">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div id="ds-search-input">
+				<div class="input-group col-md-12">
+					<div class=".hits"></div>
+					<span class="input-group-btn">
+						<button class="btn btn-info btn-lg" id="ds-search-btn-modal" type="button">
+						<i class="glyphicon glyphicon-search"></i>
+						</button>
+					</span>
+				</div>
+				<ul class="list-group" id="ds-search-list">
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+      
+      <header>
+        <nav id="main-nav" class="navbar navbar-default" role="navigation">
+  <div class="container">
+
+    <div class="navbar-header">
+      <button type="button" class="toggle navbar-toggle" data-toggle="collapse" data-target=".navbar-top-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="https://www.linode.com"><img id="navbar-logo" src="/docs/media/images/header/linode-logo.svg" style="height:57px"></a>
+    </div>
+
+    <div class="collapse navbar-collapse navbar-top-collapse">
+      <ul class="nav navbar-nav navbar-right">
+
+                <li><a href="https://www.linode.com/"><span class='nav-home'></span></a></li>
+                <li><a href="https://www.linode.com/linodes">Features</a></li>
+                <li><a href="https://www.linode.com/pricing">Pricing</a></li>
+                <li><a href="https://www.linode.com/addons">Add-ons</a></li>
+                <li><a href="https://www.linode.com/community">Community</a></li>
+
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Resources <span class="caret"></span></a>
+          <ul class="dropdown-menu dropdown-main-nav dropdown-mega">
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="http://localhost:1313/docs/getting-started">Getting Started</a></li>
+                <li><a href="http://localhost:1313/docs/migrate-from-shared">Migrating to Linode</a></li>
+                <li><a href="http://localhost:1313/docs/hosting-website">Hosting a Website</a></li>
+                <li class="divider"></li>
+                <li class="big"><a href="https://linode.com/docs"><i class="fa fa-book"></i> Guides &amp; Tutorials</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third middle">
+              <ul>
+                <li><a href="https://developers.linode.com">API</a></li>
+                <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+                <li><a href="https://www.linode.com/mobile">Mobile</a></li>
+                <li><a href="https://www.linode.com/cli" target="_blank">CLI</a></li>
+
+                <li class="divider"></li>
+
+                <li><a href="https://www.linode.com/chat"><i class="fa fa-bullhorn gray"></i> Chat</a></li>
+                <li><a href="https://www.linode.com/community"><i class="fa fa-comments"></i> Community</a></li>
+                <li class="divider visible-xs"></li>
+              </ul>
+            </li>
+            <li class="dropdown-third">
+              <ul>
+                <li><a href="https://blog.linode.com">Blog</a></li>
+                <li><a href="http://status.linode.com">System Status</a></li>
+                <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+                <li><a href="https://www.linode.com/about">About Us</a></li>
+                <li class="divider"></li>
+                <li><a href="https://www.linode.com/contact"><i class="fa fa-user"></i> Contact Support</a></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+
+        <li role="presentation" class="divider-vertical"><span>|</span></li>
+          <li class=""><a href="https://login.linode.com/login">Log in <span class="login-caret"></span></a></li>
+          <li class="visible-xs"><a href="https://login.linode.com/signup">Sign up</a></li>
+          <li class="hidden-xs"><div><a id="btn-signup-top" class="btn btn-sm btn-green navbar-btn hidden-xs" href="https://login.linode.com/signup">Sign up</a></div></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+        
+            <div class="container sub-menu-wrap">   
+                <div class="sub-menu-wrapper">
+  <h1 class="sub-menu-wrapper__title">
+    <a href="https://www.linode.com/community/">Community</a>
+  </h1>
+  <ul class="sub-menu">
+    <li><a href="https://www.linode.com/community/questions">Questions</a></li>
+    <li><a class="active" href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+    <li><a href="https://www.linode.com/stackscripts">StackScripts</a></li>
+    <li><a href="https://github.com/linode">GitHub</a></li>
+    <li><a href="https://www.linode.com/events">Events</a></li>
+  </ul>
+</div>
+            </div>
+        
+      </header>
+      
+<script>
+    var anchorForId = function (id) {
+        var anchor = document.createElement("a");
+        anchor.className = "header-link";
+        anchor.href      = "#" + id;
+        anchor.innerHTML = "<span class=\"sr-only\">Permalink</span><i class=\"fa fa-link\"></i>";
+        anchor.title = "Permalink";
+        return anchor;
+    };
+
+    var linkifyAnchors = function (level, containingElement) {
+        var headers = containingElement.getElementsByTagName("h" + level);
+        for (var h = 0; h < headers.length; h++) {
+            var header = headers[h];
+
+            if (typeof header.id !== "undefined" && header.id !== "") {
+                header.appendChild(anchorForId(header.id));
+            }
+        }
+    };
+
+    document.onreadystatechange = function () {
+        if (this.readyState === "complete") {
+            var contentBlock = document.getElementsByClassName("doc")[0];
+            if (!contentBlock) {
+                return;
+            }
+            for (var level = 1; level <= 6; level++) {
+                linkifyAnchors(level, contentBlock);
+            }
+        }
+    };
+
+</script>
+
+
+<section class="primary first-section">
+  <div class="container">
+    <div class="row breadcrumb-row with-subnavigation">
+  <div class="col-sm-12">
+    <ol class="breadcrumb library-breadcrumb">
+      
+
+
+
+
+
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/">Linode Platform</a>
+  
+</li>
+
+
+<li>
+  
+  <a href="http://localhost:1313/docs/platform/migrate-to-linode/">Migrate to Linode</a>
+  
+</li>
+
+
+<li>
+  
+  How to Migrate a WordPress.com Website to Linode
+  
+</li>
+
+    </ol>
+  </div>
+</div>
+
+    <div class="row" itemscope itemtype="http://schema.org/TechArticle">
+      <div class="col-sm-12">
+        <div class="row">
+          <div class="col-sm-9 col-sm-offset-3">
+          </div>
+        </div>
+        <div class="row">
+          <div id="article-body" class="col-sm-9 col-sm-push-3 doc">
+            <h1 class="doc-title" itemprop="headline">How to Migrate a WordPress.com Website to Linode</h1>
+<p markdown="0" class="doc-time doc-modified-time">
+  <small class="updated">Updated <time itemprop="dateModified" datetime="2018-08-16T08:08:22-04:00">Thursday, August 16, 2018</time> by Linode</small>
+  <small class="contributed-by">
+  
+  Written by Nathan Melehan
+  
+  </small>
+</p>
+
+	    
+            <div class="row">
+              <div class="col-sm-10"><div markdown="0" class="signup-top">
+    <div class="row">
+        <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+            <span>
+                
+                Use promo code <strong>DOCS10</strong> for $10 credit on a new account.
+                
+            </span>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
+            <form action="https://login.linode.com/signup">
+                <button type="submit" target="_blank" class="btn btn-blue btn-sm btn-border">Try this Guide</button>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+              <div class="col-sm-2"><div class="social-share">
+    <div class="btn-group share-group">
+        <a data-toggle="dropdown" class="btn btn-info">
+            <i class="fa fa-share-alt fa-inverse"></i>
+        </a>
+        <button href="#" data-toggle="dropdown" class="btn btn-info dropdown-toggle share">
+        <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li>
+                <a data-original-title="Twitter" rel="tooltip"  href="https://twitter.com/share?url=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fmigrate-to-linode%2fmigrate-a-wordpressdotcom-site-to-linode%2f&via=linode&text=How%20to%20Migrate%20a%20WordPress.com%20%e2%80%a6" class="btn btn-twitter" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-twitter"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Facebook" rel="tooltip"  href="http://www.facebook.com/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fmigrate-to-linode%2fmigrate-a-wordpressdotcom-site-to-linode%2f" class="btn btn-facebook" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-facebook"></i>
+                </a>
+            </li>
+            <li>
+                <a data-original-title="Hacker News" rel="tooltip"  href="https://news.ycombinator.com/submitlink?u=http%3a%2f%2flocalhost%3a1313%2fdocs%2fplatform%2fmigrate-to-linode%2fmigrate-a-wordpressdotcom-site-to-linode%2f&t=How%20to%20Migrate%20a%20WordPress.com%20Website%20to%20Linode" class="btn btn-hacker-news" data-placement="left" target="_blank" rel="noopener">
+                    <i class="fa fa-hacker-news "></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div></div>
+            </div>
+	    
+            <div class="library-github" markdown="0">
+	<i class="fa fa-github"></i>
+	<strong>Contribute on GitHub</strong>
+	<p>
+		
+        <a href="https://github.com/linode/docs/issues/new?title=How%20to%20Migrate%20a%20WordPress.com%20Website%20to%20Linode%20Proposed%20Changes&amp;body=Link%3A&nbsp;https%3A%2F%2Flinode.com%2fdocs%2fplatform%2fmigrate-to-linode%2fmigrate-a-wordpressdotcom-site-to-linode%2f%0A%23%23%20Issue%0A%0A%23%23%20Suggested%20Fix%0A&amp;labels=inaccurate guide">Report an Issue</a> |
+		<a href="https://github.com/linode/docs/blob/master/docs/platform%5cmigrate-to-linode%5cmigrate-a-wordpressdotcom-site-to-linode%5cindex.md">View File</a> |
+		<a href="https://github.com/linode/docs/edit/develop/docs/platform%5cmigrate-to-linode%5cmigrate-a-wordpressdotcom-site-to-linode%5cindex.md">Edit File</a>
+	</p>
+</div>
+
+            
+
+            
+
+            
+
+
+
+
+            
+            
+
+<p>This guide describes how to export your content from WordPress.com and self-host your WordPress website on Linode. Read the <a href="/docs/platform/migrate-to-linode/best-practices-when-migrating-to-linode/">Best Practices when Migrating to Linode</a> guide prior to following this guide for more information about migrating your site.</p>
+
+<p>Ubuntu 18.04 is used as the distribution for the new Linode deployment in this guide. If you&rsquo;d like to choose another distribution, use the examples here as an approximation for the commands you&rsquo;ll need to run. You will also install either a <a href="/docs/web-servers/lamp/install-lamp-stack-on-ubuntu-18-04/">LAMP</a> or <a href="/docs/web-servers/lemp/how-to-install-a-lemp-server-on-ubuntu-18-04/">LEMP</a> environment on your new Linode.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>WordPress.com&rsquo;s export feature will export pages, posts, and comments from your site, but it will not export your themes and widgets. You will need to customize your new self-hosted WordPress site&rsquo;s appearance after completing your migration.</div>
+</blockquote>
+
+
+<h2 id="migrate-your-website">Migrate Your Website</h2>
+
+<h3 id="deploy-your-linode">Deploy Your Linode</h3>
+
+<ol>
+<li><p>Follow Linode&rsquo;s <a href="/docs/getting-started/">Getting Started</a> guide and choose Ubuntu 18.04 as your Linux image when deploying. Choose a Linode plan with enough storage space to accommodate the website data from your current host.</p></li>
+
+<li><p>Follow the <a href="/docs/security/securing-your-server/">How to Secure Your Server</a> guide and create a limited Linux user with <code>sudo</code> privileges.</p></li>
+
+<li><p>Follow the <a href="/docs/websites/cms/install-wordpress-ubuntu-18-04">Install WordPress on Ubuntu 18.04</a> guide to stand up a new web server and WordPress installation. Later in this guide you will use the WordPress credentials you create during the installation, so be sure to record them.</p></li>
+</ol>
+
+<h3 id="export-your-wordpress-com-content">Export Your WordPress.com Content</h3>
+
+<ol>
+<li><p>Login to your WordPress.com dashboard and navigate to the <code>Settings</code> page. Choose the <code>Export</code> option from the <code>Settings</code> page:</p>
+
+<p><img src="wordpressdotcom-settings.png" alt="WordPress.com Settings Page" title="Choose the Export option from the Settings page." /></p></li>
+
+<li><p>Click <code>Export All</code>, then <code>Download</code> to download a compressed file of your content in XML form. A copy will also be emailed to you:</p>
+
+<p><img src="wordpressdotcom-export.png" alt="WordPress.com Export Page" title="Click Export All to export your content to an XML file." /></p>
+
+<p>To export posts, pages, or feedback from the site, press the down arrow to the right of the <code>Export All</code> button.</p></li>
+
+<li><p>Unzip the file.</p></li>
+</ol>
+
+<h3 id="import-your-content-on-linode">Import Your Content on Linode</h3>
+
+<ol>
+<li><p>Visit your Linode-hosted WordPress login from your browser (usually <code>http://&lt;your-linode-ip&gt;/wp-admin</code>) and login with your WordPress credentials.</p></li>
+
+<li><p>Navigate to the Import page of the Tools section. The WordPress importer plugin will be listed:</p>
+
+<p><img src="tools-import-wordpress.png" alt="WordPress Tools Page" title="WordPress Importer plugin." /></p></li>
+
+<li><p>Choose <code>Install Now</code> and then run this plugin. On the page that appears, click <code>Choose File</code> and locate the XML file you previously exported from WordPress.com to your computer:</p>
+
+<p><img src="wordpress-importer-plugin-1.png" alt="WordPress Importer Plugin - Page 1" title="Import file dialog box." /></p></li>
+
+<li><p>A page will appear that surfaces a few import options:</p>
+
+<p><img src="wordpress-importer-plugin-2.png" alt="WordPress Importer Plugin - Page 1" title="Import file options show author and post options." /></p>
+
+<p>You are able to assign your imported posts to:</p>
+
+<ul>
+<li>Your previous WordPress.com user, which will also be imported</li>
+<li>A brand new user that the import plugin will create</li>
+<li>One of the WordPress users you&rsquo;ve already created on your Linode as part of deploying your web server</li>
+</ul>
+
+<p><strong>Be sure to enable</strong> the <em>Download and import file attachment</em> option on this page.</p></li>
+
+<li><p>Submit this form. Your content will now be imported.</p></li>
+
+<li><p>Navigate to the <code>Permalinks</code> page in the <code>Settings</code> section:</p>
+
+<p><img src="wordpress-permalinks.png" alt="WordPress Permalinks" title="WordPress permalinks day and name option." /></p></li>
+
+<li><p>Choose the <code>Day and name</code> option and save the change. This option matches the permalink style used on WordPress.com.</p></li>
+</ol>
+
+<h2 id="migrating-dns-records">Migrating DNS Records</h2>
+
+<p>The last step required to migrate is to update your DNS records to reflect your new Linode&rsquo;s IP. Once this is done, visitors will start loading the page from your Linode.</p>
+
+
+
+
+
+
+
+<h3 id="optional-prepare-your-domain-name-to-move">(Optional) Prepare Your Domain Name to Move</h3>
+
+<p>A recommended first step is to lower the <em>Time to Live</em> (TTL) setting for your domain so that the migration won&rsquo;t have a negative impact on your site&rsquo;s visitors. TTL tells DNS caching servers how long to save information about your domain. Because DNS addresses don&rsquo;t often change server IP addresses, default TTL is typically about 24 hours.</p>
+
+<p>When changing servers, however, make the TTL shorter to make sure that when you update your domain information, it takes effect quickly. Otherwise, your domain could resolve to your old server&rsquo;s IP address for up to 24 hours.</p>
+
+<ol>
+<li><p>Locate your current <em>nameservers</em>. If you&rsquo;re not sure what your nameservers are, use a <a href="https://whois.icann.org/">Whois Search tool</a>. You will see several nameservers listed, probably all at the same company.</p>
+
+
+
+
+
+    <img src="/docs/networking/dns/use-linode-name-servers/whois-icann-name-servers.png" 
+        alt="linode.com nameservers"
+        title="whois.icann.org lookup of nameservers for linode.com"
+    />
+
+
+
+<p>You can usually derive the website of your nameserver authority (the organization that manages your DNS) from the nameservers you find in the Whois report (e.g. <code>ns1.linode.com</code> corresponds with <code>linode.com</code>). Sometimes the labeling for the nameservers is not directly related to the organization&rsquo;s website, and in those cases you can often find the website by plugging the nameserver into a Google search.</p></li>
+
+<li><p>Contact your nameserver authority for details on how to shorten the TTL for your domain. Every provider is a little different, so you may have to ask for instructions.</p>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Updating TTL at common nameserver authorities
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper">Most nameserver authorities will allow you to set the TTL on your domain or on individual records, but some do not allow this setting to be edited. Here are support documents from some common authorities that mention how they manage TTL:</p>
+
+<ul>
+<li><a href="https://www.godaddy.com/help/change-the-ttl-value-for-your-dns-records-20238">GoDaddy</a></li>
+<li><a href="https://help.dreamhost.com/hc/en-us/articles/215840248-DNS-propagation-overview">DreamHost</a></li>
+<li><a href="http://wiki.gandi.net/en/dns/zone/expert">Gandi</a></li>
+<li><a href="https://www.1and1.com/help/domains/general-information-about-dns-settings/time-required-for-dns-changes/">1&amp;1</a></li>
+<li><a href="http://www.networksolutions.com/support/how-to-manage-advanced-dns-records/">Network Solutions</a></li>
+<li><a href="https://my.bluehost.com/hosting/help/559">Bluehost</a></li>
+<li><a href="https://support.hostgator.com/articles/when-will-my-domain-start-working-propagation#ttl">HostGator</a></li>
+<li><a href="https://www.namecheap.com/support/knowledgebase/article.aspx/434/2237/how-do-i-set-up-host-records-for-a-domain">Namecheap</a></li>
+<li><a href="https://help.hover.com/hc/en-us/articles/217282457-How-to-Edit-DNS-records-A-AAAA-CNAME-MX-TXT-SRV">Hover</a></li>
+</ul></div></div>
+</blockquote></li>
+
+<li><p>Make a note of your current TTL. It will be listed in seconds, so you need to divide by 3600 to get the number of hours (e.g. 86,400 seconds = 24 hours). This is the amount of time that you need to wait between now and when you actually move your domain.</p></li>
+
+<li><p>Adjust your TTL to its shortest setting. For example, 300 seconds is equal to 5 minutes, so that&rsquo;s a good choice if it&rsquo;s available.</p></li>
+
+<li><p>Wait out the original TTL from Step 3 before actually moving your domain&ndash;otherwise, DNS caching servers will not know of the new, lower TTL yet. For more information on domain TTL, see our <a href="/docs/networking/dns/dns-manager-overview/#set-the-time-to-live-or-ttl">DNS guide</a>.</p></li>
+</ol>
+
+<h3 id="use-linode-s-nameservers">Use Linode&rsquo;s Nameservers</h3>
+
+<ol>
+<li><p>Follow Linode&rsquo;s instructions on <a href="/docs/networking/dns/dns-manager-overview/#add-a-domain-zone">adding a domain zone</a> to create DNS records at Linode for your domain. Recreate the DNS records listed in your current nameserver authority&rsquo;s website, but change the IP addresses to reflect your Linode IPs where appropriate.</p></li>
+
+<li><p>Locate your domain&rsquo;s registrar, which is the company you purchased your domain from. If you&rsquo;re not sure who your registrar is, you can find out with a <a href="https://whois.icann.org/">Whois Search tool</a>.</p>
+
+
+
+
+
+    <img src="/docs/networking/dns/use-linode-name-servers/whois-icann-registrar.png" 
+        alt="linode.com nameservers"
+        title="whois.icann.org lookup of nameservers for linode.com"
+    />
+
+
+
+<p>Your registrar may not be the same organization as your current nameserver authority, though they often are, as registrars generally offer free DNS services.</p></li>
+
+<li><p>Log in to your domain registrar&rsquo;s control panel and update the authoritative nameservers to be Linode&rsquo;s nameservers:</p>
+
+<ul>
+<li><code>ns1.linode.com</code></li>
+<li><code>ns2.linode.com</code></li>
+<li><code>ns3.linode.com</code></li>
+<li><code>ns4.linode.com</code></li>
+<li><code>ns5.linode.com</code></li>
+</ul>
+
+<blockquote class="disclosure-note">
+    <span>
+        
+        <img class="disclosure-icon" src="/docs/media/images/arrow-down-circle.svg" />
+        <strong class="callout-title">
+            Updating authoritative nameservers at common registrars
+        </strong>
+    </span>
+    <div class="disclosure-note-content"><div class="height-preservation-wrapper">The following support documents describe how to update the authoritative nameservers of common registrars:</p>
+
+<ul>
+<li><a href="https://support.hostgator.com/articles/how-to-change-godaddy-name-servers">GoDaddy</a></li>
+<li><a href="https://help.dreamhost.com/hc/en-us/articles/216385417-How-do-I-change-my-nameservers-at-DreamHost">DreamHost</a></li>
+<li><a href="https://doc.gandi.net/en/dns/change/">Gandi</a></li>
+<li><a href="https://www.1and1.com/help/domains/using-your-own-name-servers/using-your-own-name-servers-for-a-domain/">1&amp;1</a></li>
+<li><a href="http://www.networksolutions.com/support/move-dns-to-a-new-server/">Network Solutions</a></li>
+<li><a href="https://my.bluehost.com/hosting/help/transfer_client_start">Bluehost</a></li>
+<li><a href="https://support.hostgator.com/articles/how-do-i-manage-the-domain-i-bought-from-hostgator">HostGator</a></li>
+<li><a href="https://www.namecheap.com/support/knowledgebase/article.aspx/767/10/how-can-i-change-the-nameservers-for-my-domain">Namecheap</a></li>
+<li><a href="https://help.hover.com/hc/en-us/articles/217282477-How-to-Change-your-domain-nameservers-DNS-servers-">Hover</a></li>
+</ul></div></div>
+</blockquote></li>
+
+<li><p>Wait the amount of time you set for your TTL for the domain to propagate. If you did not shorten your TTL, this may take up to 48 hours.</p></li>
+
+<li><p>Navigate to your domain in a web browser. It should now show the website from Linode, rather than your old host. If you can&rsquo;t tell the difference, use the <a href="http://www.kloth.net/services/dig.php">DIG utility</a>. It should show the IP address for your Linode.</p></li>
+
+<li><p><a href="/docs/networking/dns/configure-your-linode-for-reverse-dns/">Set reverse DNS</a> for your domain. This is especially important if you are running a mail server.</p>
+
+<blockquote class="note">
+  <strong class="callout-title">Note</strong>
+  <div>If you&rsquo;re having trouble seeing your site at the new IP address, try visiting it in a different browser or in a private browsing session. Sometimes your browser will cache old DNS data, even if it has updated everywhere else.</div>
+</blockquote>
+</li>
+</ol>
+
+
+
+
+
+<h2 id="next-steps">Next Steps</h2>
+
+<p>The WordPress.com team recommends installing the <a href="https://jetpack.com/">Jetpack plugin</a> on your new self-hosted WordPress site. This free plugin is maintained by the WordPress.com team and provides features available on your WordPress.com site, including analytics, site management tools, and access to the <a href="https://apps.wordpress.com/">WordPress.com apps</a>. <a href="https://jetpack.com/pricing/">Premium versions</a> of the Jetpack plugin provide extra features.</p>
+
+<p>If you had subscribers on your WordPress.com site, you can also migrate them to your new self-hosted site. This requires that you install the Jetpack plugin and uses Jetpack&rsquo;s <a href="https://jetpack.com/support/subscription-migration-tool/">subscription migration tool</a>.</p>
+
+<p>Your new self-hosted WordPress site uses the default theme and widgets. Review the WordPress.org documentation for <a href="https://codex.wordpress.org/Using_Themes#Adding_New_Themes_using_the_Administration_Panels">themes</a> and <a href="https://codex.wordpress.org/WordPress_Widgets">widgets</a> to learn how to customize your site&rsquo;s appearance.</p>
+
+            
+<h2 id="more-information">More Information</h2>
+<p>You may wish to consult the following resources for additional information on this topic. While these are provided in the hope that they will be useful, please note that we cannot vouch for the accuracy or timeliness of externally hosted materials.</p>
+<ul>
+
+<li><a href="https://move.wordpress.com/">WordPress.com: Moving to Self-Hosted WordPress</a></li>
+
+</ul>
+
+
+            <h2 id="join-our-community">Join our Community</h2>
+<p><a href="https://www.linode.com/community/questions/" target="_blank">Find answers, ask questions, and help others.</a></p>
+
+
+            
+
+
+
+
+            
+            
+<p class="doc-license">This guide is published under a <a href="https://creativecommons.org/licenses/by-nd/4.0">CC BY-ND 4.0</a> license.</p>
+
+          </div>
+          <div id="doc-sidebar-container" class="col-sm-3 col-sm-pull-9 hidden-xs">
+  <div id="doc-sidebar">
+    <div markdown="0" class="doc-sidebar-inner" >
+  <div class="input-group search-form">
+  <span class="search-icon glyphicon glyphicon-search"></span>
+	<label class="sr-only" for="q">Search guides and tutorials</label>
+  <input id="ss_keyword" name="q" type="text" class="form-control search-box" placeholder="Search guides..."></input>
+  
+  <div class="hits"></div>
+</div>
+</div>
+
+      
+    <div class="doc-sidebar-inner" id="doc-sidebar-toc">
+      <h3 id="doc-sidebar-title">In This Guide:</h3>
+      <div class="sidebar sidebar-library nav navbar" id="markdown-toc">
+          <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#migrate-your-website">Migrate Your Website</a>
+<ul>
+<li><a href="#deploy-your-linode">Deploy Your Linode</a></li>
+<li><a href="#export-your-wordpress-com-content">Export Your WordPress.com Content</a></li>
+<li><a href="#import-your-content-on-linode">Import Your Content on Linode</a></li>
+</ul></li>
+<li><a href="#migrating-dns-records">Migrating DNS Records</a></li>
+<li><a href="#next-steps">Next Steps</a></li>
+</ul></li>
+</ul>
+</nav>
+      </div>
+    </div>
+    
+    <div class="library-rss">
+  <a href="http://localhost:1313/docs/index.xml"><i class="fa fa-rss-square"></i> RSS feed</a>
+</div>
+
+    <div markdown="0" class="library-signup">
+  <form action="//linode.us7.list-manage.com/subscribe/post?u=f9b54ed743e1629877750e3f4&amp;id=68bafea72a&SIGNUP=library-website"
+    method="post" class="email-signup" target="_blank" novalidate="">
+    <i class="fa fa-envelope"></i>
+    <h6>Monthly Guides Update</h6>
+    <input name="EMAIL" type="email" class="form-control input-sm"
+    placeholder="Email address" required="" />
+    <div style="position: absolute; left: -5000px;" aria-hidden="true">
+      <input type="text" name="b_f9b54ed743e1629877750e3f4_68bafea72a"
+      tabindex="-1" value="">
+    </div>
+    <div style="display:none">
+      <input type="checkbox" value="4" name="group[13][4]"
+      id="mce-group[13]-13-0" checked="">
+    </div>
+    <button type="submit" class="btn btn-blue btn-sm btn-border email-signup" value="Subscribe"
+    name="subscribe" id="mc-embedded-subscribe">Sign Up</button>
+  </form>
+</div>
+  </div>
+</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="modal fade" id="img-modal" tabindex="-1" role="dialog" aria-labelledby="imageModal" aria-hidden="true">
+  <div class="modal-dialog modal-full">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="img-modal-title" class="modal-title">Image Detail</h4>
+      </div>
+      <div class="modal-body">
+        <img id="img-modal-image" class="img-responsive">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-blue" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+      <footer>
+        <section class="neutral some-space">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-12 text-center">
+				<h3>Write for Linode.</h3>
+				<p class="lead">We're always expanding our docs. If you like to help people, can write, and have expertise in a Linux or cloud infrastructure topic, learn how you can <a href="/docs/contribute">contribute</a> to our library.</p>
+			</div>
+		</div>
+	</div>
+</section>
+
+        <section id="pre-footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-7">
+        <span>Get started in the Linode Cloud today.</span>
+      </div>
+      <div class="col-sm-5 pad-xs">
+        <a id="btn-signup-bottom" class="btn btn-lg btn-full btn-green" href="https://login.linode.com/signup">Create an Account</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="container">
+
+    <div class="row">
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/linodes">Overview</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/pricing">Plans &amp; Pricing</a></li>
+          <li><a href="https://www.linode.com/linodes">Features</a></li>
+          <li><a href="https://www.linode.com/addons">Add-Ons</a></li>
+          <li><a href="https://www.linode.com/managed">Managed</a></li>
+          <li><a href="https://www.linode.com/professional-services">Professional Services</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="http://localhost:1313/docs/">Resources</a></h5>
+        <ul>
+          <li><a href="http://localhost:1313/docs/">Guides &amp; Tutorials</a></li>
+          <li><a href="https://www.linode.com/speedtest">Speed Test</a></li>
+          <li><a href="https://www.linode.com/community">Community</a></li>
+          <li><a href="https://www.linode.com/chat">Chat</a></li>
+          <li><a href="http://status.linode.com/">System Status</a></li>
+        </ul>
+      </div>
+
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/about">Company</a></h5>
+        <ul>
+          <li><a href="https://www.linode.com/about">About Us</a></li>
+          <li><a href="https://blog.linode.com">Blog</a></li>
+          <li><a href="https://www.linode.com/press">Press</a></li>
+          <li><a href="https://www.linode.com/referrals">Referral System</a></li>
+          <li><a href="https://www.linode.com/careers">Careers</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="/agreement">Legal</a></h5>
+        <ul>
+          <li><a href="/agreement">Customer Agreement</a></li>
+          <li><a href="/tos">Terms of Service</a></li>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/aup">Acceptable Use Policy</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5><a href="https://www.linode.com/contact">Contact Us</a></h5>
+        <ul>
+          <li><a href="tel:+18554546633">855-4-LINODE</a></li>
+          <li><a href="tel:+18554546633">(855-454-6633)</a></li>
+          <li><a href="tel:+16093807100">Intl.: +1 609-380-7100</a></li>
+          <li><a href="mailto:support@linode.com">Email us</a></li>
+          <li>
+            <br />
+            <a target="_blank" href="https://facebook.com/linode"><i class="fa fa-facebook-square"></i></a>
+            <a target="_blank" href="https://twitter.com/linode"><i class="fa fa-twitter-square"></i></a>
+            <a target="_blank" href="https://plus.google.com/+linode/"><i class="fa fa-google-plus-square"></i></a>
+            <a target="_blank" href="https://linkedin.com/company/linode"><i class="fa fa-linkedin-square"></i></a>
+            <a target="_blank" href="https://github.com/linode/"><i class="fa fa-github-square"></i></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark-moar">
+  <div class="container">
+    <div id="footer-copyright" class="row">
+      <div class="col text-center">
+        &copy; 2019 Linode, LLC
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/security">Security</a>
+      </div>
+
+      <div class="col text-center">
+        <a href="https://www.linode.com/compliance">Standards &amp; Compliance</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+      </footer>
+      
+        <script src="/docs/build/js/libs.js" type="text/javascript"></script>
+<script src="/docs/build/js/main.js" type="text/javascript"></script>
+
+      
+      <script type="text/javascript">
+$( "img[src^='\/docs\/assets']" ).each(function () {
+  $( this ).parent().bind('click', false);
+  $( this ).on('click', function(e) {
+    var image_title = $( this ).attr('alt');
+    var image_href = $( this ).parent().attr('href') || $( this ).attr('src');
+    $( '#img-modal-image' ).attr('src', image_href);
+    $( '#img-modal-title' ).text(image_title);
+    $( '#img-modal' ).modal({ show: true });
+  });
+});
+</script>
+
+
+
+      
+<script type="text/javascript">
+ SidebarScroll.init()
+</script>
+
+    <script data-no-instant>document.write('<script src="/livereload.js?port=1313&mindelay=10"></' + 'script>')</script></body>
+</html>
