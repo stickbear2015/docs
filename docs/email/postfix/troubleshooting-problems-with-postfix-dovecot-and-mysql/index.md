@@ -19,6 +19,8 @@ This guide is a companion to the [Postfix, Dovecot, and MySQL](/docs/email/postf
 
 The first section, Troubleshooting Checklist, has a top-down approach to troubleshooting that will help you find specific errors for your mail server. The second section, Step-by-Step Configuration, uses a bottom-up approach that shows you how to get a basic mail server functioning and then gradually add more features.
 
+{{< content "email-warning-shortguide" >}}
+
 ## Troubleshooting Checklist
 
 Correctly diagnosing a problem is the first step in solving it. At first glance, many mail server errors can seem quite general. Usually the first sign of a problem is that you try to create a test mail account and can't connect. This section is a crash course in finding mail server errors. We recommend reading through the following sections in order, because they progress from general to more specific troubleshooting techniques.
@@ -538,6 +540,7 @@ Mar  8 18:01:27 host postfix/virtual[4418]: E2C7528420: to=<email1@example.com>,
 14. Next up is Dovecot. First, update the `mail_location` in `/etc/dovecot/conf.d/10-mail.conf`:
 
     {{< file "/etc/dovecot/conf.d/10-mail.conf" >}}
+mail_location = maildir:~ #update mail_location
 passdb {
   driver = passwd-file
   args = username_format=%u /etc/dovecot/users
@@ -731,7 +734,7 @@ ssl_key = </etc/ssl/private/dovecot.pem
 4.  Disable plain-text authentication. In `/etc/dovecot/conf.d/10-auth.conf`, set the following line:
 
     {{< file "/etc/dovecot/conf.d/10-auth.conf" >}}
-disable\_plaintext\_auth = yes
+disable_plaintext_auth = yes
 
 {{< /file >}}
 

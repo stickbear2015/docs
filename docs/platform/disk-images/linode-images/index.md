@@ -5,18 +5,17 @@ author:
 description: How to retain Disks with the Linode Images service
 keywords: ["linode Images", " imagize"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-aliases: ['platform/linode-images/','linode-images/','platform/disk-images/linode-images-new-manager/']
+aliases: ['linode-images/','platform/disk-images/linode-images-new-manager/','platform/disk-images/linode-images-classic-manager/','platform/linode-images/']
 modified: 2018-08-22
 modified_by:
   name: Linode
 published: 2014-09-25
 title: Linode Images
-classic_manager_link: platform/disk-images/linode-images-classic-manager/
 ---
 
 ![Linode Images](linode-images.jpg)
 
-*Linode Images* allows you to take snapshots of your disks, and then deploy them to any Linode under your account. This can be useful for bootstrapping a master image for a large deployment, or retaining a disk for a configuration that you may not need running, but wish to return to in the future. Linode Images will be retained whether or not you have an active Linode on your account, which also makes them useful for long term storage of a private template that you may need in the future. There is no additional charge to store Images for Linode users. Images are limited to 2GB per Image and 3 Images per account. Additionally, images can only be created on disks with ext3 or ext4 filesystems with a single partition.
+*Linode Images* allows you to take snapshots of your disks, and then deploy them to any Linode under your account. This can be useful for bootstrapping a master image for a large deployment, or retaining a disk for a configuration that you may not need running, but wish to return to in the future. Linode Images will be retained whether or not you have an active Linode on your account, which also makes them useful for long term storage of a private template that you may need in the future. There is no additional charge to store Images for Linode users. Images are limited to 6GB per Image and 3 Images per account. Additionally, images can only be created on disks with ext3 or ext4 filesystems with a single partition.
 
 {{< note >}}
 When saving a Linode image, it is the aspects of the Linode that are on the **disk** that are saved, not any additional aspects such as IP addresses, fully qualified domain names, and MAC addresses.
@@ -38,12 +37,16 @@ While an image can be captured while your Linode is running, we would recommend 
 
     ![Create an Image menu](images-create-image-menu.png "Create an Image menu.")
 
+    {{< caution >}}
+CoreOS disk images are in RAW format. Images made from CoreOS disks will not be able to be used to deploy new Linodes.
+{{< /caution >}}
+
 1.  Once you click the **Create** button, your image will be frozen for later use. You can view the progress under the bell notifications at the top of the page.
 
     ![Image creation status under the bell notifications.](images-image-being-created.png "Image creation status under the bell notifications.")
 
     {{< note >}}
-Linode Images are limited to 2048MB of data per disk.  You will need to ensure that data within your disk does not exceed this size limit. Additionally, Linode Images cannot be created if you are using raw disks or disks that have been formatted using custom filesystems.   {{< /note >}}
+Linode Images are limited to 6144MB of data per disk.  You will need to ensure that data within your disk does not exceed this size limit. Additionally, Linode Images cannot be created if you are using raw disks or disks that have been formatted using custom filesystems.   {{< /note >}}
 
     Once the job has completed, your Linode's disk has been captured and stored.
 
@@ -71,6 +74,9 @@ Deploying one of your saved images to any Linode under your account is a simple 
 
     [![Select your Image from the 'My Images' tab](images-create-linode-from-image-small.png)](images-create-linode-from-image.png)
 
+    {{< caution >}}
+You cannot deploy an image that was created from a RAW disk format. Attempting to do so will result in a failure.
+{{< /caution >}}
 
 1.  Select your desired Region, Linode Plan, Label, and set your root password, then click **Create** to create a Linode with your saved image.
 

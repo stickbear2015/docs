@@ -1,4 +1,5 @@
 abc
+abell
 absecon
 abspath
 aconf
@@ -12,11 +13,15 @@ adnanh
 adodb
 aes
 ahci0
+Aho
 ahvz
 ajp
 aker
+alef
+alexey
 alives
 allmasquerade
+alphanumerics
 amavis
 amavisd
 amd64
@@ -51,6 +56,7 @@ authy
 autocompletion
 autoconfiguration
 autoconfigure
+autodiscover
 autohosting
 autojoin
 autojump
@@ -61,6 +67,7 @@ automattic
 automount
 autorelabel
 autorun
+autoscaler
 autoscaling
 autossh
 autostart
@@ -81,6 +88,7 @@ backtick
 backticks
 backupninja
 bampton
+barebones
 base64
 basearch
 bashdoor
@@ -95,16 +103,19 @@ bitrate
 blocklists
 blockwise
 bluehost
+bookinfo
 boolstyle
 boonex
 bootable
 bootloader
 bootup
 bootups
+boto
 bounceback
 brackley
 bram
 bs4
+bufio
 bugtracker
 buildbot
 bukkit
@@ -117,6 +128,7 @@ bzrtools
 c2s
 cabd
 cacert
+cacheable
 caddy
 caddyfile
 cakey
@@ -124,6 +136,7 @@ calc
 campione
 captcha
 carootcert
+ccm
 celeryd
 centos
 centos7
@@ -185,6 +198,7 @@ config
 configs
 configtest
 configurability
+connectionless
 containerd
 containerised
 convolutional
@@ -212,12 +226,15 @@ cronjobs
 crontab
 crt
 crypto
+csi
 csr
 css
 csum
 csv
 ctools
 ctrl
+ctx
+cuda
 cyberduck
 cyg
 cygwin
@@ -232,6 +249,7 @@ dahdi
 databags
 datacenter
 datadir
+datagram
 dataset
 datasets
 datasource
@@ -250,6 +268,7 @@ dbfiles
 dbname
 dbserver
 dcs
+deallocation
 deathmatch
 debconf
 declaratively
@@ -260,6 +279,8 @@ descolada
 descr
 deserialize
 dest
+dereference
+dereferencing
 dev
 devel
 devops
@@ -275,6 +296,7 @@ dircaps
 directadmin
 dired
 direnv
+discoverability
 disqus
 distro
 distros
@@ -369,8 +391,10 @@ fastopen
 fauxhai
 fb4c
 fcgi
+fcgid
 fcgiwrap
 fcrontab
+fd
 fdisk
 fdriver
 fe70
@@ -379,6 +403,7 @@ fediverse
 fetchmail
 fetchmailrc
 ff02
+ffff
 fi
 fiiiile
 file1
@@ -402,6 +427,7 @@ flatpress
 flyspray
 foodcritic
 fortran
+fmt
 fpm
 fragging
 frakti
@@ -413,6 +439,7 @@ frontmatter
 fs
 fsck
 fstab
+func
 galera
 gamemode
 gamepad
@@ -422,6 +449,7 @@ gandi
 gatsby
 gbps
 gcc
+gcloud
 gcm
 geckodriver
 gem1
@@ -459,6 +487,8 @@ gnulinux
 gnutls
 gogs
 golang
+goroutine
+goroutines
 goto
 gpc
 gpg
@@ -470,6 +500,7 @@ greenbone
 greylist
 greylisting
 griefing
+griesemer
 groot
 grsecurity
 gsa
@@ -497,6 +528,7 @@ hasn
 hba
 hd0
 hdfs
+healthcheck
 heartbleed
 heroku
 hexo
@@ -534,6 +566,7 @@ hybla
 hyperefficient
 hypervisor
 hypervisors
+Istio
 i386
 iaas
 icann
@@ -543,6 +576,7 @@ icinga
 icingacli
 icmp
 icmpv6
+idempotence
 ident
 identrust
 idlist
@@ -601,6 +635,7 @@ iso
 isoformat
 isp
 issuewild
+istioctl
 iterable
 itk
 java6
@@ -608,6 +643,7 @@ javac
 javascript
 jdbc
 jdk
+Jellyfin
 jenkinsfile
 jetpack
 jez
@@ -634,6 +670,7 @@ keepalived
 keras
 kerberos
 kerberos5
+Kernighan
 keychain
 keyfiles
 keygen
@@ -663,6 +700,7 @@ kubelet
 kubelets
 kubernetes
 kubespray
+kuznetosv
 lambdabunker
 laravel
 largebiomes
@@ -701,6 +739,7 @@ lish
 listdir
 listserv
 listservs
+lke
 lksemel
 lo0
 loadavg
@@ -719,7 +758,10 @@ logwatch
 longview
 lookups
 loopback
+lspci
+lsb
 lsd
+lsof
 lst
 lsyncd
 lua
@@ -727,6 +769,7 @@ lubuntu
 lucene
 lugano
 luminus
+lxd
 lxml
 lzma
 lzopio
@@ -745,6 +788,7 @@ maitis
 managesieve
 mandriva
 manyof
+mapbox
 mapreduce
 mariadb
 marino
@@ -753,6 +797,8 @@ masterdb
 masterless
 mathematica
 mathjax
+matplotlib
+mawk
 maxconn
 maxdepth
 mbit
@@ -781,6 +827,7 @@ microservice
 microservices
 microsystems
 microweb
+middleware
 minecraft
 mineshafts
 miniconda
@@ -789,6 +836,7 @@ minification
 minikube
 minimalistic
 minio
+minisockets
 minitest
 misconfiguration
 misconfigurations
@@ -800,6 +848,7 @@ moby
 moddable
 modsecurity
 mongodb
+mongoimport
 monit
 moolenaar
 motd
@@ -819,6 +868,7 @@ multicast
 multicraft
 multilib
 multiport
+multisite
 multiuser
 munin
 musl
@@ -851,6 +901,7 @@ nano
 nanode
 nanodes
 natively
+nawk
 nbox
 ncdu
 ncurses
@@ -859,21 +910,25 @@ neomake
 neovim
 netblocks
 netboot
+netcat
 netconfig
 netdev
 netfilter
 netflow
 netfs
+netid
 netifrc
 netlify
 netloc
 netmask
 netplan
+netstat
 networkd
 newgrp
 newtag
 nextcloud
 nexthop
+nftables
 ng
 nginx
 ngrok
@@ -899,6 +954,8 @@ noninteractive
 nonprivileged
 nonrecursive
 nosync
+nouveau
+novaclient
 novell
 npm
 npmjs
@@ -908,6 +965,7 @@ ns2
 nsd4
 ntop
 ntopng
+ntp
 ntpd
 nullval
 num
@@ -942,6 +1000,7 @@ otomen
 outputter
 outputters
 overcommit
+overengineer
 overwatch
 ovpn
 owadb
@@ -970,6 +1029,7 @@ passwdcolumn
 passwdfile
 passwordless
 patroni
+pbr
 pem
 pepi
 percona
@@ -1027,10 +1087,12 @@ preprocessing
 prerotate
 prerouting
 prestashop
+Printf
 pritunl
 procfile
 procmail
 procs
+productpage
 prosodyctl
 proto
 proxied
@@ -1042,6 +1104,7 @@ psycop2
 pty
 pubkey
 publickey
+pulumi
 puppetd
 puppetlabs
 puppetmaster
@@ -1061,6 +1124,7 @@ python3
 pythonic
 qmail
 qmgr
+quadro
 qualys
 quickconnect
 quicklisp
@@ -1080,8 +1144,10 @@ readwrite
 realtime
 reconnections
 recursing
+recv
 red5
 reddit
+redeployable
 redhat
 redir
 redis
@@ -1098,6 +1164,7 @@ remi
 remmina
 remotehost
 replicaset
+replicationcontrollers
 replset
 repo
 repos
@@ -1109,6 +1176,7 @@ respawn
 resque
 restapi
 retpoline
+retrans
 reusability
 reutilize
 richlanguage
@@ -1138,6 +1206,7 @@ rubygems
 ruleset
 rulesets
 rundir
+runfile
 runlevels
 runtime
 runtimes
@@ -1185,6 +1254,7 @@ sendmail
 seo
 serv
 server1
+serverless
 servername
 serverpassword
 serverspec
@@ -1200,6 +1270,7 @@ sfproject
 sfroot
 sftp
 sha256
+shader
 shadowsocks
 sharded
 sharding
@@ -1252,15 +1323,19 @@ src
 srv
 sshd
 sshfs
+sshpass
 ssi
 ssl
 stackscript
 stackscripts
+stadia
 stalkyard
 stallman
 starttls
 statusbar
+stdin
 stderr
+stdout
 steamlab
 stopwait
 stopword
@@ -1290,6 +1365,7 @@ sukharev
 supervisord
 surbma
 suse
+swappable
 svn
 symantec
 symfony
@@ -1308,6 +1384,7 @@ syslog
 systemctl
 systemd
 systemname
+sysv
 sysvinit
 targ
 tasksel
@@ -1327,6 +1404,7 @@ testparam
 testuser
 tetris
 tf
+tfa
 tgz
 thawte
 theano
@@ -1400,6 +1478,7 @@ unencrypted
 unexported
 unformatted
 unicast
+uninvoiced
 uniq
 unmanaged
 unmerged
@@ -1411,11 +1490,14 @@ unregister
 unrendered
 unsets
 unsetting
+unschedulable
 untar
 untracked
 untruncated
+untrust
 untrusted
 unversioned
+upsize
 uri
 uris
 url
@@ -1442,6 +1524,7 @@ v4
 v6
 vagrantfile
 validator
+variadic
 varnishlog
 vcs
 vdev
@@ -1468,6 +1551,8 @@ vmstat
 vnc
 vset
 vswap
+vue
+vuejs
 vz
 vznetaddbr
 walkthrough
@@ -1481,6 +1566,7 @@ webapps
 webcit
 webdata1
 webdriver
+weblish
 webmail
 webmin
 webpages
@@ -1494,6 +1580,7 @@ websocket
 webtatic
 webupd8
 weechat
+Weinberger
 welcometext
 wercker
 werkzug
@@ -1516,6 +1603,7 @@ wkhtmltopdf
 wll
 wlp6s0
 wmem
+wordcloud
 wordcount
 wordpress
 worker1

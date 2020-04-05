@@ -1,460 +1,399 @@
 ---
 author:
-  name: Linode
+  name: Jared Kobos
   email: docs@linode.com
-description: 'An introduction to the Linode command line interface.'
-keywords: ["linode cli", " command line interface", " man pages", " api key"]
+description: The Linode CLI provides a simplified interface to the Linode API. This guide shows how to install the CLI and describes how to perform basic tasks from the command line.
+og_description: The Linode CLI provides a simplified interface to the Linode API. This guide shows how to install the CLI and describes how to perform basic tasks from the command line.
+keywords: ["linode api", "linode cli", "python cli"]
+aliases: ["/platform/api/using-the-linode-cli/", "cli/", "/platform/linode-cli/"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-aliases: ['cli/','platform/linode-cli/']
-modified: 2016-06-20
+modified: 2019-03-05
 modified_by:
-  name: Alex Fornuto
-published: 2014-01-27
-title: Linode CLI
-deprecated: true
-deprecated_link: 'platform/api/using-the-linode-cli/'
+  name: Linode
+published: 2018-06-29
+title: Using the Linode CLI
 external_resources:
- - '[Github Linode CLI](https://github.com/linode/cli)'
- - '[Linode API Key](/docs/platform/api/api-key)'
+  - '[Getting Started with the Linode API](/docs/platform/api/getting-started-with-the-linode-api/)'
+  - '[Linode API Documentation](https://developers.linode.com/)'
 ---
 
-The Linode Command Line Interface (**CLI**) is an [open-source](https://github.com/linode/cli) command line tool for managing your Linode services. You can reboot your Linode, update an MX record for your domain, manage your NodeBalancers, create a StackScript and more from the command line on any computer, without logging in to the [Linode Manager](https://manager.linode.com/) graphical user interface.
+![Linode CLI](using-the-linode-cli.png "Linode CLI")
 
-Your Linode [API key](/docs/platform/api/api-key/) is required for the CLI to function.
+The Linode CLI is a wrapper around the [Linode API](https://developers.linode.com) that allows you to manage your Linode account from the command line. Virtually any task that can be done through the Linode Manager can be done through the CLI, making it an excellent tool for scripting.
 
-
-![Linode CLI](linode-cli.png "Linode CLI")
+This guide describes the basics of installing and working with the CLI. It also offers examples illustrating how to complete common tasks using the CLI.
 
 ## Install the CLI
 
-You can install the Linode CLI on any Mac OS X or Linux computer. You can install it on a Linode if you want to, but the typical use case for the CLI is to run it from your home or office workstation. You can use it to manage your Linode account quickly, without the use of a GUI.
+The easiest way to install the CLI is through [Pip](https://pypi.org/project/pip/):
 
-### Mac OS X
+1.  Install the CLI:
 
-Prerequisites:
+        pip install linode-cli --upgrade
 
--   [Homebrew](http://brew.sh)
+1.  You need a Personal Access Token to use the CLI. Use the [Linode Cloud Manager](https://cloud.linode.com/profile/tokens) to obtain a token.
 
-First, update Homebrew:
+1.  The first time you run any command, you will be prompted with the CLI's configuration script. Paste your access token (which will then be used by default for all requests made through the CLI) at the prompt. You will be prompted to choose defaults for Linodes created through the CLI (region, type, and image). These are optional, and can be overridden for individual commands. Update these defaults at any time by running `linode-cli configure`:
 
-    brew update
+    {{< output >}}
+Welcome to the Linode CLI.  This will walk you through some
+initial setup.
 
-Run the following commands to install the Linode CLI:
+First, we need a Personal Access Token.  To get one, please visit
+https://cloud.linode.com/profile/tokens and click
+"Create a Personal Access Token".  The CLI needs access to everything
+on your account to work correctly.
 
-    brew tap linode/cli
-    brew install linode-cli
-
-### Debian and Ubuntu
-
-1.  Add the Linode repository to your list:
-
-        sudo bash -c 'echo "deb http://apt.linode.com/ $(lsb_release -cs) main" > /etc/apt/sources.list.d/linode.list'
-
-2.  Get the Linode GPG key:
-
-        wget -O- https://apt.linode.com/linode.gpg | sudo apt-key add -
-
-3.  Update your system:
-
-        sudo apt-get update
-
-4.  Install the Linode CLI package:
-
-        sudo apt-get install linode-cli
-
-### Fedora
-
-linode-cli included in Fedora's standard package database:
-
-    dnf install linode-cli
-
-### Manual Installation for Linux (All Distros)
-
-In this section, you will learn how to install the Linode CLI manually on any Linux system. Use a package manager, CPAN, [cpanminus](https://github.com/miyagawa/cpanminus), or your preferred method to install the following Perl modules:
-
--   Crypt::SSLeay
--   JSON
--   LWP::Protocol::https
--   LWP::UserAgent
--   Mozilla::CA
--   Try::Tiny
--   WebService::Linode
-
-1.  Download the Linode CLI tarball:
-
-        curl -Lo linode-cli.tar.gz https://github.com/linode/cli/archive/master.tar.gz
-
-2.  Extract the files:
-
-        tar xf linode-cli.tar.gz
-
-3.  Install the CLI:
-
-        cd cli-master && perl Makefile.PL && sudo make install
-
-## Setup
-
-If you installed the Linode CLI in a standard location, it should already be added to your PATH variable. That way, you will be able to invoke the CLI with the `linode` command. Otherwise, you will need to manually add the `linode-cli` folder location to your PATH, or call the program directly with the command `/path/to/linode-cli/linode`.
-
-To start with, most users will want to run the configuration utility:
-
-1.  Start the configuration utility:
-
-        linode configure
-
-    Output:
-
-        This will walk you through setting default values for common options.
-
-2.  Fill in your information at the prompts. You can skip optional questions by pressing `Return`. Here's some example output with the answers filled in.
-
-        $ linode configure
-        This will walk you through setting default values for common options.
-
-         Linode Manager user name
-         >> user1
-
-         Linode Manager password for user1
-         >>
-
-
-         Default distribution when deploying a new Linode or rebuilding an existing one. (Optional)
-         Valid options are:
-           1 - Arch 2017.01.01
-           2 - CentOS 5.6
-           3 - CentOS 6.5
-           4 - CentOS 7
-           5 - Debian 7
-           6 - Debian 8
-           7 - Fedora 24
-           8 - Fedora 25
-           9 - Gentoo 2017-01-05
-          10 - Slackware 13.37
-          11 - Slackware 13.37 32bit
-          12 - Slackware 14.1
-          13 - Slackware 14.2
-          14 - Ubuntu 12.04 LTS
-          15 - Ubuntu 14.04 LTS
-          16 - Ubuntu 16.04 LTS
-          17 - Ubuntu 16.10
-          18 - openSUSE Leap 42.1
-          19 - openSUSE Leap 42.2
-         Choose[ 1-19 ] or Enter to skip>>
-
-         Default data center when deploying a new Linode. (Optional)
-         Valid options are:
-           1 - atlanta
-           2 - dallas
-           3 - frankfurt
-           4 - fremont
-           5 - london
-           6 - newark
-           7 - shinagawa1
-           8 - singapore
-           9 - tokyo
-         Choose[ 1-9 ] or Enter to skip>>
-
-         Default plan when deploying a new Linode. (Optional)
-         Valid options are:
-           1 - Linode 1024
-           2 - Linode 2048
-           3 - Linode 4096
-           4 - Linode 8192
-           5 - Linode 12288
-           6 - Linode 16384
-           7 - Linode 24576
-           8 - Linode 32768
-           9 - Linode 49152
-          10 - Linode 61440
-          11 - Linode 65536
-          12 - Linode 81920
-          13 - Linode 102400
-          14 - Linode 204800
-         Choose[ 1-14 ] or Enter to skip>>
-
-          Path to an SSH public key to install when deploying a new Linode. (Optional)
-          >> /home/user1/.ssh/id_rsa.pub
-
-          Config written to /Users/user1/.linodecli/config
-
-Once the CLI has your Linode Manager username and password, it will generate and use a new API key automatically.
+Personal Access Token:
+{{< /output >}}
 
 {{< note >}}
-If you have [two-factor authentication](/docs/security/linode-manager-security-controls/#two-factor-authentication) enabled, you will receive a prompt for the code after entering your password:
-
-Two-factor authentication code
->> 123456
-
-Enter your code at the prompt, then continue with the configuration tool as described above. Once the Linode CLI has access to your API key, you will no longer have to enter the code.
+The CLI installs a bash completion file. On OSX, you may have to source this file before it can be used. To do this, add `source /etc/bash_completion.d/linode-cli.sh` to your `~/.bashrc` file.
 {{< /note >}}
 
-You can run the `linode configure` command again if your settings change. New answers will overwrite the old ones in the `/Users/user1/.linodecli/config` file in your user's home directory.
-
-{{< note >}}
-If you don't run the configuration tool, you can add these options manually in the `.linodecli/config` file.
-{{< /note >}}
-
-### API Key
-
-The Linode CLI requires your API key to function. If you need to generate an API key manually, read the [API Key](/docs/platform/api/api-key/) article. There are three ways to provide the key to the CLI. The configuration tool generates a new key and adds it to the `.linodecli/config` file automatically.
-
--   In the `.linodecli/config` file:
-
-    {{< file ".linodecli/config" >}}
-api-key SampleKey123456...
-
-{{< /file >}}
-
-
--   As an environment variable:
-
-        LINODE_API_KEY=SampleKey123456...
-
--   Passed directly in the command:
-
-        linode --api-key SampleKey123456...
-
-If you add your API key in the `.linodecli/config` file, or if you set it as an environment variable, the Linode CLI will have persistent access to your account. If you don't save or set the API key beforehand, you will have to enter it in the command whenever you use the CLI. The `--api-key` option should come at the end of the command. For example, your command would look like:
-
-    linode options --api-key SampleKey123456...
-
-### Multiple Users
-
-The default Linode CLI user is stored in the `.linodecli/config` file.
-
-To set up the API for additional Linode users, you can run the `linode configure` command again, supplying a different username. Configuration files for additional users are stored with the file name pattern `.linodecli/config_user1`, with **user1** being replaced by the actual username.
-
-To invoke the CLI with a particular username, use the `-u user1` option, with **user1** being your actual username, at the end of the command.
-
-## Using the CLI
-
-Invoke the CLI by prefacing your commands with `linode`. Make sure the `linode-cli` folder has been appended to your PATH variable (see the previous [Setup](#setup) section). In general, commands are in the format:
-
-    linode [object] [action] [action-options...] [options...]
-
-If no object is given, the **linode** object is assumed. Available objects include:
-
-    linode
-    domain
-    nodebalancer
-    stackscript
-    account
-
-To specify a particular Linode user, add the `-u user1` option, with **user1** being your actual username, at the end of the command. If no user is specified, the default user described in the `.linodecli/config` file will be used.
-
-The Linode CLI has many options available. In the rest of this article, we'll go over some common examples relating to Linodes, domains, NodeBalancers, StackScripts, and account details. To see all of the available options, view the man pages:
-
-    man linode
-    man linode-linode
-    man linode-domain
-    man linode-nodebalancer
-    man linode-stackscript
-    man linode-account
-
-Press `q` to exit the man pages. You can also view more examples and options on the project's [README](https://github.com/linode/cli/blob/master/README.md) page on GitHub.
-
- {{< note >}}
-If you do something via the CLI that costs money (creating a Linode, upgrading a Linode, enrolling in a new service, etc.), the CLI *will* attempt to charge the credit card on file for your account or use any account credit available.
-{{< /note >}}
-
-### Linodes
-
-The Linode CLI allows you to spin up new Linodes, issue reboots, upgrade plan sizes, and more.
-
-Listing Linodes:
-
-    linode list
-
-Creating a new Linode:
-
-    linode create <linode-label> --location <data center> --plan <linodeXXXX> --payment-term <X> --distribution "<Distribution>" --group <group-label> --stackscript "<stackscript-label>"
-
-Restarting a Linode:
-
-    linode restart <linode-label>
-
-Resizing a Linode:
-
-    linode resize <linode-label> <linodeXXXX>
-
-Rebuilding a Linode (rebuilding with a StackScript is available):
-
-    linode rebuild <linode-label> --distribution "<Distribution>" --password "<password>"
-
-For your convenience, several of the options are explained below. For details on all the Linode options, please check the appropriate man page:
-
-    man linode-linode
-
-#### --plan options
-
-To view available [Linode plan sizes](https://www.linode.com/pricing/) for the `--plan` option, use the following command:
-
-    linode plans
-
-Choose from the options below:
-
-- Linode 1024
-- Linode 2048
-- Linode 4096
-- Linode 8192
-- Linode 12288
-- Linode 16384
-- Linode 24576
-- Linode 32768
-- Linode 49152
-- Linode 61440
-- Linode 65536
-- Linode 81920
-- Linode 102400
-- Linode 204800
-
-#### --location options
-
-To view available data centers for new Linodes for the `--location` option, use either of the following commands:
-
-    linode locations
-    linode datacenters
-
-Choose from the options below:
-
-- atlanta
-- dallas
-- frankfurt
-- fremont
-- london
-- newark
-- shinagawa1
-- singapore
-- tokyo
-
-#### --distribution options
-
-To view available distributions for new Linodes for the `--distribution` option, use either of the following commands:
-
-    linode distros
-    linode distributions
-
-Choose from the options below:
-
-- Arch 2017.01.01
-- CentOS 5.6
-- CentOS 6.5
-- CentOS 7
-- Debian 7
-- Debian 8
-- Fedora 24
-- Fedora 25
-- Gentoo 2017-01-05
-- Slackware 13.37
-- Slackware 13.37 32bit
-- Slackware 14.1
-- Slackware 14.2
-- Ubuntu 12.04 LTS
-- Ubuntu 14.04 LTS
-- Ubuntu 16.04 LTS
-- Ubuntu 16.10
-- openSUSE Leap 42.1
-- openSUSE Leap 42.2
-
-### Domains
-
-With the Linode CLI, you can add and remove domains, update DNS records, and more.
-
-Listing domains:
-
-    linode domain list
-
-Listing domain records:
-
-    linode domain record-list <example.com>
-
-Creating a domain record:
-
-    linode domain record-create <example.com> <RECORD TYPE> <subdomain> <X.X.X.X>
-
-Updating a domain record:
-
-    linode domain record-update <example.com> <RECORD TYPE> <subdomain> [--priority <priority>]
-
-To see all the available options, check the man pages:
-
-    man linode-domain
-
-### NodeBalancers
-
-The Linode CLI allows you to manage your [NodeBalancers](/docs/platform/nodebalancer/) from the command line.
-
-Listing NodeBalancers:
-
-    linode nodebalancer list
-
-Creating a NodeBalancer:
-
-    linode nodebalancer create <nodebalancer-label> <data center>
-
-Configuring a NodeBalancer to handle traffic on a specific port:
-
-    linode nodebalancer config-create <nodebalancer-label> <port>
-
-Configuring a node on a NodeBalancer:
-
-    linode nodebalancer node-create <nodebalancer-label> <port> <linode-label> <private-ip>:<port>
-
-To see all the available options, check the man pages:
-
-    man linode-nodebalancer
-
-### StackScripts
-
-The Linode CLI allows you to create and show StackScripts, and more.
-
-Creating a StackScript:
-
-    linode stackscript create --label "<stackscript-label>" --codefile "</path/myscript.sh>" --distribution "<Distribution>"
-
-Showing a StackScript:
-
-    linode stackscript show <stackscript-label>
-
-StackScripts can be used to create or rebuild a Linode. Creating and rebuilding Linodes is covered in the [Linodes](#linodes) section.
-
-To see all the available options, check the man pages:
-
-    man linode-stackscript
+## Options
+
+### Help
+
+View information about any part of the CLI, including available actions and required parameters, with the `--help` flag:
+
+    linode-cli --help
+    linode-cli linodes --help
+    linode-cli linodes create --help
+
+### Customize Output Fields
+
+By default, the CLI displays a set of pre-selected fields for each type of response. If you would like to see all available fields, use the `--all` flag:
+
+    linode-cli linodes list --all
+
+Specify exactly which fields you would like to receive with the `-format` option:
+
+    linode-cli linodes list --format 'id,region,memory'
+
+### JSON Output
+
+The CLI will return output in tabulated format for easy readability. If you prefer to work with JSON, use the `--json` flag. Adding the `--pretty` flag will format the JSON output to make it more readable:
+
+    linode-cli regions list --json --pretty
+
+{{< highlight json >}}
+[
+  {
+    "country": "us",
+    "id": "us-central"
+  },
+  {
+    "country": "us",
+    "id": "us-west"
+  },
+  {
+    "country": "us",
+    "id": "us-southeast"
+  },
+  {
+    "country": "us",
+    "id": "us-east"
+  },
+  ...
+]
+{{< /highlight >}}
+
+### Machine Readable Output
+
+You can also display the output as plain text. By default, tabs are used as a delimiter, but you can specify another character with the `--delimiter` option:
+
+    linode-cli regions list --text
+
+{{< highlight text >}}
+id	country
+us-central	us
+us-west	us
+us-southeast	us
+us-east	us
+eu-west	uk
+ap-south	sg
+eu-central	de
+ap-northeast	jp
+ap-northeast-1a	jp
+ca-east         ca
+{{< /highlight >}}
+
+    linode-cli regions list --text --delimiter ";"
+
+{{< highlight text >}}
+id;country
+us-central;us
+us-west;us
+us-southeast;us
+us-east;us
+eu-west;uk
+ap-south;sg
+eu-central;de
+ap-northeast;jp
+ap-northeast-1a;jp
+ca-east;ca
+{{< /highlight >}}
+
+## Examples
+
+This section reviews some common examples related to [Accounts](#account) and [Events](#events), [Domains](#domains), [Linode Instances](#linode-instances), [Linode Kubernetes Engine (LKE)](#linode-kubernetes-engine-lke), [NodeBalancers](#nodebalancers), [Object Storage](#object-storage), [Block Storage Volumes](#block-storage-volumes), and [Support Tickets](#support-tickets). Other actions are available. Use `linode-cli linodes --help` for a complete list.
 
 ### Account
 
-The CLI allows you to view your account billing details at a glance. Run the following command:
+View or update your account information, add payment methods, view notifications, make payments, create OAuth clients, and do other related tasks through the `account` action:
 
-    linode account show
+1.  View your account:
 
-Sample output:
+        linode-cli account view
 
-    managed: yes
-    balance: $ 0.00
-    transfer pool: 6732.00GB
-    transfer used: 13.02GB
-    transfer billable: 0.00GB
-    billing method: prepay
+1.  View your account settings:
 
-To see all the available options, check the man pages:
+        linode-cli account settings
 
-    man linode-account
+1.  Make a payment:
 
-## Updating the CLI
+        linode-cli account payment-create --cvv 123 --usd 20.00
 
-Follow these instructions to update your Linode CLI package.
+1.  View notifications:
 
-### Mac OS X
+        linode-cli account notifications-list
 
-Run the following Homebrew commands:
+### Events
 
-    brew update
-    brew upgrade linode-cli
+1.  View a list of events on your account:
 
-### Debian and Ubuntu
+        linode-cli events list
 
-Run the following commands:
+1.  View details about a specific event:
 
-    sudo apt-get update
-    sudo apt-get upgrade linode-cli
+        linode-cli events view $event_id
+
+1.  Mark an event as read:
+
+        linode-cli events mark-read $event_id
+
+### Domains
+
+1.  List the Domains on your account:
+
+        linode-cli domains list
+
+1.  View all domain records in a specific Domain:
+
+        linode-cli domains records-list $domain_id
+
+1.  Delete a Domain:
+
+        linode-cli domains delete $domain_id
+
+1.  Create a Domain:
+
+        linode-cli domains create --type master --domain www.example.com --soa_email email@example.com
+
+1.  Create a new A record in a Domain:
+
+        linode-cli domains records-create $domain_id --type A --name subdomain --target 192.0.2.0
+
+### Linode Instances
+
+Tasks related to Linode instances are performed with `linode-cli linodes [ACTION]`.
+
+1.  List all of the Linodes on your account:
+
+        linode-cli linodes list
+
+    Filter results to a particular region:
+
+        linode-cli linodes list --region us-east
+
+    Filtering works on many fields throughout the CLI. Use `--help` for each action to see which properties are filterable.
+
+1.  Create a new Linode:
+
+        linode-cli linodes create --root_pass mypassword
+
+    The defaults you specified when configuring the CLI will be used for the new Linode's type, region, and image. Override these options by specifying the values:
+
+        linode-cli linodes create --root_pass mypassword --region us-east --image linode/debian9 --group webservers
+
+    If you are not writing a script, it is more secure to use `--root_pass` without specifying a password. You will then be prompted to enter a password:
+
+        linode-cli linodes create --root_pass
+
+1.  For commands targeting a specific Linode, you will need that Linode's ID. The ID is returned when creating the Linode, and can be viewed by listing the Linodes on your account as described above. Store the ID of the new Linode (or an existing Linode) for later use:
+
+        export linode_id=<id-string>
+
+1.  View details about a particular Linode:
+
+        linode-cli linodes view $linode_id
+
+1.  Boot, shut down, or reboot a Linode:
+
+        linode-cli linodes boot $linode_id
+        linode-cli linodes reboot $linode_id
+        linode-cli linodes shutdown $linode_id
+
+1.  View a list of available IP addresses for a specific Linode:
+
+        linode-cli linodes ips-list $linode_id
+
+1.  Add a private IP address to a Linode:
+
+        linode-cli linodes ip-add $linode_id --type ipv4 --public false
+
+1.  List all disks provisioned for a Linode:
+
+        linode-cli linodes disks-list $linode_id
+
+1.  Upgrade your Linode. If an upgrade is available for the specified Linode, it will be placed in the Migration Queue. It will then be automatically shut down, migrated, and returned to its last state:
+
+        linode-cli linodes upgrade $linode_id
+
+1.  Rebuild a Linode:
+
+        linode-cli linodes rebuild $linode_id --image linode/debian9 --root_pass
+
+1. Rebuild a Linode, adding a populated authorized_keys file:
+
+        linode-cli linodes rebuild $linode_id --image linode/debian9 --root_pass --authorized_keys "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEC+DOVfw+8Jsw1IPrYCcU9/HCuKayCsV8bXjsHqX/Zq email@example.com"
+
+    If your key exists on your filesystem, you can also substitute its value in the CLI command with `cat`. For example:
+
+        linode-cli linodes rebuild $linode_id --image linode/debian9 --root_pass --authorized_keys "$(cat ~/.ssh/id_rsa.pub)"
+
+Many other actions are available. Use `linode-cli linodes --help` for a complete list.
+
+### Linode Kubernetes Engine (LKE)
+
+1.  Lists current Kubernetes Clusters available on your account:
+
+        linode-cli lke clusters-list
+
+1.  Create a Kubernetes Cluster. The Kubernetes Cluster will be created asynchronously. You can use the events system to determine when the Kubernetes Cluster is ready to use:
+
+        linode-cli lke cluster-create --label my-cluster --region us-central --version 1.16 --node_pools.type g6-standard-4 --node_pools.count 6 --node_pools.type g6-standard-8 --node_pools.count 3
+
+1.  Update Kubernetes Cluster:
+
+        linode-cli lke cluster-update $cluster_id --label my-cluster
+
+1.  Delete a Cluster you have permission to `read_write`:
+
+        linode-cli lke cluster-delete $cluster_id
+
+1.  List all active Node Pools on a Kubernetes Cluster:
+
+        linode-cli lke pools-list $cluster_id
+
+1.  Create a Node Pool on a Kubernetes Cluster:
+
+        linode-cli lke pool-create $cluster_id --type g6-standard-4 --count 6
+
+1.  Update Node Pool in a Kubernetes Cluster. When a Node Pool's count is changed, the Nodes in that pool will be replaced in a rolling fashion.
+
+        linode-cli lke pool-update $cluster_id $pool_id --count 6
+
+1.  Delete a Node Pool from a Kubernetes Cluster:
+
+        linode-cli lke pool-delete $cluster_id $pool_id
+
+1.  View the Kubeconfig file for the Kubernetes Cluster:
+
+        linode-cli lke kubeconfig-view $cluster_id
+
+Other actions are available. Use `linode-cli linodes --help` for a complete list.
+
+### NodeBalancers
+
+1.  Create a new NodeBalancer:
+
+        linode-cli nodebalancers create --region us-east --label new-balancer
+
+1.  Create a configuration for a NodeBalancer:
+
+        linode-cli nodebalancers config-create $nodebalancer_id
+
+1.  Attach a Node to a NodeBalancer:
+
+        linode-cli nodebalancers node-create --address 192.200.12.34:80 --label node-1
+
+1.  To delete a node, you will need the ID of the NodeBalancer, configuration, and node:
+
+        linode-cli nodebalancers node-delete $nodebalancer_id $config_id $node_id
+
+Other actions are available. Use `linode-cli linodes --help` for a complete list.
+
+### Object Storage
+
+1.  List the current Object Storage Clusters available to use:
+
+        linode-cli object-storage clusters-list
+
+1.  Create a new Object Storage Key for your account:
+
+        linode-cli object-storage keys-create --label "my-object-storage-key"
+
+1.  List Object Storage Keys for authenticating to the Object Storage S3 API:
+
+        linode-cli object-storage keys-list
+
+1.  Update an Object Storage Key label:
+
+        linode-cli object-storage keys-update --keyId $key_id --label "my-new-object-storage-key"
+
+1.  Revoke an Object Storage Key:
+
+        linode-cli object-storage keys-delete $key_id
+
+1.  Cancel Object Storage on your Account. All buckets on the Account must be empty before Object Storage can be cancelled.
+
+        linode-cli object-storage cancel
+
+### Block Storage Volumes
+
+1.  List your current Volumes:
+
+        linode-cli volumes list
+
+1.  Create a new Volume, with the size specified in GiB:
+
+        linode-cli volumes create --label my-volume --size 100 --region us-east
+
+    Specify a `linode_id` to create the Volume and automatically attach it to a specific Linode:
+
+        linode-cli volumes create --label my-volume --size 100  --linode_id $linode_id
+
+1.  Attach or detach the Volume from a Linode:
+
+        linode-cli volumes attach $volume_id --linode_id $linode_id
+        linode-cli volumes detach $volume_id
+
+1.  Resize a Volume (size can only be increased):
+
+        linode-cli volumes resize $volume_id --size 200
+
+1.  Delete a Volume:
+
+        linode-cli volumes delete $volume_id
+
+### Support Tickets
+
+1.  List your Support Tickets:
+
+        linode-cli tickets list
+
+1.  Open a new Ticket:
+
+        linode-cli tickets create --description "Detailed description of the issue" --summary "Summary or quick title for the Ticket"
+
+    If your issue concerns a particular Linode, Volume, Domain, or NodeBalancer, pass the ID with `--domain_id`, `--linode-id`, `--volume_id`, etc.
+
+1.  List replies for a Ticket:
+
+        linode-cli tickets replies $ticket_id
+
+1.  Reply to a Ticket:
+
+        linode-cli tickets reply $ticket_id --description "The content of your reply"

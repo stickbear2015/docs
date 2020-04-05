@@ -5,12 +5,12 @@ author:
 description: 'Reverse DNS (rDNS) resolves an IP address to the designated domain name. This guide will teach you how to set it up.'
 keywords: ["reverse", "dns", "PTR"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-aliases: ['networking/Setting-Up-Reverse-DNS-Lookup/','dns-guides/configuring-dns-with-the-linode-manager/','networking/configure-your-linode-for-reverse-dns/','networking/dns/setting-reverse-dns/','dns-manager/']
+aliases: ['networking/configure-your-linode-for-reverse-dns/','networking/dns/setting-reverse-dns/','networking/setting-up-reverse-dns-lookup/','networking/dns/configure-your-linode-for-reverse-dns-classic-manager/']
 modified_by:
   name: Linode
 published: 2015-07-09
+modified: 2019-11-21
 title: Configure Your Linode for Reverse DNS (rDNS)
-classic_manager_link: networking/dns/configure-your-linode-for-reverse-dns-classic-manager/
 ---
 
 ![Configure Your Linode for Reverse DNS (rDNS)](configure-your-linode-reverse-dns.jpg)
@@ -54,3 +54,19 @@ You may also see this error if you very recently created your A record, as it ca
     {{< note >}}
 If you want to set up reverse DNS for both the IPv4 and IPv6 addresses, you can perform the same steps for the IPv6 address.
 {{</ note >}}
+
+### Ipv6 Pools
+
+While single IPv6 addresses will be configured following the same process as IPv4 addresses, IPv6 pools will be configured a little differently.
+
+1. To begin, follow the steps for [Setting Reverse DNS](#setting-reverse-dns) using your pool instead of an individual IP address. Once you finish with step 3, you will notice that a new field has appeared which asks you to enter an IPv6 address for your pool.
+
+2. Enter the IPv6 address you'd like to use, your fully qualified domain name, and click on the `save` button.
+
+    ![rDNS Pool Edit](rdns-pool-edit.png"rDNS")
+
+3. If you want to add more IPv6 addresses from your pool, you can repeat the process. Once more than one rDNS entry is created for a single pool, the **Reverse DNS** column of the IPv6 table will show you exactly how many IP addresses have been given rDNS entries from your pool.
+
+    ![rDNS Column](rdns-range.png"IP addresses DNS")
+
+4. To see each rDNS entry in more detail, click on the addresses entry in the rDNS column for your IPv6 range. A new window will appear listing the IPv6 addresses you've configured, along with their associated domain names.

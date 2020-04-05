@@ -6,7 +6,6 @@ description: "Create a disk image using dd and download it to another machine ov
 keywords: ["copy", "disk", "ssh", "dd"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
 aliases: ['migration/ssh-copy/','migrate-to-linode/disk-images/copying-a-disk-image-over-ssh/','platform/disk-images/copying-a-disk-image-over-ssh/']
-modified: 2019-01-14
 modified_by:
   name: Linode
 published: 2012-06-04
@@ -19,13 +18,17 @@ Piping SSH commands to utilities such as `dd`, `gzip`, or `rsync` is an easy way
 
 This guide demonstrates how to download a `.img` file to your computer over SSH containing a block-level copy of your Linode's disk device created with `dd`.
 
+{{< note >}}
+If the amount of data on your disk is much less than the size of the disk, then downloading a copy with `dd` can take longer than just downloading your files. If you're interested in downloading individual files or directories, review the options listed in our [Download Files from Your Linode](/docs/security/data-portability/download-files-from-your-linode/) and [Backing Up Your Data](/docs/security/backups/backing-up-your-data/) guides.
+{{< /note >}}
+
 ## Download a Disk over SSH
 
 ### Boot into Rescue Mode
 
 1.  Prepare the receiving computer by verifying that SSH is installed. Most Linux/Unix-like systems include OpenSSH in their package base by default. If the receiving system is Microsoft Windows, there are multiple SSH solutions available such as [Cygwin and PuTTY](/docs/networking/ssh/using-ssh-on-windows).
 
-1.  Reboot Your Linode into [rescue mode](/docs/troubleshooting/rescue-and-rebuild/#booting-into-rescue-mode) and connect to it using [Lish](/docs/platform/manager/remote-access/#console-access).
+1.  Reboot Your Linode into [Rescue Mode](/docs/troubleshooting/rescue-and-rebuild/#booting-into-rescue-mode) and connect to it using [Lish](/docs/platform/manager/remote-access/#console-access).
 
 1.  Set a root password for the rescue system and start the SSH server:
 
@@ -94,13 +97,15 @@ You may want to upload your disk image to a new server. For example, if you prev
 
 1.  Prepare the new Linode by first creating a new swap disk. Doing this first means that you can simply use the Linode's remaining space for the system disk without doing any subtraction. A swap disk is typically starts at 256 MB or 512 MB in size, but can be larger or smaller depending upon your needs.
 
-1.  Access your Linode through the Linode Manager. Select **Create a new disk** and select `swap` from the **Type** drop down menu.
+1.  Access your Linode through the Linode Cloud Manager. Click the **Disks/Configs** tab, then select **Add a Disk**.
 
-    [![Create a new disk](copydisk-create-disk.png)](copydisk-create-disk-full.png)
+1.  The **Add Disk** panel will appear. Select `swap` from the **Filesystem** drop down menu.
+
+    [![Create a new disk](copydisk-create-disk.png)](copydisk-create-disk.png "Create a new disk")
 
 1.  Now use the remaining disk space to create the system drive you'll copy your disk image to. Enter a descriptive name in the **Label** field, and be sure the **Size** is large enough to hold the contents of the disk you are uploading. Click **Save Changes**.
 
-1. Reboot Your Linode into [rescue mode](#boot-into-rescue-mode) and start the SSH server as described above.
+1. Reboot Your Linode into [Rescue Mode](#boot-into-rescue-mode) and start the SSH server as described above.
 
 1. Upload the disk over SSH to the Linode. Replace `192.0.2.9` with the Linode's IP address and `/home/archive/linode.img` with the disk images's path.
 
@@ -115,7 +120,6 @@ You may want to upload your disk image to a new server. For example, if you prev
 {{< /output >}}
 
     Copying your disk can take a while. If you receive a `Write failed: Broken pipe` error, repeat this process.
-
 
 ### Expand the Filesystem
 
@@ -137,19 +141,20 @@ You can check if this is necessary by comparing the space of the filesystem to t
 
 In the above example, the values in the **Size** column don't match. Although the disk is 30 GB, the filesystem can only see 24 GB.
 
-To use all available space on the new disk, execute the following from rescue mode. Replace `/dev/sdx` with your system disk's device identifier (/dev/sda, /dev/sdb, etc.).
+To use all available space on the new disk, execute the following from Rescue Mode. Replace `/dev/sdx` with your system disk's device identifier (/dev/sda, /dev/sdb, etc.).
 
     e2fsck -f /dev/sdx
     resize2fs /dev/sdx
-
 
 ### Boot from the Disk
 
 You will now need to create a new configuration profile on the receiving Linode.
 
-1.  Select your Linode and select **Create a New Configuration Profile**.
+1.  Select your Linode, click the **Disks/Configs** tab, then select and select **Add a Configuration**.
 
-    [![Selecting the configuration profile](1065-migration6-small.png)](1064-migration6.png)
+1.  The **Add Linode Configuration** panel will appear.
+
+    [![Selecting the configuration profile](1064-migration6.png)](1064-migration6.png "Selecting the configuration profile")
 
 1.  Enter a name for the configuration profile in the **Label** field, and in the **Block Device Assignment** section set the `/dev/sda` to the new system disk you created earlier in this section of the guide. Set `/dev/sdb` to the swap image.
 

@@ -32,7 +32,6 @@ OpenVPN is a widely trusted, free, and open-source VPN (virtual private network)
 | **Field** | **Description** |
 |:--------------|:------------|
 | **VPN Password** | The password you'll use when connecting to your VPN. *Required*. |
-| **SSH Key** | Your SSH [public key](/docs/security/authentication/use-public-key-authentication-with-ssh/). The public key will be stored in the `/root/.ssh/authorized_keys` file on your Linode, and you will be able to use it to login as root over SSH. *Advanced Configuration*. |
 
 ### Linode Options
 
@@ -40,7 +39,7 @@ After providing the app specific options, provide configurations for your Linode
 
 | **Configuration** | **Description** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
 |--------------|------------|
-| **Select an Image** | Debian 9 is currently the only image supported by the OpenVPN One-Click App, and it is pre-selected on the Linode creation page. *Required*. |
+| **Select an Image** | Debian 10 is currently the only image supported by the OpenVPN One-Click App, and it is pre-selected on the Linode creation page. *Required*. |
 | **Region** | The region where you would like your Linode to reside. In general, it's best to choose a location that's closest to you. For more information on choosing a DC, review the [How to Choose a Data Center](/docs/platform/how-to-choose-a-data-center) guide. You can also generate [MTR reports](/docs/networking/diagnostics/diagnosing-network-issues-with-mtr/) for a deeper look at the network routes between you and each of our data centers. *Required*. |
 | **Linode Plan** | Your Linode's [hardware resources](/docs/platform/how-to-choose-a-linode-plan/#hardware-resource-definitions). You can use any size Linode for your OpenVPN App. The Linode plan that you select should be representative of the amount of data transfer and users you expect for your VPN. For personal usage, you can create your VPN on a Nanode or 2GB Linode and should see good performance, unless you are performing intensive data transfers across your VPN. If you decide that you need more or fewer hardware resources after you deploy your app, you can always [resize your Linode](/docs/platform/disk-images/resizing-a-linode/) to a different plan. *Required*. |
 | **Linode Label** | The name for your Linode, which must be unique between all of the Linodes on your account. This name will be how you identify your server in the Cloud Manager’s Dashboard. *Required*. |
@@ -52,7 +51,10 @@ When you've provided all required Linode Options, click on the **Create** button
 
 Your VPN's administrative web interface will be available via a web browser at `https://192.0.2.2:943/admin/`, where `192.0.2.2` represents the IPv4 address of your new Linode instance. Your IPv4 address can be found under the **Networking** tab on your new Linode's detail page.
 
-The client web interface for your VPN is located at `https://192.02.2:943/`, where your Linode's IP address should take the place of the `192.0.2.2` example address. The client interface includes links to download the OpenVPN client software for your computer.
+The client web interface for your VPN is located at `https://192.0.2.2:943/`, where your Linode's IP address should take the place of the `192.0.2.2` example address. The client interface includes links to download the OpenVPN client software for your computer.
+{{< note >}}
+The OpenVPN Access Server does not come with an HTTP (insecure) web server daemon. Hence, it is important that you use `https` in the address. If you use `http` in the address, the server does not respond.
+{{< /note >}}
 
 The username you should use to log in to your OpenVPN server is `openvpn`. The password for connecting to the VPN is the password you supplied in the One-Click App creation form.
 

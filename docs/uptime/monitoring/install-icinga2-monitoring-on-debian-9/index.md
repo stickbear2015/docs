@@ -11,7 +11,6 @@ modified: 2017-12-12
 modified_by:
   name: Linode
 title: 'Install Icinga 2 Monitoring on Debian 9'
-expiryDate: 2019-12-12
 contributor:
   name: Matt Vass
   link: mailto:linuxboxgo@gmail.com
@@ -28,6 +27,8 @@ Icinga, previously a fork of the popular Nagios monitoring system, is an open so
 Icinga 2 can be configured to monitor internal systems' state and check the load, memory, disk free space, or other internal parameters via Icinga agents deployed on each node that needs to be monitored. Icinga can also be configured to send notifications and alerts via email or SMS to the system administrators defined in contacts.
 
 This guide shows how to install and configure the latest version of Icinga 2 web monitoring tool on Debian 9 to monitor network infrastructure.
+
+{{< content "email-warning-shortguide" >}}
 
 ## Before You Begin
 

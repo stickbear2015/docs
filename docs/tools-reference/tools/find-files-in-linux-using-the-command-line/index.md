@@ -49,7 +49,7 @@ This command enables the maximum optimization level (-O3) and allows `find` to f
 | `find . -name testfile.txt`                          | Find a file called testfile.txt in current and sub-directories.                  |
 | `find /home -name *.jpg`                            | Find all `.jpg` files in the `/home` and sub-directories.                        |
 | `find . -type f -empty`                              | Find an empty file within the current directory.                                 |
-| `find /home -user exampleuser -mtime 7 -iname ".db"` | Find all `.db` files (ignoring text case) modified in the last 7 days by a user named exampleuser.  |
+| `find /home -user exampleuser -mtime -7 -iname ".db"` | Find all `.db` files (ignoring text case) modified in the last 7 days by a user named exampleuser.  |
 
 
 ## Options and Optimization for Find
@@ -75,8 +75,8 @@ Optimization at the `-O2` level prioritizes file name filters, as in `-O1`, and 
 
 The `find` command contains the ability to filter a directory hierarchy based on when the file was last modified:
 
-    find / -name "*conf" -mtime 7
-    find /home/exampleuser/ -name "*conf" -mtime 3
+    find / -name "*conf" -mtime -7
+    find /home/exampleuser/ -name "*conf" -mtime -3
 
 The first command returns a list of all files in the entire file system that end with the characters `conf` and have been modified in the last 7 days. The second command filters `exampleuser` user's home directory for files with names that end with the characters `conf` and have been modified in the previous 3 days.
 

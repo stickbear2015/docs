@@ -5,7 +5,7 @@ author:
 description: 'Create Custom Instances and Automate Deployment with StackScripts.'
 keywords: ["ami", "automation", "elasticity", "cloud", "custom instance"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-aliases: ['platform/stackscripts-new-manager/','stackscripts/']
+aliases: ['stackscripts/','platform/stackscripts-new-manager/','platform/stackscripts-classic-manager/']
 modified: 2018-08-22
 modified_by:
   name: Linode
@@ -13,10 +13,9 @@ published: 2011-04-05
 title: Automate Deployment with StackScripts
 external_resources:
   - '[StackScript Community Library](http://linode.com/stackscripts)'
-classic_manager_link: platform/stackscripts-classic-manager/
 ---
 
-![Automate Deployment with StackScripts](automate-deployment-with-stackscripts-title-graphic.jpg "Automate Deployment with StackScripts")
+![Automate Deployment with StackScripts](automate-deployment-with-stackscripts.png "Automate Deployment with StackScripts")
 
 [StackScripts](http://linode.com/stackscripts/) provide Linode users with the ability to automate the deployment of custom systems on top of our default Linux distribution images. Linodes deployed with a StackScript run the script as part of the first boot process. This guide explains how StackScripts work, and offer several examples of how to use them.
 
@@ -39,10 +38,6 @@ StackScripts are usually Bash scripts, stored in the Linode Cloud Manager, and c
 1.  At this point you have the option of using a a Linode StackScript, Community StackScript, or one of your own.
 
     [![StackScript selection options.](stackscripts-selection-screen-small.png "StackScript selection options.")](stackscripts-selection-screen.png)
-
-<!-- Alternatively, you can follow along with this video, which will show you how to deploy from a StackScript:
-
-{{< youtube XviHHyXVH20 >}} -->
 
 ### Using a Community StackScript
 
@@ -125,7 +120,7 @@ Below are several common use cases for StackScripts.
 
 ### Calling StackScripts Recursively
 
-StackScripts have the ability to call other StackScripts from the library at runtime. This functionality reduces the need to write duplicate code for multiple scripts. For example, the Linode [StackScript Bash Library](https://www.linode.com/stackscripts/view/1) is a set of functions that perform various tasks. The script creates the functions but does not run them. A new StackScript can import the Bash Library and then execute functions from it. This reduces the size and time-to-write of all StackScripts using the functions built into the library script.
+StackScripts have the ability to call other StackScripts from the library at runtime. This functionality reduces the need to write duplicate code for multiple scripts. For example, the Linode [StackScript Bash Library](https://cloud.linode.com/stackscripts/1) is a set of functions that perform various tasks. The script creates the functions but does not run them. A new StackScript can import the Bash Library and then execute functions from it. This reduces the size and time-to-write of all StackScripts using the functions built into the library script.
 
 In another example use case for linked StackScripts, a user could create a StackScript that updates all software packages on the system. They would most likely want to perform this function on all new Linodes. The user could then create a StackScript to build a web server that would integrate into his current cluster. Rather than rewrite the commands to update the system, they can call the previous StackScript.
 
@@ -144,7 +139,7 @@ If you're scripting in another language, execute the script on a second line, as
     <ssinclude StackScriptID="[NUMBER]">
     ./ssinclude-[NUMBER]
 
-A great example of this use case is the [StackScript Bash Library](https://www.linode.com/stackscripts/view/1), created by Linode. This script contains several useful functions to perform common tasks such as updating software and installing Apache, MySQL,etc. Run on its own it does nothing to alter your system. By importing the Bash Library script you can save time in your own StackScripts.
+A great example of this use case is the [StackScript Bash Library](https://cloud.linode.com/stackscripts/1), created by Linode. This script contains several useful functions to perform common tasks such as updating software and installing Apache, MySQL,etc. Run on its own it does nothing to alter your system. By importing the Bash Library script you can save time in your own StackScripts.
 
 ### Demonstrating or Distributing Software Capabilities
 
@@ -265,7 +260,7 @@ The UDF tags are explained in the table below:
 |manyof   | A comma separated list of values| Optional
 
 
-Below is an example implementation of the UDF variables. Note that the UDF tags are commented out to prevent execution errors, as the stackscript system parses the tags without removing them:
+Below is an example implementation of the UDF variables. Note that the UDF tags are commented out to prevent execution errors, as the StackScript system parses the tags without removing them:
 
 {{< file "StackScript" bash >}}
 # [...]

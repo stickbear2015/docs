@@ -47,6 +47,10 @@ You'll need to specify name servers on your domain registrar's website. They'll 
 
 The next aspect of DNS management is specifying DNS records, which match domain names to IP addresses. The DNS records are then automatically bundled up into a zone file, which is what allows connecting devices to look up the correct IP address for your domain. If you decide to use Linode's name servers, our DNS Manager will help you create a default zone file. It contains records similar to the following:
 
+{{< note >}}
+You can also use trailing dots in domain names (for example, `example.com.`), which will make the name fully-qualified.
+{{< /note >}}
+
     ; example.com [448369]
     $TTL 86400
     @   IN  SOA ns1.linode.com. admin.example.com. 2013062147 14400 14400 1209600 86400
@@ -219,7 +223,7 @@ In your SPF record, you should list all the mail servers from which you send mai
 If your Linode is the only mail server you use, you should be able to use the example record above. With this SPF record, the receiving server will check the IP addresses of both the sending server and the IP address of example.com. If the IPs match, the check passes. If not, the check will soft fail (i.e., the message will be marked but will not automatically be rejected for failing the SPF check).
 
 {{< note >}}
-Make sure your SPF records are not too strict. If you accidentally exclude a legitimate mail server, its messages could get marked as spam. We recommend visiting openspf.org to learn how SPF records work and how to construct one that works for your setup. Their [examples](http://www.openspf.org/FAQ/Examples) are also helpful.
+Make sure your SPF records are not too strict. If you accidentally exclude a legitimate mail server, its messages could get marked as spam. We recommend visiting [dmarcanalyzer.com](https://www.dmarcanalyzer.com/spf/how-to-create-an-spf-txt-record/) to learn how SPF records work and how to construct one that works for your setup
 {{< /note >}}
 
 ### SRV

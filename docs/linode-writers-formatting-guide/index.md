@@ -11,6 +11,7 @@ modified_by:
 published: 2014-01-15
 title: Linode Writer's Formatting Guide
 show_on_rss_feed: false
+type: "guide"
 external_resources:
  - '[GitHub Beginners Guide](/docs/github-guide)'
  - '[Red Hat Writing Style Guide](http://stylepedia.net/)'
@@ -24,11 +25,11 @@ This guide provides templates and guidelines to use when creating or updating a 
 
 Updates, improvements, and bug fixes to Linode documentation are always welcome through [GitHub](https://github.com/linode/docs) via pull requests (PRs) or issues.
 
-We only accept new guides and authors through our guide submission process. To apply, please fill out the form on our [contribute page](/docs/contribute/).
+Through our Write For Linode program, authors can contribute new guides and be paid for their work. We ask that interested authors apply to the program with one or more writing samples so that we can evaluate your work. To learn more about the program and to complete an application, please visit our Write For Linode [program page](https://www.linode.com/lp/write-for-linode/).
 
 ## General Layout
 
-Linode Guides & Tutorials are written in [Markdown](https://en.wikipedia.org/wiki/Markdown). Our documentation site uses [Hugo](https://gohugo.io), a static site generator. Hugo-specific markdown formatting notes are given [further below](#markdown-formatting).
+Linode Guides & Tutorials are written in [Markdown](https://en.wikipedia.org/wiki/Markdown). Our documentation site uses [Hugo](https://gohugo.io), a static site generator. Hugo-specific Markdown formatting notes are given [further below](#markdown-formatting).
 
 ### Header
 
@@ -209,7 +210,7 @@ If you wish to provide links to external sites for the user to review after goin
 
 ### Extend Markdown Using Shortguides
 
-Using shortcodes, it is possible to extend a markdown file with another. For common tasks such as basic software installation, consider using the `content` shortcode. This allows our library to maintain consistent and up to date installation instructions for frequently used tools such as Python, MySQL, and Docker.
+Using shortcodes, it is possible to extend a Markdown file with another. For common tasks such as basic software installation, consider using the `content` shortcode. This allows our library to maintain consistent and up to date installation instructions for frequently used tools such as Python, MySQL, and Docker.
 
 Markdown files intended to be inserted into multiple guides are called shortguides. To create a shortguide, create a directory with the name of your shortguide anywhere within `docs/`, and then create an index.md within the directory for your content (e.g. `example-shortguide-name/index.md`).
 
@@ -270,7 +271,7 @@ Adding `os: ["mac", "linux", "windows"]` to the front matter inserts a jQuery sc
 
 The shortcode should contain two parameters: filepath and operating system.
 
-For example, `{{</* content "how-to-install-git-mac" mac */>}}` will insert a markdown snippet that will only be visible when the Mac button is in the active state.
+For example, `{{</* content "how-to-install-git-mac" mac */>}}` will insert a Markdown snippet that will only be visible when the Mac button is in the active state.
 
 ### Files and File Excerpts
 
@@ -404,6 +405,20 @@ Use single spaces between sentences; do not double-space.
     </td>
   </tr>
 </table>
+
+List definitions in a table with the definition-table shortcode:
+
+&#123;&#123;&lt; definition-table &gt;&#125;&#125;</br>
+Put your table data here.</br>
+&#123;&#123;&lt; /definition-table &gt;&#125;&#125;
+
+{{< definition-table>}}
+| Parameter | Data type/Status | Usage |
+| --------- | -------- | ------|
+| `access_token` | string, *required* | Your Linode API v4 access token. The token should have permission to read and write Linodes. The token can also be specified by exposing the `LINODE_ACCESS_TOKEN` environment variable. |
+| `authorized_keys` | list | A list of SSH public keys or SSH public key file locations on your local system, for example, `['averylongstring','~/.ssh/id_rsa.pub']`. The public key will be stored in the `/root/.ssh/authorized_keys` file on your Linode. Ansible will use the public key to SSH into your Linodes as the root user and execute your Playbooks.|
+| `label` | string, *required* | The Linode instance label. The label is used by the module as the main determiner for idempotence and must be a unique value.</br></br> Linode labels have the following constraints:</br></br> <ul><li>Must start with an alpha character.</li><li>May only consist of alphanumeric characters, dashes (-), underscores (_) or periods (.).</li><li>Cannot have two dashes (--), underscores (__) or periods (..) in a row.</li></ul>|
+{{< /definition-table >}}
 
 ## Legal Information
 

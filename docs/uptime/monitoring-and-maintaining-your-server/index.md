@@ -6,16 +6,15 @@ description: This guide introduces concepts and tools for monitoring and maintai
 og_description: This guide introduces concepts and tools for monitoring and maintaining your server.
 keywords: ["lassie", "monitor", "monitoring", "maintaining", "maintenance"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-aliases: ['monitoring-and-maintaining/','uptime/monitoring-and-maintaining-your-server-new-manager/']
+aliases: ['monitoring-and-maintaining/','uptime/monitoring-and-maintaining-your-server-classic-manager/','uptime/monitoring-and-maintaining-your-server-new-manager/']
 modified: 2018-08-21
 modified_by:
   name: Linode
 published: 2012-08-22
 title: Monitoring and Maintaining Your Server
-classic_manager_link: uptime/monitoring-and-maintaining-your-server-classic-manager/
 ---
 
-![Monitoring and Maintaining Your Server](monitoring-and-maintaining-your-server.jpg)
+![Monitoring and Maintaining Your Server](monitor-and-maintain-your-server.png "Monitoring and Maintaining Your Server")
 
 Now that your Linode is up and running, it's time to think about monitoring and maintaining your server. This guide introduces the essential tools and skills you'll need to keep your server up to date and minimize downtime. You'll learn how to monitor the availability and performance of your system, manage your logs, and update your server's software.
 

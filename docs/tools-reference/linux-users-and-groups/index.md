@@ -12,7 +12,7 @@ modified_by:
 published: 2009-08-31
 title: Linux Users and Groups
 external_resources:
- - '[User Account and Group Management @ UWISC''s Center for Computer Aided Engineering](http://www.cae.wisc.edu/linaccounts)'
+ 
  - '[Users and Groups Administration in Linux @ DebianAdmin](http://www.debianadmin.com/users-and-groups-administration-in-linux.html)'
  - '[Online Chmod Calculator](http://www.onlineconversion.com/html_chmod_calculator.htm)'
 ---
@@ -132,6 +132,10 @@ In order to provide a user with sudo ability, their name will need to be added t
 Therefore the `visudo` command should be used to edit the sudoers file. At a command line, log into your system as root and enter the command `visudo`.
 
 Below is the portion of the sudoers file that shows the users with sudo access.
+
+{{< caution >}}
+The following `sudoers` excerpt allows the listed users to execute any command using `sudo`, which gives the user full control of a system. Never add users to `sudoers` if they are untrusted. You can optionally restrict what users can do with `sudo`; refer to the `sudoers(5)` man page for this restricted usage syntax.
+{{< /caution >}}
 
     # User privilege specification
     root    ALL=(ALL:ALL) ALL

@@ -5,12 +5,11 @@ author:
 description: 'Our guide to rescuing and rebuilding your Linode.'
 keywords: ["rescue", "rebuild"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-aliases: ['rescue-and-rebuild/','troubleshooting/finnix-rescue-mode/']
+aliases: ['rescue-and-rebuild/','troubleshooting/rescue-and-rebuild-classic-manager/','troubleshooting/finnix-rescue-mode/']
 modified_by:
   name: Linode
 published: 2012-05-31
 title: Rescue and Rebuild
-classic_manager_link: troubleshooting/rescue-and-rebuild-classic-manager/
 ---
 
 ![Rescue and Rebuild](rescue-rebuild.jpg)
@@ -75,7 +74,7 @@ To boot your Linode into Rescue Mode:
 Make a note of which devices your disks are assigned to (e.g. `/dev/sda`, `/dev/sdb`, etc). For example, in the screenshot shown above, the Ubuntu disk corresponds to `/dev/sda`. These assignments will be where you can mount your disks from inside Rescue Mode.
 {{< /note >}}
 
-1.  If you need to assign more than two disks to be accessible inside Rescue Mode, click the **Add Disk** option:
+1.  If you need to assign additional disks to be accessible inside Rescue Mode, click the **Add Disk** option:
 
     [![Linode Cloud Manager Rescue form - Add Disk highlighted](cloud-manager-rescue-form-add-disk-highlighted.png "Linode Cloud Manager Rescue form with the Add Disk option highlighted")](cloud-manager-rescue-form-add-disk-highlighted.png)
 

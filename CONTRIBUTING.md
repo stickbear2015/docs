@@ -2,6 +2,10 @@
 
 This guide describes how to write and submit a guide for the Linode docs. If you would like to write on a topic, please visit our [Contribute](http://www.linode.com/contribute) page to choose a topic and submit a writing sample. When you have received an email notifying you that your topic has been accepted, you are ready to follow the steps in this guide.
 
+## Fixing an issue
+
+If you want to start contributing by helping us correct existing issues, go to our [GitHub issues page](https://github.com/linode/docs/issues) and look for issues with the label ```help wanted```. Read through the comments and make sure there is not an open pull request against the issue, and that nobody has left a comment stating that they are working on the issue (3 days without activity is a good rule of thumb). Leave a comment stating that you would like to work on the issue.
+
 ## Fork the Linode Library
 
 All of our guides are stored in the [github.com/linode/docs](https://github.com/linode/docs) repository. You will need to clone this repository to your local computer.
@@ -66,11 +70,15 @@ This section takes you through the process of creating a new guide using the top
 
         git checkout -b nginx-on-debian
 
-4.  From the root of the `docs` repo, run the following command. Specify the location and title of your guide; the example nginx guide should be located in `web-servers/nginx`. This will create a markdown file populated with YAML front matter:
+4.  From the root of the Docs repository, run the following command. Specify the location and title of your guide; the example nginx guide should be located in `web-servers/nginx`. This will create a markdown file populated with YAML front matter:
 
         hugo new web-servers/nginx/how-to-install-nginx-on-debian/index.md --kind content
 
-    This will create a subdirectory with the guide's intended url, with an `index.md` file inside that will hold the guide's contents. Any images should be added inside this directory as well.
+    This will create a subdirectory with the guide's intended url, with an `index.md` file inside that will hold the guide's contents:
+
+        /Users/your-macbook-user/linode-docs/docs/web-servers/nginx/how-to-install-nginx-on-debian/index.md created
+
+    Any images should be added inside this directory as well. Note that the guide is created under a `docs/` subdirectory that's within the Docs repository; all guides will be under this subdirectory. The root of the Docs repository itself contains related information: Hugo's configuration file, theme information, unit testing information, etc.
 
 5.  Start the Hugo server:
 
@@ -106,7 +114,7 @@ Images should be placed in the guide's subdirectory and linked using their filen
 
 1.  Commit your changes to your local branch:
 
-        git add how-to-install-nginx-on-debian.md
+        git add docs/web-servers/nginx/how-to-install-nginx-on-debian/
         git commit -m "Initial draft of guide"
 
 2.  Push the local branch to your fork:

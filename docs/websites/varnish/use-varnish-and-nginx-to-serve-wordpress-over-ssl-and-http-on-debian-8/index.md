@@ -18,10 +18,9 @@ external_resources:
  - '[NGINX Documentation](https://nginx.org/en/docs/)'
 ---
 
+![Use Varnish & NGINX to Serve WordPress over SSL & HTTP on Debian 8](varnish-nginx-wordpress-ssl-http-debian.png "Use Varnish & NGINX to Serve WordPress over SSL & HTTP on Debian 8")
 
 **Varnish** is a powerful and flexible caching HTTP reverse proxy. It can be installed in front of any web server to cache its contents, which will improve speed and reduce server load. When a client requests a webpage, Varnish first tries to send it from the cache. If the page is not cached, Varnish forwards the request to the backend server, fetches the response, stores it in the cache, and delivers it to the client.
-
-![Use Varnish & NGINX to Serve WordPress over SSL & HTTP on Debian 8](use_varnish_nginx_to_serve_wordpress_over_ssl_http_on_debian_8.png "Use Varnish & NGINX to Serve WordPress over SSL & HTTP on Debian 8")
 
 When a cached resource is requested through Varnish, the request doesn't reach the web server or involve PHP or MySQL execution. Instead, Varnish reads it from memory, delivering the cached page in a matter of microseconds.
 
@@ -593,4 +592,4 @@ By using nginx in conjunction with Varnish, the speed of any WordPress website c
 
 You can strengthen the security of the SSL connection by generating a [custom Diffie-Hellman (DH) parameter](/docs/web-servers/nginx/nginx-ssl-and-tls-deployment-best-practices/#create-a-custom-diffie-hellman-key-exchange), for a more secure cryptographic key exchange process.
 
-An additional configuration option is to enable Varnish logging for the plain HTTP website, since now Varnish will be the first to receive the client requests, while NGINX only receives requests for those pages that are not found in the cache. For SSL-encrypted websites, the logging should be done by NGINX because client requests pass through it first. Logging becomes even more important if you use log monitoring software such as [Fail2ban](/docs/security/using-fail2ban-for-security/), Awstats or Webalizer.
+An additional configuration option is to enable Varnish logging for the plain HTTP website, since now Varnish will be the first to receive the client requests, while NGINX only receives requests for those pages that are not found in the cache. For SSL-encrypted websites, the logging should be done by NGINX because client requests pass through it first. Logging becomes even more important if you use log monitoring software such as [Fail2ban](/docs/security/using-fail2ban-to-secure-your-server-a-tutorial/), Awstats or Webalizer.

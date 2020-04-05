@@ -14,6 +14,7 @@ contributor:
   name: Linode
 promo_default: false
 ---
+![How to Update your Linode's Existing Kernel](update-your-kernel.png "How to Update your Linode's Existing Kernel")
 
 This guide is about updating your Linode's current kernel to a newer version. For information on how to change which kind of kernel your Linode runs, check out the [How to Change your Linode's Kernel](/docs/platform/how-to-change-your-linodes-kernel/) guide.
 
@@ -49,15 +50,13 @@ If your output contains `generic` in the version tag, then you are probably runn
 
 ## Update Your Linode Kernel with Linode's Cloud Manager
 
-1.  Select the Linode from the *Dashboard*
+1.  Select the Linode from the *Dashboard* and click the **Disks/Configs** tab.
 
-1.  Click the **Settings** tab and expand the **Advanced Configurations** section.
-
-1. Find your current *Configuration*, click on the corresponding ellipses (**...**) menu and select **Edit**.
+1. Find your current *Configuration*, click on the **More Options Ellipses** menu and select **Edit**.
 
 1.  Scroll to the *Boot Settings* section.
 
-1.  Select **Latest 64 bit** from the *Kernel* dropdown and click **Submit** to save the changes.
+1.  Select **Latest 64 bit** from the *Select a Kernel* dropdown (if you need a 32-bit kernel, select **Latest 32 bit**) and click the **Submit** button to save the changes.
 
 1.  Reboot the Linode to boot into the new kernel and verify the kernel version:
 

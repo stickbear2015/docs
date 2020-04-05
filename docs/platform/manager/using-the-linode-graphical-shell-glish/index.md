@@ -4,7 +4,7 @@ author:
   email: docs@linode.com
 description: 'Use the graphic shell, Glish, to Manage Graphic Environments on Your Linode.'
 keywords: ["Console", "Shell", "glish", "graphic"]
-aliases: ['networking/using-the-graphic-shell-glish/','networking/use-the-graphic-shell-glish/', 'networking/using-the-linode-graphical-shell-glish/','platform/using-the-linode-graphical-shell-glish/']
+aliases: ['platform/manager/using-the-linode-graphical-shell-glish-classic-manager/','networking/use-the-graphic-shell-glish/','networking/using-the-graphic-shell-glish/','platform/using-the-linode-graphical-shell-glish/','networking/using-the-linode-graphical-shell-glish/']
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
 modified: 2015-03-09
 modified_by:
@@ -37,19 +37,25 @@ The process for launching a getty may differ depending on your distribution.
 
 ## Access Glish
 
-1.  From your Linode Dashboard, click on the **Remote Access** Tab. Under **Console Access**, click on the "Launch Graphical Web Console" link:
+1. Log in to the [Linode Cloud Manager](https://cloud.linode.com).
+2. Click on the Linodes link in the sidebar and select the desired Linode.
+3. Click on the **Launch Console** link in the top right-hand corner of the Manager.
 
-    [![Glish access link.](glish-link_small.png)](glish-link.png)
+    ![Launch the Lish Console](launch-console.png)
 
-    A new window will pop up:
+4. The Lish Web Console window appears with your Linode's console, as shown below.
 
-    [![Glish at the Debian login prompt.](glish-debian-prompt_small.png)](glish-debian-prompt.png)
+    ![An example of the Lish Web Console](lish-console.png)
 
-2.  You will need to install a desktop environment. On our Debian example Linode, we're using Xfce4:
+5. Select the **Glish** tab.
+
+    ![An example of the Gish Web Console](glish-console.png)
+
+6.  You will need to install a desktop environment. On our Debian example Linode, we're using Xfce4:
 
         sudo apt-get install xfce4
 
-3.  After installation, launch your desktop environment from the Glish console:
+7.  After installation, launch your desktop environment from the Glish console:
 
         startxfce4
 

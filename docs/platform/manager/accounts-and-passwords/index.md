@@ -5,13 +5,12 @@ author:
 description: Our guide to managing accounts and passwords.
 keywords: ["accounts", "passwords", "Linode Cloud Manager", "manager"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-aliases: ['platform/manager/accounts-and-passwords-new-manager/','accounts-and-passwords/','platform/accounts-and-passwords/']
+aliases: ['accounts-and-passwords/','platform/accounts-and-passwords/','platform/manager/accounts-and-passwords-classic-manager/','platform/manager/accounts-and-passwords-new-manager/']
 modified: 2018-08-23
 modified_by:
   name: Linode
 published: 2012-04-03
 title: Accounts and Passwords
-classic_manager_link: platform/manager/accounts-and-passwords-classic-manager/
 ---
 ![Accounts and Passwords](Accounts_and_Passwords_smg.jpg)
 
@@ -89,11 +88,26 @@ You can permanently remove a user account from the Linode Cloud Manager. Here's 
 
 The account will be removed, and the user will no longer be able to access the Linode Cloud Manager.
 
+### Changing a Username
+
+You can update a username, including your own, from the Linode Cloud Manager.
+
+1.  Click the **Account** link in the sidebar.
+1.  Click the **Users** tab.
+1.  Locate the user in the list and click on their current username.
+1.  Enter a new username in the **Username** field.
+    ![Use the Linode Cloud Manager to Update a Username](accounts-update-a-username.png "Use the Linode Cloud Manager to Update a Username.")
+1.  Click **Save**.
+
 ## Email Addresses and Contact Information
 
 Linode uses the contact information on file in your account to notify and bill you. Keep this information current to prevent service interruptions. It's especially important to keep your email address current.
 
 Both the *Account & Billing* and *My Profile* pages have an email address field. The email addresses saved on these pages receive different notifications, as described in the following sections. If you are the only user, you should enter your email address on both webpages. If there are multiple users, verify that the primary account holder's email address is current on the *Account* webpage.
+
+{{< note >}}
+Only unrestricted users can receive threshold notification emails.
+{{</ note >}}
 
 ### Updating Contact Information
 
@@ -129,18 +143,7 @@ Creating strong passwords is essential to protecting your Linode and your Linode
 
 ### Changing or Resetting Your Linode Cloud Manager Password
 
-If you want to change your password, or you forgot your password and need a new one, you can accomplish these task through the *Forgot Password* webpage. Here's how:
-
-1.  Visit the [Forgot Password](https://login.linode.com/forgot/password) webpage.
-1.  Enter your username in the **Username** field.
-
-    {{< note >}}
-  If you've forgotten your Linode Cloud Manager username, see [Recovering a Lost Username](#recovering-a-lost-username).
-{{< /note >}}
-
-1.  Check your email for a message containing further instructions.
-
-1.  Follow the instructions in the email message to reset your password.
+{{< content "change-cloud-manager-password-shortguide" >}}
 
 ### Resetting the Root Password
 

@@ -5,15 +5,15 @@ author:
 description: 'Install MongoDB for document-oriented data storage on Ubuntu 16.04 (Xenial).'
 keywords: ["nosql", "database", "mongodb", "key store", "ubuntu", "mongodb tutorial"]
 license: '[CC BY-ND 4.0](https://creativecommons.org/licenses/by-nd/4.0)'
-modified: 2016-12-30
 modified_by:
-  name: Phil Zona
+  name: Linode
 published: 2016-05-20
-title: 'Install MongoDB on Ubuntu 16.04 (Xenial)'
+title: 'How To Install MongoDB on Ubuntu 16.04 (Xenial)'
+h1_title: 'Installing MongoDB on Ubuntu 16.04 (Xenial)'
 external_resources:
- - '[Official MongoDB Documentation](https://docs.mongodb.org/v3.2/)'
+ - '[Official MongoDB Documentation](https://docs.mongodb.com/manual/)'
  - '[MongoDB Project](http://www.mongodb.org/)'
- - '[Language-Specific MongoDB Drivers](http://docs.mongodb.org/ecosystem/drivers/)'
+ - '[Language-Specific MongoDB Drivers](https://docs.mongodb.com/ecosystem/drivers/)'
 ---
 
 In this MongoDB tutorial, we explain how to install the database on Ubuntu 16.04, and then provide a short guide on some basic features and functions.
@@ -22,9 +22,9 @@ In this MongoDB tutorial, we explain how to install the database on Ubuntu 16.04
 
 MongoDB is a database engine that provides access to non-relational, document-oriented databases. It is part of the growing [NoSQL](https://en.wikipedia.org/wiki/NoSQL) movement, along with databases like Redis and Cassandra (although there are vast differences among the many non-relational databases).
 
-MongoDB seeks to provide an alternative to traditional relational database management systems (RDBMS). In addition to its schema-free design and scalable architecture, MongoDB provides a JSON output and specialized, language-specific bindings that make it particularly attractive for use in custom application development and rapid prototyping. MongoDB has been used in a number of large scale [production deployments](https://www.mongodb.org/community/deployments) and is currently one of the most popular database engines across all systems.
+MongoDB seeks to provide an alternative to traditional relational database management systems (RDBMS). In addition to its schema-free design and scalable architecture, MongoDB provides a JSON output and specialized, language-specific bindings that make it particularly attractive for use in custom application development and rapid prototyping. MongoDB has been used in a number of large scale [production deployments](https://www.mongodb.com/community/deployments) and is currently one of the most popular database engines across all systems.
 
-Since MongoDB can require a significant amount of RAM, we recommend using a [high memory Linode](https://www.linode.com/pricing#high-memory) with this guide.
+Since MongoDB can require a significant amount of RAM, we recommend using a [high memory Linode](https://www.linode.com/pricing/high-memory) with this guide.
 
 ## Before You Begin
 
@@ -42,17 +42,17 @@ This guide is written for a non-root user. Commands that require elevated privil
 
 ## Add the MongoDB Repository
 
-The `mongodb-server` package from the Ubuntu repository includes version 2.6. However, this version reached end of life in October 2016, so it should not be used in production environments. The most current version available is 3.2 and, as of this writing, the default Ubuntu repositories do not contain an updated package.
+The `mongodb-server` package from the Ubuntu repository includes version 2.6. However, this version reached end of life in October 2016, so it should not be used in production environments. The most current version available is 4.0 and, as of this writing, the default Ubuntu repositories do not contain an updated package.
 
 Because the Ubuntu repositories don't contain a current version, we'll need to use the MongoDB repository.
 
 1.  Import the MongoDB public GPG key for package signing:
 
-        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv EA312927
+        sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 
 2.  Add the MongoDB repository to your `sources.list.d` directory:
 
-        echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.2.list
+        echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
 
 3.  Update your repositories. This allows `apt` to read from the newly added MongoDB repo:
 
@@ -157,7 +157,7 @@ Successfully added user: {
 
     The `-u`, `-p`, and `--authenticationDatabase` options in the above command are required in order to authenticate connections to the shell. Without authentication, the MongoDB shell can be accessed but will not allow connections to databases.
 
-    The `mongo-admin` user created in Step 3 is purely administrative based on the roles specified. It is defined as an administrator of user for all databases, but does not have any database permissions itself. You may use it to create additional users and define their roles. If you are using multiple applications with MongoDB, set up different users with custom permissions for their corresponding databases.
+    The `mongo-admin` user created in Step 3 is purely administrative based on the roles specified. It is defined as an administrator of users for all databases, but does not have any database permissions itself. You may use it to create additional users and define their roles. If you are using multiple applications with MongoDB, set up different users with custom permissions for their corresponding databases.
 
 6.  As the `mongo-admin` user, create a new database to store regular user data for authentication. The following example calls this database `user-data`:
 
@@ -175,74 +175,11 @@ Successfully added user: {
 
         quit()
 
-For more information on access control and user management, as well as other tips on securing your databases, refer to the [MongoDB Security Documentation](https://docs.mongodb.org/v3.2/security).
+For more information on access control and user management, as well as other tips on securing your databases, refer to the [MongoDB Security Documentation](https://docs.mongodb.com/manual/security).
 
 ## Manage Data and Collections
 
-Much of MongoDB's popularity comes from its ease of integration. Interactions with databases are done via JavaScript methods, but [drivers for other languages](http://docs.mongodb.org/ecosystem/drivers/) are available. This section will demonstrate a few basic features, but we encourage you to do further research based on your specific use case.
-
-1.  Open the MongoDB shell using the `example-user` we created above:
-
-        mongo -u example-user -p --authenticationDatabase user-data
-
-2.  Create a new database. This example calls it `exampleDB`:
-
-        use exampleDB
-
-    Make sure that this database name corresponds with the one for which the user has read and write permissions (we added these permissions in Step 7 of the previous section).
-
-    To show the name of the current working database, run the `db` command.
-
-3.  Create a new *collection* called `exampleCollection`:
-
-        db.createCollection("exampleCollection", {capped: false})
-
-    If you're not familiar with MongoDB terminology, you can think of a collection as analogous to a table in a relational database management system. For more information on creating new collections, see the MongoDB documentation on the [db.createCollection() method](https://docs.mongodb.com/v3.2/reference/method/db.createCollection/).
-
-    {{< note >}}
-Collection names should not include certain punctuation such as hyphens. However, exceptions may not be raised until you attempt to use or modify the collection. For more information, refer to MongoDB's [naming restrictions](https://docs.mongodb.com/manual/reference/limits/#naming-restrictions).
-{{< /note >}}
-
-4.  Create sample data for entry into the test database. MongoDB accepts input as *documents* in the form of JSON objects such as those below. The `a` and `b` variables are used to simplify entry; objects can be inserted directly via functions as well.
-
-        var a = { name : "John Doe",  attributes: { age : 30, address : "123 Main St", phone : 8675309 }}
-        var b = { name : "Jane Doe",  attributes: { age : 29, address : "321 Main Rd", favorites : { food : "Spaghetti", animal : "Dog" } }}
-
-    Note that documents inserted into a collection need not have the same schema, which is one of many benefits of using a NoSQL database.
-
-5.  Insert the data into `exampleCollection`, using the `insert` method:
-
-        db.exampleCollection.insert(a)
-        db.exampleCollection.insert(b)
-
-    The output for each of these operations will show the number of objects successfully written to the current working database:
-
-        WriteResult({ "nInserted" : 1 })
-
-6.  Confirm that the `exampleCollection` collection was properly created:
-
-        show collections
-
-    The output will list all collections containing data within the current working database:
-
-        exampleCollection
-
-7.  View unfiltered data in the `exampleCollection` collection using the `find` method. This returns up to the first 20 documents in a collection, if a query is not passed:
-
-        db.exampleCollection.find()
-
-    The output will resemble the following:
-
-        { "_id" : ObjectId("571a3e7507d0fcd78baef08f"), "name" : "John Doe" }
-        { "_id" : ObjectId("571a3e8707d0fcd78baef090"), "age" : 30 }
-
-    You may notice the objects we entered are preceded by `_id` keys and `ObjectId` values. These are unique indexes generated by MongoDB when an `_id` value is not explicitly defined. `ObjectId` values can be used as primary keys when entering queries, although for ease of use, you may wish to create your own index as you would with any other database system.
-
-    The `find` method can also be used to search for a specific document or field by entering a search term parameter (in the form of an object) rather than leaving it empty. For example:
-
-        db.exampleCollection.find({"name" : "John Doe"})
-
-    Running the command above returns a list of documents containing the `{"name" : "John Doe"}` object.
+{{< content "mongodb-example-shortguide" >}}
 
 ## Additional MongoDB Functionality
 

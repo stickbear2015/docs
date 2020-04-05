@@ -10,8 +10,7 @@ published: 2014-12-08
 modified_by:
   name: Linode
 title: Network Helper
-aliases: ['platform/network-helper-new-manager/']
-classic_manager_link: platform/network-helper-classic-manager/
+aliases: ['platform/network-helper-new-manager/','platform/network-helper-classic-manager/']
 ---
 
 ![Network Helper](network-helper-title-graphic.jpg "Network Helper")
@@ -32,7 +31,6 @@ Network Helper is enabled by default, and works by detecting which distribution 
 If you instead choose to manually configure your Linode's network interface settings, be the IPv4 or IPv6, you must disable Network Helper for that Linode or your configuration will overwritten during the next boot.
 {{< /caution >}}
 
-
 ## Network Helper Settings
 
  Network Helper can be enabled or disabled globally for your account, or on a per-Linode basis. Network Helper can still be toggled on and off for specific Linodes, regardless of whether enabled or disabled globally.
@@ -43,9 +41,9 @@ When Network Helper is enabled globally, all new Linodes created on your account
 
 1.  Click on **Account** in the sidebar of the [Linode Cloud Manager](https://cloud.linode.com).
 
-1.  Click on the **Global Settings** tab. Set the switch under the **Network Helper** section to the desired setting. Blue is enabled, gray is disabled.
+1.  Click on the **Settings** tab. Set the switch under the **Network Helper** section to the desired setting; blue is enabled, gray is disabled.
 
-    [![The Network Helper Default Behavior option](network-helper-linode-account-settings-small.png)](network-helper-linode-account-settings.png)
+    [![The Network Helper Default Behavior option](network-helper-linode-account-settings.png)](network-helper-linode-account-settings.png)
 
 1. Click the **Save** button.
 
@@ -53,26 +51,33 @@ When Network Helper is enabled globally, all new Linodes created on your account
 
 1.  Click on **Linodes** link in the sidebar of the Linode Cloud Manager.
 
-1.  Click on the **more options ellipsis** for the Linode for which you want to enable Network Helper. Then, click **Settings**.
+1.  Click on the **More Options Ellipsis** corresponding to the Linode for which you want to enable Network Helper. Then, click **Settings**.
 
     ![Navigate to the Linode's Settings page](network-helper-linode-settings-link.png)
 
-1.  In the **Advanced Configurations** panel, click on the **more options ellipsis** for your Disk Profile. From the menu, select **Edit**:
+1.  Navigate to the tab labeled **Disks/Configs**.  From the **Configuration** pane, click on your Disk Profile's **More Options Ellipsis** and select **Edit**.
 
-    [![Select the configuration profile Edit Menu](network-helper-linode-settings-page-small.png)](network-helper-linode-settings-page.png)
+    [![Select the configuration profile Edit Menu](network-helper-linode-settings-page.png)](network-helper-linode-settings-page.png "Select the configuration profile Edit Menu")
 
-1.  A menu will appear with that configuration profile's settings. Under the **Filesystem/Boot Helpers** section, toggle the **Auto-configure networking** switch  to the desired setting. Blue is enabled, gray is disabled.
+1.  A menu will appear with that configuration profile's settings. Under the **Filesystem/Boot Helpers** section, toggle the **Auto-configure networking** switch to the desired setting; blue is enabled, gray is disabled.
 
-    [![Toggle the 'auto-configure networking' box](network-helper-linode-config-profile-settings-small.png)](network-helper-linode-config-profile-settings.png)
+    [![Toggle the 'auto-configure networking' box](network-helper-linode-config-profile-settings.png)](network-helper-linode-config-profile-settings.png "Toggle the auto-configure networking box")
 
-1. Click **Submit**.
-
+1. Click the **Submit** button.
 
 ## What Files are Modified
 
 The specific files Network Helper modifies varies by distribution.
 
-### Arch
+{{< note >}}
+Network Helper is not supported on the CoreOS distribution
+{{</ note >}}
+
+### Alpine
+
+Network Helper configures `/etc/network/interfaces`.
+
+### Arch & Ubuntu (18.04 LTS and later)
 
 Network Helper configures `/etc/systemd/network/05-eth0.network`.
 
@@ -80,7 +85,7 @@ Network Helper configures `/etc/systemd/network/05-eth0.network`.
 
 Network Helper configures `/etc/sysconfig/network-scripts/ifcfg-eth0`.
 
-### Debian & Ubuntu
+### Debian & Ubuntu (versions before 18.04 LTS)
 
 Network helper configures `/etc/network/interfaces` and `/etc/resolv.conf`.
 
@@ -90,12 +95,11 @@ Network Helper configures `/etc/conf.d/net` and `/etc/resolv.conf`.
 
 ### OpenSUSE
 
-Network Helper configures `/etc/sysconfig/network/ifcfg-eth0`, `/etc/sysconfig/network/routes` and `/etc/resolv.conf`.
+Network Helper configures `/etc/sysconfig/network/ifcfg-eth0`, `/etc/sysconfig/network/routes`, and `/etc/resolv.conf`.
 
 ### Slackware
 
 Network Helper configures `/etc/rc.d/rc.inet1.conf` and `/etc/resolv.conf`.
-
 
 ## What is Modified in Those Files
 
@@ -162,8 +166,7 @@ nameserver 72.14.179.5
 nameserver 72.14.188.5
 {{< /file >}}
 
-
-In addition to network interface file file (again, specific to this Debian example), Network Helper will create:
+In addition to the network interface file (again, specific to this Debian example), Network Helper will create:
 
 - A copy of the interface and resolver file as the distribution provided it: `.interfaces.linode-orig` and `/etc/.resolv.conf.linode-orig`. Note that Network Helper does not modify `/etc/resolv.conf` on all of our distributions.
 
